@@ -58,18 +58,18 @@ module Tr8n
             "and"     => lambda { |(*sexpr),  ctx| sexpr.all?{|e| eval(e, ctx)}  },                     # ["and", [], [], ...]
             "or"      => lambda { |(*sexpr),  ctx| sexpr.any?{|e| eval(e, ctx)} },                      # ["or", [], [], ...]
             "not"     => lambda { |(val),     ctx| not val },                                           # ["not", ["true"]]
-            "mod"     => lambda { |(l,r),     ctx| l % r },                                             # ["mod", "n", 10]
+            "mod"     => lambda { |(l,r),     ctx| l % r },                                             # ["mod", "@n", 10]
             "append"  => lambda { |(l,r),     ctx| r.to_s + l.to_s},                                    # ["append", "world", "hello "]
             "prepend" => lambda { |(l,r),     ctx| l.to_s + r.to_s},                                    # ["prepend", "hello  ", "world"]
             "true"    => lambda { |(sexpr),   ctx| true },                                              # ["true"]
             "false"   => lambda { |(sexpr),   ctx| false },                                             # ["false"]
-            "date"    => lambda { |(sexpr),   ctx| Date.strptime(sexpr, '%Y-%m-%d')},                   # ["date", "2010-01-01"]
+            "date"    => lambda { |(date),    ctx| Date.strptime(date, '%Y-%m-%d')},                    # ["date", "2010-01-01"]
             "today"   => lambda { |(sexpr),   ctx| Time.now.to_date},                                   # ["today"]
             "time"    => lambda { |(sexpr),   ctx| Time.strptime(sexpr, '%Y-%m-%d %H:%M:%S')},          # ["time", "2010-01-01 10:10:05"]
             "now"     => lambda { |(sexpr),   ctx| Time.now},                                           # ["now"]
-            "match"   => lambda { |(l,r),     ctx|                                                      # ["match", /a/, "abc"]
-              l = Regexp.new(/^\//.match(l) ? l[1..-2] : l) if l.is_a?(String)
-              not l.match(r).nil?;
+            "match"   => lambda { |(search, subject),     ctx|                                          # ["match", /a/, "abc"]
+              search = regexp_from_string(search)
+              not search.match(subject).nil?
             },
             "in"      => lambda { |(l,r),     ctx|                                                      # ["in", "1,2,3,5..10,20..24", "@n"]
               r = r.to_s.strip
@@ -82,15 +82,51 @@ module Tr8n
               end
               false
             },
-            "within"  => lambda { |(l,r),     ctx|                                                      # ["within", "0..3", "n"]
+            "within"  => lambda { |(l,r),     ctx|                                                      # ["within", "0..3", "@n"]
               bounds = l.split('..').map{|d| Integer(d)}
               (bounds.first..bounds.last).include?(r)
             },
             "replace" => lambda { |(search,replace,subject),     ctx|                                   # ["replace", "/^a/", "v", "abc"]
-              search = Regexp.new(/^\//.match(search) ? search[1..-2] : search) if search.is_a?(String)
+              # handle regular expression
+              if /\/i$/.match(search)
+                  replace = replace.gsub(/\$(\d+)/, '\\\\\1') # for compatibility with Perl notation
+              end
+              search = regexp_from_string(search)
               subject.gsub(search, replace)
             },
+            "count"   => lambda { |(arr),  ctx|                                                         # ["count", "@genders"]
+              (arr.is_a?(String) ? vars[arr] : arr).count
+            },
+            "all"     => lambda { |(l,r),  ctx|                                                         # ["all", "@genders", "male"]
+              l = (l.is_a?(String) ? vars[l] : l)
+              l.is_a?(Array) ? l.all?{|e| e == r} : false
+            },
+            "any"     => lambda { |(l,r),  ctx|                                                        # ["any", "@genders", "female"]
+              l = (l.is_a?(String) ? vars[l] : l)
+              l.is_a?(Array) ? l.any?{|e| e == r} : false
+            },
         }
+      end
+
+      def regexp_from_string(str)
+        return Regexp.new(/#{str}/) unless /^\//.match(str)
+
+        str = str.gsub(/^\//, '')
+
+        if /\/i$/.match(str)
+          str = str.gsub(/\/i$/, '')
+          return Regexp.new(/#{str}/i)
+        end
+
+        str = str.gsub(/\/$/, '')
+        Regexp.new(/#{str}/)
+      end
+
+      def reset!
+        @vars.each do |var|
+          @env.delete(var)
+        end
+        @vars = {}
       end
 
       def apply(fn, args, ctx=@env)
@@ -106,7 +142,7 @@ module Tr8n
 
         fn = sexpr[0]
         args = (sexpr.drop 1)
-        unless ["quote", "cdr", "cond", "if", "&&", "||", "and", "or", "true", "false", "let"].member?(fn)
+        unless ["quote", "cdr", "cond", "if", "&&", "||", "and", "or", "true", "false", "let", "count", "all", "any"].member?(fn)
           args = args.map { |a| self.eval(a, ctx) }
         end
         apply(fn, args, ctx)

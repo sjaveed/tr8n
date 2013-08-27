@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,35 +21,32 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tr8n
-  module RulesEngine
-    
-    class Parser
-      attr_reader :tokens, :expression
+####################################################################### 
+# 
+# Data Token Forms:
+#
+# {count} 
+# {count:number} 
+# {user:gender}
+# {today:date} 
+# {user_list:list}
+# {long_token_name} 
+# {user1}
+# {user1:user}
+# {user1:user::pos}
+#
+# Data tokens can be associated with any rules through the :dependency
+# notation or using the nameing convetnion of the token suffix, defined
+# in the tr8n configuration file
+#
+####################################################################### 
 
-      def initialize(expression)
-        @expression = expression
-        if expression =~ /^\(/
-          @tokens = expression.scan(/[()]|\w+|@\w+|[\+\-\!\|\=>&<\*\/%]+|".*?"|'.*?'/)
-        end
-      end
-     
-      def parse
-        return @expression unless @tokens
-        token = @tokens.shift
-        return parse_list if (token) == '('
-        return token[1..-2] if token =~ /['"].*/
-        return token.to_i if token =~ /\d+/
-        token.to_s
-      end
-     
-      def parse_list
-        list = []
-        list << parse until @tokens.first == ')'
-        @tokens.shift
-        list
+module Tr8n
+  module Tokens
+    class Data < Tr8n::Tokens::Base
+      def self.expression
+        /(\{[^_:][\w]*(:[\w]+)?(::[\w]+)?\})/
       end
     end
-
   end
 end

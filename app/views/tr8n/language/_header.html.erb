@@ -1,14 +1,14 @@
 <div class="section_title tr8n_txtl">
-  <div class="tr8n_fltr" style="padding-top:0px;">
-    <% if mode == :view %>
-      <%=link_to_function(image_tag("tr8n/table_edit.png"), "switchSectionMode('#{section}', 'edit')") %>
-    <% else %>
-      <%=link_to_function(image_tag("tr8n/disk.png"), "submitSection('#{section}')")%>
-      <%=link_to_function(image_tag("tr8n/cancel.png"), "switchSectionMode('#{section}', 'view')")%>
-    <% end %>  
+  <div class="tr8n_fltr" style="padding-top:0px;font-size:11px;font-weight:normal">
+    <%=
+      [
+        ["basic information", "index"],
+        ["context rules", "context_rules"],
+        ["language cases", "language_cases"],
+        ["prohibited word", "prohibited_words"],
+      ].map {|label| link_to(tra(label.first, description), :action => label.last)}. join(' | '). html_safe
+    %>
   </div>
   
-	<%=tr8n_toggler_tag("#{section}_content")%>
-	
   <%=tra(label, description) %>
 </div>

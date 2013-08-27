@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,32 +21,20 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-####################################################################### 
-# 
-# Data Token Forms:
-#
-# {count} 
-# {count:number} 
-# {user:gender}
-# {today:date} 
-# {user_list:list}
-# {long_token_name} 
-# {user1}
-# {user1:user}
-# {user1:user::pos}
-#
-# Data tokens can be associated with any rules through the :dependency
-# notation or using the nameing convetnion of the token suffix, defined
-# in the tr8n configuration file
-#
-####################################################################### 
+class Tr8n::Decorators::Base
+  attr_reader :language, :translation_key, :label, :options
 
-module Tr8n
-  module Tokens
-    class DataToken < Tr8n::Token
-      def self.expression
-        /(\{[^_:][\w]*(:[\w]+)?(::[\w]+)?\})/
-      end
-    end
+  def self.decorator(translation_key, language, label, options = {})
+    Tr8n.config.decorator_class.new(
+      :translation_key => translation_key,
+      :language => language,
+      :label => label,
+      :options => options
+    )
   end
+
+  def decorate
+    raise Tr8n::Exception.new("Must be implemented by the extending class")
+  end
+
 end

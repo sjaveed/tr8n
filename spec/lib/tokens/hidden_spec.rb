@@ -1,6 +1,6 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-describe Tr8n::Tokens::MethodToken do
+describe Tr8n::Tokens::Hidden do
   describe 'registering tokens' do
 
     context "incorrect tokens" do
@@ -30,7 +30,7 @@ describe Tr8n::Tokens::MethodToken do
           '{users:list | all male, all female, mixed genders}',
           '{count || message, messages}'
         ].each do |label|
-          Tr8n::Tokens::MethodToken.parse(label).count.should eq(0)
+          Tr8n::Tokens::Hidden.parse(label).count.should eq(0)
         end
       end
     end
@@ -38,21 +38,13 @@ describe Tr8n::Tokens::MethodToken do
     context "correct tokens" do
       it "should be registered" do
         [
-          'Hello {user.name}',
-          '{user.name}',
-          '{user.name:gender}',
+          '{_he_she}',
+          '{_posted__items}',
+          'Hello {user.name} you have {count} {_posted__items}'
         ].each do |label|
-          tokens = Tr8n::Tokens::MethodToken.parse(label)
+          tokens = Tr8n::Tokens::Hidden.parse(label)
           tokens.count.should eq(1)
-          tokens.first.class.name.should eq("Tr8n::Tokens::MethodToken")
-        end
-
-        [
-          'Hello {user.first_name} [bold: {user.last_name}]',
-        ].each do |label|
-          tokens = Tr8n::Tokens::MethodToken.parse(label)
-          tokens.count.should eq(2)
-          tokens.first.class.name.should eq("Tr8n::Tokens::MethodToken")
+          tokens.first.class.name.should eq("Tr8n::Tokens::Hidden")
         end
       end
     end

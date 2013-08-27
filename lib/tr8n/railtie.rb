@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,14 +24,31 @@
 require 'rails'
 require 'pp'
 
+module Tr8n
+  module Tokens
+  end
+
+  module Decorators
+  end
+end
+
 [
- ".",
- "./tokens",
- "./rules_engine"
-].each do |dir|
-    Dir[File.expand_path("#{File.dirname(__FILE__)}/#{dir}/*.rb")].sort.each do |file|
-      require(file)
-    end
+    ".",
+    "./rules_engine",
+    "./tokens/base.rb",
+    "./tokens",
+    "./decorators/base.rb",
+    "./decorators",
+].each do |f|
+  if f.index('.rb')
+    file = File.expand_path(File.join(File.dirname(__FILE__), f))
+    require(file)
+    next
+  end
+
+  Dir[File.expand_path("#{File.dirname(__FILE__)}/#{f}/*.rb")].sort.each do |file|
+    require(file)
+  end
 end
 
 require File.join(File.dirname(__FILE__), 'extensions/array_extension')

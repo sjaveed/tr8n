@@ -23,38 +23,66 @@
 
 ####################################################################### 
 # 
-# Method Token Forms
+# Hidden Token Forms:
 #
-# {user.name}  
-# {user.name:gender}
+# {_he_she} 
+# {_posted__items}
+#
+#  '_' escaped as '/'
+#  '__' escaped as '__'
 # 
+# Hidden tokens cannot have rules and are there for default language
+# substitutions only
+#
 ####################################################################### 
 
 module Tr8n
   module Tokens
-    class MethodToken < Tr8n::Token
+    class Hidden < Tr8n::Tokens::Base
+
       def self.expression
-        /(\{[^_:.][\w]*(\.[\w]+)(:[\w]+)?(::[\w]+)?\})/
+        /(\{_[\w]+\})/
       end
     
-      def object_name
-        @object_name ||= name.split(".").first
+      def allowed_in_translation?
+        false
       end
     
-      def object_method_name
-        @object_method_name ||= name.split(".").last
+      def supports_cases?
+        false
       end
     
-      def suffix
-        @suffix ||= object_name.split('_').last
+      def dependant?
+        false
       end
     
-      def substitute(translation_key, label, values = {}, options = {}, language = Tr8n::Config.current_language)
-        object = values[object_name.to_sym]
-        raise Tr8n::TokenException.new("Missing value for a token: #{full_name}") unless object
-        object_value = sanitize_token_value(object, object.send(object_method_name), options.merge(:sanitize_values => true), language)
-        label.gsub(full_name, object_value)
+      def dependency_rules
+        []
       end
+    
+      def language_rule
+        nil
+      end
+    
+      # return humanized form
+      def prepare_label_for_translator(label)
+        label.gsub(full_name, humanized_name)
+      end
+    
+      # return humanized form
+      def prepare_label_for_suggestion(label, index)
+        label.gsub(full_name, humanized_name)
+      end
+      
+      def humanized_name
+        @humanized_name ||= begin
+          hnm = name[1..-1].clone
+          hnm.gsub!('__', ' ')
+          hnm.gsub!('_', '/')
+          hnm
+        end
+      end
+      
     end
   end
 end

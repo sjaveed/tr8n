@@ -23,65 +23,34 @@
 
 ####################################################################### 
 # 
-# Hidden Token Forms:
+# Method Token Forms
 #
-# {_he_she} 
-# {_posted__items}
-#
-#  '_' escaped as '/'
-#  '__' escaped as '__'
+# {user.name}  
+# {user.name:gender}
 # 
-# Hidden tokens cannot have rules and are there for default language
-# substitutions only
-#
 ####################################################################### 
 
 module Tr8n
   module Tokens
-    class HiddenToken < Tr8n::Token
+    class Method < Tr8n::Tokens::Base
       def self.expression
-        /(\{_[\w]+\})/
+        /(\{[^_:.][\w]*(\.[\w]+)(:[\w]+)?(::[\w]+)?\})/
       end
     
-      def allowed_in_translation?
-        false
+      def object_name
+        @object_name ||= short_name.split(".").first
       end
     
-      def supports_cases?
-        false
+      def object_method_name
+        @object_method_name ||= short_name.split(".").last
       end
-    
-      def dependant?
-        false
+
+      def substitute(translation_key, language, label, values = {}, options = {})
+        object = values[object_name.to_sym]
+        raise Tr8n::TokenException.new("Missing value for a token: #{full_name}") unless object
+        object_value = sanitize(object, object.send(object_method_name), options.merge(:sanitize_values => true), language)
+        label.gsub(full_name, object_value)
       end
-    
-      def dependency_rules
-        []
-      end
-    
-      def language_rule
-        nil
-      end
-    
-      # return humanized form
-      def prepare_label_for_translator(label)
-        label.gsub(full_name, humanized_name)
-      end
-    
-      # return humanized form
-      def prepare_label_for_suggestion(label, index)
-        label.gsub(full_name, humanized_name)
-      end
-      
-      def humanized_name
-        @humanized_name ||= begin
-          hnm = name[1..-1].clone
-          hnm.gsub!('__', ' ')
-          hnm.gsub!('_', '/')
-          hnm
-        end
-      end
-      
     end
   end
 end

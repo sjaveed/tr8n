@@ -54,8 +54,8 @@ defaults:
   # 
   # Put your API key in the box below.
   #############################################################################
-  enable_google_suggestions:  false      # uses google for suggestions
-  google_api_key: "YOUR GOOGLE API KEY"  # get this API key from Google.
+  enable_google_suggestions: true      # uses google for suggestions
+  google_api_key: "AIzaSyBvL_IjAhFwoC2oixepTmju9UHZnZiA7YI"  # get this API key from Google.
 
   #############################################################################
   # Featured languages can be added as a bottom strip bar on all pages using
@@ -157,36 +157,12 @@ defaults:
   #############################################################################
   # Rules Engine Settings
   #############################################################################
-  rules_engine:  
-    language_rule_classes:    ["Tr8n::NumericRule", "Tr8n::GenderRule", "Tr8n::GenderListRule", "Tr8n::DateRule", "Tr8n::ValueRule"]
-    data_token_classes:       ["Tr8n::Tokens::DataToken", "Tr8n::Tokens::HiddenToken", "Tr8n::Tokens::MethodToken", "Tr8n::Tokens::TransformToken"]
-    decoration_token_classes: ["Tr8n::Tokens::DecorationToken"]
+  rules_engine:
+    data_token_classes:       ["Tr8n::Tokens::Data", "Tr8n::Tokens::Hidden", "Tr8n::Tokens::Method", "Tr8n::Tokens::Transform"]
+    decoration_token_classes: ["Tr8n::Tokens::Decoration"]
     allow_nil_token_values:   true
-    numeric_rule:             
-      token_suffixes:         ["count", "num", "age", "hours", "minutes", "years", "seconds"]
-      object_method:          "to_i"
-    gender_rule:  
-      token_suffixes:         ["user", "profile", "actor", "target", "partner"]
-      object_method:          "gender"
-      method_values:  
-        female:               "female"
-        male:                 "male"
-        neutral:              "neutral"
-        unknown:              "unknown"
-    list_rule:                # use list_rule if your site does not support user genders 
-      object_method:          "size"
-      token_suffixes:         ["list"]
-    gender_list_rule:         # similiar to list rule, but works together with gender rule 
-      object_method:          "size"
-      token_suffixes:         ["list"]
-    date_rule:                
-      token_suffixes:         ["date"]
-      object_method:          "to_date"
-    value_rule:               
-      token_suffixes:         "*"
-      object_method:          "to_s"
 
-    # minimal rank makes the translation acceptable for subsitution and counts towards the translator rank
+    # minimal rank makes the translation acceptable for substitution and counts towards the translator rank
     translation_threshold:    1
 
     viewing_user_token:       "viewing_user"

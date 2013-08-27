@@ -3,6 +3,9 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 describe Tr8n::RulesEngine::Parser do
   describe "#parser" do
     it "parses expressions" do
+      expect(Tr8n::RulesEngine::Parser.new("hello world").tokens).to be_nil
+      expect(Tr8n::RulesEngine::Parser.new("hello world").parse).to eq("hello world")
+
       expect(Tr8n::RulesEngine::Parser.new("(= 1 (mod n 10))").tokens).to eq(
           ["(", "=", "1", "(", "mod", "n", "10", ")", ")"]
       )

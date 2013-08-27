@@ -92,6 +92,8 @@ describe Tr8n::RulesEngine::Evaluator do
       expect(e.eval(["replace", "o", "a", "hello world"])).to eq("hella warld")
       expect(e.eval(["replace", "/world$/", "moon", "hello moon"])).to eq("hello moon")
 
+      expect(e.eval("hello world")).to eq("hello world")
+
       expect(e.eval(["append", "world", "hello "])).to eq("hello world")
       expect(e.eval(["prepend", "hello ", "world"])).to eq("hello world")
 
@@ -104,6 +106,29 @@ describe Tr8n::RulesEngine::Evaluator do
       expect(e.eval(["time", "2011-01-01 10:9:8"])).to eq(Time.new(2011, 1, 1, 10, 9, 8))
 
       expect(e.eval([">", ["date", "2014-01-01"], ["today"]])).to be_true
+
+      expect(e.eval(["count", [1,2,3,4,5]])).to eq(5)
+
+      e.reset!
+      e.eval(["let", "@arr", [1,2,3,4,5]])
+      expect(e.vars).to eq({"@arr"=>[1,2,3,4,5]})
+
+      expect(e.eval("@arr")).to eq([1,2,3,4,5])
+      expect(e.eval(["count", "@arr"])).to eq(5)
+
+      expect(e.eval(["all", ["1","1","1"], "1"])).to be_true
+      expect(e.eval(["all", ["1","1","2"], "1"])).to be_false
+
+      e.reset!
+      e.eval(["let", "@genders", ["male", "female", "male"]])
+      expect(e.vars).to eq({"@genders"=>["male", "female", "male"]})
+      expect(e.eval(["any", "@genders", "male"])).to be_true
+      expect(e.eval(["any", "@genders", "female"])).to be_true
+
+      expect(e.eval(["&&", ["any", "@genders", "female"], ["any", "@genders", "male"]])).to be_true
+
+      expect(e.eval(["all", "@genders", "female"])).to be_false
+      expect(e.eval(["all", "@genders", "male"])).to be_false
     end
 
     it "evaluates expressions" do

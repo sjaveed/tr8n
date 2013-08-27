@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,35 +21,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tr8n
-  module RulesEngine
-    
-    class Parser
-      attr_reader :tokens, :expression
+class Tr8n::Decorators::Default < Tr8n::Decorators::Base
 
-      def initialize(expression)
-        @expression = expression
-        if expression =~ /^\(/
-          @tokens = expression.scan(/[()]|\w+|@\w+|[\+\-\!\|\=>&<\*\/%]+|".*?"|'.*?'/)
-        end
-      end
-     
-      def parse
-        return @expression unless @tokens
-        token = @tokens.shift
-        return parse_list if (token) == '('
-        return token[1..-2] if token =~ /['"].*/
-        return token.to_i if token =~ /\d+/
-        token.to_s
-      end
-     
-      def parse_list
-        list = []
-        list << parse until @tokens.first == ')'
-        @tokens.shift
-        list
-      end
-    end
-
+  def decorate
+    label
   end
+  
 end

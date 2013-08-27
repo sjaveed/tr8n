@@ -682,7 +682,18 @@ module Tr8n
     #########################################################
     # RULES ENGINE
     #########################################################
-    
+
+    def self.context_rules
+      {
+          "numeric" => {
+              "variables" => {
+                  "@n" => "to_i",
+              }
+          }
+      }
+    end
+
+
     def self.language_rule_classes
       @language_rule_classes ||= rules_engine[:language_rule_classes].collect{|lrc| lrc.constantize}
     end

@@ -37,7 +37,7 @@
 ####################################################################### 
 module Tr8n
   module Tokens
-    class DecorationToken < Tr8n::Token
+    class Decoration < Tr8n::Tokens::Base
       def self.expression
         /(\[\w+:[^\]]+\])/
       end
@@ -51,7 +51,7 @@ module Tr8n
           end
           case ch
             when "[" 
-              tokens.push(Tr8n::Tokens::DecorationToken.new(label, ch))
+              tokens.push(Tr8n::Tokens::Decoration.new(label, ch))
             when "]"
               candidates.push(tokens.pop) if tokens.size > 0
           end
@@ -83,12 +83,22 @@ module Tr8n
         @full_name = @full_name + str;
       end
 
+      def parse_elements
+        # do nothing
+      end
+
+      def short_name
+        @short_name ||= full_name[1..-2].split(':').first.strip
+      end
+
+      def name(opts = {})
+        val = short_name
+        val = "[#{val}: ]" if opts[:parens]
+        val
+      end
+
       def decoration?
         true
-      end
-      
-      def language_rule
-        nil
       end
       
       def value
@@ -136,7 +146,7 @@ module Tr8n
         default_decoration
       end  
       
-      def substitute(translation_key, label, values = {}, options = {}, language = Tr8n::Config.current_language)
+      def substitute(translation_key, language, label, values = {}, options = {})
         method = values[name_key]
         substitution_value = ""
         
@@ -158,11 +168,7 @@ module Tr8n
           
         label.gsub(full_name, substitution_value) 
       end
-      
-      def sanitized_name
-        "[#{name}: ]"
-      end
-      
+
     end
   end
 end

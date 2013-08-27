@@ -1,0 +1,208 @@
+#--
+# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+
+####################################################################### 
+# 
+# Transform Token Form  - can be defined for each context rule of each language
+#
+# {count | message}   - will not include count: "messages" 
+# {count | message, messages} 
+# {count:number | message, messages} 
+# {user:gender | he, she, he/she}
+# {now:date | did, does, will do}
+# {users:list | all male, all female, mixed genders}
+#
+# {count || message, messages}  - will include count:  "5 messages" 
+# 
+####################################################################### 
+
+module Tr8n
+  module Tokens
+    class Transform < Tr8n::Tokens::Base
+
+      attr_reader :pipe_separator, :piped_params
+
+      def self.expression
+        /(\{[^_:|][\w]*(:[\w]+)?(::[\w]+)?\s*\|\|?[^{^}]+\})/
+      end
+
+      def parse_elements
+        name_without_parens = @full_name[1..-2]
+        name_without_pipes = name_without_parens.split('|').first.strip
+        name_without_case_keys = name_without_pipes.split('::').first.strip
+
+        @short_name = name_without_pipes.split(':').first.strip
+        @case_keys = name_without_pipes.scan(/(::\w+)/).flatten.uniq.collect{|c| c.gsub('::', '')}
+        @context_keys = name_without_case_keys.scan(/(:\w+)/).flatten.uniq.collect{|c| c.gsub(':', '')}
+
+        @pipe_separator = (full_name.index("||") ? "||" : "|")
+        @piped_params = name_without_parens.split(pipe_separator).last.split(",").collect{|param| param.strip}
+      end
+
+      def name(opts = {})
+        val = short_name
+        val = "#{val}:#{context_keys.join(':')}" if opts[:context_keys] and context_keys.any?
+        val = "#{val}::#{case_keys.join('::')}" if opts[:case_keys] and case_keys.any?
+        val = "{#{val}}" if opts[:parens]
+        val
+      end
+
+      def allowed_in_translation?
+        pipe_separator == "||" 
+      end
+      
+      def implied?
+        not allowed_in_translation?
+      end
+
+      def validate_language_rule
+        unless dependant?
+          raise Tr8n::TokenException.new("Unknown dependency type for #{full_name} token in #{original_label}; no way to apply the transform method.")
+        end
+        
+        unless language_rule.respond_to?(:default_transform)
+          raise Tr8n::TokenException.new("#{language_rule.class.name} does not respond to the default transform method.")
+        end
+      end
+      
+      # return with the default transform substitution
+      def prepare_label_for_translator(label)
+        validate_language_rule
+        
+        substitution_value = "" 
+        substitution_value << sanitized_name if allowed_in_translation?
+        substitution_value << " " unless substitution_value.blank?
+        substitution_value << language_rule.default_transform(self, piped_params)
+        
+        label.gsub(full_name, substitution_value)    
+      end
+    
+      # return only the internal part
+      def prepare_label_for_suggestion(label, index)
+        validate_language_rule
+        label.gsub(full_name, language_rule.default_transform(self, piped_params))    
+      end
+
+      # token:      {count|| one: message, many: messages}
+      # results in: {"one": "message", "many": "messages"}
+      #
+      # token:      {count|| message}
+      # transform:  {"one": "{$0}", "other": "{$0::plural}"}
+      # results in: {"one": "message", "other": "messages"}
+      #
+      # token:      {user| Dorogoi, Dorogaya}
+      # transform:  {"male": "{$0}", "female": "{$1}", "unknown": "{$0}/{$1}"}
+      # results in: {"male": "Dorogoi", "female": "Dorogaya", "other": "Dorogoi/Dorogaya"}
+      #
+      # token:      {actors:|| likes, like}
+      # transform:  {"one": "{$0}", "other": "{$1}"}
+      # results in: {"one": "likes", "other": "like"}
+
+      def generate_value_map(params, context)
+        values = {}
+
+        if params.first.index(':')
+          params.each do |p|
+            nv = p.split(':')
+            values[nv.first.strip] = nv.last.strip
+          end
+          return values
+        end
+
+        unless context.token_mapping
+          raise Tr8n::TokenException.new("The token context #{context.keyword} does not support transformation for unnamed params: #{full_name}")
+        end
+
+        context.token_mapping.each do |key, value|
+          value.scan(/({\$\d(::\w+)*})/).each do |matches|
+            token = matches.first
+            parts = token[1..-2].split('::')
+            index = parts.first.gsub('$', '').to_i
+
+            if params.size < index
+              raise Tr8n::TokenException.new("The index inside #{context.token_mapping} is out of bound: #{full_name}")
+            end
+
+            # apply language cases
+            value = params[index]
+            if Tr8n::Config.enable_language_cases?
+              parts[1..-1].each do |case_key|
+                lcase = Tr8n::LanguageCase.by_keyword_and_language(case_key, context.language)
+                unless lcase
+                  raise Tr8n::TokenException.new("Language case #{case_key} for context #{context.keyword} is not defined: #{full_name}")
+                end
+                value = lcase.apply(value)
+              end
+            end
+
+            values[key] = value
+          end
+        end
+
+        values
+      end
+
+      def substitute(translation_key, language, label, values = {}, options = {})
+        object = values[key]
+
+        unless object
+          raise Tr8n::TokenException.new("Missing value for a token: #{full_name}")
+        end
+        
+        if context_keys.any?
+          context = Tr8n::LanguageContext.by_keyword_and_language(context_keys.first, language)
+        else
+          context = Tr8n::LanguageContext.by_token_and_language(short_name, language)
+        end
+
+        unless context
+          raise Tr8n::TokenException.new("Unknown context for a token: #{full_name}")
+        end
+
+        if piped_params.empty?
+          raise Tr8n::TokenException.new("Piped params may not be empty: #{full_name}")
+        end
+
+        piped_values = generate_value_map(piped_params, context)
+        rule = context.find_matching_rule(object)
+
+        value = piped_values[rule.keyword]
+        if value.nil? and context.fallback_rule
+          value = piped_values[context.fallback_rule.keyword]
+        end
+
+        return label unless value
+
+        substitution_value = [] 
+        if allowed_in_translation?
+          substitution_value << token_value(object, options, language) 
+          substitution_value << " " 
+        end
+        substitution_value << value
+
+        label.gsub(full_name, substitution_value.join(""))    
+      end
+      
+    end
+  end
+end

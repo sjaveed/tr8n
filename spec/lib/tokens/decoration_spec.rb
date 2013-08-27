@@ -1,6 +1,6 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-describe Tr8n::Tokens::DecorationToken do
+describe Tr8n::Tokens::Decoration do
   describe 'identifying tokens' do
 
     context 'incorrect tokens' do
@@ -14,7 +14,7 @@ describe Tr8n::Tokens::DecorationToken do
 					'Hello [[bold]]',
 					'You have [bold {count}] messages',
       	].each do |label|
-        	Tr8n::Tokens::DecorationToken.parse(label).should be_empty
+        	Tr8n::Tokens::Decoration.parse(label).should be_empty
         end
       end
     end
@@ -33,21 +33,21 @@ describe Tr8n::Tokens::DecorationToken do
 					'[link: {count||person, people}]',
 					'[link: {user.name}]'
       	].each do |label|
-        	Tr8n::Tokens::DecorationToken.parse(label).count.should eq(1)
+        	Tr8n::Tokens::Decoration.parse(label).count.should eq(1)
         end
 
       	[
 					'You have [link1: {msg_count|| message}] and [link2: {alert_count|| alert}]',
       	].each do |label|
-        	Tr8n::Tokens::DecorationToken.parse(label).count.should eq(2)
+        	Tr8n::Tokens::Decoration.parse(label).count.should eq(2)
         end
       end
     end
 
     context 'nested tokens' do
       it 'should be registered' do
-        Tr8n::Tokens::DecorationToken.parse('You have [italic: [bold: {count}] messages]').count.should eq(2)
-        Tr8n::Tokens::DecorationToken.parse('You have [italic: [bold: {count}] messages]', :exclude_nested => true).count.should eq(1)
+        Tr8n::Tokens::Decoration.parse('You have [italic: [bold: {count}] messages]').collect{|t| t.to_s}.should eq(["[bold: {count}]", "[italic: [bold: {count}] messages]"])
+        Tr8n::Tokens::Decoration.parse('You have [italic: [bold: {count}] messages]', :exclude_nested => true).collect{|t| t.to_s}.should eq(["[bold: {count}]"])
       end
     end
 

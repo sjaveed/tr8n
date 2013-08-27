@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -35,7 +35,7 @@ module Tr8n
 
     # scans for all token types    
     def data_tokens(opts = {})
-      @data_tokens ||= Tr8n::Token.register_tokens(label, :data, opts)
+      @data_tokens ||= Tr8n::Tokens::Base.register_tokens(label, :data, opts)
     end
 
     def data_tokens?
@@ -43,7 +43,7 @@ module Tr8n
     end
 
     def decoration_tokens(opts = {})
-      @decoration_tokens ||= Tr8n::Token.register_tokens(label, :decoration, opts)
+      @decoration_tokens ||= Tr8n::Tokens::Base.register_tokens(label, :decoration, opts)
     end
 
     def decoration_tokens?

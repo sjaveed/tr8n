@@ -66,80 +66,66 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     self.class.cache_key(language.locale, keyword)
   end
 
-  def self.by_keyword(keyword, language = Tr8n::Config.current_language)
+  def self.by_keyword_and_language(keyword, language = Tr8n::Config.current_language)
     Tr8n::Cache.fetch(cache_key(language.locale, keyword)) do 
       where(:language_id => language.id, :keyword => keyword).first
     end
   end
 
-  def self.language_case_cache_key(id)
-    "language_case_[#{id}]"
-  end
-
-  def language_case_cache_key
-    self.class.language_case_cache_key(id)
-  end
-
-  def self.language_case_rules_cache_key(id)
+  def self.cache_key_for_rules(id)
     "language_case_rules_[#{id}]"
   end
 
-  def language_case_rules_cache_key
-    self.class.language_case_rules_cache_key(id)
-  end
-
-  def self.by_id(case_id)
-    Tr8n::Cache.fetch(language_case_cache_key(case_id)) do 
-      find_by_id(case_id)
-    end
-  end
-
-  def self.by_language(language)
-    where("language_id = ?", language.id).all
-  end
-
-  def add_rule(definition, opts = {})
-    opts[:position] ||= language_case_rules.count
-    opts[:translator] ||= Tr8n::Config.current_translator
-    Tr8n::LanguageCaseRule.create(:language_case => self,           :language => language, 
-                                  :translator => opts[:translator], :position => opts[:position], 
-                                  :definition => definition)
+  def cache_key_for_rules
+    self.class.cache_key_for_rules(id)
   end
 
   def rules
-    return language_case_rules if id.blank?
-    
-    Tr8n::Cache.fetch(language_case_rules_cache_key) do 
+    Tr8n::Cache.fetch(cache_key_for_rules) do
       language_case_rules
     end
   end
 
-  def save_with_log!(new_translator)
+  def save_with_log!(translator)
     if self.id
       if changed?
-        self.translator = new_translator
+        self.translator = translator
         translator.updated_language_case!(self)
       end
     else  
-      self.translator = new_translator
+      self.translator = translator
       translator.added_language_case!(self)
     end
 
     save  
   end
   
-  def destroy_with_log!(new_translator)
-    new_translator.deleted_language_case!(self)
+  def destroy_with_log!(translator)
+    translator.deleted_language_case!(self)
     
     destroy
   end
 
-  def apply(object, value, options = {})
+  def add_rule(position, definition, description = "", examples = "", translator = nil)
+    Tr8n::LanguageCaseRule.create(
+        :position => position,
+        :language => language,
+        :language_case => self,
+        :definition => definition,
+        :description => description,
+        :examples => examples,
+        :translator => translator
+    )
+  end
+
+  def apply(value, object = nil, options = {})
     value = value.to_s
+
     html_tag_expression = /<\/?[^>]*>/
     html_tokens = value.scan(html_tag_expression).uniq
     sanitized_value = value.gsub(html_tag_expression, "")
-    
+
+    # get words
     if application == 'phrase'
       words = [sanitized_value]
     else  
@@ -148,7 +134,7 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     
     # replace html tokens with temporary placeholders {$h1}
     html_tokens.each_with_index do |html_token, index|
-      value = value.gsub(html_token, "{$#{index}}")
+      value = value.gsub(html_token, "{$h#{index}}")
     end
 
     # replace words with temporary placeholders {$w1}
@@ -158,15 +144,15 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     
     transformed_words = []
     words.each do |word|
-      lcvm = Tr8n::LanguageCaseValueMap.by_language_and_keyword(language, word)
-      
-      if lcvm
-        map_case_value = lcvm.value_for(object, keyword)
-        case_value = map_case_value.blank? ? word : map_case_value
-      else
-        case_rule = evaluate_rules(object, word)
-        case_value = case_rule ? case_rule.apply(word) : word 
-      end
+      #lcvm = Tr8n::LanguageCaseValueMap.by_language_and_keyword(language, word)
+      #
+      #if lcvm
+      #  map_case_value = lcvm.value_for(object, keyword)
+      #  case_value = map_case_value.blank? ? word : map_case_value
+      #else
+        case_rule = find_matching_rule(word, object)
+        case_value = case_rule ? case_rule.apply(word) : word
+      #end
 
       transformed_words << decorate_language_case(word, case_value || word, case_rule, options)
     end
@@ -184,9 +170,9 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     value
   end
 
-  def evaluate_rules(object, value)
+  def find_matching_rule(value, object)
     rules.each do |rule|
-      return rule if rule.evaluate(object, value)
+      return rule if rule.evaluate(value, object)
     end
     nil
   end
@@ -202,22 +188,22 @@ class Tr8n::LanguageCase < ActiveRecord::Base
   end
 
   def self.application_options
-    [["every word", "words"], ["entire phrase", "phrase"]]
+    [["each word", "words"], ["entire phrase", "phrase"]]
   end
 
   def clear_cache
-    Tr8n::Cache.delete(language_case_cache_key)
-    Tr8n::Cache.delete(language_case_rules_cache_key) 
+    Tr8n::Cache.delete(cache_key)
+    Tr8n::Cache.delete(cache_key_for_rules)
   end
 
   def to_api_hash(opts = {})
     {
-      :keyword => keyword,
-      :latin_name => latin_name,
-      :native_name => native_name,
-      :description => description,
-      :application => application,
-      :rules => language_case_rules.collect{ |lcr| lcr.definition }
+      "keyword"     => keyword,
+      "latin_name"  => latin_name,
+      "native_name" => native_name,
+      "description" => description,
+      "application" => application,
+      "rules"       => rules.collect{|rule| rule.to_api_hash}
     }
   end
 

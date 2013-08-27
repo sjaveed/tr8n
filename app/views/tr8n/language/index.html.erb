@@ -14,41 +14,55 @@
 	</style>
 
 	<%= render :partial => "/tr8n/common/header" %>
-	
-	<%=render(:partial => "basic_info", :locals => {:mode => :view}) %>
-	<%=render(:partial => "prohibited_words", :locals => {:mode => :view}) %>
-	<%=render(:partial => "grammar", :locals => {:mode => :view}) %>
-	<% if Tr8n::Config.enable_language_cases? %>
-	  <%=render(:partial => "language_cases", :locals => {:mode => :view}) %>
-	<% end %>	
-	
-	<script>
-	  function switchSectionMode(section, mode) {
-	    Tr8n.Utils.update(section + '_container', '/tr8n/language/update_language_section', {
-	        parameters: {section:section, mode:mode}
-	    });
-	  }
-	  
-	  function submitSection(section) {
-	    if (section == "grammar") {
-	      if (!confirm("<%=trla('Updating language rules may affect all existing translations for this language. Are you sure you want to do this?')%>"))
-	        return;
-	    }
-	
-	    if (section == "cases") {
-	      if (!confirm("<%=trla('Updating language cases may affect all existing translations for this language. Are you sure you want to do this?')%>"))
-	        return;
-	    }
-	    
-	    var params = Tr8n.Utils.serializeForm(section + '_form');
-	    params['section'] = section;
-	    Tr8n.Utils.update(section + '_container', '/tr8n/language/update_language_section', {
-	      parameters: params,
-	      method: 'post'
-	    });
-	  }
-	</script>
-	
-	<%= render :partial => "/tr8n/common/footer" %>
+
+	<div id="basic_info_container">
+  <%=render(:partial => "header", :locals => {:section => "basic_info", :label => "Basic Information", :description => "", :mode => "edit"})%>
+  
+  <%= form_for(tr8n_current_language, :as => :language, :url => {:action => :index}, :html => {:id => 'basic_info_form', :method => :post}) do |f| %>
+    <div id="basic_info_content" class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+          <%=tr8n_help_icon_tag %>
+      </div>
+      <div>
+        <table cellpadding="0px" cellspacing="0px">
+          <tr>
+            <th class="tr8n_txtl" style="width:120px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Native Name:", "Language native name")%></th>
+            <td class="tr8n_txtl" style="padding:3px;">
+                <%=f.text_field(:native_name)%>
+            </td>
+          </tr>
+          <tr>
+            <th class="tr8n_txtl" style="padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Direction:", "Language direction")%></th>
+            <td class="tr8n_txtl" style="padding:3px;">
+                <%=f.check_box(:right_to_left, :style=>"margin:0px; padding:0px; width:15px;") %> <%=tra("This language is read from right to left")%>
+            </td>
+          </tr>
+					
+					<% if Tr8n::Config.enable_fallback_languages? and not tr8n_current_language.default? %>
+	          <tr>
+	            <th class="tr8n_txtl" style="padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Fallback Language:", "Language to fall back onto if the language phrase is not translated")%></th>
+	            <td class="tr8n_txtl" style="padding:3px;" dir="ltr">
+	                <%=select_tag("language[fallback_language_id]", options_for_select(Tr8n::Language.options, @fallback_language.id.to_s))%>
+	            </td>
+	          </tr>
+          <% end %>
+
+					
+	            <tr>
+	              <th style="padding:3px;vertical-align:middle;font-weight:bold;"></th>
+	              <td style="padding-top:15px;padding-bottom:15px;">
+	                 <button type="submit" class="translator_btn translator_submit_btn" onClick="Tr8n.submit('basic_info_form'); return false;">
+	                    <span><%=tra("Update")%></span>
+	                  </button>
+	              </td>
+	            </tr>
+
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>

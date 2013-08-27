@@ -1,6 +1,6 @@
 require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
-describe Tr8n::Tokens::DataToken do
+describe Tr8n::Tokens::Data do
   describe 'registering tokens' do
 
     context "incorrect tokens" do
@@ -10,7 +10,7 @@ describe Tr8n::Tokens::DataToken do
           'Hello {} and welcome',
           'Hello {user::}'
         ].each do |label|
-          Tr8n::Tokens::DataToken.parse(label).count.should eq(0)
+          Tr8n::Tokens::Data.parse(label).count.should eq(0)
         end
       end
     end
@@ -29,18 +29,18 @@ describe Tr8n::Tokens::DataToken do
           'Hello {user1:user}',
           'Hello {user1:user::pos} and welcome',
         ].each do |label|
-          tokens = Tr8n::Tokens::DataToken.parse(label)
+          tokens = Tr8n::Tokens::Data.parse(label)
           tokens.count.should eq(1)
-          tokens.first.class.name.should eq("Tr8n::Tokens::DataToken")
+          tokens.first.class.name.should eq("Tr8n::Tokens::Data")
         end
 
         [
           '{user} has {count} messages',
           '{user1:user} has {count:number} messages'
         ].each do |label|
-          tokens = Tr8n::Tokens::DataToken.parse(label)
+          tokens = Tr8n::Tokens::Data.parse(label)
           tokens.count.should eq(2)
-          tokens.first.class.name.should eq("Tr8n::Tokens::DataToken")
+          tokens.first.class.name.should eq("Tr8n::Tokens::Data")
         end
       end
     end

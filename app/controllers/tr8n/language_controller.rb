@@ -32,9 +32,65 @@ module Tr8n
     ssl_allowed :translator, :select, :lists, :switch, :remove  if respond_to?(:ssl_allowed)
 
     def index
-      @rules = rules_by_dependency(tr8n_current_language.rules)
-      @cases = tr8n_current_language.cases
+      # @rules = rules_by_dependency(tr8n_current_language.rules)
+      # @cases = tr8n_current_language.cases
       @fallback_language = (tr8n_current_language.fallback_language || tr8n_default_language)
+      if request.post?
+        tr8n_current_language.update_attributes(params[:language])
+        trfn("Language has been updated")
+      end
+    end
+
+    def context_rules
+
+    end
+
+    def language_cases
+      @cases = tr8n_current_language.cases
+    end
+
+    def lb_language_case_rule
+      @case = Tr8n::LanguageCase.find(params[:case_id])
+      
+      if params[:rule_id]
+        @rule = Tr8n::LanguageCaseRule.find(params[:rule_id])
+      else
+        @rule = Tr8n::LanguageCaseRule.new(:definition => {})
+      end
+    
+      if request.post?
+        if params[:position]
+          position = params[:position].to_i
+        else
+          position = @case.rules.size
+        end
+
+        @rule.update_attributes(params[:rule].merge(:language_case => @case, :position => position))
+
+        if params[:position]
+          @case.rules.each_with_index do |lcrule, index|
+            next if lcrule == @rule
+            if lcrule.position.nil?
+              lcrule.update_attributes(:position => index+1)
+              next 
+            end
+            if lcrule.position >= position
+              lcrule.update_attributes(:position => (lcrule.position +1)) 
+            end
+          end
+        end
+        return dismiss_lightbox
+      end
+
+      render_lightbox
+    end
+  
+    def move_language_case_rule
+
+    end
+
+    def prohibited_words
+      
     end
 
     def update_language_section
@@ -255,20 +311,7 @@ module Tr8n
       @source_url = params[:source_url] || request.env['HTTP_REFERER']
     end
   
-    def lb_language_case_rule
-      @case = Tr8n::LanguageCase.new(params[:case])
-      @rule_index = params[:rule_index]
-    
-      if params[:case_action].index("add_rule_at")
-        @rule = Tr8n::LanguageCaseRule.new(:definition => {})
-        @new_rule = true
-      else
-        @rule = Tr8n::LanguageCaseRule.new(params[:rule])
-      end
-    
-      render :layout => false
-    end
-  
+
   private
 
     # parse with safety - we don't want to disconnect existing translations from those rules

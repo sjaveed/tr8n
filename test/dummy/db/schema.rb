@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130814212903) do
+ActiveRecord::Schema.define(:version => 20130824220631) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -139,6 +139,8 @@ ActiveRecord::Schema.define(:version => 20130814212903) do
     t.integer  "position"
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
+    t.string   "description"
+    t.string   "examples"
   end
 
   add_index "tr8n_language_case_rules", ["language_case_id"], :name => "tr8n_lcr_lc"
@@ -173,6 +175,29 @@ ActiveRecord::Schema.define(:version => 20130814212903) do
   add_index "tr8n_language_cases", ["language_id", "keyword"], :name => "tr8n_lc_lk"
   add_index "tr8n_language_cases", ["language_id", "translator_id"], :name => "tr8n_lc_lt"
   add_index "tr8n_language_cases", ["language_id"], :name => "tr8n_lc_l"
+
+  create_table "tr8n_language_context_rules", :force => true do |t|
+    t.integer  "language_context_id"
+    t.integer  "translator_id"
+    t.string   "keyword"
+    t.string   "description"
+    t.string   "examples"
+    t.text     "definition"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  create_table "tr8n_language_contexts", :force => true do |t|
+    t.integer  "language_id"
+    t.integer  "translator_id"
+    t.string   "keyword"
+    t.string   "description"
+    t.text     "definition"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "tr8n_language_contexts", ["language_id", "keyword"], :name => "tr8n_lctx_lk"
 
   create_table "tr8n_language_forum_messages", :force => true do |t|
     t.integer  "language_id",             :null => false
@@ -223,6 +248,8 @@ ActiveRecord::Schema.define(:version => 20130814212903) do
     t.text     "definition"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.string   "description"
+    t.string   "examples"
   end
 
   add_index "tr8n_language_rules", ["language_id", "translator_id"], :name => "tr8n_lr_lt"
@@ -429,6 +456,7 @@ ActiveRecord::Schema.define(:version => 20130814212903) do
     t.datetime "synced_at"
     t.datetime "created_at",                                     :null => false
     t.datetime "updated_at",                                     :null => false
+    t.text     "context"
   end
 
   add_index "tr8n_translations", ["created_at"], :name => "tr8n_trn_c"

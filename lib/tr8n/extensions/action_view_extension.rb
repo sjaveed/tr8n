@@ -86,9 +86,8 @@ module Tr8n
       return label if label.tr8n_translated?
 
       if desc.is_a?(Hash)
-        options = desc
-        tokens  = options[:tokens] || {}
-        desc    = options[:context] || ""
+        tokens = desc
+        options = tokens
       end
 
       options.merge!(:caller => caller)
@@ -370,27 +369,51 @@ module Tr8n
     end
 
     def tr8n_page_links_tag(collection, options = {})
-      paginator = Kaminari::Helpers::Paginator.new(self, options.reverse_merge(:current_page => collection.current_page, :total_pages => collection.total_pages, :per_page => collection.limit_value, :param_name => Kaminari.config.param_name, :remote => false, :params => params))
-      html = []
-      html << "<span class='pagination'>"
-      html << link_to("<span class='page'>#{tr('{laquo} First')}</span>".html_safe, params.merge(:page => 1)) unless collection.current_page == 1 
-      html << link_to("<span class='page'>#{tr('{lsaquo} Previous')}</span>".html_safe, params.merge(:page => collection.current_page - 1)) unless collection.current_page == 1 
-      paginator.each_page do |page|
-        if page.left_outer? || page.right_outer? || page.inside_window?
-          if collection.current_page == page
-            html << "<span class='page current'>#{page}</span>".html_safe
-          else  
-            html << link_to("<span class='page'>#{page}</span>".html_safe, params.merge(:page => page))
-          end
-        elsif !page.was_truncated? and html.last != '...'
-          html << "..."
-        end
-      end
-      html << link_to("<span class='page'>#{tr('Next {rsaquo}')}</span>".html_safe, params.merge(:page => collection.current_page + 1)) unless collection.current_page == collection.total_pages
-      html << link_to("<span class='page'>#{tr('Last {raquo}')}</span>".html_safe, params.merge(:page => collection.total_pages)) unless collection.current_page == collection.total_pages
-      html << "</span>"
-      html.join(' ').html_safe
+      #paginator = Kaminari::Helpers::Paginator.new(self, options.reverse_merge(:current_page => collection.current_page, :total_pages => collection.num_pages, :per_page => collection.limit_value, :param_name => Kaminari.config.param_name, :remote => false, :params => params))
+      #html = []
+      #html << "<span class='pagination'>"
+      #html << link_to("<span class='page'>#{tr('{laquo} First')}</span>".html_safe, params.merge(:page => 1)) unless collection.current_page == 1
+      #html << link_to("<span class='page'>#{tr('{lsaquo} Previous')}</span>".html_safe, params.merge(:page => collection.current_page - 1)) unless collection.current_page == 1
+      #paginator.each_page do |page|
+      #  if page.left_outer? || page.right_outer? || page.inside_window?
+      #    if collection.current_page == page
+      #      html << "<span class='page current'>#{page}</span>".html_safe
+      #    else
+      #      html << link_to("<span class='page'>#{page}</span>".html_safe, params.merge(:page => page))
+      #    end
+      #  elsif !page.was_truncated? and html.last != '...'
+      #    html << "..."
+      #  end
+      #end
+      #html << link_to("<span class='page'>#{tr('Next {rsaquo}')}</span>".html_safe, params.merge(:page => collection.current_page + 1)) unless collection.current_page == collection.num_pages
+      #html << link_to("<span class='page'>#{tr('Last {raquo}')}</span>".html_safe, params.merge(:page => collection.num_pages)) unless collection.current_page == collection.num_pages
+      #html << "</span>"
+      #html.join(' ').html_safe
     end
+
+    def tr8n_page_entries_info_tag(collection, options = {})
+      #entry_name = options[:subject] || (collection.empty? ? 'entry' : collection.first.class.name.underscore.sub('_', ' ').split('/').last)
+      #
+      #if collection.num_pages < 2
+      #  case collection.size
+      #    when 0
+      #      tr("None found", nil, {}, options)
+      #    when 1
+      #      tr("Displaying [strong: {count}] {count|#{entry_name}}", nil, {:count => 1}, options)
+      #    else
+      #      tr("Displaying [strong: all {count}] {count|#{entry_name}}", nil, {:count => collection.size}, options)
+      #  end
+      #else
+      #  tr("Displaying #{entry_name.pluralize} [strong: {start_num} - {end_num}] of [strong: {total_count}] in total",
+      #     "", {
+      #          :start_num    => collection.offset_value + 1,
+      #          :end_num      => collection.offset_value + collection.length,
+      #          :total_count  => collection.total_count
+      #      }, options
+      #  )
+      #end
+    end
+
 
     def tr8n_with_options_tag(opts, &block)
       if Tr8n::Config.disabled?
@@ -551,34 +574,6 @@ module Tr8n
         img_tag.html_safe
       end
     end 
-
-    def tr8n_will_paginate(collection = nil, options = {})
-      will_paginate(collection, options.merge(:previous_label => tr("{laquo} Previous", "Previous entries in a list", {}, options), 
-                                              :next_label => tr("Next {raquo}", "Next entries in a list", {}, options)))
-    end
-
-    def tr8n_page_entries_info_tag(collection, options = {})
-      entry_name = options[:subject] || (collection.empty? ? 'entry' : collection.first.class.name.underscore.sub('_', ' ').split('/').last)
-      
-      if collection.total_pages < 2
-        case collection.size
-          when 0
-            tr("None found", nil, {}, options)
-          when 1
-            tr("Displaying [strong: {count}] {count|#{entry_name}}", nil, {:count => 1}, options)
-          else
-            tr("Displaying [strong: all {count}] {count|#{entry_name}}", nil, {:count => collection.size}, options)
-        end
-      else
-        tr("Displaying #{entry_name.pluralize} [strong: {start_num} - {end_num}] of [strong: {total_count}] in total", 
-           "", {
-              :start_num    => collection.offset_value + 1,
-              :end_num      => collection.offset_value + collection.length,
-              :total_count  => collection.total_count
-           }, options
-        )
-      end
-    end    
 
     def tr8n_language_completeness_chart_tag(language = Tr8n::Config.current_language)
       values = [language.total_metric.not_translated_count, language.total_metric.locked_key_count, language.total_metric.translated_key_count - language.total_metric.locked_key_count]

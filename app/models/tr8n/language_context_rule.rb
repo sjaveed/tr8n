@@ -20,6 +20,25 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
+#
+#-- Tr8n::LanguageContextRule Schema Information
+#
+# Table name: tr8n_language_context_rules
+#
+#  id                     INTEGER         not null, primary key
+#  language_context_id    integer         
+#  translator_id          integer         
+#  keyword                varchar(255)    
+#  description            varchar(255)    
+#  examples               varchar(255)    
+#  definition             text            
+#  created_at             datetime        not null
+#  updated_at             datetime        not null
+#
+# Indexes
+#
+#
+#++
 
 
 class Tr8n::LanguageContextRule < ActiveRecord::Base
@@ -37,8 +56,12 @@ class Tr8n::LanguageContextRule < ActiveRecord::Base
     keyword == 'other'
   end
 
-  def expression
-    @expression ||= Tr8n::RulesEngine::Parser.new(definition).parse
+  def conditions
+    definition["conditions"]
+  end
+
+  def conditions_expression
+    @conditions_expression ||= definition["conditions_expression"] || Tr8n::RulesEngine::Parser.new(conditions).parse
   end
 
   def evaluate(vars = {})
@@ -50,7 +73,7 @@ class Tr8n::LanguageContextRule < ActiveRecord::Base
       re.eval(["let", key, value])
     end
 
-    re.eval(expression)
+    re.eval(conditions_expression)
   rescue Exception => ex
     Tr8n::Logger.error("Failed to evaluate language context rule #{expression}: #{ex.message}")
     false

@@ -28,7 +28,7 @@ def setup_english_language
       definition:   {
           "token_expression"  => '/.*(profile|user)(\d)*$/',
           "variables"         => ['@gender'],
-          "token_mapping"     => {"male" => "{$0}", "female" => "{$1}", "unknown" => "{$0}/{$1}"}
+          "token_mapping"     => [{"other" => "{$0}"}, {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"}]
       },
       description:   "Gender language context"
   )
@@ -42,11 +42,11 @@ def setup_english_language
       definition:   {
           "token_expression"  => '/.*(num|count)(\d)*$/',
           "variables"         => ['@n'],
-          "token_mapping"     => {"one" => "{$0}", "other" => "{$0::plural}"}
+          "token_mapping"     => [{"one" => "{$0}", "other" => "{$0::plural}"}, {"one" => "{$0}", "other" => "{$1}"}]
       },
       description:   "Number language context"
   )
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => "(= 1 @n)")
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => "(= 1 @n)")
   Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
 
   plural_case = Tr8n::LanguageCase.create(
@@ -94,9 +94,59 @@ def setup_english_language
       '/$/'                      => "s"
   }
   plural.each do |search, replace|
-    plural_case.add_rule(position, {"conditions" => "(match '#{search}' @value)", "operations" => "(replace '#{search}' '#{replace}' @value)"})
+    rule = plural_case.add_rule(position, {"conditions" => "(match '#{search}' @value)", "operations" => "(replace '#{search}' '#{replace}' @value)"})
     position += 1
   end
+
+
+
+  singular_case = Tr8n::LanguageCase.create(
+      language:     english,
+      keyword:      "singular",
+      latin_name:   "Singular",
+      native_name:  "Singular",
+      description:  "Converts plural value to singular value",
+      application:  "phrase")
+
+  position = 0
+  singular_case.add_rule(position, {"conditions" => "(in '#{uncounatable.join(',')}' @value)", "operations" => "@value"})
+  position += 1
+  irregular.each do |search, replace|
+    singular_case.add_rule(position, {"conditions" => "(= '#{replace}' @value)", "operations" => "(quote '#{search}')"})
+    position += 1
+  end
+  singular = {
+      '/(n)ews$/i'                => "$1ews",
+      '/([ti])a$/i'               => "$1um",
+      '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i'  => "$1$2sis",
+      '/(^analy)ses$/i'           => "$1sis",
+      '/([^f])ves$/i'             => "$1fe",
+      '/(hive)s$/i'               => "$1",
+      '/(tive)s$/i'               => "$1",
+      '/([lr])ves$/i'             => "$1f",
+      '/([^aeiouy]|qu)ies$/i'     => "$1y",
+      '/(s)eries$/i'              => "$1eries",
+      '/(m)ovies$/i'              => "$1ovie",
+      '/(x|ch|ss|sh)es$/i'        => "$1",
+      '/([m|l])ice$/i'            => "$1ouse",
+      '/(bus)es$/i'               => "$1",
+      '/(o)es$/i'                 => "$1",
+      '/(shoe)s$/i'               => "$1",
+      '/(cris|ax|test)es$/i'      => "$1is",
+      '/(octop|vir)i$/i'          => "$1us",
+      '/(alias|status)es$/i'      => "$1",
+      '/^(ox)en$/i'               => "$1",
+      '/(vert|ind)ices$/i'        => "$1ex",
+      '/(matr)ices$/i'            => "$1ix",
+      '/(quiz)zes$/i'             => "$1",
+      '/(us)es$/i'                => "$1",
+      '/s$/i'                     => ""
+  }
+  singular.each do |search, replace|
+    rule = singular_case.add_rule(position, {"conditions" => "(match '#{search}' @value)", "operations" => "(replace '#{search}' '#{replace}' @value)"})
+    position += 1
+  end
+
 
   english
 end
@@ -111,7 +161,7 @@ def setup_russian_language
           "rules"             => ["male", "female", "other"],
           "token_expression"  => '/.*(profile|user)(\d)*$/',
           "variables"         => ['@gender'],
-          "token_mapping"     => {"male" => "{$0}", "female" => "{$1}", "unknown" => "{$0}/{$1}"}
+          "token_mapping"     => [{"other" => "{$0}"}, {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"}]
       },
       description:   "Gender language context"
   )
@@ -126,7 +176,7 @@ def setup_russian_language
           "rules"             => ["one", "few", "many", "other"],
           "token_expression"  => '/.*(num|count)(\d)*$/',
           "variables"         => ['@n'],
-          "token_mapping"     => {"one" => "{$0}", "few" => "{$1}", "other" => "{$2}"}
+          "token_mapping"     => ["unsupported", "unsupported", {"one" => "{$0}", "few" => "{$1}", "many" => "{$2}"}]
       },
       description:   "Number language context"
   )

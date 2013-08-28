@@ -60,5 +60,91 @@ describe Tr8n::Tokens::Transform do
       end
     end
 
-  end  
+  end
+
+  describe 'default transform tokens' do
+    context 'using gender token mapping in the context' do
+      it "should use correct value" do
+        english = Tr8n::Language.create!(:locale => "en-US", :english_name => "English")
+
+        context = Tr8n::LanguageContext.create(
+            :language   =>     english,
+            :keyword    =>     "gender",
+            :definition =>   {
+                "token_expression"  => '/.*(profile|user)(\d)*$/',
+                "variables"         => ['@gender'],
+                "token_mapping"     => [{"other" => "{$0}"}, {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"}],
+                "default_rule"      => "other"
+            },
+            :description =>    "Gender language context"
+        )
+        Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => "(= 'male' @gender)")
+        Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "female", :definition => "(= 'female' @gender)")
+        Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
+
+        token = Tr8n::Tokens::Transform.parse('{user:gender | male: He, female: She }').first
+        token.piped_params.should eq(["male: He", "female: She"])
+        token.generate_value_map(token.piped_params, context).should eq({"male"=>"He", "female"=>"She"})
+
+        token = Tr8n::Tokens::Transform.parse('{user| male: He, female: She }').first
+        token.piped_params.should eq(["male: He", "female: She"])
+        token.generate_value_map(token.piped_params, context).should eq({"male"=>"He", "female"=>"She"})
+
+        token = Tr8n::Tokens::Transform.parse('{user:gender | He, She }').first
+        token.piped_params.should eq(["He", "She"])
+        token.generate_value_map(token.piped_params, context).should eq({"male"=>"He", "female"=>"She", "other"=>"He/She"})
+
+        token = Tr8n::Tokens::Transform.parse('{user | He, She }').first
+        token.piped_params.should eq(["He", "She"])
+        token.generate_value_map(token.piped_params, context).should eq({"male"=>"He", "female"=>"She", "other"=>"He/She"})
+
+        token = Tr8n::Tokens::Transform.parse('{user:gender | Born on}').first
+        token.piped_params.should eq(["Born on"])
+        token.generate_value_map(token.piped_params, context).should eq({"other"=>"Born on"})
+
+        token = Tr8n::Tokens::Transform.parse('{user | Born on}').first
+        token.piped_params.should eq(["Born on"])
+        token.generate_value_map(token.piped_params, context).should eq({"other"=>"Born on"})
+      end
+    end
+
+    context 'using gender token mapping in the context' do
+      it "should use correct value" do
+        english = Tr8n::Language.create!(:locale => "en-US", :english_name => "English")
+
+        context = Tr8n::LanguageContext.create(
+            :language   =>     english,
+            :keyword    =>     "number",
+            :definition =>   {
+                "token_expression"  => '/.*(num)(\d)*$/',
+                "variables"         => ['@number'],
+                "token_mapping"     => [{"one" => "{$0}", "other" => "{$0::plural}"}, {"one" => "{$0}", "other" => "{$1}"}],
+                "default_rule"      => "other"
+            },
+            :description =>    "Number language context"
+        )
+        Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => "(= 1 @n)")
+        Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
+
+        plural_case = Tr8n::LanguageCase.create(
+            language:     english,
+            keyword:      "plural",
+            latin_name:   "Plural",
+            native_name:  "Plural",
+            description:  "Converts singular value to plural value",
+            application:  "phrase")
+
+        plural_case.add_rule(0, {"conditions" => "(= 'message' @value)", "operations" => "(quote 'messages')"})
+
+        token = Tr8n::Tokens::Transform.parse('{num|| one: message, other: messages}').first
+        token.piped_params.should eq(["one: message", "other: messages"])
+        token.generate_value_map(token.piped_params, context).should eq({"one"=>"message", "other" => "messages"})
+
+        token = Tr8n::Tokens::Transform.parse('{num|| message}').first
+        token.piped_params.should eq(["message"])
+        token.generate_value_map(token.piped_params, context).should eq({"one"=>"message", "other" => "messages"})
+      end
+    end
+  end
+
 end

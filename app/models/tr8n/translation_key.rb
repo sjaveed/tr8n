@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -148,29 +148,23 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   end
 
   # returns only the tokens that depend on one or more rules of the language, if any defined for the language
-  def language_rules_dependant_tokens(language = Tr8n::Config.current_language)
-    toks = []
-    included_token_hash = {}
+  def language_context_dependant_tokens(language = Tr8n::Config.current_language)
+    tokens = {}
 
-    data_tokens.each do |token|
-      next unless token.dependant?
-      next if included_token_hash[token.name]
-      
-      token.language_rules.each do |rule_class|
-        if language.rule_class_names.include?(rule_class.name)
-          toks << token
-          included_token_hash[token.name] = token
-        end
-      end
+    viewing_user = Tr8n::Config.viewing_user_token_for(label)
+
+    (data_tokens + [viewing_user]).each do |token|
+      next if tokens[token.short_name]
+      ctx = token.context_for_language(language, :silent => true)
+      tokens[token.short_name] = token if ctx
     end
 
-    toks << Tr8n::Config.viewing_user_token_for(label) if language.gender_rules?
-    toks.uniq
+    tokens.values
   end
 
   # determines whether the key can have rules generated for the language
   def permutatable?(language = Tr8n::Config.current_language)
-    language_rules_dependant_tokens(language).any?
+    language_context_dependant_tokens(language).any?
   end
 
   def glossary
@@ -333,7 +327,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     
     # if the first translation does not depend on any of the context rules
     # use it... we don't care about the rest of the rules.
-    if translations.first.rules_hash.blank?
+    if translations.first.context.blank?
       return {:id => self.id, :key => self.key, :label => translations.first.label}
     end
     
@@ -342,11 +336,11 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     context_hash_matches = {}
     valid_translations = []
     translations.each do |translation|
-      context_key = translation.rules_hash || ""
+      context_key = translation.context || ""
       next if context_hash_matches[context_key]
       context_hash_matches[context_key] = true
-      if translation.rules_definitions
-        valid_translations << {:label => translation.label, :context => translation.rules_definitions.dup}
+      if translation.context
+        valid_translations << {:label => translation.label, :context => translation.context.dup}
       else
         valid_translations << {:label => translation.label}
       end
@@ -407,6 +401,10 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   end
 
   def translate(language = Tr8n::Config.current_language, token_values = {}, options = {})
+    if options[:api] # deprecated
+      return find_all_valid_translations(cached_translations_for_language(language))
+    end
+
     if Tr8n::Config.disabled? or language.default?
       return substitute_tokens(language, label, token_values, options.merge(:fallback => false)).html_safe
     end
@@ -429,8 +427,8 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
 
     # no translation found  
-    translated_label = substitute_tokens(Tr8n::Config.default_language, label, token_values, options)
-    decorate_translation(Tr8n::Config.default_language, translated_label, options.merge(:translated => false)).html_safe
+    translated_label = substitute_tokens(self.language, label, token_values, options)
+    decorate_translation(self.language, translated_label, options.merge(:translated => false)).html_safe
   end
 
   ###############################################################
@@ -484,9 +482,9 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       classes << 'tr8n_not_translated'
     end
 
-    html = "<tr8n class='#{classes.join(' ')}' translation_key_id='#{id}'>"
+    html = "<span class='#{classes.join(' ')}' translation_key_id='#{id}'>"
     html << sanitized_label
-    html << "</tr8n>"
+    html << "</span>"
     html.html_safe    
   end
   
@@ -519,18 +517,18 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     translator.admin? or translator.manager?
   end
   
-  def decorate_translation(language, translated_label, translated = true, options = {})
+  def decorate_translation(language, translated_label, options = {})
     return translated_label if options[:skip_decorations]
     return translated_label if Tr8n::Config.current_user_is_guest?
     return translated_label unless Tr8n::Config.current_user_is_translator?
     return translated_label if Tr8n::Config.current_translator.blocked?
     return translated_label unless Tr8n::Config.current_translator.enable_inline_translations?
     return translated_label unless can_be_translated?
-    return translated_label if self.language == language
+    #return translated_label if self.language == language
     return translated_label if locked?(language) and not Tr8n::Config.current_translator.manager?
 
     classes = ['tr8n_translatable']
-    
+
     if locked?(language)
       classes << 'tr8n_locked'
     elsif language.default?
@@ -538,7 +536,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     elsif options[:fallback] 
       classes << 'tr8n_fallback'
     else
-      classes << (translated ? 'tr8n_translated' : 'tr8n_not_translated')
+      classes << (options[:translated] ? 'tr8n_translated' : 'tr8n_not_translated')
     end  
 
     html = "<tr8n class='#{classes.join(' ')}' translation_key_id='#{id}'>"

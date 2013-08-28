@@ -166,8 +166,9 @@ module Tr8n
 
     def self.models
       [ 
-         Tr8n::LanguageRule, Tr8n::LanguageUser, Tr8n::Language, Tr8n::LanguageMetric,
-         Tr8n::LanguageCase, Tr8n::LanguageCaseValueMap, Tr8n::LanguageCaseRule,
+         Tr8n::LanguageUser, Tr8n::Language, Tr8n::LanguageMetric,
+         Tr8n::LanguageContext, Tr8n::LanguageContextRule,
+         Tr8n::LanguageCase, Tr8n::LanguageCaseRule, Tr8n::LanguageCaseValueMap,
          Tr8n::TranslationKey, Tr8n::RelationshipKey, Tr8n::ConfigurationKey, 
          Tr8n::TranslationKeySource, Tr8n::TranslationKeyComment, Tr8n::TranslationKeyLock,
          Tr8n::TranslationSource, Tr8n::TranslationDomain, Tr8n::TranslationSourceLanguage, 
@@ -175,7 +176,8 @@ module Tr8n
          Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric, 
          Tr8n::TranslatorFollowing, Tr8n::TranslatorReport, 
          Tr8n::LanguageForumTopic, Tr8n::LanguageForumMessage,
-         Tr8n::Glossary, Tr8n::IpLocation, Tr8n::SyncLog, Tr8n::Application, 
+         Tr8n::Glossary, Tr8n::IpLocation, Tr8n::SyncLog,
+         Tr8n::Application, Tr8n::ApplicationLanguage,  Tr8n::ApplicationTranslator,
          Tr8n::Component, Tr8n::ComponentSource, Tr8n::ComponentTranslator, Tr8n::ComponentLanguage,
          Tr8n::Notification,
          Tr8n::Oauth::OauthToken
@@ -223,24 +225,52 @@ module Tr8n
       domain.application = app
       domain.save
 
-      ["en-US", "ru", "fr", "es"].each do |locale|
+      ["en-US", "ru"].each do |locale|
         app.add_language(Tr8n::Language.for(locale))
       end
 
       app
     end
 
-    def self.init_languages
-      puts "Initializing default languages..."
-      default_languages.each do |locale, info|
-        puts ">> Initializing #{info[:english_name]}..."
-        lang = Tr8n::Language.find_or_create(locale, info[:english_name])
-        info[:right_to_left] = false if info[:right_to_left].nil?
-        fallback_key = info.delete(:fallback_key)
-        lang.update_attributes(info)
-        lang.reset!
+    def self.import_language(files, locale)
+      unless files[locale]
+         return Tr8n::Language.by_locale(locale)
       end
-      puts "Created #{default_languages.size} languages."    
+
+      json = load_json(files[locale])
+
+      puts ">> Initializing #{json["english_name"]} language..."
+
+      if json["fallback"]
+        json["fallback_language"] = import_language(files, json["fallback"])
+      end
+
+      language = Tr8n::Language.create_from_json(json)
+
+      files[locale]= nil
+
+      language
+    end
+
+    def self.init_languages
+      puts "Initializing languages..."
+
+      folder = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "config", "data", "languages"))
+
+      language_files = {}
+
+      Dir[File.join(folder, "*.json")].each do |file|
+        locale = File.basename(file, ".json")
+        language_files[locale] = file
+      end
+
+      locales = language_files.keys
+      locales.sort.each do |locale|
+        next unless language_files[locale] # has already been added
+        lang = import_language(language_files, locale)
+      end
+
+      puts "Created #{Tr8n::Language.count} languages."
     end
 
     def self.init_glossary
@@ -260,7 +290,7 @@ module Tr8n
   
     # json support
     def self.load_json(file_path)
-      json = JSON.parse(File.read("#{root}#{file_path}"))
+      json = JSON.parse(File.read(file_path))
       return HashWithIndifferentAccess.new(json) if json.is_a?(Hash)
       map = {"map" => json}
       HashWithIndifferentAccess.new(map)[:map]
@@ -685,63 +715,36 @@ module Tr8n
 
     def self.context_rules
       {
-          "numeric" => {
+          "number" => {
               "variables" => {
                   "@n" => "to_i",
               }
-          }
+          },
+          "gender" => {
+              "variables" => {
+                  "@gender" => "gender",
+              }
+          },
+          "genders" => {
+              "variables" => {
+                  "@genders" => lambda{|list| list.collect{|u| u.gender}},
+                  "@size" => lambda{|list| list.size}
+              }
+          },
+          "date" => {
+              "variables" => {
+              }
+          },
+          "time" => {
+              "variables" => {
+              }
+          },
+          "list" => {
+              "variables" => {
+                  "@count" => lambda{|list| list.size}
+              }
+          },
       }
-    end
-
-
-    def self.language_rule_classes
-      @language_rule_classes ||= rules_engine[:language_rule_classes].collect{|lrc| lrc.constantize}
-    end
-
-    def self.language_rule_dependencies
-      @language_rule_dependencies ||= begin
-        depts = HashWithIndifferentAccess.new
-        language_rule_classes.each do |cls|
-          if depts[cls.dependency]
-            raise Tr8n::Exception.new("The same dependency key #{cls.dependency} has been registered for multiple rules. This is not allowed.")
-          end  
-          depts[cls.dependency] = cls
-        end
-        depts
-      end
-    end
-
-    def self.universal_language_rules
-      @universal_language_rules ||= begin
-        urs = []
-        language_rule_classes.each do |cls|
-          next unless cls.suffixes.is_a?(String)
-          urs << cls if cls.suffixes == "*"
-        end
-        urs
-      end
-    end
-
-    def self.language_rule_suffixes
-      @language_rule_suffixes ||= begin
-        sfx = {}
-        language_rule_classes.each do |cls|
-          next unless cls.suffixes.is_a?(Array)
-          cls.suffixes.each do |suffix|
-            if suffix.index("_")
-              raise Tr8n::Exception.new("Incorrect rule suffix: #{suffix}. Suffix may not have '_' in it.")
-            end
-            sfx[suffix] ||= []
-            sfx[suffix] << cls
-          end
-        end
-        sfx
-      end
-    end
-
-    def self.language_rules_for_suffix(suffix)
-      suffix_rules = language_rule_suffixes[suffix] || []
-      suffix_rules + universal_language_rules
     end
 
     def self.allow_nil_token_values?
@@ -752,18 +755,8 @@ module Tr8n
       rules_engine["#{category}_token_classes".to_sym].collect{|tc| tc.constantize}
     end
 
-    # deprecated
-    def self.data_token_classes
-      @data_token_classes ||= rules_engine[:data_token_classes].collect{|tc| tc.constantize}
-    end
-
-    # deprecated
-    def self.decoration_token_classes
-      @decoration_token_classes ||= rules_engine[:decoration_token_classes].collect{|tc| tc.constantize}
-    end
-  
     def self.viewing_user_token_for(label)
-      Tr8n::Tokens::DataToken.new(label, "{#{rules_engine[:viewing_user_token]}:gender}")
+      Tr8n::Tokens::Data.new(label, "{#{rules_engine[:viewing_user_token]}:gender}")
     end
 
     def self.translation_threshold

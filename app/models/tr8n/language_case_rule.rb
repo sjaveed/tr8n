@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -25,14 +25,16 @@
 #
 # Table name: tr8n_language_case_rules
 #
-#  id                  INTEGER     not null, primary key
-#  language_case_id    integer     not null
-#  language_id         integer     
-#  translator_id       integer     
-#  definition          text        not null
-#  position            integer     
-#  created_at          datetime    not null
-#  updated_at          datetime    not null
+#  id                  INTEGER         not null, primary key
+#  language_case_id    integer         not null
+#  language_id         integer         
+#  translator_id       integer         
+#  definition          text            not null
+#  position            integer         
+#  created_at          datetime        not null
+#  updated_at          datetime        not null
+#  description         varchar(255)    
+#  examples            varchar(255)    
 #
 # Indexes
 #
@@ -66,7 +68,7 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
   end
 
   def conditions_expression
-    @conditions_expression ||= Tr8n::RulesEngine::Parser.new(conditions).parse
+    @conditions_expression ||= definition["conditions_expression"] || Tr8n::RulesEngine::Parser.new(conditions).parse
   end
 
   def operations
@@ -74,7 +76,7 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
   end
 
   def operations_expression
-    @operations_expression ||= Tr8n::RulesEngine::Parser.new(operations).parse
+    @operations_expression ||= definition["operations_expression"] || Tr8n::RulesEngine::Parser.new(operations).parse
   end
 
   def gender_variables(object)

@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -58,14 +58,17 @@ class Tr8n::Language < ActiveRecord::Base
   after_destroy   :update_cache
 
   belongs_to :fallback_language,    :class_name => 'Tr8n::Language', :foreign_key => :fallback_language_id
-  
-  has_many :language_rules,         :class_name => 'Tr8n::LanguageRule',        :dependent => :destroy, :order => "type asc"
-  has_many :language_cases,         :class_name => 'Tr8n::LanguageCase',        :dependent => :destroy, :order => "id asc"
+
+  has_many :language_contexts,      :class_name => 'Tr8n::LanguageContext',     :dependent => :destroy
+  has_many :language_cases,         :class_name => 'Tr8n::LanguageCase',        :dependent => :destroy
+
   has_many :language_users,         :class_name => 'Tr8n::LanguageUser',        :dependent => :destroy
   has_many :translations,           :class_name => 'Tr8n::Translation',         :dependent => :destroy
   has_many :translation_key_locks,  :class_name => 'Tr8n::TranslationKeyLock',  :dependent => :destroy
   has_many :language_metrics,       :class_name => 'Tr8n::LanguageMetric'
-  
+
+  alias :contexts :language_contexts
+
   ###############################################################
   ## CACHE METHODS
   ###############################################################
@@ -104,9 +107,15 @@ class Tr8n::Language < ActiveRecord::Base
   ###############################################################
   ## FINDER METHODS
   ###############################################################
+
+  # deprecated
   def self.for(locale)
+    by_locale(locale)
+  end
+
+  def self.by_locale(locale)
     return nil if locale.nil?
-    Tr8n::Cache.fetch(cache_key(locale)) do 
+    Tr8n::Cache.fetch(cache_key(locale)) do
       find_by_locale(locale)
     end
   end
@@ -115,47 +124,24 @@ class Tr8n::Language < ActiveRecord::Base
     find_by_locale(lcl) || create(:locale => lcl, :english_name => english_name) 
   end
 
-  def rules
-    Tr8n::Cache.fetch(context_rules_cache_key) do 
-      language_rules
-    end
+  def context_by_keyword(keyword, opts = {})
+    ctx = Tr8n::LanguageContext.by_keyword_and_language(keyword, self)
+    ctx ||= fallback_language.context_by_keyword(keyword) if fallback_language
+    ctx
+  end
+
+  def context_by_token_name(token_name, opts = {})
+    ctx = Tr8n::LanguageContext.by_token_and_language(token_name, self)
+    ctx ||= fallback_language.context_by_token_name(token_name) if fallback_language
+    ctx
   end
 
   def cases
-    Tr8n::Cache.fetch(language_cases_cache_key) do 
+    Tr8n::Cache.fetch(language_cases_cache_key) do
       language_cases
     end
   end
 
-  def reset!
-    reset_language_rules!
-    reset_language_cases!
-  end
-  
-  # reloads rules for the language from the yml file
-  def reset_language_rules!
-    rules.delete_all
-    Tr8n::Config.language_rule_classes.each do |rule_class|
-      rule_class.default_rules_for(self).each do |keyword, definition|
-        rule_class.create(:language => self, :keyword => keyword, :definition => definition)
-      end
-    end
-  end
-  
-  # reloads language cases for the language from the yml file
-  def reset_language_cases!
-    cases.delete_all
-    Tr8n::Config.default_language_cases_for(locale).each do |lcase|
-      rules = lcase.delete(:rules)
-      language_case = Tr8n::LanguageCase.create(lcase.merge(:language => self, :translator => Tr8n::Config.system_translator))
-      next if rules.blank?
-      rules.keys.sort.each_with_index do |lrkey, index|
-        lcrule = rules[lrkey]
-        Tr8n::LanguageCaseRule.create(:language_case => language_case, :language => self, :translator => Tr8n::Config.system_translator, :position => index, :definition => lcrule)
-      end
-    end
-  end
-  
   def current?
     self.locale == Tr8n::Config.current_language.locale
   end
@@ -168,24 +154,6 @@ class Tr8n::Language < ActiveRecord::Base
     locale
   end
   
-  # deprecated
-  def has_rules?
-    rules?
-  end
-
-  def rules?
-    not rules.empty?
-  end
-  
-  def gender_rules?
-    return false unless rules?
-    
-    rules.each do |rule|
-      return true if rule.class.dependency == 'gender'
-    end
-    false
-  end
-
   def cases?
     not cases.empty?
   end
@@ -272,7 +240,7 @@ class Tr8n::Language < ActiveRecord::Base
     raise Tr8n::Exception.new("The label #{label} is being translated twice") if label.tr8n_translated?
 
     unless Tr8n::Config.enabled?
-      return Tr8n::TranslationKey.substitute_tokens(label, tokens, options, self).tr8n_translated.html_safe
+      return Tr8n::TranslationKey.substitute_tokens(self, label, tokens, options).tr8n_translated.html_safe
     end
 
     translation_key = Tr8n::TranslationKey.find_or_create(label, desc, options)
@@ -282,30 +250,6 @@ class Tr8n::Language < ActiveRecord::Base
 
   def trl(label, desc = "", tokens = {}, options = {})
     tr(label, desc, tokens, options.merge(:skip_decorations => true))
-  end
-
-  def default_rule
-    @default_rule ||= Tr8n::Config.language_rule_classes.first.new(:language => self, :definition => {})
-  end
-  
-  def rule_classes  
-    @rule_classes ||= rules.collect{|r| r.class}.uniq
-  end
-
-  def rule_class_names  
-    @rule_class_names ||= rule_classes.collect{|r| r.name}
-  end
-
-  def dependencies  
-    @dependencies ||= rule_classes.collect{|r| r.dependency}.uniq
-  end
-
-  def default_rules_for(dependency)
-    rules.select{|r| r.class.dependency == dependency}
-  end
-
-  def has_gender_rules?
-    dependencies.include?("gender")
   end
 
   def update_daily_metrics_for(metric_date)
@@ -416,20 +360,102 @@ class Tr8n::Language < ActiveRecord::Base
       hash[:curse_words] = curse_words
       hash[:fallback] = fallback_language.locale if fallback_language
 
-      hash[:context_rules] = {}
-      language_rules.each do |rule|
-        hash[:context_rules][rule.class.dependency] ||= {}
-        hash[:context_rules][rule.class.dependency][rule.keyword] = rule.to_api_hash
+      hash[:language_contexts] = {}
+      language_contexts.each do |ctx|
+        hash[:language_contexts][ctx.keyword] = ctx.to_api_hash(:rules => true)
       end
 
       hash[:language_cases] = {}
-      Tr8n::LanguageCase.where(:language_id => self.id).each do |lc|
+      language_cases.each do |lc|
         hash[:language_cases][lc.keyword] = lc.to_api_hash(:rules => true)
       end
     end
 
     hash
   end
+
+  def self.create_context_rules(language, json)
+    return unless json
+
+    json.each do |key, ctx|
+      context = Tr8n::LanguageContext.create(:language    => language,
+                                             :keyword     => key,
+                                             :description => ctx["description"],
+                                             :definition  => {
+                                                 "keys"               => ctx["keys"],
+                                                 "token_expression"   => ctx["token_expression"],
+                                                 "variables"          => ctx["variables"],
+                                                 "token_mapping"      => ctx["token_mapping"],
+                                                 "default_rule"       => ctx["default_rule"],
+                                             }
+      )
+
+      if ctx["rules"]
+        ctx["rules"].each do |key, rl|
+          rule = Tr8n::LanguageContextRule.create(:language_context => context,
+                                                  :keyword          => key,
+                                                  :description      => rl["description"],
+                                                  :examples         => rl["examples"],
+                                                  :definition       => {
+                                                      "conditions"            =>  rl["rule"],
+                                                      "conditions_expression" =>  Tr8n::RulesEngine::Parser.new(rl["rule"]).parse,
+                                                  }
+          )
+        end
+      end
+    end
+  end
+
+  def self.create_language_cases(language, json)
+    return unless json
+
+    json.each do |key, ctx|
+      lang_case = Tr8n::LanguageCase.create( :language    => language,
+                                             :keyword     => key,
+                                             :latin_name  => ctx["latin_name"],
+                                             :native_name => ctx["native_name"],
+                                             :description => ctx["description"],
+                                             :application => ctx["application"],
+      )
+
+      if ctx["rules"]
+        ctx["rules"].each_with_index do |rl, index|
+          #puts ["Registering: ", rl["conditions"], rl["operations"]]
+          rule = Tr8n::LanguageCaseRule.create(   :language_case    => lang_case,
+                                                  :position         => index,
+                                                  :description      => rl["description"],
+                                                  :examples         => rl["examples"],
+                                                  :definition       => {
+                                                      "conditions"            =>  rl["conditions"],
+                                                      "conditions_expression" =>  Tr8n::RulesEngine::Parser.new(rl["conditions"]).parse,
+                                                      "operations"            =>  rl["operations"],
+                                                      "operations_expression" =>  Tr8n::RulesEngine::Parser.new(rl["operations"]).parse,
+                                                  }
+          )
+        end
+      end
+    end
+  end
+
+  def self.create_from_json(json)
+    language = Tr8n::Language.create(:locale              => json["locale"],
+                                     :enabled             => true,
+                                     :right_to_left       => json["right_to_left"],
+                                     :curse_words         => json["curse_words"],
+                                     :english_name        => json["english_name"],
+                                     :native_name         => json["native_name"],
+                                     :google_key          => json["google_key"],
+                                     :myheritage_key      => json["myheritage_key"],
+                                     :facebook_key        => json["facebook_key"],
+                                     :fallback_language   => json["fallback_language"]
+    )
+
+    create_context_rules(language, json["context_rules"])
+    create_language_cases(language, json["language_cases"])
+
+    language
+  end
+
 
 end
 

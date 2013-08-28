@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -31,8 +31,6 @@
 #  language_id       integer     
 #  created_at        datetime    not null
 #  updated_at        datetime    not null
-#  manager           boolean     
-#  inline_mode       boolean     
 #
 # Indexes
 #

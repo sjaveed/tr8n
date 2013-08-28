@@ -1,10 +1,10 @@
-require File.expand_path('../../spec_helper', File.dirname(__FILE__))
+require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Tr8n::Language do
   describe 'cache key' do
     it 'shold use locale' do
       lang = Tr8n::Language.find_or_create('test', 'Test Language')
-      lang.cache_key.should eq("language_test")
+      lang.cache_key.should eq("language_[test]")
     end
   end
 
@@ -42,11 +42,7 @@ describe Tr8n::Language do
   describe 'current language' do
     before :all do 
       @lang = Tr8n::Language.find_or_create('test', 'Test Language')
-      Tr8n::Config.init(@lang.locale)
-    end
-
-    after :all do 
-      @lang.destroy
+      Tr8n::Config.set_language(@lang)
     end
 
     it 'must be set' do
@@ -59,7 +55,7 @@ describe Tr8n::Language do
   describe 'default language' do
     before :all do 
       @lang = Tr8n::Language.find_or_create('test', 'Test Language')
-      Tr8n::Config.init(@lang.locale)
+      Tr8n::Config.set_language(@lang)
     end
 
     after :all do 

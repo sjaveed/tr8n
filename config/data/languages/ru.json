@@ -1,0 +1,140 @@
+{
+  "locale": "ru",
+  "english_name": "Russian",
+  "native_name": "Русский",
+  "google_key": "ru",
+  "myheritage_key": "ru",
+  "context_rules": {
+    "date": {
+      "keys": ["one", "other"],
+      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
+      "variables": ["@n"],
+      "token_mapping": [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}],
+      "default_rule": "other",
+      "rules": {
+        "one":    {"rule": "(= 1 @n)", "description": "{token} is 1", "examples": "1"},
+        "other":  {"description": "{token} is not 1", "examples": "0, 2-999; 1.2, 2.07..."}
+      }
+    },
+    "gender": {
+      "keys": ["male", "female", "other"],
+      "token_expression":  "/.*(user|profile|actor|target)(\d)*$/",
+      "variables": ["@gender"],
+      "token_mapping": [{"other": "{$0}"}, {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}, {"male": "{$0}", "female": "{$1}", "other": "{$2}"}],
+      "default_rule": "other",
+      "rules": {
+        "male":   {"rule": "(= 'male' @gender)", "description": "{token} is a male"},
+        "female": {"rule": "(= 'female' @gender)", "description": "{token} is a female"},
+        "other":  {"description": "{token}'s gender is unknown"}
+      }
+    },
+    "genders": {
+      "keys": ["male", "female", "unknown", "other"],
+      "token_expression":  "/.*(users|profiles|actors|targets)(\d)*$/",
+      "variables": ["@genders"],
+      "token_mapping": ["unsupported", "unsupported", "unsupported", {"male": "{$0}", "female":"{$1}", "unknown":"{$2}", "other":"{$3}"}],
+      "default_rule": "other",
+      "rules": {
+        "male": {"rule": "(&& (= 1 (count @genders)) (all @genders 'male'))", "description": "{token} contains 1 male"},
+        "female": {"rule": "(&& (= 1 (count @genders)) (all @genders 'female'))", "description": "{token} contains 1 female"},
+        "unknown": {"rule": "(&& (= 1 (count @genders)) (all @genders 'unknown'))", "description": "{token} contains 1 person with unknown gender"},
+        "other": {"description": "{token} contains at least 2 people"}
+      }
+    },
+    "number": {
+      "keys": ["one", "few", "many", "other"],
+      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
+      "variables": ["@n"],
+      "token_mapping": ["unsupported", "unsupported", {"one": "{$0}", "few": "{$1}", "many": "${2}", "other": "{$2}"}, {"one": "{$0}", "few": "{$1}", "many": "${2}", "other": "{$3}"}],
+      "default_rule": "many",
+      "rules": {
+        "one":    {"rule": "(&& (= 1 (mod @n 10)) (!= 11 (mod @n 100)))", "description": "{token} mod 10 is 1 and {token} mod 100 is not 11", "examples": "1, 21, 31, 41, 51, 61..."},
+        "few":    {"rule": "(&& (in '2..4' (mod @n 10)) (not (in '12..14' (mod @n 100))))", "description": "{token} mod 10 in 2..4 and {token} mod 100 not in 12..14", "examples": "2-4, 22-24, 32-34..."},
+        "many":   {"rule": "(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))", "description": "{token} mod 10 is 0 or {token} mod 10 in 5..9 or {token} mod 100 in 11..14", "examples": "0, 5-20, 25-30, 35-40..."},
+        "other":  {"examples": "1.2, 2.07, 5.94..."}
+      }
+    },
+    "value": {
+      "keys": ["vowel", "other"],
+      "token_expression":  "/.*$/",
+      "variables": ["@value"],
+      "token_mapping": ["unsupported", {"vowel": "{$0}", "con": "{$1}"}],
+      "default_rule": "vowel",
+      "rules": {
+        "vowel": {"rule": ["match", "/^[аиоуыэАИОУЭ]/", "@value"], "description": "{token} starts with a vowel", "examples": "а, и, о, у, ы, э"},
+        "other": {"description": "{token} starts with a consonant", "examples": "б, в, г, д, к..."}
+      }
+    }
+  },
+  "language_cases": {
+    "acc": {
+      "keyword": "acc",
+      "latin_name": "Accusativus",
+      "native_name": "Винительный падеж",
+      "description": "Вижу - Кого? Что?",
+      "application": "words",
+      "rules": [
+
+      ]
+    },
+    "dat": {
+      "keyword": "dat",
+      "latin_name": "Dativus",
+      "native_name": "Дательный падеж",
+      "description": "Рад - Кому? Чему?",
+      "application": "words",
+      "rules": [
+
+      ]
+    },
+    "gen": {
+      "keyword": "gen",
+      "latin_name": "Genitivus",
+      "native_name": "Родительный падеж",
+      "description": "Нет - Кого? Чего?",
+      "application": "words",
+      "rules": [
+          {"conditions": "(match '/[бвгджзклмнпрстфхцчшщ]$/' @value)", "operations": "(append 'a' @value)"}
+      ]
+    },
+    "ins": {
+      "keyword": "ins",
+      "latin_name": "Instrumentalis",
+      "native_name": "Творительный падеж",
+      "description": "Доволен - Кем? Чем?",
+      "application": "words",
+      "rules": [
+
+      ]
+    },
+    "nom": {
+      "keyword": "nom",
+      "latin_name": "Nominativus",
+      "native_name": "Именительный падеж",
+      "description": "Есть - Кто? Что?",
+      "application": "words",
+      "rules": [
+
+      ]
+    },
+    "pos": {
+      "keyword": "pos",
+      "latin_name": "Possessive",
+      "native_name": "Притяжательный падеж",
+      "description": "Чей?",
+      "application": "words",
+      "rules": [
+      ]
+    },
+    "pre": {
+      "keyword": "pre",
+      "latin_name": "Prepositivus",
+      "native_name": "Предложный падеж",
+      "description": "Думаю - О ком? О чём?",
+      "application": "words",
+      "rules": [
+
+      ]
+    }
+  }
+}

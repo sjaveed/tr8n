@@ -7,6 +7,31 @@ describe Tr8n::TokenizedLabel do
       it "should register all tokens" do
         str = 'Dear {user:gender}, you have [bold: {count:number|| new message}] in your mailbox!'
 
+        english = Tr8n::Language.create!(:locale => "en-US", :english_name => "English")
+        Tr8n::Config.set_language(english)
+
+        context = Tr8n::LanguageContext.create(
+            :language   =>     english,
+            :keyword    =>     "number",
+            :definition =>   {
+                "token_expression"  => '/.*(num)(\d)*$/',
+                "variables"         => ['@number'],
+                "token_mapping"     => [{"one" => "{$0}", "other" => "{$0::plural}"}, {"one" => "{$0}", "other" => "{$1}"}],
+                "default_rule"      => "other"
+            },
+            :description =>    "Number language context"
+        )
+
+        plural_case = Tr8n::LanguageCase.create(
+            language:     english,
+            keyword:      "plural",
+            latin_name:   "Plural",
+            native_name:  "Plural",
+            description:  "Converts singular value to plural value",
+            application:  "phrase")
+
+        plural_case.add_rule(0, {"conditions" => "(= 'new message' @value)", "operations" => "(quote 'new messages')"})
+
         label = Tr8n::TokenizedLabel.new(str)
         label.label.should eq(str)
 

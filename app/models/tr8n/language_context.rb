@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -19,6 +19,25 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+#
+#-- Tr8n::LanguageContext Schema Information
+#
+# Table name: tr8n_language_contexts
+#
+#  id               INTEGER         not null, primary key
+#  language_id      integer         
+#  translator_id    integer         
+#  keyword          varchar(255)    
+#  description      varchar(255)    
+#  definition       text            
+#  created_at       datetime        not null
+#  updated_at       datetime        not null
+#
+# Indexes
+#
+#  tr8n_lctx_lk    (language_id, keyword) 
+#
 #++
 
 class Tr8n::LanguageContext < ActiveRecord::Base
@@ -63,9 +82,12 @@ class Tr8n::LanguageContext < ActiveRecord::Base
     contexts = Tr8n::Cache.fetch(cache_key_for_contexts(language.locale)) do
       where(:language_id => language.id).all
     end
+
     contexts.each do |ctx|
       return ctx if ctx.applies_to_token?(token_name)
     end
+
+    nil
   end
 
   def self.cache_key_for_rules(id)
@@ -94,7 +116,7 @@ class Tr8n::LanguageContext < ActiveRecord::Base
   #
   # To simplify the syntax, each language can provide it's construct for mapping, like so:
   #
-  # {"one": "{$0}", "other": "{$0}::plural"}
+  # [{"one": "{$0}", "other": "{$0}::plural"}]
   #
   # Developers then can use the simplified form:
   #
@@ -107,8 +129,16 @@ class Tr8n::LanguageContext < ActiveRecord::Base
     definition["token_mapping"]
   end
 
+  def default_rule
+    definition["default_rule"]
+  end
+
   def token_expression
-    eval(config["token_expression"] || definition["token_expression"])
+    @token_expression ||= begin
+      exp = config["token_expression"] || definition["token_expression"]
+      exp = Regexp.new(exp[1..-2]) if exp.is_a?(String)
+      exp
+    end
   end
 
   def variables
@@ -148,9 +178,10 @@ class Tr8n::LanguageContext < ActiveRecord::Base
   end
 
   def find_matching_rule(token)
+    token_vars = vars(token)
     rules.each do |rule|
       next if rule.fallback?
-      return rule if rule.evaluate(vars(token))
+      return rule if rule.evaluate(token_vars)
     end
     fallback_rule
   end

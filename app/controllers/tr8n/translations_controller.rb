@@ -98,7 +98,7 @@ class Tr8n::TranslationsController < Tr8n::BaseController
     end
 
     translation.label = sanitize_label(params[:translation][:label])
-    translation.rules = parse_rules
+    #translation.context = parse_rules
 
     unless translation.can_be_edited_by?(tr8n_current_translator)
       tr8n_current_translator.tried_to_perform_unauthorized_action!("tried to update translation which is locked or belongs to another translator")

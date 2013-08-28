@@ -4,7 +4,8 @@ require File.expand_path('../../spec_helper', File.dirname(__FILE__))
 
 describe Tr8n::Tokens::Base do
   before :all do
-    @english = Tr8n::Language.create(:locale => "en-US", :english_name => "English")
+    @english = setup_english_language
+    Tr8n::Config.set_language(@english)
   end
 
   describe "initialize" do
@@ -22,7 +23,6 @@ describe Tr8n::Tokens::Base do
       expect(token.decoration?).to be_false
 
       expect(token.name(:parens => true, :context_keys => true)).to eq('{user}')
-
 
       tkey = Tr8n::TranslationKey.new({:label => "Hello {user:gender::pos}", :locale => 'en-US'})
       token = tkey.tokens.first
@@ -132,7 +132,7 @@ describe Tr8n::Tokens::Base do
         :limit => 4,
         :separator => ", ",
         :description => nil,
-        :and_or => 'and'
+        :andor => 'and'
       }], {}, @english)).to eq("First name 1, First name 2, First name 3, First name 4 and 2 others")
 
       expect(token.token_value([users, [:first_name], {
@@ -143,7 +143,7 @@ describe Tr8n::Tokens::Base do
         :limit => 4,
         :separator => ", ",
         :description => nil,
-        :and_or => 'and'
+        :andor => 'and'
       }], {}, @english)).to eq("First name 1, First name 2, First name 3, First name 4, First name 5, First name 6")
 
       expect(token.token_value([users, [:first_name], {
@@ -154,7 +154,7 @@ describe Tr8n::Tokens::Base do
         :limit => 4,
         :separator => ", ",
         :description => nil,
-        :and_or => 'or'
+        :andor => 'or'
       }], {}, @english)).to eq("First name 1, First name 2, First name 3, First name 4 or 2 others")
 
       expect(token.token_value([users, [:first_name], {
@@ -165,7 +165,7 @@ describe Tr8n::Tokens::Base do
         :limit => 2,
         :separator => ", ",
         :description => nil,
-        :and_or => 'or'
+        :andor => 'or'
       }], {}, @english)).to eq("First name 1, First name 2 or 4 others")
 
       expect(token.token_value([users, [:first_name], {
@@ -176,7 +176,7 @@ describe Tr8n::Tokens::Base do
         :limit => 2,
         :separator => " & ",
         :description => nil,
-        :and_or => 'or'
+        :andor => 'or'
       }], {}, @english)).to eq("First name 1 & First name 2 or 4 others")
 
     end

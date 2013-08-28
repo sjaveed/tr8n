@@ -147,7 +147,7 @@ module Tr8n
       end  
       
       def substitute(translation_key, language, label, values = {}, options = {})
-        method = values[name_key]
+        method = values[key]
         substitution_value = ""
         
         if method

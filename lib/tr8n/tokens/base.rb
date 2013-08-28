@@ -97,6 +97,24 @@ module Tr8n
         value
       end
 
+      def context_for_language(language, opts = {})
+        unless language
+          raise Tr8n::TokenException.new("Can't determine context without language: #{full_name}")
+        end
+
+        if context_keys.any?
+          ctx = language.context_by_keyword(context_keys.first)
+        else
+          ctx = language.context_by_token_name(short_name)
+        end
+
+        unless opts[:silent]
+          raise Tr8n::TokenException.new("Unknown context for a token: #{full_name} in #{language.locale}") unless ctx
+        end
+
+        ctx
+      end
+
       ##############################################################################
       #
       # chooses the appropriate case for the token value. case is identified with ::

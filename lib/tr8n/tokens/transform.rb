@@ -75,49 +75,46 @@ module Tr8n
         not allowed_in_translation?
       end
 
-      def validate_language_rule
-        unless dependant?
-          raise Tr8n::TokenException.new("Unknown dependency type for #{full_name} token in #{original_label}; no way to apply the transform method.")
-        end
-        
-        unless language_rule.respond_to?(:default_transform)
-          raise Tr8n::TokenException.new("#{language_rule.class.name} does not respond to the default transform method.")
-        end
-      end
-      
       # return with the default transform substitution
-      def prepare_label_for_translator(label)
-        validate_language_rule
-        
-        substitution_value = "" 
+      def prepare_label_for_translator(label, language = Tr8n::Config.current_language)
+        substitution_value = ""
         substitution_value << sanitized_name if allowed_in_translation?
         substitution_value << " " unless substitution_value.blank?
-        substitution_value << language_rule.default_transform(self, piped_params)
+
+        context = context_for_language(language)
+        values = generate_value_map(piped_params, context)
+
+        substitution_value << values[context.default_rule]
         
         label.gsub(full_name, substitution_value)    
       end
     
       # return only the internal part
-      def prepare_label_for_suggestion(label, index)
-        validate_language_rule
-        label.gsub(full_name, language_rule.default_transform(self, piped_params))    
+      def prepare_label_for_suggestion(label, index, language = Tr8n::Config.current_language)
+        context = context_for_language(language)
+        values = generate_value_map(piped_params, context)
+
+        label.gsub(full_name, values[context.default_rule])
       end
 
       # token:      {count|| one: message, many: messages}
       # results in: {"one": "message", "many": "messages"}
       #
       # token:      {count|| message}
-      # transform:  {"one": "{$0}", "other": "{$0::plural}"}
+      # transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
+      # results in: {"one": "message", "other": "messages"}
+      #
+      # token:      {count|| message, messages}
+      # transform:  [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}]
       # results in: {"one": "message", "other": "messages"}
       #
       # token:      {user| Dorogoi, Dorogaya}
-      # transform:  {"male": "{$0}", "female": "{$1}", "unknown": "{$0}/{$1}"}
+      # transform:  ["unsupported", {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}]
       # results in: {"male": "Dorogoi", "female": "Dorogaya", "other": "Dorogoi/Dorogaya"}
       #
       # token:      {actors:|| likes, like}
-      # transform:  {"one": "{$0}", "other": "{$1}"}
+      # transform:  ["unsupported", {"one": "{$0}", "other": "{$1}"}]
       # results in: {"one": "likes", "other": "like"}
-
       def generate_value_map(params, context)
         values = {}
 
@@ -133,7 +130,20 @@ module Tr8n
           raise Tr8n::TokenException.new("The token context #{context.keyword} does not support transformation for unnamed params: #{full_name}")
         end
 
-        context.token_mapping.each do |key, value|
+        token_mapping = context.token_mapping
+
+        if token_mapping.is_a?(Array)
+          if params.size > token_mapping.size
+            raise Tr8n::TokenException.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
+          end
+          token_mapping = token_mapping[params.size-1]
+          if token_mapping.is_a?(String)
+            raise Tr8n::TokenException.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
+          end
+        end
+
+        token_mapping.each do |key, value|
+          values[key] = value
           value.scan(/({\$\d(::\w+)*})/).each do |matches|
             token = matches.first
             parts = token[1..-2].split('::')
@@ -154,8 +164,7 @@ module Tr8n
                 value = lcase.apply(value)
               end
             end
-
-            values[key] = value
+            values[key] = values[key].gsub(token, value)
           end
         end
 
@@ -168,23 +177,17 @@ module Tr8n
         unless object
           raise Tr8n::TokenException.new("Missing value for a token: #{full_name}")
         end
-        
-        if context_keys.any?
-          context = Tr8n::LanguageContext.by_keyword_and_language(context_keys.first, language)
-        else
-          context = Tr8n::LanguageContext.by_token_and_language(short_name, language)
-        end
-
-        unless context
-          raise Tr8n::TokenException.new("Unknown context for a token: #{full_name}")
-        end
 
         if piped_params.empty?
           raise Tr8n::TokenException.new("Piped params may not be empty: #{full_name}")
         end
 
+        context = context_for_language(language)
+
         piped_values = generate_value_map(piped_params, context)
+
         rule = context.find_matching_rule(object)
+        return label unless rule
 
         value = piped_values[rule.keyword]
         if value.nil? and context.fallback_rule

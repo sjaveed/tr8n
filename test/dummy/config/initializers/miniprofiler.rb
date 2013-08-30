@@ -1,0 +1,1 @@
+# Rack::MiniProfiler.config.base_url_path = "/tr8n/"

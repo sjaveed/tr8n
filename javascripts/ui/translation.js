@@ -28,7 +28,7 @@ Tr8n.Translation = {
 
   report: function(translation_key, translation_id) {
     // TODO: wrap in trl
-    var msg = "Reporting this translation will remove it from this list and the translator will be put on a watch list. \n\nAre you sure you want to report this translation?";
+    var msg = "Reporting this translation will remove it from this list and the dashboard will be put on a watch list. \n\nAre you sure you want to report this translation?";
     if (!confirm(msg)) return;
     Tr8n.TranslatorHelper.vote(translation_key, translation_id, -1000);
   },
@@ -37,7 +37,7 @@ Tr8n.Translation = {
     Tr8n.Effects.hide('tr8n_votes_for_' + translation_id);
     Tr8n.Effects.show('tr8n_spinner_for_' + translation_id);
 
-    // the long version updates and reorders translations - used in translator and phrase list
+    // the long version updates and reorders translations - used in dashboard and phrase list
     // the short version only updates the total results - used everywhere else
     if (Tr8n.element('tr8n_translator_votes_for_' + translation_key_id)) {
       Tr8n.Utils.update('tr8n_translator_votes_for_' + translation_key_id, '/tr8n/translations/vote', {

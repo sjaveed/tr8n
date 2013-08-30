@@ -206,7 +206,7 @@ Tr8n.SDK.Proxy = {
     if (this.options['fetch_translations_on_init']) {
       Tr8n.log("Fetching translations from the server...");
 
-      Tr8n.api('language/translate', {
+      Tr8n.api('settings/translate', {
         'batch': true, 
         'source': Tr8n.source
       }, function(data) {
@@ -252,7 +252,7 @@ Tr8n.SDK.Proxy = {
       if (!data["data"] || !data["data"]["detections"] || data["data"]["detections"].length == 0) 
         return Tr8n.default_locale;
       var first_detection = data["data"]["detections"][0][0];
-      detected_locale = first_detection["language"];
+      detected_locale = first_detection["settings"];
     }).fail(function() {
       return detected_locale;
     });
@@ -290,7 +290,7 @@ Tr8n.SDK.Proxy = {
       phrases: window.tr8nJQ.stringifyJSON(phrases)
     };
 
-    Tr8n.api('language/translate', params, function(data) {
+    Tr8n.api('settings/translate', params, function(data) {
         // Tr8n.log("Received response from the server: " + JSON.stringify(data));
         self.updateMissingTranslationKeys(data['phrases']);
     });

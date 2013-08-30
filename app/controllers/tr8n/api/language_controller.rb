@@ -23,7 +23,7 @@
 
 class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
 
-  # for ssl access to the translator - using ssl_requirement plugin  
+  # for ssl access to the dashboard - using ssl_requirement plugin
   ssl_allowed :translate  if respond_to?(:ssl_allowed)
 
   def index
@@ -33,7 +33,7 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
 
     lang = Tr8n::Language.for(params[:locale])
     unless lang
-      return render_error("Unknown language locale")
+      return render_error("Unknown settings locale")
     end
 
     render_response(lang.to_api_hash(:definition => true))

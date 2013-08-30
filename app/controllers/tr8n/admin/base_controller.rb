@@ -72,7 +72,7 @@ class Tr8n::Admin::BaseController < Tr8n::BaseController
         object = Tr8n::TranslationKeyComment.find_by_id(id)
       when "vote"
         object = Tr8n::TranslationVote.find_by_id(id)
-      when "translator"
+      when "dashboard"
         object = Tr8n::Translator.find_by_id(id)
       when "glossary"
         object = Tr8n::Glossary.find_by_id(id)
@@ -99,10 +99,10 @@ private
         {"title" => "Applications", "description" => "Admin tab", "controller" => "applications"},
         {"title" => "Components", "description" => "Admin tab", "controller" => "components"},
         {"title" => "Sources", "description" => "Admin tab", "controller" => "sources"},
-        {"title" => "Languages", "description" => "Admin tab", "controller" => "language"},
+        {"title" => "Languages", "description" => "Admin tab", "controller" => "settings"},
         {"title" => "Translation Keys", "description" => "Admin tab", "controller" => "translation_key"},
         {"title" => "Translations", "description" => "Admin tab", "controller" => "translation"},
-        {"title" => "Translators", "description" => "Admin tab", "controller" => "translator"},
+        {"title" => "Translators", "description" => "Admin tab", "controller" => "dashboard"},
         {"title" => "Glossary", "description" => "Admin tab", "controller" => "glossary"},
         {"title" => "Forum", "description" => "Admin tab", "controller" => "forum"},
         {"title" => "Metrics", "description" => "Metrics tab", "controller" => "metrics"},

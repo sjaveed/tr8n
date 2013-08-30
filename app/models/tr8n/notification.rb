@@ -85,7 +85,7 @@ class Tr8n::Notification < ActiveRecord::Base
   def self.translators_for_translation(translation)
     tkey = translation.translation_key
 
-    # find translators for all other translations of the key in this language
+    # find translators for all other translations of the key in this settings
     tanslations = Tr8n::Translation.where("translation_key_id = ? and language_id = ?", 
                                            tkey.id, translation.language.id).all
     translators = []

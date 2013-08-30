@@ -46,8 +46,8 @@ class Tr8n::TranslationKeyComment < ActiveRecord::Base
   attr_accessible :language_id, :translation_key_id, :translator_id, :message
   attr_accessible :language, :translator, :translation_key
   
-  belongs_to :language,               :class_name => "Tr8n::Language"  
-  belongs_to :translator,             :class_name => "Tr8n::Translator"  
+  belongs_to :language,               :class_name => "Tr8n::Language"
+  belongs_to :translator,             :class_name => "Tr8n::Translator"
   belongs_to :translation_key,        :class_name => "Tr8n::TranslationKey"
   
   after_create :distribute_notification

@@ -10,7 +10,7 @@
     :created_at,
     [:language_id, lambda{|message|
       if message.language
-        link_to(message.language.english_name, :controller => "/tr8n/admin/language", :action => :view, :lang_id => message.language.id)
+        link_to(message.language.english_name, :controller => "/tr8n/admin/settings", :action => :view, :lang_id => message.language.id)
       else
          "Deleted Language"    
       end  
@@ -18,7 +18,7 @@
 
     [:translator_id, lambda{|message|
       if message.translator
-        link_to(message.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :translator_id => message.translator.id) 
+        link_to(message.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :translator_id => message.translator.id)
       else
          "Deleted Translator"    
       end  

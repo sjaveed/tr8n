@@ -35,11 +35,11 @@ THE SOFTWARE.
   Currently implemented functions:
 
     String.pluralize(plural) == String
-      renders a singular English language noun into its plural form
+      renders a singular English settings noun into its plural form
       normal results can be overridden by passing in an alternative
 
     String.singularize(singular) == String
-      renders a plural English language noun into its singular form
+      renders a plural English settings noun into its singular form
       normal results can be overridden by passing in an alterative
 */
 
@@ -261,7 +261,7 @@ if (!String.prototype._non_titlecased_words)
     Arguments:
       plural - String (optional) - overrides normal output with said String
     Returns:
-      String - singular English language nouns are returned in plural form
+      String - singular English settings nouns are returned in plural form
     Examples:
       "person".pluralize() == "people"
       "octopus".pluralize() == "octopi"
@@ -288,7 +288,7 @@ if (!String.prototype.pluralize)
     Arguments:
       singular - String (optional) - overrides normal output with said String
     Returns:
-      String - plural English language nouns are returned in singular form
+      String - plural English settings nouns are returned in singular form
     Examples:
       "people".singularize() == "person"
       "octopi".singularize() == "octopus"

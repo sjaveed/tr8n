@@ -23,7 +23,7 @@
 
 ####################################################################### 
 # 
-# Transform Token Form  - can be defined for each context rule of each language
+# Transform Token Form  - can be defined for each context rule of each settings
 #
 # {count | message}   - will not include count: "messages" 
 # {count | message, messages} 
@@ -76,12 +76,13 @@ module Tr8n
       end
 
       # return with the default transform substitution
-      def prepare_label_for_translator(label, language = Tr8n::Config.current_language)
+      def prepare_label_for_translator(label, language)
         substitution_value = ""
         substitution_value << sanitized_name if allowed_in_translation?
         substitution_value << " " unless substitution_value.blank?
 
         context = context_for_language(language)
+
         values = generate_value_map(piped_params, context)
 
         substitution_value << values[context.default_rule]
@@ -90,7 +91,7 @@ module Tr8n
       end
     
       # return only the internal part
-      def prepare_label_for_suggestion(label, index, language = Tr8n::Config.current_language)
+      def prepare_label_for_suggestion(label, index, language)
         context = context_for_language(language)
         values = generate_value_map(piped_params, context)
 
@@ -153,7 +154,7 @@ module Tr8n
               raise Tr8n::TokenException.new("The index inside #{context.token_mapping} is out of bound: #{full_name}")
             end
 
-            # apply language cases
+            # apply settings cases
             value = params[index]
             if Tr8n::Config.enable_language_cases?
               parts[1..-1].each do |case_key|

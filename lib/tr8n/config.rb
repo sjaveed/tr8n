@@ -29,7 +29,7 @@ module Tr8n
     #########################################################
     # Basic Stuff
   
-    # initializes language, user and translator
+    # initializes settings, user and dashboard
     # the variables are kept in a thread safe form throughout the request
     def self.init(application, language, user = nil, source = nil, component = nil)
       set_application(application)
@@ -46,7 +46,7 @@ module Tr8n
         set_current_component(nil)
       end
 
-      # register the total metric for the current source and language
+      # register the total metric for the current source and settings
       current_source.total_metric 
 
       Thread.current[:tr8n_block_options]      = []
@@ -239,15 +239,17 @@ module Tr8n
 
       json = load_json(files[locale])
 
-      puts ">> Initializing #{json["english_name"]} language..."
+      puts ">> Initializing #{json["english_name"]} settings..."
 
       if json["fallback"]
-        json["fallback_language"] = import_language(files, json["fallback"])
+        fallback_json = load_json(files[json["fallback"]])
+        json = fallback_json.rmerge(json)
+        # json["fallback_language"] = import_language(files, json["fallback"])
       end
 
       language = Tr8n::Language.create_from_json(json)
 
-      files[locale]= nil
+      #files[locale]= nil
 
       language
     end
@@ -717,7 +719,6 @@ module Tr8n
       {
           "number" => {
               "variables" => {
-                  "@n" => "to_i",
               }
           },
           "gender" => {
@@ -774,7 +775,7 @@ module Tr8n
       end
     end
 
-    # get rules for specified locale, or get default language rules
+    # get rules for specified locale, or get default settings rules
     def self.load_default_rules(rules_type, locale = default_locale)
       @default_rules ||= {}
       @default_rules[rules_type] ||= load_yml("/config/tr8n/rules/default_#{rules_type}_rules.yml", nil)
@@ -1001,7 +1002,7 @@ module Tr8n
         request_token = remote_application.find_or_create_request_token(current_translator)
         params.merge!({
           'code' => request_token.token,
-          'translator' => {
+          'dashboard' => {
             'id'      => current_translator.id,
             'email'   => current_translator.email,
             'name'    => current_translator.name,

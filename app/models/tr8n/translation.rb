@@ -87,7 +87,7 @@ class Tr8n::Translation < ActiveRecord::Base
 
       rules.each do |context_key, rule_key|
         next if rule_key == 'other'
-        context = Tr8n::LanguageContext.by_keyword_and_language(context_key, language)
+        context = language.context_by_keyword(context_key)
         rule = context.find_matching_rule(token_object)
         return false unless rule and rule.keyword == rule_key
       end
@@ -121,8 +121,12 @@ class Tr8n::Translation < ActiveRecord::Base
   end
 
   def vote!(translator, score)
+    Tr8n::Logger.debug("Voting ##{translator.id} #{score}")
+
     score = score.to_i
     vote = Tr8n::TranslationVote.find_or_create(self, translator)
+    Tr8n::Logger.debug("Vote #{vote.inspect}")
+
     vote.update_attributes(:vote => score.to_i)
     
     Tr8n::Notification.distribute(vote)
@@ -134,7 +138,7 @@ class Tr8n::Translation < ActiveRecord::Base
 
     self.translator.update_rank!(language) if self.translator
     
-    # add the translator to the watch list
+    # add the dashboard to the watch list
     self.translator.update_attributes(:reported => true) if score < VIOLATION_INDICATOR
     
     translator.voted_on_translation!(self)
@@ -145,9 +149,14 @@ class Tr8n::Translation < ActiveRecord::Base
   def update_rank!
     new_rank = 0
     Tr8n::TranslationVote.where(:translation_id => self.id).each do |tv|
+      Tr8n::Logger.debug("#{tv.inspect}")
       next unless tv.translator
+      Tr8n::Logger.debug("voting power #{tv.translator.voting_power} #{tv.vote}")
       new_rank += (tv.translator.voting_power * tv.vote)
     end
+
+    Tr8n::Logger.debug("rank #{new_rank}")
+
     update_attributes(:rank => new_rank)
   end
   
@@ -270,24 +279,24 @@ class Tr8n::Translation < ActiveRecord::Base
   #end
   #
   ## create translation from API hash for a specific key
-  #def self.create_from_sync_hash(tkey, translator, thash, opts = {})
+  #def self.create_from_sync_hash(tkey, dashboard, thash, opts = {})
   #  return if thash["label"].blank?  # don't add empty translations
   #
   #  lang = Tr8n::Language.for(thash["locale"])
-  #  return unless lang  # don't add translations for an unsupported language
+  #  return unless lang  # don't add translations for an unsupported settings
   #
   #  # generate rules for the translation
   #  rules = []
   #  if thash["rules"] and thash["rules"].any?
   #    thash["rules"].each do |rhash|
-  #      rule = Tr8n::LanguageRule.create_from_sync_hash(lang, translator, rhash, opts)
+  #      rule = Tr8n::LanguageRule.create_from_sync_hash(lang, dashboard, rhash, opts)
   #      return unless rule # if the rule has not been created, we should not even add the translation
   #      rules << {:token => rhash["token"], :rule_id => rule.id}
   #    end
   #  end
   #  rules = nil if rules.empty?
   #
-  #  tkey.add_translation(thash["label"], rules, lang, translator)
+  #  tkey.add_translation(thash["label"], rules, lang, dashboard)
   #end
     
   ###############################################################
@@ -320,7 +329,7 @@ class Tr8n::Translation < ActiveRecord::Base
 
   def self.filter_group_by_options
     [["nothing", "nothing"], 
-     ["translator", "translator"], 
+     ["dashboard", "dashboard"],
      ["context rule", "context"], 
      ["rank", "rank"], 
      ["date", "date"]].collect{|option| [option.first.trl("Translation filter group by option"), option.last]}

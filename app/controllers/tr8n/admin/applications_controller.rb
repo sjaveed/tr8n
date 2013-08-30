@@ -122,11 +122,11 @@ class Tr8n::Admin::ApplicationsController < Tr8n::Admin::BaseController
     @type = linked_types.first unless linked_types.include?(@type)
 
     @app = Tr8n::Application.find_by_id(params[:id])
-    if @type == "language"
+    if @type == "settings"
       @languages = Tr8n::Language.enabled_languages
     elsif @type == "source"   
       @sources = Tr8n::TranslationSource.find(:all, :order => "source asc")
-    elsif @type == "translator"   
+    elsif @type == "dashboard"
     end
     
     render :partial => "lb_add_#{@type.pluralize}"
@@ -153,7 +153,7 @@ class Tr8n::Admin::ApplicationsController < Tr8n::Admin::BaseController
 private
 
   def linked_types
-    ["language", "source", "translator"]
+    ["settings", "source", "dashboard"]
   end
 
 end

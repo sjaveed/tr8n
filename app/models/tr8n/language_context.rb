@@ -49,7 +49,7 @@ class Tr8n::LanguageContext < ActiveRecord::Base
   after_save :clear_cache
   after_destroy :clear_cache
 
-  belongs_to :language, :class_name => "Tr8n::Language"   
+  belongs_to :language, :class_name => "Tr8n::Language"
   belongs_to :translator, :class_name => "Tr8n::Translator"
 
   has_many   :language_context_rules, :class_name => "Tr8n::LanguageContextRule", :dependent => :destroy
@@ -99,8 +99,10 @@ class Tr8n::LanguageContext < ActiveRecord::Base
   end
 
   def rules
-    Tr8n::Cache.fetch(cache_key_for_rules) do
-      language_context_rules
+    @rules ||= begin
+      Tr8n::Cache.fetch(cache_key_for_rules) do
+        language_context_rules
+      end
     end
   end
 
@@ -108,13 +110,13 @@ class Tr8n::LanguageContext < ActiveRecord::Base
     Tr8n::Config.context_rules[keyword] || {}
   end
 
-  # Context rule can be mapped to a transform token using the sequence of rule keys with language cases
+  # Context rule can be mapped to a transform token using the sequence of rule keys with settings cases
   # This is done so that developers don't have to name each value in the piped token
   # For example, in the numeric context rule, a transform token in its full form can look like this:
   #
   #  {count:numeric|| one: message, other: messages}
   #
-  # To simplify the syntax, each language can provide it's construct for mapping, like so:
+  # To simplify the syntax, each settings can provide it's construct for mapping, like so:
   #
   # [{"one": "{$0}", "other": "{$0}::plural"}]
   #

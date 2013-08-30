@@ -1,0 +1,21 @@
+{
+  "locale": "af",
+  "english_name": "Afrikaans",
+  "native_name": "Afrikaans",
+  "google_key": "af",
+  "context_rules": {
+    "number": {
+      "keys": ["one", "other"],
+      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
+      "variables": ["@n"],
+      "token_mapping": ["unsupported", {"one": "{$0}", "other": "{$1}"}],
+      "default_rule": "other",
+      "rules": {
+        "one":    {"rule": "(= 1 @n)", "description": "{token} is 1", "examples": "1"},
+        "other":  {"description": "{token} is not 1", "examples": "0, 2-999; 1.2, 2.07..."}
+      }
+    }
+  },
+  "language_cases": {
+  }
+}

@@ -24,7 +24,7 @@
     }, 'text-align:right;width:50px;'],
     [:translator_id, lambda{|vote|
       if vote.translator
-        link_to(vote.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :id => vote.translator.id)
+        link_to(vote.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :id => vote.translator.id)
       else
         "Unknown" 
       end  

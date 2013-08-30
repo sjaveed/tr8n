@@ -1,0 +1,42 @@
+<%= stylesheet_link_tag('tr8n/tr8n_container.css') %>
+
+<div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:#f1f4f9;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
+  <div style="padding:15px;padding-bottom:10px;">
+    <div style="float:right">
+      <div style="float:right">
+        <%=tr8n_translator_rank_tag(@translator)%>
+      </div>
+    </div>
+    <div style="font-size:22px; font-weight: bold;padding-bottom:15px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+      <table>
+        <tr>
+          <td style="vertical-align:top;padding-right:2px; width:60px;">
+            <%=tr8n_user_mugshot_tag(@translator, :linked => true)%>
+          </td>
+          <td style="vertical-align:top">
+            <%= @translator.name %>
+            <div style="color:#999; font-size:14px; padding-top:8px;">
+              translator
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+    <% [
+           ["Dashboard", "dashboard"],
+           ["Assignments", "assignments"],
+           ["Notifications", "notifications"],
+           ["Following", "following"],
+           ["Preferences", "settings"],
+       ].each do |tab| %>
+
+      <li class="<%='active' if controller.controller_name == tab.last %>">
+        <%=link_to(tra(tab.first), "/tr8n/translator/#{tab.last}")%>
+      </li>
+    <% end %>
+  </ul>
+
+</div>

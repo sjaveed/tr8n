@@ -37,7 +37,7 @@ module Tr8n
 
       if Tr8n::Config.enable_browser_cache?  
         # translations are loaded through a script
-        js_source = "/tr8n/api/language/translate.js?cache=true&callback=Tr8n.SDK.Proxy.registerTranslationKeys&source=#{CGI.escape(source.source)}&t=#{source.updated_at.to_i}"
+        js_source = "/tr8n/api/settings/translate.js?cache=true&callback=Tr8n.SDK.Proxy.registerTranslationKeys&source=#{CGI.escape(source.source)}&t=#{source.updated_at.to_i}"
         html << "<script type='text/javascript' src='#{js_source}'></script>"
       else  
         # translations are embedded right into the page
@@ -73,57 +73,12 @@ module Tr8n
         :date   => Tr8n::Config.rules_engine[:date_rule]
       }
 
-      # build a list of actual rules of the language
+      # build a list of actual rules of the settings
 
       client_var_name = opts[:client_var_name] || :tr8nProxy
       opts.merge!(:enable_tml => Tr8n::Config.enable_tml?)
 
       "<script>Tr8n.SDK.Proxy.init(#{opts.to_json});</script>".html_safe
-    end
-
-    # translation functions
-    def tr(label, desc = "", tokens = {}, options = {})
-      return label if label.tr8n_translated?
-
-      if desc.is_a?(Hash)
-        tokens = desc
-        options = tokens
-      end
-
-      options.merge!(:caller => caller)
-      if request
-        options.merge!(:url => request.url)
-        options.merge!(:host => request.env['HTTP_HOST'])
-      end
-
-      unless Tr8n::Config.enabled?
-        return Tr8n::TranslationKey.substitute_tokens(label, tokens, options)
-      end
-
-      Tr8n::Config.current_language.translate(label, desc, tokens, options)
-    end
-
-    # for translating labels
-    def trl(label, desc = "", tokens = {}, options = {})
-      tr(label, desc, tokens, options.merge(:skip_decorations => true))
-    end
-
-    # for admin translations
-    def tra(label, desc = "", tokens = {}, options = {})
-      if Tr8n::Config.enable_admin_translations?
-        if Tr8n::Config.enable_admin_inline_mode?
-          tr(label, desc, tokens, options)
-        else
-          trl(label, desc, tokens, options)
-        end
-      else
-        Tr8n::Config.default_language.translate(label, desc, tokens, options)
-      end
-    end
-    
-    # for admin translations
-    def trla(label, desc = "", tokens = {}, options = {})
-      tra(label, desc, tokens, options.merge(:skip_decorations => true))
     end
 
     def tr8n_options_for_select(options, selected = nil, description = nil, lang = Tr8n::Config.current_language)
@@ -172,7 +127,7 @@ module Tr8n
       end
 
       if linked
-        html << link_to(name.html_safe, "/tr8n/language/switch?locale=#{lang.locale}&language_action=switch_language&source_url=#{CGI.escape(opts[:source_url]||'')}")
+        html << link_to(name.html_safe, "/tr8n/settings/switch?locale=#{lang.locale}&language_action=switch_language&source_url=#{CGI.escape(opts[:source_url]||'')}")
       else    
         html << name
       end
@@ -502,53 +457,6 @@ module Tr8n
       "dir='#{lang.dir}'".html_safe
     end
 
-    ######################################################################
-    ## Common methods
-    ######################################################################
-
-    def tr8n_request_remote_ip
-      @remote_ip ||= if request.env['HTTP_X_FORWARDED_FOR']
-        request.env['HTTP_X_FORWARDED_FOR'].split(',').first
-      else
-        request.remote_ip
-      end
-    end
-
-    def tr8n_current_user
-      Tr8n::Config.current_user
-    end
-
-    def tr8n_current_language
-      Tr8n::Config.current_language
-    end
-
-    def tr8n_default_language
-      Tr8n::Config.default_language
-    end
-
-    def tr8n_current_translator
-      Tr8n::Config.current_translator
-    end
-  
-    def tr8n_current_user_is_admin?
-      Tr8n::Config.current_user_is_admin?
-    end
-  
-    def tr8n_current_user_is_translator?
-      Tr8n::Config.current_user_is_translator?
-    end
-
-    def tr8n_current_user_is_manager?
-      return true if Tr8n::Config.current_user_is_admin?
-      return false unless Tr8n::Config.current_user_is_translator?
-      tr8n_current_translator.manager?
-    end
-  
-    def tr8n_current_user_is_guest?
-      Tr8n::Config.current_user_is_guest?
-    end
-
-
     def tr8n_translator_tag(translator, options = {})
       return "Deleted Translator" unless translator
       
@@ -644,24 +552,5 @@ module Tr8n
       render(:partial => "/tr8n/common/lightbox_title", :locals => {:title => title})
     end
 
-  private
-
-    def generate_sitemap(sections, options = {})
-      html = "<ul class='section_list'>"
-      text_align = tr8n_style_attribute_tag('text-align', 'left')
-      sections.each do |section|
-        html << "<li class='section_list_item' style='#{text_align};'>" 
-        html << "<a href='/tr8n/phrases/index?section_key=#{section.key}'>" << tr(section.label, section.description) << "</a> "
-        html << "<a href='" << section.data[:link] << "' target='_new'><img src='/assets/tr8n/bullet_go.png' style='border:0px; vertical-align:middle'></a>" if section.data[:link]
-
-        if section.children.size > 0
-          html << generate_sitemap(section.children, options)
-        end  
-        html << "</li>"
-      end
-      html << "</ul>"
-      html.html_safe
-    end      
-    
   end
 end

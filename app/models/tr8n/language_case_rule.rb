@@ -50,8 +50,8 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
   attr_accessible :language, :language_case, :translator
   
   belongs_to :language_case,  :class_name => "Tr8n::LanguageCase"   
-  belongs_to :language,       :class_name => "Tr8n::Language"   
-  belongs_to :translator,     :class_name => "Tr8n::Translator"   
+  belongs_to :language,       :class_name => "Tr8n::Language"
+  belongs_to :translator,     :class_name => "Tr8n::Translator"
   
   serialize :definition
 
@@ -99,7 +99,7 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
 
     re.eval(conditions_expression)
   rescue Exception => ex
-    Tr8n::Logger.error("Failed to evaluate language case #{conditions}: #{ex.message}")
+    Tr8n::Logger.error("Failed to evaluate settings case #{conditions}: #{ex.message}")
     value
   end
 
@@ -112,7 +112,7 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
 
     re.eval(operations_expression)
   rescue Exception => ex
-    Tr8n::Logger.error("Failed to apply language case #{operations}: #{ex.message}")
+    Tr8n::Logger.error("Failed to apply settings case #{operations}: #{ex.message}")
     value
   end
 

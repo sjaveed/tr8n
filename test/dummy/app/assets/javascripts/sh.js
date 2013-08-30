@@ -15,7 +15,7 @@ var _ = self.Prism = {
 			return Object.prototype.toString.call(o).match(/\[object (\w+)\]/)[1];
 		},
 
-		// Deep clone a language definition (e.g. to extend it)
+		// Deep clone a settings definition (e.g. to extend it)
 		clone: function (o) {
 			var type = _.util.type(o);
 
@@ -50,7 +50,7 @@ var _ = self.Prism = {
 			return lang;
 		},
 
-		// Insert a token before another token in a language literal
+		// Insert a token before another token in a settings literal
 		insertBefore: function (inside, before, insert, root) {
 			root = root || _.languages;
 			var grammar = root[inside];
@@ -77,7 +77,7 @@ var _ = self.Prism = {
 			return root[inside] = ret;
 		},
 
-		// Traverse a language definition with Depth First Search
+		// Traverse a settings definition with Depth First Search
 		DFS: function(o, callback) {
 			for (var i in o) {
 				callback.call(o, i, o[i]);
@@ -90,7 +90,7 @@ var _ = self.Prism = {
 	},
 
 	highlightAll: function(async, callback) {
-		var elements = document.querySelectorAll('code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code');
+		var elements = document.querySelectorAll('code[class*="settings-"], [class*="settings-"] code, code[class*="lang-"], [class*="lang-"] code');
 
 		for (var i=0, element; element = elements[i++];) {
 			_.highlightElement(element, async === true, callback);
@@ -98,7 +98,7 @@ var _ = self.Prism = {
 	},
 
 	highlightElement: function(element, async, callback) {
-		// Find language
+		// Find settings
 		var language, grammar, parent = element;
 
 		while (parent && !lang.test(parent.className)) {
@@ -114,14 +114,14 @@ var _ = self.Prism = {
 			return;
 		}
 
-		// Set language on the element, if not present
-		element.className = element.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
+		// Set settings on the element, if not present
+		element.className = element.className.replace(lang, '').replace(/\s+/g, ' ') + ' settings-' + language;
 
-		// Set language on the parent, for styling
+		// Set settings on the parent, for styling
 		parent = element.parentNode;
 
 		if (/pre/i.test(parent.nodeName)) {
-			parent.className = parent.className.replace(lang, '').replace(/\s+/g, ' ') + ' language-' + language;
+			parent.className = parent.className.replace(lang, '').replace(/\s+/g, ' ') + ' settings-' + language;
 		}
 
 		var code = element.textContent;

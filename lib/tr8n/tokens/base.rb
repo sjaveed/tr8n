@@ -75,7 +75,7 @@ module Tr8n
         short_name.to_sym
       end
 
-      # used by the translator submit dialog
+      # used by the dashboard submit dialog
       def name_for_case_keys(keys)
         keys = [keys] unless keys.is_a?(Array)
         "#{name}::#{keys.join('::')}"
@@ -99,7 +99,7 @@ module Tr8n
 
       def context_for_language(language, opts = {})
         unless language
-          raise Tr8n::TokenException.new("Can't determine context without language: #{full_name}")
+          raise Tr8n::TokenException.new("Can't determine context without settings: #{full_name}")
         end
 
         if context_keys.any?
@@ -368,12 +368,12 @@ module Tr8n
       end
 
       # return sanitized form
-      def prepare_label_for_translator(label)
+      def prepare_label_for_translator(label, language)
         label.gsub(full_name, sanitized_name)
       end
 
       # return tokenless form
-      def prepare_label_for_suggestion(label, index)
+      def prepare_label_for_suggestion(label, index, language)
         label.gsub(full_name, "(#{index})")
       end
 

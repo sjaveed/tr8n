@@ -22,7 +22,7 @@
 	    <% tr8n_current_language.contexts.each do |context| %>
 	      <td style="text-align:center; font-size:10px; color: grey; border: 1px dotted #ccc; padding:5px; vertical-align:middle; background:white;">
 	        <% if token.context_for_language(tr8n_current_language, :silent => true) == context %>
-	          <%=check_box_tag("dependencies[#{token.short_name}][#{context.keyword}]", "true", false, :style => "width:20px;")%>
+	          <%=check_box_tag("token_contexts[#{token.short_name}][#{context.keyword}]", "true", false, :style => "width:20px;")%>
 	        <% else %>
 	          n/a  
 	        <% end %>  
@@ -33,6 +33,6 @@
 		 
 	</table>
 <% else %>
-  <%=tra("The language does not have any rules defined and no rules permutations can be generated.") %> 
-  <%=tra("Please contact the language manager to define language rules.")%>
+  <%=tra("The settings does not have any rules defined and no rules permutations can be generated.") %>
+  <%=tra("Please contact the settings manager to define settings rules.")%>
 <% end %>	

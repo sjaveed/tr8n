@@ -50,7 +50,7 @@ class Tr8n::LanguageMetric < ActiveRecord::Base
   attr_accessible :language_id, :metric_date, :user_count, :translator_count, :translation_count, :key_count, :locked_key_count, :translated_key_count
   attr_accessible :language, :completeness
   
-  belongs_to :language, :class_name => "Tr8n::Language"   
+  belongs_to :language, :class_name => "Tr8n::Language"
 
   def self.default_attributes
     {:user_count => 0, :translator_count => 0, 
@@ -76,12 +76,12 @@ class Tr8n::LanguageMetric < ActiveRecord::Base
     metric_date = last_daily_metric.nil? ? (Date.today - 30.days) : last_daily_metric.metric_date
 
     Tr8n::Language.enabled_languages.each do |lang|
-      Tr8n::Logger.debug("Processing #{lang.english_name} language...")
+      Tr8n::Logger.debug("Processing #{lang.english_name} settings...")
       
       start_date = metric_date
       months=[]
       while start_date <= Date.today do
-        Tr8n::Logger.debug("Generating daily data for #{lang.english_name} language on #{start_date}...")
+        Tr8n::Logger.debug("Generating daily data for #{lang.english_name} settings on #{start_date}...")
         
         months << Date.new(start_date.year, start_date.month, 1)
         lang.update_daily_metrics_for(start_date)
@@ -89,18 +89,18 @@ class Tr8n::LanguageMetric < ActiveRecord::Base
       end
       
       months.uniq.each do |month|
-        Tr8n::Logger.debug("Generating monthly data for #{lang.english_name} language on #{month}...")
+        Tr8n::Logger.debug("Generating monthly data for #{lang.english_name} settings on #{month}...")
         lang.update_monthly_metrics_for(month)
       end
       
-      Tr8n::Logger.debug("Generating total data for #{lang.english_name} language...")
+      Tr8n::Logger.debug("Generating total data for #{lang.english_name} settings...")
       lang.update_total_metrics
     end    
   end
   
   def self.calculate_total_metrics
     Tr8n::Language.enabled_languages.each do |lang|
-      Tr8n::Logger.debug("Generating total data for #{lang.english_name} language...")
+      Tr8n::Logger.debug("Generating total data for #{lang.english_name} settings...")
       lang.update_total_metrics
     end    
   end  

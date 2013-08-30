@@ -16,8 +16,8 @@
 
 <%= tr8n_actions_tag([
     link_to_function("Add Sources", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=source&id=#{@comp.id}', {height:450})"),
-    link_to_function("Add Languages", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=language&id=#{@comp.id}', {height:450})"),
-    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=translator&id=#{@comp.id}', {height:450})"),
+    link_to_function("Add Languages", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=settings&id=#{@comp.id}', {height:450})"),
+    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=dashboard&id=#{@comp.id}', {height:450})"),
   ])
 %>
 
@@ -27,7 +27,7 @@
 <% if languages.empty? or sources.empty? %>
   <div style="padding:10px 0px;">
     In order to track translation progress of this component, you must 
-    <%= link_to_function("assign at least one language", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_objects_to_component?type=language&id=#{@comp.id}', {height:350})") %>
+    <%= link_to_function("assign at least one settings", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_objects_to_component?type=settings&id=#{@comp.id}', {height:350})") %>
     
     and 
     <%= link_to_function("add at least one source", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_objects_to_component?type=source&id=#{@comp.id}', {height:350})") %>
@@ -36,7 +36,7 @@
   </div>
 <% else %>
   <div style="padding-top:10px;padding-bottom:10px;">
-    Jump to: <%= languages.collect{|lang| link_to(lang.english_name, params.merge(:show_language=>lang.id, :anchor => "language-#{lang.id}"))}.join(", ").html_safe %>
+    Jump to: <%= languages.collect{|lang| link_to(lang.english_name, params.merge(:show_language=>lang.id, :anchor => "settings-#{lang.id}"))}.join(", ").html_safe %>
   </div>
 
   <% languages.each do |language| 
@@ -48,8 +48,8 @@
         <td style="width:20%;text-align:left; padding:10px 0px; font-size:18px; vertical-align:middle;">
           <%=tr8n_toggler_tag("lang_content_#{language.id}", "", params[:show_language] == language.id.to_s)%> 
           <span dir="ltr">
-            <a name="<%="language-#{language.id}"%>" style="text-decoration:none;color:black;"><%= tr8n_language_flag_tag(language) %> 
-              <%= link_to(language.english_name, params.merge(:show_language=>language.id, :anchor => "language-#{language.id}")) %>
+            <a name="<%="settings-#{language.id}"%>" style="text-decoration:none;color:black;"><%= tr8n_language_flag_tag(language) %>
+              <%= link_to(language.english_name, params.merge(:show_language=>language.id, :anchor => "settings-#{language.id}")) %>
             </a>
           </span>
         </td>
@@ -110,7 +110,7 @@
                   </div>
                   <div style="font-weight:bold;font-size:12px;"><%= tr8n_language_flag_tag(language) %> <%=link_to(source.title, :action => :source, :source_id => source.id)%></div>
               </div>
-              <%=render :partial => "/tr8n/translator/translation_source_metric", :locals => {:translation_source => source, :translation_source_metric => metrics[index]} %>
+              <%=render :partial => "/tr8n/dashboard/translation_source_metric", :locals => {:translation_source => source, :translation_source_metric => metrics[index]} %>
           </div>
         <% end %>
         <div style="clear:both;"></div>

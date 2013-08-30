@@ -49,8 +49,8 @@ class Tr8n::LanguageCaseValueMap < ActiveRecord::Base
   after_save :clear_cache
   after_destroy :clear_cache
   
-  belongs_to :language, :class_name => "Tr8n::Language"   
-  belongs_to :translator, :class_name => "Tr8n::Translator"   
+  belongs_to :language, :class_name => "Tr8n::Language"
+  belongs_to :translator, :class_name => "Tr8n::Translator"
   
   serialize :map
   

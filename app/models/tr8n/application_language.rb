@@ -45,7 +45,7 @@ class Tr8n::ApplicationLanguage < ActiveRecord::Base
   belongs_to :language, :class_name => 'Tr8n::Language'
 
   def self.find_or_create(application, language)
-    where("application_id = ? and language_id = ?", application.id, language.id).first || create(:application => application, :language => language) 
+    where("application_id = ? and language_id = ?", application.id, language.id).first || create(:application => application, :language => language)
   end
 
 end

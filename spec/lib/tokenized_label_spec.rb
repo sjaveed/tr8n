@@ -11,7 +11,7 @@ describe Tr8n::TokenizedLabel do
         Tr8n::Config.set_language(english)
 
         context = Tr8n::LanguageContext.create(
-            :language   =>     english,
+            :settings   =>     english,
             :keyword    =>     "number",
             :definition =>   {
                 "token_expression"  => '/.*(num)(\d)*$/',
@@ -19,11 +19,11 @@ describe Tr8n::TokenizedLabel do
                 "token_mapping"     => [{"one" => "{$0}", "other" => "{$0::plural}"}, {"one" => "{$0}", "other" => "{$1}"}],
                 "default_rule"      => "other"
             },
-            :description =>    "Number language context"
+            :description =>    "Number settings context"
         )
 
         plural_case = Tr8n::LanguageCase.create(
-            language:     english,
+            settings:     english,
             keyword:      "plural",
             latin_name:   "Plural",
             native_name:  "Plural",

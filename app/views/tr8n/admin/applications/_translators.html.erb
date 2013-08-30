@@ -1,7 +1,7 @@
 <%= will_filter_scripts_tag %>
 
 <%= tr8n_actions_tag([
-    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_objects?type=translator&id=#{@app.id}', {height:450})"),
+    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_objects?type=dashboard&id=#{@app.id}', {height:450})"),
   ])
 %>
 
@@ -15,7 +15,7 @@
       }, :style => 'vertical-align:middle'],
       [:name, lambda{|at|
         if at.translator
-         link_to(at.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :id => at.translator.id) 
+         link_to(at.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :id => at.translator.id)
         else
           "deleted"
         end

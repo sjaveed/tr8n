@@ -7,14 +7,14 @@
     [:icn, image_tag("tr8n/icons/chart_bar.png"), :title => "", :style => "width:12px;"],
     [:translator_id, lambda{|metric|
       if metric.translator
-        link_to(metric.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :translator_id => metric.translator.id)
+        link_to(metric.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :translator_id => metric.translator.id)
       else
         "Unknown" 
       end  
     }, :filterable => true],
     [:language_id, lambda{|metric|
       if metric.language
-        link_to(metric.language.english_name, :controller => "/tr8n/admin/language", :action => :view, :lang_id => metric.language.id)
+        link_to(metric.language.english_name, :controller => "/tr8n/admin/settings", :action => :view, :lang_id => metric.language.id)
       else
          "Deleted Language"    
       end  

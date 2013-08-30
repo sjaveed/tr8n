@@ -22,32 +22,52 @@
 #++
 
 Tr8n::Engine.routes.draw do
-  [:awards, :chart, :forum, :glossary, :help, :language_cases,
-   :language, :phrases, :translations, :translator].each do |ctrl|
-    match "#{ctrl}(/:action)", :controller => "#{ctrl}"
+  [:dashboard, :awards, :forum, :glossary, :phrases, :sitemap, :translations].each do |ctrl|
+    match "app/#{ctrl}(/:action)", :controller => "app/#{ctrl}"
   end
-  
-  [:applications, :components, :sources, :chart, :clientsdk, :forum, :glossary, :language, :translation, 
-   :translation_key, :translator, :domain, :metrics].each do |ctrl|
+
+  [:dashboard, :censorship, :context_rules, :cases, :settings].each do |ctrl|
+    match "language/#{ctrl}(/:action)", :controller => "language/#{ctrl}"
+  end
+
+  [:dashboard, :assignments, :following, :registration, :notifications, :settings].each do |ctrl|
+    match "translator/#{ctrl}(/:action)", :controller => "translator/#{ctrl}"
+  end
+
+  [:applications, :components, :sources, :chart, :clientsdk, :forum, :glossary, :settings, :translation,
+   :translation_key, :dashboard, :domain, :metrics].each do |ctrl|
     match "admin/#{ctrl}(/:action)", :controller => "admin/#{ctrl}"
   end
   
-  [:application, :source, :component, :language, :translation_key, :translation, :translator, :proxy, :oauth].each do |ctrl|
+  [:application, :source, :component, :settings, :translation_key, :translation, :dashboard, :proxy, :oauth].each do |ctrl|
     match "api/#{ctrl}(/:action)", :controller => "api/#{ctrl}"
   end
 
   [:translator, :language_selector, :language_case_manager, :utils].each do |ctrl|
     match "tools/#{ctrl}(/:action)", :controller => "tools/#{ctrl}"
   end
-  
-  match "api/language/translate.js", :controller => "api/language", :action => "translate"
+
+  [:help, :home].each do |ctrl|
+    match "#{ctrl}(/:action)", :controller => "#{ctrl}"
+  end
+
+  match "api/settings/translate.js", :controller => "api/settings", :action => "translate"
 
   namespace :tr8n do
-    root :to => "translator#index"
+    root :to => "app/dashboard#index"
+    namespace :app do
+      root :to => "app/dashboard#index"
+    end
+    namespace :translator do
+      root :to => "translator/dashboard#index"
+    end
+    namespace :language do
+      root :to => "language/dashboard#index"
+    end
     namespace :admin do
-      root :to => "applications#index"
+      root :to => "admin/applications#index"
     end
   end
   
-  root :to => "translator#index"
+  root :to => "translator/dashboard#index"
 end

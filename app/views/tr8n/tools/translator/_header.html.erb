@@ -5,7 +5,7 @@
   </div>
   
   <div class="quiet small">
-    <%=tra("Original Phrase in {language}", nil, :language => "<span dir='ltr'>#{@translation_key.language.native_name}</span>".html_safe)%>
+    <%=tra("Original Phrase in {language}", :language => "<span dir='ltr'>#{@translation_key.language.name}</span>".html_safe)%>
   </div>
 
   <div class="quote" <%=tr8n_dir_attribute_tag%>>

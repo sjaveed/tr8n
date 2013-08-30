@@ -1,7 +1,7 @@
 <%= will_filter_scripts_tag %>
 
 <%= tr8n_actions_tag([
-    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=translator&id=#{@comp.id}', {height:450})"),
+    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/components/lb_add_objects?type=dashboard&id=#{@comp.id}', {height:450})"),
   ])
 %>
 
@@ -14,7 +14,7 @@
         ctran.translator.id
       }],
       [:name, lambda{|ctran|
-         link_to(ctran.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :id => ctran.translator.id) 
+         link_to(ctran.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :id => ctran.translator.id)
       }],
       [:country, lambda{|ctran|
         ctran.translator.country_code

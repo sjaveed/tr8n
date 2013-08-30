@@ -1,0 +1,28 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= stylesheet_link_tag('tr8n/tr8n_container.css') %>
+
+  <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%> >
+
+    <div style="padding:20px;">
+      <span style="font-size:30px;">
+        <%=tr("{title} Terms of Use", nil, :title => Tr8n::Config.site_title) %>
+      </span>
+      <span style="font-size:12px;color:#888;"><%= tr("updated {date}", nil, :date => Date.new(2013, 5, 15).tr(:monthname_year)) %></span>
+    </div>
+
+    <div style="padding:10px;border:1px solid #ccc;overflow:auto;height:600px;margin:10px;font-family:Arial;font-size:12px;">
+      <%=render :partial => Tr8n::Config.registration_disclaimer_path %>
+    </div>
+
+    <div style="text-align:center; padding:15px;">
+      <button type="submit" class="translator_btn translator_submit_btn" onClick="location='/tr8n/translator/registration?agree=yes';">
+          <span><%=tra("Agree")%></span>
+      </button>
+      <%=tr("or")%>
+      <%=link_to(tr("Cancel"), Tr8n::Config.default_url)%>
+    </div>
+
+  </div>
+
+<% end %>

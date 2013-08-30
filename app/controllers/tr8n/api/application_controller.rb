@@ -26,7 +26,7 @@
 ###########################################################################
 
 class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
-  # for ssl access to the translator - using ssl_requirement plugin  
+  # for ssl access to the dashboard - using ssl_requirement plugin
   ssl_allowed :sync  if respond_to?(:ssl_allowed)
 
   def index

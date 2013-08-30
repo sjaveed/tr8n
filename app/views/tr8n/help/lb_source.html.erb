@@ -18,17 +18,17 @@
     </div>
 
 
-    <%=render :partial => "/tr8n/translator/translation_source_metric", :locals => {:translation_source => @translation_source, :translation_source_metric => @translation_source_metric} %>
+    <%=render :partial => "/tr8n/dashboard/translation_source_metric", :locals => {:translation_source => @translation_source, :translation_source_metric => @translation_source_metric} %>
 
     <div>
       <div style="padding:5px;">
         <%= tra("Not translated - phrases that don't have any translations.") %>
       </div>
       <div style="padding:5px;">
-        <%= tra("Pending Approval - phrases with translations that are awaiting language manager's review.") %>
+        <%= tra("Pending Approval - phrases with translations that are awaiting settings manager's review.") %>
       </div>
       <div style="padding:5px;">
-        <%= tra("Approved - phrases that have been translated, verified and locked by the language manager.") %>
+        <%= tra("Approved - phrases that have been translated, verified and locked by the settings manager.") %>
       </div>
     </div>
   </div>

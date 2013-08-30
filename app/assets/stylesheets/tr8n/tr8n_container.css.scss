@@ -1,0 +1,157 @@
+@import "bootstrap_and_overrides.css.scss";
+
+
+@mixin rounded-corners($radius) {
+  -webkit-border-radius: $radius;
+  -khtml-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
+  border-radius: $radius;
+}
+
+.tr8n_container {
+
+  .sub_section {
+    border: 1px solid #ddd;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius: 10px;
+
+    .header {
+      background-color:#F1F4F9;
+      padding:5px;
+      border-bottom: 1px dotted #ccc;
+      font-size:18px;
+      font-weight:bold;
+      border-top-left-radius:10px;
+      border-top-right-radius:10px;
+    }
+    .rule {
+      font-size:12px;
+      background-color:white;
+      padding:15px;
+      border-bottom: 1px solid #ddd;
+      padding-top:10px;
+    }
+
+    .rule:hover {
+      background-color:#f9f8f7;
+    }
+
+    .rule_buttons {
+      float:right;
+    }
+  }
+
+  .variable {
+    color: #465fff;
+    padding-left: 5px;
+  }
+
+  .tr8n_sexp {
+    .open_paren {
+      color: #66cc66;
+      padding-left: 5px;
+      margin-right: -5px;
+    }
+
+    .close_paren {
+      color: #66cc66;
+      padding-left: 5px;
+      margin-left: -5px;
+    }
+
+    .variable {
+      color: #465fff;
+      padding-left: 5px;
+    }
+
+    .symbol {
+      color: #b1b100;
+      padding-left: 5px;
+    }
+
+    .string {
+      color: #ff0000;
+      padding-left: 5px;
+    }
+
+    .number {
+      color: #cc66cc;
+      padding-left: 5px;
+    }
+  }
+
+  .labeled_box {
+    color:#888;
+    font-size:12px;
+    border: 1px solid #eee;
+    border-radius:5px;
+    margin-top:5px;
+    margin-bottom:5px;
+
+    .title {
+      color:#bbb;
+      background:#f9f8f7;
+      padding:3px;
+      border:1px solid #eee;
+      border-top-left-radius:5px;
+      border-bottom-right-radius:5px;
+    }
+  }
+
+  /****************************************/
+  /*** Classes for the admin user page
+  /****************************************/
+  .tr8n_admin                          {font-size: 12px; font-family:arial}
+  .tr8n_admin h1                       {font-size: 20px; font-weight:bold; border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom:3px; padding-top:5px; }
+  .tr8n_admin h2                       {font-size: 16px; font-weight:bold; border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom:3px; padding-top:5px; }
+
+  .admin_table                         {width: 100%; font-size: 12px; border: 1px #e5e5e5 solid; border-collapse: collapse; background-color: white; margin-bottom: 10px; }
+  .admin_table td                      {padding: 5px; border: 1px solid #e5e5e5; vertical-align:top; text-align:left;}
+  .admin_table th                      {background-color: #efefef; border: none; border: 1px #e5e5e5 solid; font-weight:bold; padding: 5px; vertical-align:top; text-align:left;}
+  .admin_table tr:hover                {background-color: #eee; }
+  .admin_table td.numeric              {text-align: right; }
+  .admin_table th.numeric              {text-align: right; }
+
+  .tr8n_dashboard_chart {
+    text-align:center;
+    width:100%;
+    border:1px dotted #ccc;
+    background-color:white;
+    border:solid 1px #e8e8e8;
+    border-color:#e8e8e8 #bababa #bababa #e8e8e8;
+    @include rounded-corners(10px);
+  }
+
+  /****************************************/
+  /*** Logger Objects
+  /****************************************/
+  .tr8n_logger_obj_key {
+    padding-right: 10px;
+    color: #444;
+  }
+  .tr8n_logger_obj_value_string {
+    color: green;
+  }
+  .tr8n_logger_obj_value_string {
+    color: green;
+  }
+  .tr8n_logger_obj_value_boolean {
+    color: blue;
+  }
+  .tr8n_logger_obj_value_number {
+    color: red;
+  }
+}
+
+.wf_container select {
+  height: 20px !important;
+  line-height: 20px !important;
+}
+
+.table_head_container input[type="checkbox"] {
+  margin-left: 0px !important;
+}
+

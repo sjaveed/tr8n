@@ -4783,11 +4783,11 @@ Expr = Sizzle.selectors = {
 		}),
 
 		// "Whether an element is represented by a :lang() selector
-		// is based solely on the element's language value
+		// is based solely on the element's settings value
 		// being equal to the identifier C,
 		// or beginning with the identifier C immediately followed by "-".
-		// The matching of C against the element's language value is performed case-insensitively.
-		// The identifier C does not have to be a valid language name."
+		// The matching of C against the element's settings value is performed case-insensitively.
+		// The identifier C does not have to be a valid settings name."
 		// http://www.w3.org/TR/selectors/#lang-pseudo
 		"lang": markFunction( function( lang ) {
 			// lang value must be a valid identifider
@@ -11786,7 +11786,7 @@ var VKI_default_keyboard_image = VKI_default_keyboard_image || "";
             var left = oLeft + self.VKI_target.offsetWidth;
             var bottom = scr.offsetHeight - oTop - self.VKI_target.offsetHeight;
             var right = scr.offsetWidth - oLeft - self.VKI_target.offsetWidth;
-            self.VKI_keyboard.style.display = (top < 0 || left < 0 || bottom < 0 || right < 0) ? "none" : "";
+            self.VKI_keyboard.style.display = ""; // (top < 0 || left < 0 || bottom < 0 || right < 0) ? "none" : "";
             if (self.VKI_isIE6) self.VKI_iframe.style.display = (top < 0 || left < 0 || bottom < 0 || right < 0) ? "none" : "";
           }
         }
@@ -12041,7 +12041,7 @@ var Tr8n = {
     if (subject == 'translation') {
       if (action == 'report') {
         Tr8n.UI.Translator.hide();
-        Tr8n.UI.Lightbox.show('/tr8n/translator/lb_report?translation_id=' + msg['id'], {width:600, height:360});
+        Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_report?translation_id=' + msg['id'], {width:600, height:360});
         return;
       } 
     }
@@ -12054,7 +12054,7 @@ var Tr8n = {
     if (subject == 'language_case_map') {
       if (action == 'report') {
         Tr8n.UI.Translator.hide();
-        Tr8n.UI.Lightbox.show('/tr8n/translator/lb_report?language_case_map_id=' + msg['id'], {width:600, height:360});
+        Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_report?language_case_map_id=' + msg['id'], {width:600, height:360});
         return;
       } 
     }
@@ -12064,7 +12064,7 @@ var Tr8n = {
       if (action == 'hide') { Tr8n.UI.Lightbox.hide(); return;}
     }
 
-    if (subject == 'translator') {
+    if (subject == 'dashboard') {
       if (action == 'resize') { Tr8n.UI.Translator.resize(msg['height']); return; } 
       if (action == 'hide') { Tr8n.UI.Translator.hide(); return; }
     } 
@@ -13066,7 +13066,7 @@ Tr8n.SDK.Api = {
 
 	// Makes an oauth jsonp request to Tr8n's servers for data.
 	//
-	// 		Tr8n.SDK.Api.get('/translator', function(data){
+	// 		Tr8n.SDK.Api.get('/dashboard', function(data){
 	//			// do something awesome with Tr8n data
 	//		})
 	//
@@ -13103,7 +13103,7 @@ Tr8n.SDK.Api = {
 	// requests use a GET method but we can get around this by adding a 
 	// _method=post parameter to our request.
 	//
-	// 		Tr8n.Api.post('/translator', function(data){
+	// 		Tr8n.Api.post('/dashboard', function(data){
 	//			// Add awesome data to Tr8n
 	//		})
 	//
@@ -13420,7 +13420,7 @@ Tr8n.SDK.Proxy = {
     if (this.options['fetch_translations_on_init']) {
       Tr8n.log("Fetching translations from the server...");
 
-      Tr8n.api('language/translate', {
+      Tr8n.api('settings/translate', {
         'batch': true, 
         'source': Tr8n.source
       }, function(data) {
@@ -13466,7 +13466,7 @@ Tr8n.SDK.Proxy = {
       if (!data["data"] || !data["data"]["detections"] || data["data"]["detections"].length == 0) 
         return Tr8n.default_locale;
       var first_detection = data["data"]["detections"][0][0];
-      detected_locale = first_detection["language"];
+      detected_locale = first_detection["settings"];
     }).fail(function() {
       return detected_locale;
     });
@@ -13504,7 +13504,7 @@ Tr8n.SDK.Proxy = {
       phrases: window.tr8nJQ.stringifyJSON(phrases)
     };
 
-    Tr8n.api('language/translate', params, function(data) {
+    Tr8n.api('settings/translate', params, function(data) {
         // Tr8n.log("Received response from the server: " + JSON.stringify(data));
         self.updateMissingTranslationKeys(data['phrases']);
     });
@@ -13730,7 +13730,7 @@ Tr8n.SDK.Language.prototype = {
 
 
 Tr8n.SDK.TranslationKey = function(label, description, options) {
-  this.id = null;                         // translation_key_id used by translator
+  this.id = null;                         // translation_key_id used by dashboard
   this.key = null;                        // unique translation key used to find elements 
   this.element_id = Tr8n.Utils.uuid();    // element id to be updated
   this.original = true;                   // by default assuming there are no translations in the cache
@@ -13821,7 +13821,7 @@ Tr8n.SDK.TranslationKey.prototype = {
         // Tr8n.log("Found a valid match: " + translation.label);      
         return this.substituteTokens(translation['label'], token_values, options);
       } else {
-        // Tr8n.log("No valid match found, using default language");      
+        // Tr8n.log("No valid match found, using default settings");
         return this.substituteTokens(this.label, token_values, options);
       }
     }
@@ -14518,7 +14518,7 @@ Tr8n.SDK.TML.Token.prototype = {
   
   toTokenString: function() {
     if (this.type == "data") {
-      // TODO: we may need to add dependencies here: gender, number and language cases
+      // TODO: we may need to add dependencies here: gender, number and settings cases
       return "{" + this.name + "}";
     } else {
       return "[" + this.name + ": " + this.content + "]";
@@ -14544,7 +14544,7 @@ Tr8n.UI.LanguageSelector = {
   },
 
   change: function(locale) {
-    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/change?locale=' + locale, {width:400, height:480, message:"Changing language..."});      
+    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/change?locale=' + locale, {width:400, height:480, message:"Changing settings..."});
   },
 
   toggleInlineTranslations: function() {
@@ -14734,7 +14734,7 @@ Tr8n.UI.Translator = {
     this.container.className      = 'tr8n_translator';
     this.container.id             = 'tr8n_translator';
     this.container.style.display  = "none";
-    this.container.style.width    = "400px";
+    this.container.style.width    = "600px";
 
     this.stem_image = document.createElement('img');
     this.stem_image.src = Tr8n.host + '/assets/tr8n/top_left_stem.png';
@@ -14919,7 +14919,7 @@ Tr8n.Translation = {
 
   report: function(translation_key, translation_id) {
     // TODO: wrap in trl
-    var msg = "Reporting this translation will remove it from this list and the translator will be put on a watch list. \n\nAre you sure you want to report this translation?";
+    var msg = "Reporting this translation will remove it from this list and the dashboard will be put on a watch list. \n\nAre you sure you want to report this translation?";
     if (!confirm(msg)) return;
     Tr8n.TranslatorHelper.vote(translation_key, translation_id, -1000);
   },
@@ -14928,7 +14928,7 @@ Tr8n.Translation = {
     Tr8n.Effects.hide('tr8n_votes_for_' + translation_id);
     Tr8n.Effects.show('tr8n_spinner_for_' + translation_id);
 
-    // the long version updates and reorders translations - used in translator and phrase list
+    // the long version updates and reorders translations - used in dashboard and phrase list
     // the short version only updates the total results - used everywhere else
     if (Tr8n.element('tr8n_translator_votes_for_' + translation_key_id)) {
       Tr8n.Utils.update('tr8n_translator_votes_for_' + translation_key_id, '/tr8n/translations/vote', {

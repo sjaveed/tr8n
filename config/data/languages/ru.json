@@ -6,19 +6,20 @@
   "myheritage_key": "ru",
   "context_rules": {
     "date": {
-      "keys": ["one", "other"],
-      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
-      "variables": ["@n"],
-      "token_mapping": [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}],
-      "default_rule": "other",
+      "keys": ["past", "present", "future"],
+      "token_expression":  "/.*(date|time)(\\d)*$/",
+      "variables": ["@date"],
+      "token_mapping": ["unsupported", "unsupported", {"past": "{$0}", "present":"{$1}", "future":"{$2}"}],
+      "default_rule": "present",
       "rules": {
-        "one":    {"rule": "(= 1 @n)", "description": "{token} is 1", "examples": "1"},
-        "other":  {"description": "{token} is not 1", "examples": "0, 2-999; 1.2, 2.07..."}
+        "past": {"rule": "(> (today) @date)", "description": "{token} is in the past"},
+        "present": {"rule": "(= (today) @date)", "description": "{token} is in the future"},
+        "future": {"rule": "(< (today) @date)", "description": "{token} is in the present"}
       }
     },
     "gender": {
       "keys": ["male", "female", "other"],
-      "token_expression":  "/.*(user|profile|actor|target)(\d)*$/",
+      "token_expression":  "/.*(user|profile|actor|target)(\\d)*$/",
       "variables": ["@gender"],
       "token_mapping": [{"other": "{$0}"}, {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}, {"male": "{$0}", "female": "{$1}", "other": "{$2}"}],
       "default_rule": "other",
@@ -30,7 +31,7 @@
     },
     "genders": {
       "keys": ["male", "female", "unknown", "other"],
-      "token_expression":  "/.*(users|profiles|actors|targets)(\d)*$/",
+      "token_expression":  "/.*(users|profiles|actors|targets)(\\d)*$/",
       "variables": ["@genders"],
       "token_mapping": ["unsupported", "unsupported", "unsupported", {"male": "{$0}", "female":"{$1}", "unknown":"{$2}", "other":"{$3}"}],
       "default_rule": "other",
@@ -43,7 +44,7 @@
     },
     "number": {
       "keys": ["one", "few", "many", "other"],
-      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
+      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\\d)*$/",
       "variables": ["@n"],
       "token_mapping": ["unsupported", "unsupported", {"one": "{$0}", "few": "{$1}", "many": "${2}", "other": "{$2}"}, {"one": "{$0}", "few": "{$1}", "many": "${2}", "other": "{$3}"}],
       "default_rule": "many",

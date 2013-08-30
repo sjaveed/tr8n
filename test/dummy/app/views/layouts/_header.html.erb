@@ -14,11 +14,17 @@
           </li>
 
         <% if current_user %>
-          <li class="<%= 'active' if request.url.index('/tr8n') and not request.url.index('/tr8n/admin') %>">
-            <%=link_to(tr("Translation Tools"), "/tr8n/translator") %>
+          <li class="<%= 'active' if request.url.index('/tr8n/app') %>">
+            <%=link_to(tr("Applications"), "/tr8n/app/dashboard") %>
+          </li>
+          <li class="<%= 'active' if request.url.index('/tr8n/translator') %>">
+            <%=link_to(tr("Translator"), "/tr8n/translator/dashboard") %>
+          </li>
+          <li class="<%= 'active' if request.url.index('/tr8n/language') %>">
+            <%=link_to(tr("Language"), "/tr8n/language/dashboard") %>
           </li>
           <li class="<%= 'active' if request.url.index('/tr8n/admin') %>">
-            <%=link_to(tr("Administration Tools"), "/tr8n/admin/applications") %>
+            <%=link_to(tr("Administration"), "/tr8n/admin/applications") %>
           </li>
         <% end %>
       </ul>

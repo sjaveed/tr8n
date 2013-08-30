@@ -135,9 +135,9 @@ private
   end
 
   def ensure_authorized_call
-    # The call is either made on behalf a translator or application - signed with secret
+    # The call is either made on behalf a dashboard or application - signed with secret
     # ensure_translator
-    # unless translator.admin?
+    # unless dashboard.admin?
     #   raise Tr8n::Exception.new("Must be an administrator to perform this operation.")
     # end
   end

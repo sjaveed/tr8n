@@ -1,0 +1,26 @@
+{
+  "locale": "ar",
+  "english_name": "Arabic",
+  "native_name": "العربية",
+  "right_to_left": true,
+  "google_key": "ar",
+  "context_rules": {
+    "number": {
+      "keys": ["zero", "one", "two", "few", "many", "other"],
+      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
+      "variables": ["@n"],
+      "token_mapping": "unsupported",
+      "default_rule": "other",
+      "rules": {
+        "zero":   {"rule": "(= 0 @n)", "description": "{token} is 0", "examples": "0"},
+        "one":    {"rule": "(= 1 @n)", "description": "{token} is 1", "examples": "1"},
+        "two":    {"rule": "(= 2 @n)", "description": "{token} is 2", "examples": "2"},
+        "few":    {"rule": "(in '3..10' (mod 100 @n))", "description": "{token} mod 100 in 3..10", "examples": "3-10, 103-110, 203-210..."},
+        "many":   {"rule": "(in '11..99' (mod 100 @n))", "description": "{token} mod 100 in 11..99", "examples": "11-99, 111-199, 211-299..."},
+        "other":  {"examples": "100-102, 200-202, 300-302...; 0.2, 1.07, 2.94, 3.81, 11.68, 100.55..."}
+      }
+    }
+  },
+  "language_cases": {
+  }
+}

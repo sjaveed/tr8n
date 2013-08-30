@@ -47,7 +47,7 @@
 class Tr8n::ComponentTranslatorNotification < Tr8n::Notification
 
   def self.distribute(ct)
-    create(:translator => ct.translator, 
+    create(:translator => ct.translator,
       :object => ct, 
       :target => ct.translator, 
       :action => "got_assigned_to_component")

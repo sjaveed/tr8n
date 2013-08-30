@@ -106,12 +106,12 @@ module Tr8n
       end
       
       # return as is
-      def prepare_label_for_translator(label)
+      def prepare_label_for_translator(label, language)
         label
       end
     
       # return only the internal part
-      def prepare_label_for_suggestion(label, index)
+      def prepare_label_for_suggestion(label, index, language)
         label.gsub(name, "(#{index})")
       end
         

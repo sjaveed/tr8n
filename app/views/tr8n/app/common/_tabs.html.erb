@@ -1,0 +1,61 @@
+<div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:#f1f4f9;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
+  <div style="padding:15px;padding-bottom:10px;">
+    <div style="float:right">
+      <div style="float:right">
+        <%= form_tag("/tr8n/app/phrases", :id => "tr8n_key_search_form", :method => :get) do %>
+          <%= text_field_tag("search", "", :style => "width:250px;font-size:13px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search for phrases")) %>
+        <% end %>
+      </div>
+    </div>
+    <div style="font-size:14px; font-weight: bold;padding-bottom:15px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+
+      <ul class="nav nav-pills" style="margin-bottom:-20px;padding-bottom:0px;margin-left:-10px;">
+        <li class="dropdown" id="menu1">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1" style="font-size:25px;">
+            <%= Tr8n::Config.default_application.name %>
+            <b class="caret"></b>
+
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#">
+              <div style="font-size:15px;padding-top:10px;padding-bottom:10px;">
+                World Vital Records <span style=" font-size:12px; padding-left:10px;">www.wvt.com</span>
+              </div>
+            </a></li>
+            <li><a href="#">
+              <div style="font-size:15px;padding-top:10px;padding-bottom:10px;">
+                MyHeritage
+              </div>
+            </a></li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+    <% [
+           ["Dashboard", "dashboard"],
+           ["Site Map", "sitemap"],
+           ["Phrases", "phrases"],
+           ["Translations", "translations"],
+           ["Awards", "awards"],
+           ["Forum", "forum"],
+           ["Glossary", "glossary"],
+       ].each do |tab| %>
+
+      <li class="<%='active' if controller.controller_name == tab.last %>">
+        <%=link_to(tra(tab.first), "/tr8n/app/#{tab.last}")%>
+      </li>
+    <% end %>
+  </ul>
+
+</div>
+
+<script>
+  $(function() {
+    // Setup drop down menu
+    $('.dropdown-toggle').dropdown();
+  });
+</script>

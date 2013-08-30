@@ -19,26 +19,26 @@ defaults:
   enable_tr8n:                true      # enables the engine
   enable_key_caller_tracking: false     # tracks all calls to labels with their traces - for debugging only
 
-  enable_glossary_hints:      true      # shows glossary in the translator    
+  enable_glossary_hints:      true      # shows glossary in the dashboard
   enable_software_keyboard:   true      # shows the soft keyboard icon  
   enable_keyboard_shortcuts:  true      # adds some keyboard shortcuts like ctrl+shift+s
   enable_dictionary_lookup:   true      # shows dictionary words definitions
 
   enable_fallback_languages:  true      # for example: Catalan can fallback onto Spanish
-  enable_translator_language: true      # translator can translate from non-default language
+  enable_translator_language: true      # dashboard can translate from non-default settings
 
   enable_language_flags:      true      # shows flag icons next to the languages
-  enable_language_stats:      true      # shows percent completion of a language
+  enable_language_stats:      true      # shows percent completion of a settings
 
   enable_admin_translations:  true      # registers tr8n admin keys in the system
   enable_admin_inline_mode:   false     # allows tr8n engine sections to be inline translated
 
-  enable_language_cases:      true      # enables support for language cases
+  enable_language_cases:      true      # enables support for settings cases
   enable_client_sdk:          false     # allows javascript to use tr8nProxy object
   enable_browser_cache:       false     # caches translations in the browser
   enable_tml:                 false     # allows to use HTML TML tags in pages
 
-  enable_country_tracking:    true      # tracks and reports translator countries 
+  enable_country_tracking:    true      # tracks and reports dashboard countries
 
   enable_translator_tabs:     true      # enables translation tools tabs 
 
@@ -48,7 +48,7 @@ defaults:
   # Google translation suggestions is now a paid feature by Google.
   # 
   # In order to enable this useful feauture, visit:
-  # http://code.google.com/apis/language/translate/overview.html  
+  # http://code.google.com/apis/settings/translate/overview.html
   #
   # Provide your billing information and register for an API key.
   # 
@@ -72,10 +72,10 @@ defaults:
 
   #############################################################################
   # Set the following flag to true if you would like to allow any registered 
-  # user to become a translator. The users become translators as soon as they
+  # user to become a dashboard. The users become translators as soon as they
   # enable inline translation mode, submit a translation, or vote on a 
   # translation. If the flag is set to false, then a user must be promoted to
-  # be a translator in order to submit or vote on translations.
+  # be a dashboard in order to submit or vote on translations.
   #############################################################################
   open_registration_mode:           true
   enable_registration_disclaimer:   false
@@ -106,10 +106,10 @@ defaults:
   #
   #############################################################################
   caching:
-    enabled:                  false
+    enabled:                  true
     adapter:                  ActiveSupport::Cache
     store:                    ['dalli_store', 'localhost:11211']
-    version:                  'dev:0' # you can change the version to invalidate the cache
+    version:                  '0' # you can change the version to invalidate the cache
 
   #############################################################################
   # By default, Tr8n will use its own logger. If you set it to false,  
@@ -118,7 +118,7 @@ defaults:
   logger:
     enabled:                  true
     log_path:                 "log/tr8n.log"          # location of the log file
-    enable_paranoia_mode:     true                  # logs every translator action
+    enable_paranoia_mode:     false                   # logs every dashboard action
 
   #############################################################################
   # Site Integration Settings
@@ -130,7 +130,7 @@ defaults:
     current_locale_method:    "current_locale"                  # application controller method that sets and returns current locale
     default_url:              "/"                               # default site url where to redirect the user if Tr8n is disabled            
     login_url:                "/login"                          # url for user authorization
-    default_locale:           "en-US"                           # locale of the site default language
+    default_locale:           "en-US"                           # locale of the site default settings
     sitemap_path:             "/config/tr8n/site/sitemap.json"  # location of the sitemap definition file
     splash_screen:            "/tr8n/common/splash_screen"      # location of the Tr8n splash screen  
     tr8n_layout:              "tr8n"                            # layout for the tr8n pages - change it to your layout
@@ -162,7 +162,7 @@ defaults:
     decoration_token_classes: ["Tr8n::Tokens::Decoration"]
     allow_nil_token_values:   true
 
-    # minimal rank makes the translation acceptable for substitution and counts towards the translator rank
+    # minimal rank makes the translation acceptable for substitution and counts towards the dashboard rank
     translation_threshold:    1
 
     viewing_user_token:       "viewing_user"
@@ -255,7 +255,7 @@ defaults:
     server:                   "http://tr8nhub.com"  # visit this url to register your application
     key:                      "YOUR APP KEY"     # replace with your application key
     secret:                   "YOUR APP SECRET"  # replace with your application secret   
-    batch_size:               50                 # how many keys to send to the server at a time - if your site supports many language, decrease the batch size
+    batch_size:               50                 # how many keys to send to the server at a time - if your site supports many settings, decrease the batch size
     all_languages:            false              # use only enabled languages, or all languages
     enable_push:              false              # allows translations to be pushed from the main server using the sync API        
     push_servers:             ["tr8nhub.com"]       # only allows those servers to push translations

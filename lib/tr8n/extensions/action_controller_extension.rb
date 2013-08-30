@@ -24,8 +24,10 @@
 module Tr8n
   module ActionControllerExtension
     def self.included(base)
-      base.send(:include, InstanceMethods) 
-      base.before_filter :init_tr8n
+      base.send(:include, Tr8n::ActionCommonMethods)
+      base.send(:include, InstanceMethods)
+      base.before_filter :tr8n_init
+      base.before_filter :tr8n_reset
     end
 
     module InstanceMethods
@@ -77,7 +79,7 @@ module Tr8n
         self.send(Tr8n::Config.current_locale_method)
       rescue
         # fallback to the default session based locale implementation
-        # choose the first language from the accepted languages header
+        # choose the first settings from the accepted languages header
         session[:locale] = tr8n_user_preferred_locale unless session[:locale]
         session[:locale] = params[:locale] if params[:locale]
         session[:locale]
@@ -92,7 +94,7 @@ module Tr8n
         domain.application
       end
 
-      def init_tr8n
+      def tr8n_init
         return unless Tr8n::Config.enabled?
 
         # initialize request thread variables
@@ -122,106 +124,8 @@ module Tr8n
         end
       end
 
-      ############################################################
-      # There are two ways to call the tr method
-      #
-      # tr(label, desc = "", tokens = {}, options = {})
-      # or 
-      # tr(label, {:desc => "", tokens => {},  ...})
-      ############################################################
-      def tr(label, desc = "", tokens = {}, options = {})
-        return label if label.tr8n_translated?
-
-        if desc.is_a?(Hash)
-          tokens = desc
-          options = tokens
-        end
-
-        options.merge!(:caller => caller)
-        options.merge!(:url => request.url)
-        options.merge!(:host => request.env['HTTP_HOST'])
-
-        unless Tr8n::Config.enabled?
-          return Tr8n::TranslationKey.substitute_tokens(label, tokens, options)
-        end
-
-        Tr8n::Config.current_language.translate(label, desc, tokens, options)
-      end
-
-      # for translating labels
-      def trl(label, desc = "", tokens = {}, options = {})
-        tr(label, desc, tokens, options.merge(:skip_decorations => true))
-      end
-
-      # flash notice
-      def trfn(label, desc = "", tokens = {}, options = {})
-        flash[:trfn] = tr(label, desc, tokens, options)
-      end
-
-      # flash error
-      def trfe(label, desc = "", tokens = {}, options = {})
-        flash[:trfe] = tr(label, desc, tokens, options)
-      end
-
-      # flash error
-      def trfw(label, desc = "", tokens = {}, options = {})
-        flash[:trfw] = tr(label, desc, tokens, options)
-      end
-
-      # for admin translations
-      def tra(label, desc = "", tokens = {}, options = {})
-        if Tr8n::Config.enable_admin_translations?
-          if Tr8n::Config.enable_admin_inline_mode?
-            tr(label, desc, tokens, options)
-          else
-            trl(label, desc, tokens, options)
-          end
-        else
-          Tr8n::Config.default_language.translate(label, desc, tokens, options)
-        end
-      end
-      
-      # for admin translations
-      def trla(label, desc = "", tokens = {}, options = {})
-        tra(label, desc, tokens, options.merge(:skip_decorations => true))
-      end
-  
-      ######################################################################
-      ## Common methods
-      ######################################################################
-
-      def tr8n_current_user
-        Tr8n::Config.current_user
-      end
-
-      def tr8n_current_language
-        Tr8n::Config.current_language
-      end
-
-      def tr8n_default_language
-        Tr8n::Config.default_language
-      end
-
-      def tr8n_current_translator
-        Tr8n::Config.current_translator
-      end
-    
-      def tr8n_current_user_is_admin?
-        Tr8n::Config.current_user_is_admin?
-      end
-    
-      def tr8n_current_user_is_translator?
-        Tr8n::Config.current_user_is_translator?
-      end
-
-      def tr8n_current_user_is_manager?
-        return true if Tr8n::Config.current_user_is_admin?
-        return false unless Tr8n::Config.current_user_is_translator?
-        tr8n_current_translator.manager?
-      end
-    
-      def tr8n_current_user_is_guest?
-        Tr8n::Config.current_user_is_guest?
+      def tr8n_reset
+        #Tr8n.config.reset_request
       end
 
     end

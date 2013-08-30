@@ -29,7 +29,7 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::BaseController
 
   layout 'tr8n/tools/lightbox'
 
-  # language selector window
+  # settings selector window
   def index
     @inline_translations_allowed = false
     @inline_translations_enabled = false
@@ -71,7 +71,7 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::BaseController
   end
 
   def toggle_inline_translations
-    # redirect to login if not a translator
+    # redirect to login if not a dashboard
     if tr8n_current_user_is_translator?
       tr8n_current_translator.toggle_inline_translations!
     end

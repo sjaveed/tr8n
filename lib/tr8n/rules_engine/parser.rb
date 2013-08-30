@@ -35,8 +35,8 @@ module Tr8n
       end
      
       def parse
-        return @expression unless @tokens
-        token = @tokens.shift
+        return @expression unless tokens
+        token = tokens.shift
         return parse_list if (token) == '('
         return token[1..-2] if token =~ /['"].*/
         return token.to_i if token =~ /\d+/
@@ -45,10 +45,34 @@ module Tr8n
      
       def parse_list
         list = []
-        list << parse until @tokens.first == ')'
-        @tokens.shift
+        list << parse until tokens.first == ')'
+        tokens.shift
         list
       end
+
+      def class_for(token)
+        {
+            /^[\(]$/ => 'open_paren',
+            /^[\)]$/ => 'close_paren',
+            /^['|"]/ => 'string',
+            /^@/ => 'variable',
+            /^[\d|.]+$/ => 'number',
+        }.each do |regexp, cls|
+          return cls if regexp.match(token)
+        end
+        'symbol'
+      end
+
+      def decorate
+        return unless tokens
+        html = ["<span class='tr8n_sexp'>"]
+        html << tokens.collect do |token|
+          "<span class='#{class_for(token)}'>#{token}</span>"
+        end.join('')
+        html << "</span>"
+        html.join('').html_safe
+      end
+
     end
 
   end

@@ -13,7 +13,7 @@ function removeLanguage(language_id) {
         <%=link_to_function(image_tag("tr8n/close.gif", :style => "border:0px; padding:5px;", :alt=>trla("Close")), "hideLightbox()") %>
     </div>
     <div style="padding-top:3px">
-        <%=tra("Select your language") %>
+        <%=tra("Select your settings") %>
     </div>
   </div>
   <div class="bd">
@@ -29,7 +29,7 @@ function removeLanguage(language_id) {
                 <li id="lang_<%=language.id%>">
                     <% if language.default? %>
                       <div style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;">
-                         <%=tra('default', 'Default language label') %>
+                         <%=tra('default', 'Default settings label') %>
                       </div>
                     <% else %>
                       <div style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;">
@@ -90,22 +90,22 @@ function removeLanguage(language_id) {
           <% end %>
         
           <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-              <%=link_to(tra("Translation Tools"), "/tr8n/translator", :target => "_top") %>
+              <%=link_to(tra("Translation Tools"), "/tr8n/dashboard", :target => "_top") %>
               <div style="font-weight:normal; color:grey;"><%=tra("Search for translations by other users, vote on translations or add your own translations.") %></div>
           </div>
 
           <% if tr8n_current_translator.manager? %>
             <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-                <%=link_to(tra("Manage Language"), "/tr8n/language", :target => "_top") %>
+                <%=link_to(tra("Manage Language"), "/tr8n/settings", :target => "_top") %>
                 <span style="color: grey; font-size: 10px; padding-left:0.5em; font-style:italic;">language admins only</span>
-                <div style="font-weight:normal; color:grey;"><%=tra("Change language native name and define language rules.") %></div>
+                <div style="font-weight:normal; color:grey;"><%=tra("Change settings native name and define settings rules.") %></div>
             </div>
           <% end %>
 
         <% else %>
             <% if false # TODO: add domain check %>
                 <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-                    <%=link_to(tra("Become a Translator"), "/tr8n/translator/registration", :target => "_top") %>
+                    <%=link_to(tra("Become a Translator"), "/tr8n/dashboard/registration", :target => "_top") %>
                     <div style="font-weight:normal; color:grey;"><%=tra("Allows you to submit and vote on translations") %></div>
                 </div>
             <% end %>
@@ -113,7 +113,7 @@ function removeLanguage(language_id) {
 
         <% if tr8n_current_user_is_admin? %>
           <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-              <%=link_to(tra("Configure tr8n"), "/tr8n/admin/language", :target => "_top") %>
+              <%=link_to(tra("Configure tr8n"), "/tr8n/admin/settings", :target => "_top") %>
               <span style="color: grey; font-size: 10px; padding-left:0.5em; font-style:italic;">tr8n admins only</span>
               <div style="font-weight:normal; color:grey;"><%=tra("Manage translators, languages and translations.") %></div>
           </div>

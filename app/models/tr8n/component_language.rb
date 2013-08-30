@@ -47,7 +47,7 @@ class Tr8n::ComponentLanguage < ActiveRecord::Base
   belongs_to :language, :class_name => 'Tr8n::Language'
 
   def self.find_or_create(component, language)
-    where("component_id = ? and language_id = ?", component.id, language.id).first || create(:component => component, :language => language) 
+    where("component_id = ? and language_id = ?", component.id, language.id).first || create(:component => component, :language => language)
   end
 
   def restricted?

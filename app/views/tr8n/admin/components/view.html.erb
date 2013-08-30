@@ -1,5 +1,5 @@
 <%= render :partial => "/tr8n/admin/common/header" %>
-<%= render :partial => "tabs", :locals => {:current_tab => tra("{comp} [span: is being translated by {translator_count||translator} into {language_count||language}]", nil, :comp => "#{image_tag("tr8n/icons/brick.png")} #{@comp.name}".html_safe, :translator_count => @translators.count, :language_count => @languages.count, :span => lambda{|t| "<span style='font-size:12px; color:#888'>#{t}</span>"})} %>
+<%= render :partial => "tabs", :locals => {:current_tab => tra("{comp} [span: is being translated by {translator_count||dashboard} into {language_count||settings}]", nil, :comp => "#{image_tag("tr8n/icons/brick.png")} #{@comp.name}".html_safe, :translator_count => @translators.count, :language_count => @languages.count, :span => lambda{|t| "<span style='font-size:12px; color:#888'>#{t}</span>"})} %>
 
 <table class="admin_table">
     <tr>

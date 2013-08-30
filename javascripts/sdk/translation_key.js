@@ -22,7 +22,7 @@
 ****************************************************************************/
 
 Tr8n.SDK.TranslationKey = function(label, description, options) {
-  this.id = null;                         // translation_key_id used by translator
+  this.id = null;                         // translation_key_id used by dashboard
   this.key = null;                        // unique translation key used to find elements 
   this.element_id = Tr8n.Utils.uuid();    // element id to be updated
   this.original = true;                   // by default assuming there are no translations in the cache
@@ -113,7 +113,7 @@ Tr8n.SDK.TranslationKey.prototype = {
         // Tr8n.log("Found a valid match: " + translation.label);      
         return this.substituteTokens(translation['label'], token_values, options);
       } else {
-        // Tr8n.log("No valid match found, using default language");      
+        // Tr8n.log("No valid match found, using default settings");
         return this.substituteTokens(this.label, token_values, options);
       }
     }

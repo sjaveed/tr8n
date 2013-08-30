@@ -15,14 +15,14 @@
   :locked, 
   [:language_id, lambda{|lock|
     if lock.language
-      link_to(lock.language.english_name, :controller => "/tr8n/admin/language", :action => :view, :lang_id => lock.language.id)
+      link_to(lock.language.english_name, :controller => "/tr8n/admin/settings", :action => :view, :lang_id => lock.language.id)
     else
        "Deleted Language"    
     end  
   }], 
   [:translator_id, lambda{|lock|
     if lock.translator
-      link_to(lock.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :translator_id => lock.translator.id) 
+      link_to(lock.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :translator_id => lock.translator.id)
     else
        "Deleted Translator"    
     end  

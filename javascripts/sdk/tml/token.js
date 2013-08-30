@@ -97,7 +97,7 @@ Tr8n.SDK.TML.Token.prototype = {
   
   toTokenString: function() {
     if (this.type == "data") {
-      // TODO: we may need to add dependencies here: gender, number and language cases
+      // TODO: we may need to add dependencies here: gender, number and settings cases
       return "{" + this.name + "}";
     } else {
       return "[" + this.name + ": " + this.content + "]";

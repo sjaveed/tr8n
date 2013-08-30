@@ -5,7 +5,7 @@
   "context_rules": {
     "number": {
       "keys": ["one", "other"],
-      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
+      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\\d)*$/",
       "variables": ["@n"],
       "token_mapping": [{"one": "{$0}", "other": "{$0::plural}"}, {"one": "{$0}", "other": "{$1}"}],
       "default_rule": "other",
@@ -16,7 +16,7 @@
     },
     "gender": {
       "keys": ["male", "female", "other"],
-      "token_expression":  "/.*(user|profile|actor|target)(\d)*$/",
+      "token_expression":  "/.*(user|profile|actor|target)(\\d)*$/",
       "variables": ["@gender"],
       "token_mapping": [{"other": "{$0}"}, {"male": "{$0}", "female": "{$1}", "other": "{$0}/{$1}"}, {"male": "{$0}", "female": "{$1}", "other": "{$2}"}],
       "default_rule": "other",
@@ -28,7 +28,7 @@
     },
     "genders": {
       "keys": ["one", "other"],
-      "token_expression":  "/.*(users|profiles|actors|targets)(\d)*$/",
+      "token_expression":  "/.*(users|profiles|actors|targets)(\\d)*$/",
       "variables": ["@size"],
       "token_mapping": ["unsupported", {"one": "{$0}", "other":"{$1}"}],
       "default_rule": "other",
@@ -39,7 +39,7 @@
     },
     "list": {
       "keys": ["one", "other"],
-      "token_expression":  "/.*(items|list)(\d)*$/",
+      "token_expression":  "/.*(items|list)(\\d)*$/",
       "variables": ["@count"],
       "token_mapping": ["unsupported", {"one": "{$0}", "other":"{$1}"}],
       "default_rule": "other",
@@ -50,7 +50,7 @@
     },
     "date": {
       "keys": ["past", "present", "future"],
-      "token_expression":  "/.*(date|time)(\d)*$/",
+      "token_expression":  "/.*(date|time)(\\d)*$/",
       "variables": ["@date"],
       "token_mapping": ["unsupported", "unsupported", {"past": "{$0}", "present":"{$1}", "future":"{$2}"}],
       "default_rule": "present",
@@ -76,11 +76,6 @@
           "operations": "(append 'nd' @value)",
           "description": "append 'nd' if value ends in 2, but not in 12",
           "examples": "2, 22, 32, 42, 102, 122..."
-        },
-        { "conditions": "(&& (match '/3$/' @value) (! (match '/13$/' @value)))",
-          "operations": "(append 'rd' @value)",
-          "description": "append 'nd' if value ends in 3, but not in 13",
-          "examples": "3, 23, 33, 43, 103, 123..."
         },
         { "conditions": "(&& (match '/3$/' @value) (! (match '/13$/' @value)))",
           "operations": "(append 'rd' @value)",
@@ -152,7 +147,7 @@
       "description": "Converts singular form to plural",
       "application": "phrase",
       "rules": [
-        { "conditions": "(in 'sheep,fish,series,species,money,rice,information,equipment' @value)", "operations": "@value", "description": "Uncountable word"},
+        { "conditions": "(in 'sheep,fish,series,species,money,rice,information,equipment' @value)", "operations": "(quote @value)", "description": "Uncountable word"},
         { "conditions": "(= 'move' @value)", "operations": "(quote 'moves')", "description": "Irregular word"},
         { "conditions": "(= 'sex' @value)", "operations": "(quote 'sexes')", "description": "Irregular word"},
         { "conditions": "(= 'child' @value)", "operations": "(quote 'children')", "description": "Irregular word"},

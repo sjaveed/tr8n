@@ -1,3 +1,8 @@
 <p>
-  <%=tr("You have {count|| message}", {:count => 1}) %>
+
+  <% current_user.gender = "male" %>
+
+  <%= tr("{count||message, messages}", :count => 1) %>
+
+
 </p>

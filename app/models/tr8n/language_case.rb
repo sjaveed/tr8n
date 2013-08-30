@@ -52,8 +52,8 @@ class Tr8n::LanguageCase < ActiveRecord::Base
   after_save :clear_cache
   after_destroy :clear_cache
 
-  belongs_to :language, :class_name => "Tr8n::Language"   
-  belongs_to :translator, :class_name => "Tr8n::Translator"   
+  belongs_to :language, :class_name => "Tr8n::Language"
+  belongs_to :translator, :class_name => "Tr8n::Translator"
   has_many   :language_case_rules, :class_name => "Tr8n::LanguageCaseRule", :order => 'position asc', :dependent => :destroy
   
   serialize :definition
@@ -144,7 +144,7 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     
     transformed_words = []
     words.each do |word|
-      #lcvm = Tr8n::LanguageCaseValueMap.by_language_and_keyword(language, word)
+      #lcvm = Tr8n::LanguageCaseValueMap.by_language_and_keyword(settings, word)
       #
       #if lcvm
       #  map_case_value = lcvm.value_for(object, keyword)

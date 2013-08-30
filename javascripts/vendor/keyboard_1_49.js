@@ -1696,7 +1696,7 @@ var VKI_default_keyboard_image = VKI_default_keyboard_image || "";
             var left = oLeft + self.VKI_target.offsetWidth;
             var bottom = scr.offsetHeight - oTop - self.VKI_target.offsetHeight;
             var right = scr.offsetWidth - oLeft - self.VKI_target.offsetWidth;
-            self.VKI_keyboard.style.display = (top < 0 || left < 0 || bottom < 0 || right < 0) ? "none" : "";
+            self.VKI_keyboard.style.display = ""; // (top < 0 || left < 0 || bottom < 0 || right < 0) ? "none" : "";
             if (self.VKI_isIE6) self.VKI_iframe.style.display = (top < 0 || left < 0 || bottom < 0 || right < 0) ? "none" : "";
           }
         }

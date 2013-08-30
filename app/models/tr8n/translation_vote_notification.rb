@@ -62,7 +62,7 @@ class Tr8n::TranslationVoteNotification < Tr8n::Notification
     translators += followers(tkey)
     translators += followers(vote.translator)
 
-    # remove the current translator
+    # remove the current dashboard
     translators = translators.uniq - [vote.translator]
 
     translators.each do |t|

@@ -339,7 +339,7 @@ class Tr8n::Translator < ActiveRecord::Base
   end
 
   def url
-    "/tr8n/translator/index/#{id}"
+    "/tr8n/dashboard/index/#{id}"
   end
 
   def admin?

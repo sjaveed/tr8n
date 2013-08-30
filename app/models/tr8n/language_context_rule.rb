@@ -47,8 +47,8 @@ class Tr8n::LanguageContextRule < ActiveRecord::Base
   attr_accessible :language, :language_context, :translator
   
   belongs_to :language_context,   :class_name => "Tr8n::LanguageContext"   
-  belongs_to :language,           :class_name => "Tr8n::Language"   
-  belongs_to :translator,         :class_name => "Tr8n::Translator"   
+  belongs_to :language,           :class_name => "Tr8n::Language"
+  belongs_to :translator,         :class_name => "Tr8n::Translator"
 
   serialize :definition
 
@@ -75,7 +75,7 @@ class Tr8n::LanguageContextRule < ActiveRecord::Base
 
     re.eval(conditions_expression)
   rescue Exception => ex
-    Tr8n::Logger.error("Failed to evaluate language context rule #{expression}: #{ex.message}")
+    Tr8n::Logger.error("Failed to evaluate settings context rule #{conditions_expression}: #{ex.message}")
     false
   end
 

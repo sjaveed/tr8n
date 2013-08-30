@@ -31,7 +31,7 @@
 #  '_' escaped as '/'
 #  '__' escaped as '__'
 # 
-# Hidden tokens cannot have rules and are there for default language
+# Hidden tokens cannot have rules and are there for default settings
 # substitutions only
 #
 ####################################################################### 
@@ -65,12 +65,12 @@ module Tr8n
       end
     
       # return humanized form
-      def prepare_label_for_translator(label)
+      def prepare_label_for_translator(label, language)
         label.gsub(full_name, humanized_name)
       end
     
       # return humanized form
-      def prepare_label_for_suggestion(label, index)
+      def prepare_label_for_suggestion(label, index, language)
         label.gsub(full_name, humanized_name)
       end
       

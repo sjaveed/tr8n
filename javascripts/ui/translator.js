@@ -78,7 +78,7 @@ Tr8n.UI.Translator = {
     this.container.className      = 'tr8n_translator';
     this.container.id             = 'tr8n_translator';
     this.container.style.display  = "none";
-    this.container.style.width    = "400px";
+    this.container.style.width    = "600px";
 
     this.stem_image = document.createElement('img');
     this.stem_image.src = Tr8n.host + '/assets/tr8n/top_left_stem.png';

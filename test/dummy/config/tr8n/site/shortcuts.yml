@@ -7,16 +7,16 @@ Ctrl+Shift+I:
   script:       "Tr8n.UI.LanguageSelector.toggleInlineTranslations();"
 
 Ctrl+Shift+L:       
-  description:  Shows/hides language selector 
+  description:  Shows/hides settings selector
   script:       "Tr8n.UI.LanguageSelector.show(true);"
 
 Ctrl+Shift+N:       
   description:  Displays notifications
-  script:       "Tr8n.UI.Lightbox.show('/tr8n/translator/lb_notifications', {height:600, width:600});"
+  script:       "Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_notifications', {height:600, width:600});"
 
 Ctrl+Shift+A:       
   description:  Displays all available languages  
-  script:       "window.location = Tr8n.host + '/tr8n/language/table';"
+  script:       "window.location = Tr8n.host + '/tr8n/settings/table';"
 
 Ctrl+Shift+K:       
   description:  Adds software keyboard for each entry field

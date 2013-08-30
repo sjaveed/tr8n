@@ -4783,11 +4783,11 @@ Expr = Sizzle.selectors = {
 		}),
 
 		// "Whether an element is represented by a :lang() selector
-		// is based solely on the element's language value
+		// is based solely on the element's settings value
 		// being equal to the identifier C,
 		// or beginning with the identifier C immediately followed by "-".
-		// The matching of C against the element's language value is performed case-insensitively.
-		// The identifier C does not have to be a valid language name."
+		// The matching of C against the element's settings value is performed case-insensitively.
+		// The identifier C does not have to be a valid settings name."
 		// http://www.w3.org/TR/selectors/#lang-pseudo
 		"lang": markFunction( function( lang ) {
 			// lang value must be a valid identifider

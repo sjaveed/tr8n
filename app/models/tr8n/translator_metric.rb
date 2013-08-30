@@ -72,7 +72,7 @@ class Tr8n::TranslatorMetric < ActiveRecord::Base
     Tr8n::TranslatorMetric.connection.execute("delete from #{Tr8n::TranslatorMetric.table_name} where translator_id = #{translator.id}")
   end
 
-  # updated when an action is done by the translator
+  # updated when an action is done by the dashboard
   def update_metrics!(opts = {})
     return Tr8n::OfflineTask.schedule(self, :update_metrics!, {:offline => true}) unless opts[:offline]
 
@@ -91,7 +91,7 @@ class Tr8n::TranslatorMetric < ActiveRecord::Base
     save
   end
   
-  # updated when an action is done to the translator's translations
+  # updated when an action is done to the dashboard's translations
   def update_rank!(opts = {})
     return Tr8n::OfflineTask.schedule(self, :update_rank!, {:offline => true}) unless opts[:offline]
     

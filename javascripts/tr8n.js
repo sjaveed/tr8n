@@ -179,7 +179,7 @@ var Tr8n = {
     if (subject == 'translation') {
       if (action == 'report') {
         Tr8n.UI.Translator.hide();
-        Tr8n.UI.Lightbox.show('/tr8n/translator/lb_report?translation_id=' + msg['id'], {width:600, height:360});
+        Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_report?translation_id=' + msg['id'], {width:600, height:360});
         return;
       } 
     }
@@ -192,7 +192,7 @@ var Tr8n = {
     if (subject == 'language_case_map') {
       if (action == 'report') {
         Tr8n.UI.Translator.hide();
-        Tr8n.UI.Lightbox.show('/tr8n/translator/lb_report?language_case_map_id=' + msg['id'], {width:600, height:360});
+        Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_report?language_case_map_id=' + msg['id'], {width:600, height:360});
         return;
       } 
     }
@@ -202,7 +202,7 @@ var Tr8n = {
       if (action == 'hide') { Tr8n.UI.Lightbox.hide(); return;}
     }
 
-    if (subject == 'translator') {
+    if (subject == 'dashboard') {
       if (action == 'resize') { Tr8n.UI.Translator.resize(msg['height']); return; } 
       if (action == 'hide') { Tr8n.UI.Translator.hide(); return; }
     } 

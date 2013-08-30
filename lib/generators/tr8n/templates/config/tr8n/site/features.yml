@@ -12,8 +12,8 @@ defaults:
 
   dashboard:
     title:            Dashboard
-    link:             /tr8n/translator/index
-    controller:       translator
+    link:             /tr8n/dashboard/index
+    controller:       dashboard
     actions:          [index]
     default_language: true
     manager_only:     false
@@ -68,8 +68,8 @@ defaults:
 
   rules:
     title:            Manage Language
-    link:             /tr8n/language
-    controller:       language
+    link:             /tr8n/settings
+    controller:       settings
     actions:          [index]
     default_language: true
     manager_only:     true

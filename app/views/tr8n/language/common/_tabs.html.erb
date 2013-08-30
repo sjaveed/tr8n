@@ -1,0 +1,26 @@
+<div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:#f1f4f9;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
+  <div style="padding:15px;padding-bottom:10px;">
+    <div style="float:right">
+      <%= image_tag("tr8n/flags/#{tr8n_current_language.flag}.png", :style => "align:middle") %>
+    </div>
+    <div style="font-size:22px; font-weight: bold;padding-bottom:15px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+      <%=tra("{language} Language", nil, :language => tr8n_current_language.english_name)%>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+    <% [
+          ["Dashboard", "dashboard"],
+          ["Context Rules", "context_rules"],
+          ["Language Cases", "cases"],
+          ["Censorship", "censorship"],
+          ["Settings", "settings"],
+       ].each do |tab| %>
+
+      <li class="<%='active' if controller.controller_name == tab.last %>">
+        <%=link_to(tra(tab.first), "/tr8n/language/#{tab.last}")%>
+      </li>
+    <% end %>
+  </ul>
+
+</div>

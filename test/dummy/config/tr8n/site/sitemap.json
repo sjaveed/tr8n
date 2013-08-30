@@ -20,7 +20,7 @@
         {"label": "Awards", "description": "Tr8n section title", "link": "/tr8n/awards", "sources": ["tr8n/awards/index"]},
         {"label": "Glossary", "description": "Tr8n section title", "link": "/tr8n/glossary", "sources": ["tr8n/glossary/index"]},
         {"label": "Help", "desc": "Tr8n section title", "link": "/tr8n/help", "sources": ["tr8n/help/index"]},
-        {"label": "Language Management", "desc": "Tr8n section title", "sources": ["tr8n/language/index"]}
+        {"label": "Language Management", "desc": "Tr8n section title", "sources": ["tr8n/settings/index"]}
     ]
   },
   {
@@ -30,8 +30,8 @@
     "splitters":    [[0, 0], [1, 2], [3, -1]],
     "sections": [
         {"label": "Language Translations Features", "sources": [], "sections": [
-            {"label": "Selector Window", "description": "",  "sources": ["tr8n/language/select"]},
-            {"label": "Translator Window", "description": "",  "sources": ["tr8n/language/translate"]}
+            {"label": "Selector Window", "description": "",  "sources": ["tr8n/settings/select"]},
+            {"label": "Translator Window", "description": "",  "sources": ["tr8n/settings/translate"]}
         ]},
         {"label": "Flash Notices", "sources": ["FlashNotice"], "sections": []},
         {"label": "Flash Errors", "sources": ["FlashError"], "sections": []},

@@ -47,7 +47,7 @@
 class Tr8n::LanguageForumMessageNotification < Tr8n::Notification
 
   def self.distribute(message)
-    # find translators for all other translations of the key in this language
+    # find translators for all other translations of the key in this settings
     messages = Tr8n::LanguageForumMessage.where("language_forum_topic_id = ?", message.language_forum_topic.id)
 
     translators = []
@@ -57,7 +57,7 @@ class Tr8n::LanguageForumMessageNotification < Tr8n::Notification
 
     translators += followers(message.translator)
 
-    # remove the current translator
+    # remove the current dashboard
     translators = translators.uniq - [message.translator]
 
     translators.each do |t|

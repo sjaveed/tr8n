@@ -1,4 +1,4 @@
-<%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/translations", :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
+<%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
   <%= hidden_field_tag(:origin, params[:origin]) %>
   <%= hidden_field_tag(:translation_key_id, @translation_key.id, :id => :tr8n_translator_translation_key_id) %>
   <%= hidden_field_tag(:translation_id, @translation.id, :id => :tr8n_translator_translation_id) %>
@@ -30,12 +30,12 @@
   						
   						<% if tr8n_current_language.cases.any? and @translation_key.data_tokens? %>
   							<div style="font-size: 10px; padding-top:15px;">
-  								<%=link_to_function(tra("Click here if the token values depend on the language cases"), "Tr8n.Effects.hide('tr8n_translator_tokens_simple_view'); Tr8n.Effects.show('tr8n_translator_tokens_extended_view'); resizeFrame();")%>
+  								<%=link_to_function(tra("Click here if the token values depend on the settings cases"), "Tr8n.Effects.hide('tr8n_translator_tokens_simple_view'); Tr8n.Effects.show('tr8n_translator_tokens_extended_view'); resizeFrame();")%>
   						  </div>
   						<% end %>	
             </div>
   					
-            <% if tr8n_current_language.cases.any? %>
+            <% if false # tr8n_current_language.cases.any? %>
   						<div id="tr8n_translator_tokens_extended_view" style="display:none">
                 <div class="small_section_title" style="color: #999; font-size: 10px;">
                    <strong><%=tra("Data Tokens")%></strong>

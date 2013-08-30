@@ -49,7 +49,7 @@ class Tr8n::TranslationKeyCommentNotification < Tr8n::Notification
   def self.distribute(comment)
     tkey = comment.translation_key
 
-    # find translators for all other translations of the key in this language
+    # find translators for all other translations of the key in this settings
     tanslations = Tr8n::Translation.where("translation_key_id = ? and language_id = ?", tkey.id, comment.language.id)
 
     translators = []
@@ -61,7 +61,7 @@ class Tr8n::TranslationKeyCommentNotification < Tr8n::Notification
     translators += followers(tkey)
     translators += followers(comment.translator)
 
-    # remove the current translator
+    # remove the current dashboard
     translators = translators.uniq - [comment.translator]
 
     translators.each do |t|

@@ -9,7 +9,7 @@
 
 <%= tr8n_will_filter(@results) %>
 
-<%=link_to_function("+ Add New Language", "Tr8n.UI.Lightbox.show('/tr8n/admin/language/lb_update', {height:400})")%>
+<%=link_to_function("+ Add New Language", "Tr8n.UI.Lightbox.show('/tr8n/admin/settings/lb_update', {height:400})")%>
  | 
 <%=link_to_function("Calculate Completeness", 'calculateCompleteness()')%>
 <br>
@@ -62,7 +62,7 @@
 	  }, 'text-align:right;'],
 	  [:actions, lambda{|lang|
 	     html = [] 
-	     html << link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/language/lb_update?lang_id=#{lang.id}', {height:400})")
+	     html << link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/settings/lb_update?lang_id=#{lang.id}', {height:400})")
 	     unless lang.default?
 	      if lang.enabled?
 	        html << link_to("Disable", :action => :disable, :lang_id => lang.id)
@@ -86,20 +86,20 @@
 		if (!confirm('Are you sure you want to run this opperation?'))
 		   return;
 			    
-	  location = '/tr8n/admin/language/calculate_total_metrics'	
+	  location = '/tr8n/admin/settings/calculate_total_metrics'
 	}
 	
   function disableSelectedLanguages() {
     if (!confirm("Are you sure you want to disable those languages?")) return;
     
-    Tr8n.element('languages_form').action = "/tr8n/admin/language/disable";
+    Tr8n.element('languages_form').action = "/tr8n/admin/settings/disable";
     Tr8n.element('languages_form').submit();
   }
 
   function enableSelectedLanguages() {
     if (!confirm("Are you sure you want to enable those languages?")) return;
     
-    Tr8n.element('languages_form').action = "/tr8n/admin/language/enable";
+    Tr8n.element('languages_form').action = "/tr8n/admin/settings/enable";
     Tr8n.element('languages_form').submit();
   }
 
@@ -119,7 +119,7 @@
   function addSelectedLanguagesToComponent() {
     var languages = getSelectedLanguages();
     if (languages.length == 0) {
-      alert('At least one translator must be selected.');
+      alert('At least one dashboard must be selected.');
       return;
     }
     Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_to_component?languages=' + languages, {height:400});

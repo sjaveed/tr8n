@@ -1,0 +1,13 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      Application Dashboard
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>

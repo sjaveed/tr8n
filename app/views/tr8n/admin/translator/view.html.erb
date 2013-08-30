@@ -29,7 +29,7 @@
         </th>
         <td>
             <%= @translator.access_key %>
-            (<%= link_to('generate', {:action => :generate_access_key, :translator_id => @translator.id}, {:confirm => "Are you sure you want to generate translator access key?"}) %>)
+            (<%= link_to('generate', {:action => :generate_access_key, :translator_id => @translator.id}, {:confirm => "Are you sure you want to generate dashboard access key?"}) %>)
             <span style="color: #888">Used to access restricted components when user is logged out.</span>
         </td>
     </tr> 
@@ -153,8 +153,8 @@
 
 <script>
   function performTranslatorAction(action) {
-    var reason = prompt("Please provide a reason why you want to " + action + " this translator:");
-    location = "/tr8n/admin/translator/" + action + "?translator_id=<%=@translator.id%>&reason=" + reason;
+    var reason = prompt("Please provide a reason why you want to " + action + " this dashboard:");
+    location = "/tr8n/admin/dashboard/" + action + "?translator_id=<%=@translator.id%>&reason=" + reason;
   }  
 </script>
 
@@ -181,8 +181,8 @@
 
 <script>
 	function updateTranslatorLevel() {
-		var reason = prompt("Please provide the reason for promoting/demoting this translator:");
+		var reason = prompt("Please provide the reason for promoting/demoting this dashboard:");
 		if (reason) reason = "";
-		location = "/tr8n/admin/translator/update_level?translator_id=<%=@translator.id%>&new_level=" + Tr8n.value('translator_level') + "&reason=" + reason;
+		location = "/tr8n/admin/dashboard/update_level?translator_id=<%=@translator.id%>&new_level=" + Tr8n.value('translator_level') + "&reason=" + reason;
 	}
 </script>

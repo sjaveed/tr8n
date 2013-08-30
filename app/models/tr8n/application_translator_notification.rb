@@ -47,7 +47,7 @@
 class Tr8n::ApplicationTranslatorNotification < Tr8n::Notification
 
   def self.distribute(at)
-    create(:translator => at.translator, 
+    create(:translator => at.translator,
       :object => at, 
       :target => at.translator, 
       :action => "got_assigned_to_application")

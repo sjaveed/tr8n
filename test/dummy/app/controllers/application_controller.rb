@@ -62,7 +62,7 @@ private
   def language
     Tr8n.config.current_language
   end
-  helper_method :language
+  helper_method :settings
 
   def login(email, password, opts = {})
     user = User.authenticate(email, password)

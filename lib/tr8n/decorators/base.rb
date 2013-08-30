@@ -27,7 +27,7 @@ class Tr8n::Decorators::Base
   def self.decorator(translation_key, language, label, options = {})
     Tr8n.config.decorator_class.new(
       :translation_key => translation_key,
-      :language => language,
+      :settings => language,
       :label => label,
       :options => options
     )

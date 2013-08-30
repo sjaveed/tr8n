@@ -23,34 +23,34 @@ def setup_english_language
   english = Tr8n::Language.create!(:locale => "en-US", :english_name => "English")
 
   context = Tr8n::LanguageContext.create(
-      language:     english,
+      settings:     english,
       keyword:      "gender",
       definition:   {
           "token_expression"  => '/.*(profile|user)(\d)*$/',
           "variables"         => ['@gender'],
           "token_mapping"     => [{"other" => "{$0}"}, {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"}]
       },
-      description:   "Gender language context"
+      description:   "Gender settings context"
   )
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => "(= 'male' @gender)")
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "female", :definition => "(= 'female' @gender)")
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => {"conditions" => "(= 'male' @gender)"})
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "female", :definition => {"conditions" => "(= 'female' @gender)"})
   Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
 
   context = Tr8n::LanguageContext.create(
-      language:     english,
+      settings:     english,
       keyword:      "number",
       definition:   {
           "token_expression"  => '/.*(num|count)(\d)*$/',
           "variables"         => ['@n'],
           "token_mapping"     => [{"one" => "{$0}", "other" => "{$0::plural}"}, {"one" => "{$0}", "other" => "{$1}"}]
       },
-      description:   "Number language context"
+      description:   "Number settings context"
   )
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => "(= 1 @n)")
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => {"conditions" => "(= 1 @n)"})
   Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
 
   plural_case = Tr8n::LanguageCase.create(
-      language:     english,
+      settings:     english,
       keyword:      "plural",
       latin_name:   "Plural",
       native_name:  "Plural",
@@ -101,7 +101,7 @@ def setup_english_language
 
 
   singular_case = Tr8n::LanguageCase.create(
-      language:     english,
+      settings:     english,
       keyword:      "singular",
       latin_name:   "Singular",
       native_name:  "Singular",
@@ -155,7 +155,7 @@ def setup_russian_language
   russian = Tr8n::Language.create!(:locale => "ru", :english_name => "Russian")
 
   context = Tr8n::LanguageContext.create(
-      language:     russian,
+      settings:     russian,
       keyword:      "gender",
       definition:   {
           "rules"             => ["male", "female", "other"],
@@ -163,14 +163,14 @@ def setup_russian_language
           "variables"         => ['@gender'],
           "token_mapping"     => [{"other" => "{$0}"}, {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"}]
       },
-      description:   "Gender language context"
+      description:   "Gender settings context"
   )
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => "(= 'male' @gender)")
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "female", :definition => "(= 'female' @gender)")
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => {"conditions" => "(= 'male' @gender)"})
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "female", :definition => {"conditions" => "(= 'female' @gender)"})
   Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
 
   context = Tr8n::LanguageContext.create(
-      language:     russian,
+      settings:     russian,
       keyword:      "number",
       definition:   {
           "rules"             => ["one", "few", "many", "other"],
@@ -178,11 +178,25 @@ def setup_russian_language
           "variables"         => ['@n'],
           "token_mapping"     => ["unsupported", "unsupported", {"one" => "{$0}", "few" => "{$1}", "many" => "{$2}"}]
       },
-      description:   "Number language context"
+      description:   "Number settings context"
   )
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => "(&& (= 1 (mod @n 10)) (!= 11 (mod @n 100)))")
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "few", :definition => "(&& (in '2..4' (mod @n 10)) (not (in '12..14' (mod @n 100))))")
-  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "many", :definition => "(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))")
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => {"conditions" => "(&& (= 1 (mod @n 10)) (!= 11 (mod @n 100)))"})
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "few", :definition => {"conditions" => "(&& (in '2..4' (mod @n 10)) (not (in '12..14' (mod @n 100))))"})
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "many", :definition => {"conditions" => "(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))"})
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
+
+  context = Tr8n::LanguageContext.create(
+      settings:     russian,
+      keyword:      "value",
+      definition:   {
+          "rules"             => ["vowels", "other"],
+          "token_expression"  => '/.*/',
+          "variables"         => ['@n'],
+          "token_mapping"     => ["unsupported", {"one" => "{$0}", "other" => "{$1}"}]
+      },
+      description:   "Value settings context"
+  )
+  Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "vowels", :definition => {"conditions" => "(match '/^[aoue]/' @value)"})
   Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
 
   russian

@@ -218,13 +218,23 @@
 		max-height:400px;
 	 	@include rounded-corners(10px);	
 	}
-}
 
-.tr8n_translator .stem                         {position:absolute;margin:0;}
-.tr8n_translator .stem.top_left                {top:-12px;}
-.tr8n_translator .stem.top_right               {top:-12px;-moz-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); filter: fliph;}
-.tr8n_translator .stem.bottom_left             {bottom:-12px;-moz-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: flipv;}
-.tr8n_translator .stem.bottom_right            {bottom:-12px;-moz-transform: scaleX(-1), scaleY(-1); -webkit-transform: scaleX(-1), scaleY(-1); transform: scaleX(-1), scaleY(-1); filter: fliph, flipv;}
+    .stem {
+      position:absolute;margin:0;
+    }
+    .top_left {
+      top:-12px;
+    }
+    .top_right {
+      top:-12px;-moz-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); filter: fliph;
+    }
+    .bottom_left {
+      bottom:-12px;-moz-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: flipv;
+    }
+    .bottom_right  {
+      bottom:-12px;-moz-transform: scaleX(-1), scaleY(-1); -webkit-transform: scaleX(-1), scaleY(-1); transform: scaleX(-1), scaleY(-1); filter: fliph, flipv;
+    }
+}
 
 .tr8n_translator_content {
 	font-family: verdana; 
@@ -299,15 +309,6 @@ button::-moz-focus-inner                        {border:none;}
 .language_selector_trigger                      {cursor: pointer; font-family:arial; font-size:12px; vertical-algin:middle}
 .language_selector                              {position: absolute;top: 0;left: 0;font-family: verdana;width: 14em;background: #f9f8f7;padding: 0;}
 
-.tr8n_dashboard_chart {
-	text-align:center; 
-	width:100%; 
-	border:1px dotted #ccc; 
-	background-color:white; 
-	border:solid 1px #e8e8e8;
-	border-color:#e8e8e8 #bababa #bababa #e8e8e8;
- 	@include rounded-corners(10px);	
-}
 
 .tr8n_language_selector {
 	position: absolute; 
@@ -411,57 +412,6 @@ button::-moz-focus-inner                        {border:none;}
 
 
 /****************************************/
-/*** Classes for the feature tabs
-/****************************************/
-   
-.translations_navigation {
-	height:70px; 
-	position:relative; 
-	padding:15px 15px 0px; 
-	padding-top:20px;
-	padding-left:15px;
-	background-color:#f1f4f9; 
-	border:1px solid #ccc; 
-	margin:0px; 
-	margin-bottom:10px;
-	border-bottom:solid 1px #ddd;
-	border-color:#e8e8e8 #bababa #bababa #e8e8e8;
- 	@include rounded-corners(10px);	
-}
-
-.translations_tab_nav                     {list-style-type:none;bottom:-1px !important;position:absolute;margin:0px;padding:0px;font-family:arial;}
-.translations_tab_nav li                  {float:left;margin-right:2px;cursor:pointer;text-align:bottom;}
-.translations_tab_nav li a                {display:block;padding:6px 0px 6px 10px; outline:none;}
-
-.translations_tabs                        {margin-left:5px;zoom:1}
-.translations_tabs li                     {background: url('/assets/tr8n/site_sprite.gif') no-repeat right -255px;font-size:12px;font-weight:bold;margin:0;position:relative;z-index:1}
-.translations_tabs li a                   {padding:13px 30px 6px 6px;color:#1166bb;cursor:pointer;text-decoration:none;line-height:14px;}
-.translations_tabs li a:hover             {text-decoration:none}
-.translations_tabs li.current             {margin-left: -30px;background-position:right -360px;z-index:2}
-.translations_tabs li.current a           {padding-left:30px;background: url('/assets/tr8n/site_sprite.gif') no-repeat left -325px;color: #333;font-size:13px;}
-.translations_tabs li.last                {background-position:right -290px;}
-.translations_tabs li.last a              {padding-right:30px;}
-.translations_tabs li.last_current        {margin-left: -25px;background-position:right -430px;}
-.translations_tabs li.last_current a      {padding-left:30px;color: #000;}
-.translations_tabs li.first a             {padding-left:30px;background:url('/assets/tr8n/site_sprite.gif') no-repeat 0 -220px;}
-.translations_tabs li.first_current       {margin:0}
-.translations_tabs li.first_current a     {background-position:0 -395px;color: #000;}
-
-/****************************************/
-/*** Classes for the admin user page
-/****************************************/
-.tr8n_admin                                {font-size: 12px; font-family:arial}
-.tr8n_admin h1                             {font-size: 20px; font-weight:bold; border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom:3px; padding-top:5px; }
-.tr8n_admin h2                             {font-size: 16px; font-weight:bold; border-bottom: 1px solid #ccc; margin-bottom: 10px; padding-bottom:3px; padding-top:5px; }
-
-.tr8n .admin_table                         {width: 100%; font-size: 12px; border: 1px #e5e5e5 solid; border-collapse: collapse; background-color: white; margin-bottom: 10px; }
-.tr8n .admin_table td                      {padding: 5px; border: 1px solid #e5e5e5; vertical-align:top; text-align:left;}
-.tr8n .admin_table th                      {background-color: #efefef; border: none; border: 1px #e5e5e5 solid; font-weight:bold; padding: 5px; vertical-align:top; text-align:left;}
-.tr8n .admin_table tr:hover                {background-color: #eee; }
-.tr8n .admin_table td.numeric              {text-align: right; }
-.tr8n .admin_table th.numeric              {text-align: right; }
-
-/****************************************/
 /***  Pure CSS Buttons.
 /***  Learn more ~ http://www.halmatferello.com/lab/pure-css-buttons/
 /***  Licensed under GPL and MIT.
@@ -495,26 +445,6 @@ body.tr8n_grey_disabled_button                  {background-position: left -300p
 body.tr8n_grey_disabled_button span             {background-position: right -626px; }
 
 .tr8n_cancel_link                               {font-size:12px;font-family:arial;}
-
-/****************************************/
-/*** Logger Objects
-/****************************************/
-.tr8n_logger_obj_key {
-  padding-right: 10px;
-  color: #444;
-}
-.tr8n_logger_obj_value_string {
-  color: green;
-}
-.tr8n_logger_obj_value_string {
-  color: green;
-}
-.tr8n_logger_obj_value_boolean {
-  color: blue;
-}
-.tr8n_logger_obj_value_number {
-  color: red;
-}
 
 
 /****************************************/

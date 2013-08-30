@@ -1,5 +1,2 @@
-<% if Tr8n::Config.enable_translator_tabs? and not tr8n_current_user_is_guest? %>
-	<%= render :partial => "/tr8n/common/tabs" %>
-<% end %>	
-
-<div class="tr8n" <%=tr8n_dir_attribute_tag%> >
+<%= stylesheet_link_tag('tr8n/tr8n_container.css') %>
+<%= javascript_include_tag('tr8n/tr8n_container.js') %>

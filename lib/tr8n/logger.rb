@@ -68,5 +68,14 @@ module Tr8n
     def self.fatal(msg)
       logger.fatal(msg)
     end
+
+    def self.measure(msg)
+      t0 = Time.now
+      if block_given?
+        yield
+      end
+      t1 = Time.now
+      debug(msg + " #{(t1-t0)} mls")
+    end
   end 
 end

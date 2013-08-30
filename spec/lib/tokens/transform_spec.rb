@@ -68,7 +68,7 @@ describe Tr8n::Tokens::Transform do
         english = Tr8n::Language.create!(:locale => "en-US", :english_name => "English")
 
         context = Tr8n::LanguageContext.create(
-            :language   =>     english,
+            :settings   =>     english,
             :keyword    =>     "gender",
             :definition =>   {
                 "token_expression"  => '/.*(profile|user)(\d)*$/',
@@ -76,7 +76,7 @@ describe Tr8n::Tokens::Transform do
                 "token_mapping"     => [{"other" => "{$0}"}, {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"}],
                 "default_rule"      => "other"
             },
-            :description =>    "Gender language context"
+            :description =>    "Gender settings context"
         )
         Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "male", :definition => "(= 'male' @gender)")
         Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "female", :definition => "(= 'female' @gender)")
@@ -113,7 +113,7 @@ describe Tr8n::Tokens::Transform do
         english = Tr8n::Language.create!(:locale => "en-US", :english_name => "English")
 
         context = Tr8n::LanguageContext.create(
-            :language   =>     english,
+            :settings   =>     english,
             :keyword    =>     "number",
             :definition =>   {
                 "token_expression"  => '/.*(num)(\d)*$/',
@@ -121,13 +121,13 @@ describe Tr8n::Tokens::Transform do
                 "token_mapping"     => [{"one" => "{$0}", "other" => "{$0::plural}"}, {"one" => "{$0}", "other" => "{$1}"}],
                 "default_rule"      => "other"
             },
-            :description =>    "Number language context"
+            :description =>    "Number settings context"
         )
         Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => "(= 1 @n)")
         Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "other")
 
         plural_case = Tr8n::LanguageCase.create(
-            language:     english,
+            settings:     english,
             keyword:      "plural",
             latin_name:   "Plural",
             native_name:  "Plural",

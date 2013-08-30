@@ -50,7 +50,7 @@
 
 class Tr8n::Language < ActiveRecord::Base
   self.table_name = :tr8n_languages  
-  attr_accessible :locale, :english_name, :native_name, :enabled, :right_to_left, :completenss, :fallback_language_id, :curse_words, :featured_index
+  attr_accessible :locale, :english_name, :native_name, :enabled, :right_to_left, :completeness, :fallback_language_id, :curse_words, :featured_index
   attr_accessible :google_key, :facebook_key, :myheritage_key
   attr_accessible :fallback_language
 
@@ -67,8 +67,6 @@ class Tr8n::Language < ActiveRecord::Base
   has_many :translation_key_locks,  :class_name => 'Tr8n::TranslationKeyLock',  :dependent => :destroy
   has_many :language_metrics,       :class_name => 'Tr8n::LanguageMetric'
 
-  alias :contexts :language_contexts
-
   ###############################################################
   ## CACHE METHODS
   ###############################################################
@@ -80,8 +78,8 @@ class Tr8n::Language < ActiveRecord::Base
     self.class.cache_key(locale)
   end
   
-  def context_rules_cache_key
-    "rules_[#{locale}]"
+  def language_contexts_cache_key
+    "contexts_[#{locale}]"
   end
 
   def language_cases_cache_key
@@ -98,7 +96,7 @@ class Tr8n::Language < ActiveRecord::Base
 
   def update_cache
     Tr8n::Cache.delete(cache_key)
-    Tr8n::Cache.delete(context_rules_cache_key)
+    Tr8n::Cache.delete(language_contexts_cache_key)
     Tr8n::Cache.delete(language_cases_cache_key)
     Tr8n::Cache.delete(self.class.featured_languages_cache_key)
     Tr8n::Cache.delete(self.class.enabled_languages_cache_key)
@@ -124,21 +122,30 @@ class Tr8n::Language < ActiveRecord::Base
     find_by_locale(lcl) || create(:locale => lcl, :english_name => english_name) 
   end
 
+  def contexts
+    @contexts ||= begin
+      Tr8n::Cache.fetch(language_contexts_cache_key) do
+        language_contexts
+      end
+    end
+  end
+
   def context_by_keyword(keyword, opts = {})
-    ctx = Tr8n::LanguageContext.by_keyword_and_language(keyword, self)
-    ctx ||= fallback_language.context_by_keyword(keyword) if fallback_language
-    ctx
+    contexts.detect{|ctx| ctx.keyword == keyword}
   end
 
   def context_by_token_name(token_name, opts = {})
-    ctx = Tr8n::LanguageContext.by_token_and_language(token_name, self)
-    ctx ||= fallback_language.context_by_token_name(token_name) if fallback_language
-    ctx
+    contexts.each do |ctx|
+      return ctx if ctx.applies_to_token?(token_name)
+    end
+    nil
   end
 
   def cases
-    Tr8n::Cache.fetch(language_cases_cache_key) do
-      language_cases
+    @cases ||= begin
+      Tr8n::Cache.fetch(language_cases_cache_key) do
+        language_cases
+      end
     end
   end
 
@@ -179,9 +186,14 @@ class Tr8n::Language < ActiveRecord::Base
   def valid_case?(case_keyword)
     case_for(case_keyword) != nil
   end
-  
+
+  def name
+    return native_name if native_name
+    english_name
+  end
+
   def full_name
-    return english_name if english_name == native_name
+    return english_name if english_name == native_name or native_name.blank?
     "#{english_name} - #{native_name}"
   end
 
@@ -284,7 +296,7 @@ class Tr8n::Language < ActiveRecord::Base
     end
   end
 
-  # you can add -bad_words to override the fallback language rules
+  # you can add -bad_words to override the fallback settings rules
   def accepted_prohibited_words
     return [] if curse_words.blank?
     @accepted_prohibited_words ||= begin
@@ -365,9 +377,9 @@ class Tr8n::Language < ActiveRecord::Base
         hash[:language_contexts][ctx.keyword] = ctx.to_api_hash(:rules => true)
       end
 
-      hash[:language_cases] = {}
+      hash[:cases] = {}
       language_cases.each do |lc|
-        hash[:language_cases][lc.keyword] = lc.to_api_hash(:rules => true)
+        hash[:cases][lc.keyword] = lc.to_api_hash(:rules => true)
       end
     end
 

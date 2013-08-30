@@ -4,12 +4,12 @@
   <div class="section" id="tr8n_translator_translations_container">
     <div class="small_section_title">
       <div style="<%=tr8n_style_attribute_tag('float', 'right')%>;font-weight:normal;font-size:10px;color:grey;">
-        <%=link_to(tra("view all"), {:controller => "/tr8n/phrases", :action => :view, :translation_key_id => @translation_key.id, :anchor => "translations"}, :target => "_top") %> | 
+        <%=link_to(tra("view all"), {:controller => "/tr8n/app/phrases", :action => :view, :translation_key_id => @translation_key.id, :anchor => "translations"}, :target => "_top") %> |
 				<% 
            comments_count = @translation_key.comments.count
            link_title = (comments_count > 0) ? "view comments (#{comments_count})" : "add comments"
         %>
-        <%=link_to(tra(link_title), {:controller => "/tr8n/phrases", :action => :view, :translation_key_id => @translation_key.id, :anchor => "comments"}, :target => "_top") %>
+        <%=link_to(tra(link_title), {:controller => "/tr8n/app/phrases", :action => :view, :translation_key_id => @translation_key.id, :anchor => "comments"}, :target => "_top") %>
       </div>
       <strong><%=tra("Vote on Translations")%></strong>
     </div>
@@ -31,7 +31,7 @@
       <%=tra("Lock this phrase if you believe that it has been translated enough.") %>
     </div>   
 
-    <%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/translations", :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
+    <%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
       <%= hidden_field_tag(:origin, params[:origin]) %>
       <%= hidden_field_tag(:translation_key_id, @translation_key.id, :id => :tr8n_translator_translation_key_id) %>
       <%= hidden_field_tag(:lock, "true") %>

@@ -2,12 +2,12 @@
 <%= render :partial => "tabs" %>
 <%= tr8n_will_filter(@translators) %>
 
-<%= link_to_function("+ Register new translator", "Tr8n.UI.Lightbox.show('/tr8n/admin/translator/lb_register', {height:150})") %>
+<%= link_to_function("+ Register new dashboard", "Tr8n.UI.Lightbox.show('/tr8n/admin/dashboard/lb_register', {height:150})") %>
  | 
 <%= link_to("Update translators stats", {:action => :update_stats}, :confirm => "Are you sure you want to run this opperation?")%>
 
 <%= form_tag("", :id => "tr8n_form") do %>
-  <%= hidden_field_tag(:type, "translator") %>
+  <%= hidden_field_tag(:type, "dashboard") %>
   <%= will_filter_table_tag(@translators, :columns => [
     [:icn, image_tag("tr8n/icons/user.png"), :title => "", :style => "width:12px;"],
     [:checkbox, :ids],
@@ -87,7 +87,7 @@
   function addSelectedTranslatorsToComponent() {
     var translators = getSelectedTranslators();
     if (translators.length == 0) {
-      alert('At least one translator must be selected.');
+      alert('At least one dashboard must be selected.');
       return;
     }
     Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_to_component?translators=' + translators, {height:400});

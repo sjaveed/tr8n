@@ -43,7 +43,7 @@ class Tr8n::TranslatorFollowing < ActiveRecord::Base
   attr_accessible :translator_id, :object_id, :object_type
   attr_accessible :translator, :object
 
-  belongs_to :translator, :class_name => "Tr8n::Translator"   
+  belongs_to :translator, :class_name => "Tr8n::Translator"
   belongs_to :object, :polymorphic => true
 
   after_create :distribute_notification

@@ -12,14 +12,14 @@
     }], 
     [:language_id, lambda{|comment|
       if comment.language
-        link_to(comment.language.english_name, :controller => "/tr8n/admin/language", :action => :view, :id => comment.language.id)
+        link_to(comment.language.english_name, :controller => "/tr8n/admin/settings", :action => :view, :id => comment.language.id)
       else
          "Deleted Language"    
       end  
     }], 
     [:translator_id, lambda{|comment|
       if comment.translator
-        link_to(comment.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :id => comment.translator.id) 
+        link_to(comment.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :id => comment.translator.id)
       else
          "Deleted Translator"    
       end  

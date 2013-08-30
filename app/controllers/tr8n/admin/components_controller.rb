@@ -59,11 +59,11 @@ class Tr8n::Admin::ComponentsController < Tr8n::Admin::BaseController
     @comp = Tr8n::Component.find_by_id(params[:id])
     @app = @comp.application
 
-    if @type == "language"
+    if @type == "settings"
       @languages = @app.languages
     elsif @type == "source"   
       @sources = @app.sources.order("source asc")
-    elsif @type == "translator"   
+    elsif @type == "dashboard"
       @translators = @app.translators
     end
     
@@ -174,7 +174,7 @@ class Tr8n::Admin::ComponentsController < Tr8n::Admin::BaseController
 private
 
   def component_link_types
-    ["language", "source", "translator"]
+    ["settings", "source", "dashboard"]
   end
 
 end

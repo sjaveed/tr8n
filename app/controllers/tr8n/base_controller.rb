@@ -44,7 +44,6 @@ module Tr8n
   
     before_filter :validate_tr8n_enabled, :except => [:translate]
     before_filter :validate_guest_user, :except => [:select, :switch, :translate, :table, :registration]
-    before_filter :validate_current_translator, :except => [:select, :switch, :translate, :table, :registration]
     before_filter :validate_remote_application
 
     layout Tr8n::Config.site_info[:tr8n_layout]
@@ -64,26 +63,6 @@ module Tr8n
     def dismiss_lightbox
       redirect_to(:controller => "/tr8n/help", :action => "lb_done", :origin => params[:origin])
     end
-  
-    def tr8n_features_tabs
-      @tabs ||= begin 
-        tabs = Tr8n::Config.features.clone
-        unless Tr8n::Config.multiple_base_languages?
-          tabs = tabs.select{|tab| tab[:default_language]} if tr8n_current_language.default?
-        end
-    
-        unless tr8n_current_user_is_translator? and tr8n_current_translator.manager?
-          tabs = tabs.select{|tab| !tab[:manager_only]}  
-        end
-
-        if tr8n_current_language.dir == 'rtl'
-          tabs = tabs.reverse 
-        end
-        
-        tabs
-      end
-    end
-    helper_method :tr8n_features_tabs
 
     def redirect_to_source
       # Do not allow redirects to external websites
@@ -129,7 +108,7 @@ module Tr8n
       end
     end
 
-    # make sure that the current user is a translator
+    # make sure that the current user is a dashboard
     def validate_current_translator
       if tr8n_current_user_is_translator? and tr8n_current_translator.blocked?
         trfe("Your translation privileges have been revoked. Please contact the site administrator for more details.")
@@ -141,25 +120,20 @@ module Tr8n
       redirect_to("/tr8n/translator/registration")
     end
 
-    # make sure that the current user is a language manager
+    # make sure that the current user is a settings manager
     def validate_language_management
       # admins can do everything
       return if tr8n_current_user_is_admin?
     
       if tr8n_current_language.default?
-        trfe("Only administrators can modify this language")
+        trfe("Only administrators can modify this settings")
         return redirect_to(tr8n_features_tabs.first[:link])
       end
 
       unless tr8n_current_user_is_translator? and tr8n_current_translator.manager? 
-        trfe("In order to manage a language you first must request to become a manager of that language.")
+        trfe("In order to manage a settings you first must request to become a manager of that settings.")
         return redirect_to(tr8n_features_tabs.first[:link])
       end
-    end
-  
-    def validate_default_language
-      return if Tr8n::Config.multiple_base_languages?
-      redirect_to(tr8n_features_tabs.first[:link]) if tr8n_current_language.default?
     end
   
     def validate_language

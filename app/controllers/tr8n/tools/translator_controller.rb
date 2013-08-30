@@ -26,8 +26,8 @@ class Tr8n::Tools::TranslatorController < Tr8n::BaseController
   skip_before_filter :validate_guest_user
   skip_before_filter :validate_current_translator
 
-  # for ssl access to the translator - using ssl_requirement plugin  
-  ssl_allowed :translator, :select, :lists, :switch, :remove  if respond_to?(:ssl_allowed)
+  # for ssl access to the translator - using ssl_requirement plugin
+  ssl_allowed :index, :select, :lists, :switch, :remove  if respond_to?(:ssl_allowed)
 
   layout 'tr8n/tools/translator'
 

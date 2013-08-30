@@ -25,7 +25,7 @@
               <% else %>
                 <%=link_to_function(image_tag("tr8n/thumb_up.png", :title=>trla("This translation is good")), "Tr8n.Translation.vote('#{trn.translation_key.id}', '#{trn.id}', 1)")%> 
                 <%=link_to_function(image_tag("tr8n/thumb_down.png", :title=>trla("This translation is bad")), "Tr8n.Translation.vote('#{trn.translation_key.id}', '#{trn.id}', -1)")%> 
-                <%=link_to_function(image_tag("tr8n/exclamation.png", :title=>trla("This translation contains abusive language")), 
+                <%=link_to_function(image_tag("tr8n/exclamation.png", :title=>trla("This translation contains abusive settings")),
                 "Tr8n.postMessage({'subject': 'translation', 'action': 'report', 'id': '#{trn.id}'}, '#{params[:origin]}')")%>
               <% end %>   
             </td>
@@ -33,7 +33,7 @@
               <%= trn.label %>
               <% if trn.context %>
                 <div style="font-size: 10px; color: grey; padding-top:3px;">
-                  <%=tra("Context:")%> <%= trn.context %>  
+                  <%=tra("Context:")%> <%= trn.context_description %>
                 </div>
               <% end %>
             </td>

@@ -26,12 +26,12 @@
             <% if tr8n_current_user %>
               <%=tra("You must agree to the terms of use.") %>
               <div style="font-size:12px;text-align:center;padding-top:15px;">
-                <%=tra("[link: Click here] to view the terms of use.", nil, :link => lambda{|txt| link_to(txt, "/tr8n/translator/registration", :target => "_top")} ) %>
+                <%=tra("[link: Click here] to view the terms of use.", nil, :link => lambda{|txt| link_to(txt, "/tr8n/dashboard/registration", :target => "_top")} ) %>
               </div>
             <% else %>
-              <%=tra("You must be a registered translator.") %>
+              <%=tra("You must be a registered dashboard.") %>
               <div style="font-size:12px;text-align:center;padding-top:15px;">
-                <%=tra("[link: Click here] to create a translator account.", nil, :link => lambda{|txt| link_to(txt, Tr8n::Config.login_url, :target => "_top")} ) %>
+                <%=tra("[link: Click here] to create a dashboard account.", nil, :link => lambda{|txt| link_to(txt, Tr8n::Config.login_url, :target => "_top")} ) %>
               </div>
             <% end %>
           <% end %>

@@ -56,8 +56,8 @@ namespace :tr8n do
     Tr8n::LanguageMetric.calculate_language_metrics
   end
 
-  desc "Initializes default language cases"
-  task :language_cases => :environment do
+  desc "Initializes default settings cases"
+  task :cases => :environment do
     Tr8n::Language.all.each do |lang|
       lang.reset_language_cases!
     end 

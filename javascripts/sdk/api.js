@@ -25,7 +25,7 @@ Tr8n.SDK.Api = {
 
 	// Makes an oauth jsonp request to Tr8n's servers for data.
 	//
-	// 		Tr8n.SDK.Api.get('/translator', function(data){
+	// 		Tr8n.SDK.Api.get('/dashboard', function(data){
 	//			// do something awesome with Tr8n data
 	//		})
 	//
@@ -62,7 +62,7 @@ Tr8n.SDK.Api = {
 	// requests use a GET method but we can get around this by adding a 
 	// _method=post parameter to our request.
 	//
-	// 		Tr8n.Api.post('/translator', function(data){
+	// 		Tr8n.Api.post('/dashboard', function(data){
 	//			// Add awesome data to Tr8n
 	//		})
 	//

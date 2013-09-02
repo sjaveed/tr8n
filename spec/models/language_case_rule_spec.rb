@@ -1,7 +1,7 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Tr8n::LanguageCaseRule do
-  describe "settings case rules" do
+  describe "language case rules" do
 
     before :all do
       @user = User.create(:first_name => "Mike", :gender => "male")
@@ -10,7 +10,7 @@ describe Tr8n::LanguageCaseRule do
       @russian = Tr8n::Language.create(:locale => "ru", :english_name => "Russian")
 
 	    @lcase_en = Tr8n::LanguageCase.create(
-	      settings:     @english,
+	      language:     @english,
 	      keyword:      "pos",
 	      latin_name:   "Possessive",
 	      native_name:  "Possessive", 
@@ -18,7 +18,7 @@ describe Tr8n::LanguageCaseRule do
 	      application:  "phrase")
 
 	    @lcase_ru = Tr8n::LanguageCase.create(
-	      settings:     @russian,
+	      language:     @russian,
 	      keyword:      "pos",
 	      latin_name:   "Possessive",
 	      native_name:  "Possessive", 
@@ -36,7 +36,7 @@ describe Tr8n::LanguageCaseRule do
     describe "evaluating simple rules without genders" do
       it "should result in correct substitution" do
         lcrule = Tr8n::LanguageCaseRule.create(
-        		:settings => @english,
+        		:language => @english,
         		:language_case => @lcase_en,
         		:definition => {
         			"conditions" => "(match '/s$/' @value)",
@@ -54,7 +54,7 @@ describe Tr8n::LanguageCaseRule do
 
 
         lcrule = Tr8n::LanguageCaseRule.create(
-         		:settings => @english,
+         		:language => @english,
          		:language_case => @lcase_en,
          		:definition => {
                 "conditions" => "(not (match '/s$/' @value))",
@@ -71,7 +71,7 @@ describe Tr8n::LanguageCaseRule do
          lcrule.evaluate("friends").should be_false
 
          lcrule = Tr8n::LanguageCaseRule.create(
-         		:settings => @english,
+         		:language => @english,
          		:language_case => @lcase_en,
          		:definition => {
                 "conditions" => "(= '1' @value))",
@@ -84,7 +84,7 @@ describe Tr8n::LanguageCaseRule do
          lcrule.apply("1").should eq("first")
 
          lcrule = Tr8n::LanguageCaseRule.create(
-         		:settings => @english,
+         		:language => @english,
          		:language_case => @lcase_en,
          		:definition => {
                 "conditions" => "(match '/(0|4|5|6|7|8|9|11|12|13)$/' @value))",
@@ -107,13 +107,13 @@ describe Tr8n::LanguageCaseRule do
          michael = double(:gender => "male", :name => "Michael")
 
          @context = Tr8n::LanguageContext.create(
-             settings:     @russian,
+             language:     @russian,
              keyword:      "gender",
              definition:   {
                  "token_expression"  => '/.*(profile|user)(\d)*$/',
                  "variables"         => ['@gender']
              },
-             description:   "Gender settings context"
+             description:   "Gender language context"
          )
 
          Tr8n::Config.stub(:context_rules) {
@@ -127,7 +127,7 @@ describe Tr8n::LanguageCaseRule do
          }
 
          lcrule1 = Tr8n::LanguageCaseRule.create(
-         		:settings => @russian,
+         		:language => @russian,
          		:language_case => @lcase_ru,
          		:definition => {
                 "conditions" => "(&& (= 'female' @gender) (= '1' @value))",
@@ -143,7 +143,7 @@ describe Tr8n::LanguageCaseRule do
          lcrule1.apply("1").should eq("pervaya")
 
          lcrule2 = Tr8n::LanguageCaseRule.create(
-         		:settings => @russian,
+         		:language => @russian,
          		:language_case => @lcase_ru,
          		:definition => {
                 "conditions" => "(&& (= 'male' @gender) (= '1' @value))",
@@ -161,7 +161,7 @@ describe Tr8n::LanguageCaseRule do
      	describe "when using replace" do
         it "it should correctly replace values" do
            lcrule = Tr8n::LanguageCaseRule.create(
-	         		:settings => @english,
+	         		:language => @english,
 	         		:language_case => @lcase_ru,
 	         		:definition => {
                   "conditions" => "(= '1' @value)",
@@ -177,7 +177,7 @@ describe Tr8n::LanguageCaseRule do
      	describe "when using append" do
       	 	it "it should correctly append values" do
 	         lcrule = Tr8n::LanguageCaseRule.create(
-	         		:settings => @english,
+	         		:language => @english,
 	         		:language_case => @lcase_ru,
 	         		:definition => {
                   "conditions" => "(= '1' @value)",
@@ -193,7 +193,7 @@ describe Tr8n::LanguageCaseRule do
      	describe "when using prepend" do
       	 	it "it should correctly prepend values" do
 	         lcrule = Tr8n::LanguageCaseRule.create(
-	         		:settings => @english,
+	         		:language => @english,
 	         		:language_case => @lcase_ru,
 	         		:definition => {
                   "conditions" => "(match '/^(q|w|r|t|p|s|d|f|g|j|k|h|l|z|x|c|v|b|n|m)/' @value)",
@@ -205,7 +205,7 @@ describe Tr8n::LanguageCaseRule do
 	         lcrule.apply("car").should eq("a car")
 
 	         lcrule = Tr8n::LanguageCaseRule.create(
-	         		:settings => @english,
+	         		:language => @english,
 	         		:language_case => @lcase_ru,
 	         		:definition => {
                   "conditions" => "(match '/^(e|u|i|o|a)/' @value)",
@@ -226,7 +226,7 @@ describe Tr8n::LanguageCaseRule do
         english = Tr8n::Language.create(:locale => "en-US", :english_name => "English")
 
         lcase = Tr8n::LanguageCase.create(
-            settings:     english,
+            language:     english,
             keyword:      "plural",
             latin_name:   "Pluralization rule",
             native_name:  "Pluralization",
@@ -234,7 +234,7 @@ describe Tr8n::LanguageCaseRule do
             application:  "phrase")
 
         lcrule = Tr8n::LanguageCaseRule.create(
-            :settings => english,
+            :language => english,
             :language_case => lcase,
             :definition => {
                 "conditions" => "(in 'sheep, fish, series, species, money, rice, information, equipment' @value)",
@@ -246,7 +246,7 @@ describe Tr8n::LanguageCaseRule do
         lcrule.apply("sheep").should eq("sheep")
 
         lcrule = Tr8n::LanguageCaseRule.create(
-            :settings => english,
+            :language => english,
             :language_case => lcase,
             :definition => {
                 "conditions" => "(= 'move' @value)",
@@ -258,7 +258,7 @@ describe Tr8n::LanguageCaseRule do
         lcrule.apply("move").should eq("moves")
 
         lcrule = Tr8n::LanguageCaseRule.create(
-            :settings => english,
+            :language => english,
             :language_case => lcase,
             :definition => {
                 "conditions" => "(match '/(quiz)$/' @value)",
@@ -271,7 +271,7 @@ describe Tr8n::LanguageCaseRule do
         lcrule.apply("quiz").should eq("quizzes")
 
         lcrule = Tr8n::LanguageCaseRule.create(
-            :settings => english,
+            :language => english,
             :language_case => lcase,
             :definition => {
                 "conditions" => "(match '/(?:([^f])fe|([lr])f)$/' @value)",
@@ -289,7 +289,7 @@ describe Tr8n::LanguageCaseRule do
         english = Tr8n::Language.create(:locale => "en-US", :english_name => "English")
 
         lcase = Tr8n::LanguageCase.create(
-            settings:     english,
+            language:     english,
             keyword:      "plural",
             latin_name:   "Pluralization rule",
             native_name:  "Pluralization",
@@ -298,7 +298,7 @@ describe Tr8n::LanguageCaseRule do
 
         lcrule = Tr8n::LanguageCaseRule.create(
             :position => 0,
-            :settings => english,
+            :language => english,
             :language_case => lcase,
             :definition => {
                 "conditions" => "(match '/(?:([^f])fe|([lr])f)$/' @value)",

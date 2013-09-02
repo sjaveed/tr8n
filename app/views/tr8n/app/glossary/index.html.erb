@@ -2,12 +2,23 @@
   <%= render :partial => "/tr8n/app/common/header" %>
   <div class="tr8n tr8n_container">
 
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Glossary") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%=tra("Each application can have its own glossary of common terms that will appear in the translator window.") %> <%= tra("Glossaries can also be shared between applications.") %>
+        <%=tra("When a language is removed no language data is lost.") %> <%=tra("The language will not appear in the language selector") %>
+      </div>
+    </div>
+
     <div class="section blue tr8n_txtl">
       <%= form_tag({:action => :index}, {:method => :get, :id => "glossary_search_form"}) do %>
          <div class="tr8n_fltr">
-              <button type="submit" class="translator_btn translator_small_btn" onClick="Tr8n.Effects.submit('glossary_search_form'); return false;">
-                  <span><%=tra("Search")%></span>
-              </button>
+            <button type="submit" class="btn btn-primary btn-lg" onClick="Tr8n.Effects.submit('glossary_search_form'); return false;">
+                <span><%=tra("Search")%></span>
+            </button>
          </div>
 
         <div class="tr8n_txtl">
@@ -31,14 +42,73 @@
         <% @terms.each_with_index do |term, index| %>
           <tr  style="border-bottom:1px dotted #ccc;">
             <td class="tr8n_txtl" style="vertical-align:top;padding:5px;background: #f9f8f7;"><strong><%=term.keyword%></strong></td>
-            <td class="tr8n_txtl" style="vertical-align:top;padding:5px;"><%=tra(term.description.gsub("\n", "{br}"))%></td>
+            <td class="tr8n_txtl" style="vertical-align:top;padding:5px;"><%=tr(term.description.gsub("\n", "{br}"))%></td>
           </tr>
         <% end %>
       </table>
+
+      <div class="text-left" style="padding-top:20px;">
+        <!-- Button trigger modal -->
+        <a data-toggle="modal" href="#suggest_new_term" class="btn btn-lg"><%=tra("Suggest New Term") %></a>
+      </div>
 
     </div>
 
 	</div>
 	<%= render :partial => "/tr8n/common/footer" %>
 	
+<% end %>
+
+<script>
+  $(document).ready(function() {
+
+// Support for AJAX loaded modal window.
+// Focuses on first input textbox after it loads the window.
+    $('[data-toggle="modal"]').click(function(e) {
+      e.preventDefault();
+      $(url).modal('open');
+//      var url = $(this).attr('href');
+//      if (url.indexOf('#') == 0) {
+//        $(url).modal('open');
+//      } else {
+//        $.get(url, function(data) {
+//          $('<div class="modal hide fade">' + data + '</div>').modal();
+//        }).success(function() { $('input:text:visible:first').focus(); });
+//      }
+    });
+
+  });
+</script>
+
+<!--<a href="/url/to/load/modal_window.htm" data-toggle="modal">link</a>-->
+
+
+<!-- Modal -->
+<%= form_tag(:role => "form", :class => "form-inline") do %>
+<div class="modal fade" id="suggest_new_term" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><%=tra("Suggest a New Glossary Term")%></h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="exampleInputEmail1"><%=tra("Keyword")%></label>
+            <%=text_field_tag(:keyword, "", :placeholder => "Enter term keyword", :class => "form-control input-block-level") %>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1"><%=tra("Definition")%></label>
+            <%= text_area_tag(:description, "", :placeholder => "Enter term definition", :class => "form-control input-block-level", :style=>"height:100px;") %>
+            <span class="help-block"><%= tra("Enter the definition in {language}", :language => Tr8n::Config.default_language.name)%></span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
+        </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <% end %>

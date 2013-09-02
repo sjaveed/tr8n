@@ -4,10 +4,22 @@
   <div class="tr8n tr8n_container">
 
     <div class="section_title">
+      <div style="float:right">
+
+      </div>
+
       Application Site Map
     </div>
 
+    <% selected_application.components.each do |comp| %>
+      <%= comp.name %>
+    <% end %>
+
+    <a href="#" id="create_component_button" class="btn btn-small"><%= tra("Create New Component") %></a>
+
+
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
+  <%= render :partial=>"/tr8n/app/wizards/component" %>
 
 <% end %>

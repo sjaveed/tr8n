@@ -90,7 +90,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
                 :admin => Tr8n::Config.block_options[:admin] )
       end
 
-      #track_source(existing_key, options)
+      track_source(existing_key, options)
       existing_key
     end
   end
@@ -746,7 +746,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   end
 
   def title
-    "Original Phrase in {settings}".translate(nil, :language => language.native_name)
+    "Original Phrase in {language}"
   end
   
   def self.help_url

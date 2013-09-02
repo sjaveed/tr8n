@@ -1,7 +1,7 @@
 require File.expand_path('../spec_helper', File.dirname(__FILE__))
 
 describe Tr8n::LanguageCase do
-  describe "settings case creation" do
+  describe "language case creation" do
     before :all do
       @user = User.create(:first_name => "Mike", :gender => "male")
       @translator = Tr8n::Translator.create!(:name => "Mike", :user => @user, :gender => "male")
@@ -10,9 +10,9 @@ describe Tr8n::LanguageCase do
     end
 
     describe "registering cache key" do
-      it "should contain settings and keyword" do
+      it "should contain language and keyword" do
         lcase = Tr8n::LanguageCase.create(
-          settings:     @english,
+          language:     @english,
           keyword:      "pos",
           latin_name:   "Possessive",
           native_name:  "Possessive", 
@@ -28,7 +28,7 @@ describe Tr8n::LanguageCase do
     describe "apply" do
       it "should substitute the tokens with appropriate case" do
         lcase = Tr8n::LanguageCase.create(
-          settings:     @english,
+          language:     @english,
           keyword:      "pos",
           latin_name:   "Possessive",
           native_name:  "Possessive", 
@@ -53,7 +53,7 @@ describe Tr8n::LanguageCase do
     describe "plurals in English" do
       it "should substitute the tokens with appropriate value" do
         lcase = Tr8n::LanguageCase.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "plural",
             latin_name:   "Plural",
             native_name:  "Plural",
@@ -122,7 +122,7 @@ describe Tr8n::LanguageCase do
     describe "singular in English" do
       it "should substitute the tokens with appropriate value" do
         lcase = Tr8n::LanguageCase.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "singular",
             latin_name:   "Singular",
             native_name:  "Singular",

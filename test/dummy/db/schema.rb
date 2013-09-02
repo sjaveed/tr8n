@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130824220631) do
+ActiveRecord::Schema.define(:version => 20130830230530) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -55,8 +55,9 @@ ActiveRecord::Schema.define(:version => 20130824220631) do
     t.string   "secret"
     t.string   "name"
     t.string   "description"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.integer  "default_language_id"
   end
 
   add_index "tr8n_applications", ["key"], :name => "tr8n_apps"

@@ -74,6 +74,10 @@ module Tr8n
       redirect_to_site_default_url
     end
 
+    def redirect_back
+      redirect_to(request.env['HTTP_REFERER'])
+    end
+
     def redirect_to_site_default_url
       redirect_to(Tr8n::Config.default_url)
     end

@@ -13,7 +13,7 @@
     end    
 
     unless @translation_key.locked?
-      if @translation_key.rules? and @translation_key.permutatable?
+      if @translation_key.permutatable?
         actions << link_to_function("#{image_tag('tr8n/script_gear.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Generate Context Rules")}".html_safe, "addContextRules()")
       end
     end
@@ -23,12 +23,12 @@
 		end
 			
     if @translation_key.followed?
-      actions << link_to("#{image_tag('tr8n/eye_not.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Unfollow")}".html_safe, :controller => '/tr8n/dashboard', :action => :unfollow, :translation_key_id => @translation_key.id)
+      actions << link_to("#{image_tag('tr8n/eye_not.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Unfollow")}".html_safe, :controller => '/tr8n/translator/following', :action => :unfollow, :translation_key_id => @translation_key.id)
     else
-      actions << link_to("#{image_tag('tr8n/eye.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Follow")}".html_safe, :controller => '/tr8n/dashboard', :action => :follow, :translation_key_id => @translation_key.id)
+      actions << link_to("#{image_tag('tr8n/eye.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Follow")}".html_safe, :controller => '/tr8n/translator/following', :action => :follow, :translation_key_id => @translation_key.id)
     end 
 
-    actions << link_to_function("#{image_tag('tr8n/exclamation.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Report")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_report?translation_key_id=#{@translation_key.id}', {width:600, height:360});")
+    actions << link_to_function("#{image_tag('tr8n/exclamation.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Report")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/translator/reports/lb_report?translation_key_id=#{@translation_key.id}', {width:600, height:360});")
   %>
   
   <div class="tr8n_txtl">

@@ -27,11 +27,6 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
 
   def index
     ## In the embedded mode - there should be only one application
-    #begin
-    #  @selected_application = send(:current_application)
-    #rescue
-    #  @selected_application = Tr8n::Config.default_application
-    #end
     #
     #sources = sources_from_params
     #
@@ -42,7 +37,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     #  return
     #end
 
-    @translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => @selected_application))
+    @translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => selected_application))
 
     # get a list of all restricted keys
     restricted_keys = Tr8n::TranslationKey.all_restricted_ids

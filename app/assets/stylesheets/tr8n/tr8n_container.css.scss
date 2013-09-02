@@ -1,5 +1,18 @@
-@import "bootstrap_and_overrides.css.scss";
+@import "./bootstrap/bootstrap_and_overrides.css.scss";
+@import "./jquery/jquery.tagsinput.css";
+@import "./jquery/chosen.css";
+@import "./utils/autocomplete.css";
+@import "./utils/lightbox.css";
 
+.wizard-modal .chzn-container .chzn-results {
+  max-height:120px;
+}
+
+div.tagsinput span.tag {
+  background: #eee;
+  border: 1px solid #ccc;
+  color: black;
+}
 
 @mixin rounded-corners($radius) {
   -webkit-border-radius: $radius;
@@ -12,27 +25,49 @@
 
 .tr8n_container {
 
+  .section {
+    background-color:#fff;
+    padding:10px;
+    margin-bottom:15px;
+    border:solid 1px #ddd;
+    border-top-left-radius:10px;
+    border-bottom-right-radius:10px;
+
+    &.grey {
+      background-color:#f9f8f7;
+    }
+
+    &.blue {
+      background-color:#EFF8FF;
+    }
+
+    &.yellow {
+      background-color:#FDFFF0;
+    }
+  }
+
   .sub_section {
     border: 1px solid #ddd;
     margin-top:5px;
     margin-bottom:15px;
-    border-radius: 10px;
+    border-top-left-radius:10px;
+    border-bottom-right-radius:10px;
 
     .header {
       background-color:#F1F4F9;
-      padding:5px;
-      border-bottom: 1px dotted #ccc;
+      padding:10px;
       font-size:18px;
       font-weight:bold;
       border-top-left-radius:10px;
-      border-top-right-radius:10px;
+      border-bottom-right-radius:10px;
     }
     .rule {
       font-size:12px;
       background-color:white;
       padding:15px;
-      border-bottom: 1px solid #ddd;
       padding-top:10px;
+      border-top-left-radius:10px;
+      border-bottom-right-radius:10px;
     }
 
     .rule:hover {

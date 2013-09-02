@@ -41,7 +41,7 @@
 
 class Tr8n::Application < ActiveRecord::Base
   self.table_name = :tr8n_applications
-  attr_accessible :key, :name, :description
+  attr_accessible :key, :name, :description, :default_language
 
   has_many :components, :class_name => 'Tr8n::Component', :dependent => :destroy
 
@@ -51,6 +51,7 @@ class Tr8n::Application < ActiveRecord::Base
   has_many :translation_sources, :class_name => 'Tr8n::TranslationSource', :dependent => :destroy
   alias :sources :translation_sources
 
+  belongs_to :default_language, :class_name => 'Tr8n::Language', :foreign_key => :default_language_id
   has_many :application_languages, :class_name => 'Tr8n::ApplicationLanguage', :dependent => :destroy
   has_many :languages, :class_name => 'Tr8n::Language', :through => :application_languages
 
@@ -96,6 +97,12 @@ class Tr8n::Application < ActiveRecord::Base
 
   def add_language(language)
     Tr8n::ApplicationLanguage.find_or_create(self, language)
+  end
+
+  def remove_language(language)
+    al = Tr8n::ApplicationLanguage.where(:application_id => self.id, :language_id => language.id).first
+    al.destroy if al
+    al
   end
 
   def to_api_hash(opts = {})

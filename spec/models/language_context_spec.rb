@@ -15,13 +15,13 @@ describe Tr8n::LanguageContext do
       Tr8n::LanguageContext.cache_key("ru", "numeric").should eq("language_context_[ru]_[numeric]")
 
       context = Tr8n::LanguageContext.create(
-          settings:     @english,
+          language:     @english,
           keyword:      "numeric",
           definition:   {
               "token_expression"  => '/.*(count|num|age|hours|minutes|years|seconds)(\d)*$/',
               "variables"         => ['@n']
           },
-          description:   "Numeric settings context"
+          description:   "Numeric language context"
       )
 
       context.cache_key.should eq("language_context_[en-US]_[numeric]")
@@ -37,13 +37,13 @@ describe Tr8n::LanguageContext do
     it "should return correct hash" do
 
       context = Tr8n::LanguageContext.create(
-          settings:     @english,
+          language:     @english,
           keyword:      "numeric",
           definition:   {
               "token_expression"  => '/.*(count|num|age|hours|minutes|years|seconds)(\d)*$/',
               "variables"         => ['@n']
           },
-          description:   "Numeric settings context"
+          description:   "Numeric language context"
       )
 
       Tr8n::LanguageContextRule.create(:language_context => context, :keyword => "one", :definition => {"conditions" => "(&& (= 1 (mod @n 10)) (!= 11 (mod @n 100)))"}, :description => "{n} mod 10 is 1 and {n} mod 100 is not 11", :examples => "1, 21, 31, 41, 51, 61...")
@@ -53,7 +53,7 @@ describe Tr8n::LanguageContext do
 
       context.to_api_hash.should  eq({
         "keyword"=>"numeric",
-        "description"=>"Numeric settings context",
+        "description"=>"Numeric language context",
         "definition"=>
             {"token_expression"=> "/.*(count|num|age|hours|minutes|years|seconds)(\\d)*$/",
              "variables"=>["@n"]},
@@ -86,13 +86,13 @@ describe Tr8n::LanguageContext do
   describe "matching tokens" do
     it "should identify the right tokens" do
       @context = Tr8n::LanguageContext.create(
-          settings:     @english,
+          language:     @english,
           keyword:      "numeric",
           definition:   {
               "token_expression"  => '/.*(count|num|age|hours|minutes|years|seconds)(\d)*$/',
               "variables"         => ['@n']
           },
-          description:   "Numeric settings context"
+          description:   "Numeric language context"
       )
 
       @context.token_expression.should eq(/.*(count|num|age|hours|minutes|years|seconds)(\d)*$/)
@@ -112,13 +112,13 @@ describe Tr8n::LanguageContext do
     describe "loading variables" do
       it "should return assigned variables" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "gender",
             definition:   {
                 "token_expression"  => '/.*(profile|user|actor|target)(\d)*$/',
                 "variables"         => ['@gender']
             },
-            description:   "Gender settings context"
+            description:   "Gender language context"
         )
 
         Tr8n::Config.stub(:context_rules) {
@@ -150,13 +150,13 @@ describe Tr8n::LanguageContext do
     describe "evaluate rules" do
       it "should return matching rule" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "gender",
             definition:   {
                 "token_expression"  => '/.*(profile|user)(\d)*$/',
                 "variables"         => ['@gender']
             },
-            description:   "Gender settings context"
+            description:   "Gender language context"
         )
 
         Tr8n::Config.stub(:context_rules) {
@@ -181,7 +181,7 @@ describe Tr8n::LanguageContext do
 
         # unknown goes before other
         unknown = Tr8n::LanguageContextRule.create(:language_context => @context, :keyword => "unknown", :definition => {"conditions" => "(&& (!= 'male' @gender) (!= 'female' @gender))"})
-        @context.reload
+        @context.reset!
         @context.rules.count.should eq(4)
         @context.find_matching_rule(double(:gender => "unknown")).should eq(unknown)
       end
@@ -192,7 +192,7 @@ describe Tr8n::LanguageContext do
     describe "loading variables" do
       it "should return assigned variables" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "genders",
             definition:   {
                 "token_expression"  => '/.*(profiles|users|actors|targets)(\d)*$/',
@@ -222,13 +222,13 @@ describe Tr8n::LanguageContext do
     describe "evaluate rules" do
       it "should return matching rule" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "genders",
             definition:   {
                 "token_expression"  => '/.*(profiles|users)(\d)*$/',
                 "variables"         => ['@genders']
             },
-            description:   "Gender settings context"
+            description:   "Gender language context"
         )
 
         Tr8n::Config.stub(:context_rules) {
@@ -253,7 +253,7 @@ describe Tr8n::LanguageContext do
 
         # unknown goes before other
         at_least_two = Tr8n::LanguageContextRule.create(:language_context => @context, :keyword => "at_least_two", :definition => {"conditions" => "(> (count @genders) 1)"})
-        @context.reload
+        @context.reset!
         @context.rules.count.should eq(5)
         @context.find_matching_rule([double(:gender => "male"), double(:gender => "male")]).should eq(at_least_two)
 
@@ -261,7 +261,7 @@ describe Tr8n::LanguageContext do
 
         all_male = Tr8n::LanguageContextRule.create(:language_context => @context, :keyword => "all_male", :definition => {"conditions" => "(&& (> (count @genders) 1) (all @genders 'male'))"})
         all_female = Tr8n::LanguageContextRule.create(:language_context => @context, :keyword => "all_female", :definition => {"conditions" => "(&& (> (count @genders) 1) (all @genders 'female'))"})
-        @context.reload
+        @context.reset!
         @context.rules.count.should eq(6)
 
         all_male.evaluate({"@genders" => ["male", "male"]}).should be_true
@@ -277,7 +277,7 @@ describe Tr8n::LanguageContext do
     describe "loading variables" do
       it "should return assigned variables" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "list",
             definition:   {
                 "token_expression"  => '/.*(list)(\d)*$/',
@@ -304,13 +304,13 @@ describe Tr8n::LanguageContext do
     describe "evaluate rules" do
       it "should return matching rule" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "list",
             definition:   {
                 "token_expression"  => '/.*(list)(\d)*$/',
                 "variables"         => ['@count']
             },
-            description:   "List settings context"
+            description:   "List language context"
         )
 
         Tr8n::Config.stub(:context_rules) {
@@ -338,13 +338,13 @@ describe Tr8n::LanguageContext do
     describe "loading variables" do
       it "should return assigned variables" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "numeric",
             definition:   {
                 "token_expression"  => '/.*(count|num|age|hours|minutes|years|seconds)(\d)*$/',
                 "variables"         => ['@n']
             },
-            description:   "Numeric settings context"
+            description:   "Numeric language context"
         )
 
         Tr8n::Config.stub(:context_rules) {
@@ -391,13 +391,13 @@ describe Tr8n::LanguageContext do
     describe "evaluate rules" do
       it "should return matching rule" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @russian,
+            language:     @russian,
             keyword:      "numeric",
             definition:   {
                 "token_expression"  => '/.*(count|num|age|hours|minutes|years|seconds)(\d)*$/',
                 "variables"         => ['@n']
             },
-            description:   "Numeric settings context"
+            description:   "Numeric language context"
         )
 
         Tr8n::Config.stub(:context_rules) {
@@ -426,7 +426,7 @@ describe Tr8n::LanguageContext do
     describe "loading variables" do
       it "should return assigned variables" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "list",
             definition:   {
                 "token_expression"  => '/.*(date)(\d)*$/',
@@ -452,7 +452,7 @@ describe Tr8n::LanguageContext do
     describe "evaluate rules" do
       it "should return matching rule" do
         @context = Tr8n::LanguageContext.create(
-            settings:     @english,
+            language:     @english,
             keyword:      "list",
             definition:   {
                 "token_expression"  => '/.*(date)(\d)*$/',

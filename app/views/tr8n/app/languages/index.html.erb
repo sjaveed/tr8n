@@ -1,0 +1,52 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <div style="float:right; font-size:12px;">
+        <%=link_to(tra("+ Add Languages"), {:action => :add_languages_modal}, {"data-toggle" => "dynamic_modal"})%>
+      </div>
+      <%=tra("Application Languages") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Languages") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%=tra("This section allows you to add and remove languages from the application.") %>
+        <%=tra("When a language is removed no language data is lost.") %> <%=tra("The language will not appear in the language selector") %>
+      </div>
+    </div>
+
+    <div class="section">
+      <table class="table table-hover ">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Direction</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% selected_application.languages.each do |lang| %>
+          <tr>
+            <td>
+              <%= image_tag("tr8n/flags/#{lang.flag}.png", :style => "align:middle") %>  &nbsp;
+              <%=lang.name%>
+            </td>
+            <td><%= lang.dir %></td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-remove-circle'></i>".html_safe, {:action => :remove_language, :locale => lang.locale}, :confirm => trla("Are you sure you want to remove this language from the application?"))%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>

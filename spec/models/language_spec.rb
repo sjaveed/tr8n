@@ -8,8 +8,8 @@ describe Tr8n::Language do
     end
   end
 
-  describe 'finding or creating a new settings' do
-    context 'none existing settings' do
+  describe 'finding or creating a new language' do
+    context 'none existing language' do
       it 'should not be found' do
         lang = Tr8n::Language.for('test')
         lang.should be_nil
@@ -29,7 +29,7 @@ describe Tr8n::Language do
       end
     end
 
-    context 'existing settings' do
+    context 'existing language' do
       it 'should be found' do
         Tr8n::Language.create(:locale => 'test123', :english_name => 'Test Language 123')
         lang = Tr8n::Language.for('test123')
@@ -39,7 +39,7 @@ describe Tr8n::Language do
     end
   end  
 
-  describe 'current settings' do
+  describe 'current language' do
     before :all do 
       @lang = Tr8n::Language.find_or_create('test', 'Test Language')
       Tr8n::Config.set_language(@lang)
@@ -52,7 +52,7 @@ describe Tr8n::Language do
     end
   end
 
-  describe 'default settings' do
+  describe 'default language' do
     before :all do 
       @lang = Tr8n::Language.find_or_create('test', 'Test Language')
       Tr8n::Config.set_language(@lang)

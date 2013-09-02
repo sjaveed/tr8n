@@ -4,36 +4,35 @@
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%>>
 
     <div class="section_title">
-      <%= tra("Language Context Rules") %>
+      <%= tra("Language Contexts") %>
     </div>
 
     <div class="section grey">
       <div class="tr8n_fltr" style="padding-right:5px;">
-        <%=tr8n_help_icon_tag %>
+        <%=tr8n_help_icon_tag("Language Context Rules") %>
       </div>
 
       <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:10px;font-size:12px;">
         <%=tra("Tokens are parts of a phrase that are not translated, such as a profile name or a number.") %>
         <%=tra("Translations in some languages can depend on the gender or numerical value of the tokens in the phrase.") %>
         <%=tra("For example, the translation for {english_sample} can depend on the gender of the actor and target as well as the number of photos.", :english_sample => "<span dir='ltr' style='display:inline-block;font-weight:bold;'>{actor} tagged {target} in {count} photos</span>")%>
-        <%=tra("If translations in your settings depend on any of these rules, you can add them here.") %>
+        <%=tra("If translations in this language depend on any of these rules, you can add them here.") %>
 
         <div style="float:right; font-size: 12px; color: grey; padding:5px; padding-top:20px;">
-          <button type="submit" class="translator_btn translator_submit_btn" onClick="">
-            <span><%=tra("Add Language Context")%></span>
+          <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/language/context_rules/context_modal">
+            <%= tra("Add Language Context") %>
           </button>
         </div>
 
         <div class="tr8n_txtl" style="padding-top:10px;">
-          <%=tra("Translations in this settings may depend on the following context rules:")%>
+          <%=tra("Translations in this language may use the following contexts:")%>
         </div>
       </div>
     </div>
 
     <% if tr8n_current_language.contexts.empty? %>
       <div class="tr8n_txtl" style="font-style:italic; font-size: 10px; color: grey;">
-        <%=tra("There are no settings cases defined for this settings.")%>
-        <%=link_to_function(tra("Click here to add settings cases."), "addLanguageCase('#{@cases.size}')")%>
+        <%=tra("There are no language contexts defined for this language.")%>
       </div>
 
     <% else %>
@@ -41,76 +40,30 @@
       <div class="sub_section">
         <div class="header">
           <div class="rule_buttons">
-            <%=link_to_function(image_tag("tr8n/pencil.png"), "")%>
-            <%=link_to_function(image_tag("tr8n/delete.png"), "")%>
+            <%=link_to("<i class='icon-wrench'></i>".html_safe, {:action => :context_modal, :id => context.id}, {"data-toggle" => "dynamic_modal"})%>
+            <%=link_to("<i class='icon-remove-circle'></i>".html_safe, {:action => :delete_context, :id => context.id}, :confirm => trla("Are you sure you want to delete this context?"))%>
           </div>
 
           <div>
-            <%=context.keyword %> <%=context.description %>
-          </div>
-          <div>
-            <span style="font-size:12px; color:#666; font-weight:normal;margin-top:5px;">
-              {:<%=context.keyword %>}
-            </span>
-            <span style="font-size:12px;">|</span>
-            <span style="font-size:12px; color:#666; font-weight:normal;margin-top:5px;">
-              <%= tra("{count|| rule}", :count => context.rules.size) %>
-            </span>
-            <span style="font-size:12px;">|</span>
-            <span style="font-size:12px; color:#888; font-weight:normal;margin-top:5px;">
-              <span style="color:#666">tokens:</span> <%= context.definition["token_expression"] %>
-            </span>
-            <span style="font-size:12px;">|</span>
-            <span style="font-size:12px; color:#888; font-weight:normal;margin-top:5px;">
-               <span style="color:#666">variables:</span> <%= context.variables.collect{|var| "<span class='variable'>#{var}</span>"}.join(', ').html_safe %>
-            </span>
-          </div>
-          <div>
-            <span style="font-size:12px; color:#888; font-weight:normal;margin-top:5px;">
-               <span style="color:#666">forms:</span>
-                <% context.token_mapping.each_with_index do |form, index| %>
-                  <%= index+1 %>: <%= form %> |
-                <% end %>
-            </span>
-          </div>
-        </div>
-
-        <% context.rules.each do |rule| %>
-          <div class="rule">
-            <div>
-              <div class="rule_buttons">
-                <%=link_to_function(image_tag("tr8n/pencil.png"), "")%>
-                <%=link_to_function(image_tag("tr8n/cross.png"), "")%>
-              </div>
-
-              <div style="font-size:14px; padding-bottom:10px;">
-                <strong><%=rule.keyword %></strong>
-                <span style="color:#888;font-size:12px;"><%=rule.description %></span>
-              </div>
-
-              <% if rule.conditions %>
-                <div class="labeled_box">
-                  <span class="title">conditions</span>
-                  <div style="padding:5px;padding-left:25px;">
-                   <%= Tr8n::RulesEngine::Parser.new(rule.conditions).decorate %>
-                  </div>
-                </div>
-              <% end %>
-              <% if rule.examples %>
-                <div class="labeled_box">
-                  <span class="title">examples</span>
-                  <div style="padding:5px;padding-left:25px;">
-                    <%=rule.examples%>
-                  </div>
-                </div>
-              <% end %>
+            <%=link_to(context.keyword, {:action => :view, :id => context.id}) %>
+            <div style="font-size:12px; color:#666; font-weight:normal; padding-top:5px;">
+            <%=context.description %>
             </div>
-          </div>
-        <% end %>
 
-        <div class="tr8n_txtl" style="font-size: 12px; color: grey; padding:5px; padding-top:10px;">
-          <%=link_to_function(tra(" + Add Context Rule"), "addLanguageCaseRule('', '0')")%>
+            <div>
+              <span style="font-size:12px; color:#666; font-weight:normal;margin-top:5px;">
+                {:<%=context.keyword %>}
+              </span>
+              <span style="font-size:12px;"> - </span>
+              <span style="font-size:12px; color:#666; font-weight:normal;margin-top:5px;">
+                <%=link_to(tra("{count|| rule}", :count => context.rules.size), {:action => :view, :id => context.id})%>
+              </span>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
       <% end %>
@@ -122,3 +75,4 @@
   <%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>
+

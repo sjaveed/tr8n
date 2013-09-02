@@ -23,8 +23,6 @@
     <div class="tr8n_txtl" style="padding-top:10px; font-size:12px;"><%=trla("No translations found")%></div>
 <% end %>
 
-<%= tr8n_paginator_tag(translations, :subject => 'translation') if mode == :list and translations.any? %>	
-
 <% if [:edit, :view].include?(mode) %>
 	<script>
 	  function deleteTranslationRow(translation_id, section_key) {

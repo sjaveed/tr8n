@@ -216,14 +216,14 @@ module Tr8n
       html.html_safe    
     end
 
-    def tr8n_help_icon_tag(filename = "index")
-      link_to(image_tag("tr8n/help.png", :style => "border:0px; vertical-align:middle;", :title => trl("Help")), {:controller => "/tr8n/help", :action => filename}, :target => "_new").html_safe
-    end
-
-    def tr8n_help_link(text, opts = {})
-      filename = opts[:filename].nil? ? text.downcase.gsub(' ', '_') : opts[:filename] 
-      classname = "tr8n_selected" if filename == controller.action_name
-      link_to(text, { :controller => "/tr8n/help", :action => filename }, :class => classname).html_safe
+    def tr8n_help_icon_tag(wiki = "Home")
+      link_to("<i class='icon-question-sign'></i>".html_safe, "http://wiki.tr8nhub.com/index.php?title=#{wiki}",
+              :target => "_new",
+              :style => "margin:5px;",
+              "data-placement" => "bottom",
+              "data-original-title" => "Click on the icon to go to the wiki site",
+              "title" => "Click on the icon to go to the wiki site",
+              "data-toggle" => "tooltip")
     end
 
     def tr8n_spinner_tag(id = "spinner", label = nil, cls='spinner')
@@ -319,56 +319,9 @@ module Tr8n
       link_to_function("<span>#{label}</span>".html_safe, function, :class => "tr8n_grey_button tr8n_pcb")    
     end
 
-    def tr8n_paginator_tag(collection, options)  
+    def tr8n_paginator_tag(collection, options = {})
       render :partial => "/tr8n/common/paginator", :locals => {:collection => collection, :options => options}
     end
-
-    def tr8n_page_links_tag(collection, options = {})
-      #paginator = Kaminari::Helpers::Paginator.new(self, options.reverse_merge(:current_page => collection.current_page, :total_pages => collection.num_pages, :per_page => collection.limit_value, :param_name => Kaminari.config.param_name, :remote => false, :params => params))
-      #html = []
-      #html << "<span class='pagination'>"
-      #html << link_to("<span class='page'>#{tr('{laquo} First')}</span>".html_safe, params.merge(:page => 1)) unless collection.current_page == 1
-      #html << link_to("<span class='page'>#{tr('{lsaquo} Previous')}</span>".html_safe, params.merge(:page => collection.current_page - 1)) unless collection.current_page == 1
-      #paginator.each_page do |page|
-      #  if page.left_outer? || page.right_outer? || page.inside_window?
-      #    if collection.current_page == page
-      #      html << "<span class='page current'>#{page}</span>".html_safe
-      #    else
-      #      html << link_to("<span class='page'>#{page}</span>".html_safe, params.merge(:page => page))
-      #    end
-      #  elsif !page.was_truncated? and html.last != '...'
-      #    html << "..."
-      #  end
-      #end
-      #html << link_to("<span class='page'>#{tr('Next {rsaquo}')}</span>".html_safe, params.merge(:page => collection.current_page + 1)) unless collection.current_page == collection.num_pages
-      #html << link_to("<span class='page'>#{tr('Last {raquo}')}</span>".html_safe, params.merge(:page => collection.num_pages)) unless collection.current_page == collection.num_pages
-      #html << "</span>"
-      #html.join(' ').html_safe
-    end
-
-    def tr8n_page_entries_info_tag(collection, options = {})
-      #entry_name = options[:subject] || (collection.empty? ? 'entry' : collection.first.class.name.underscore.sub('_', ' ').split('/').last)
-      #
-      #if collection.num_pages < 2
-      #  case collection.size
-      #    when 0
-      #      tr("None found", nil, {}, options)
-      #    when 1
-      #      tr("Displaying [strong: {count}] {count|#{entry_name}}", nil, {:count => 1}, options)
-      #    else
-      #      tr("Displaying [strong: all {count}] {count|#{entry_name}}", nil, {:count => collection.size}, options)
-      #  end
-      #else
-      #  tr("Displaying #{entry_name.pluralize} [strong: {start_num} - {end_num}] of [strong: {total_count}] in total",
-      #     "", {
-      #          :start_num    => collection.offset_value + 1,
-      #          :end_num      => collection.offset_value + collection.length,
-      #          :total_count  => collection.total_count
-      #      }, options
-      #  )
-      #end
-    end
-
 
     def tr8n_with_options_tag(opts, &block)
       if Tr8n::Config.disabled?

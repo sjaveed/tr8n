@@ -1,4 +1,4 @@
 <ul class="breadcrumb">
-  <li><%=link_to(@selected_application ? @selected_application.name : "Tr8n Service", :action => :index)%> <span class="divider">/</span></li>
+  <li><%=link_to(selected_application.name, :app_id => selected_application.id)%> <span class="divider">/</span></li>
   <li class="active"><%=link_to(tra("All Phrases"), :action => :index)%></li>
 </ul>

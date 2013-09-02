@@ -4,7 +4,7 @@
   <div class="tr8n tr8n_container">
 
     <div class="section_title">
-      <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px; padding-top:5px;">
+      <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px;">
         <% if params[:mode] == "all" %>
             <%=link_to(tra("Awards for {language} Language", 'Awards section header', :language => tr8n_current_language.native_name), :mode => :current) %>
         <% else %>

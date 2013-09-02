@@ -207,4 +207,9 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     }
   end
 
+  def name
+    return native_name unless native_name.blank?
+    latin_name
+  end
+
 end

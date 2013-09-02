@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Tr8n::App::GlossaryController < Tr8n::BaseController
+class Tr8n::App::GlossaryController < Tr8n::App::BaseController
 
   before_filter :validate_current_translator
   

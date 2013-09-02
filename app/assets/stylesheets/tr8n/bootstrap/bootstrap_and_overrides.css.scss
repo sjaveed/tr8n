@@ -1,6 +1,9 @@
+//@import "bootstrap";
+//@import "bootstrap-responsive";
+@import "bootstrap-wizard";
+
+
 .tr8n_container {
-  @import "bootstrap";
-  @import "bootstrap-responsive";
 }
 
 body {
@@ -16,4 +19,13 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+
+.modal-body {
+  max-height: 600px;
+  label {
+    padding-top:10px;
+    font-weight:bold;
+  }
 }

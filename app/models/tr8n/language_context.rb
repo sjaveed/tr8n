@@ -110,6 +110,13 @@ class Tr8n::LanguageContext < ActiveRecord::Base
     Tr8n::Config.context_rules[keyword] || {}
   end
 
+  def reset!
+    @rules = nil
+    @token_expression = nil
+    @fallback_rule = nil
+    reload
+  end
+
   # Context rule can be mapped to a transform token using the sequence of rule keys with settings cases
   # This is done so that developers don't have to name each value in the piped token
   # For example, in the numeric context rule, a transform token in its full form can look like this:
@@ -144,6 +151,8 @@ class Tr8n::LanguageContext < ActiveRecord::Base
   end
 
   def variables
+    return [] unless definition["variables"]
+    return definition["variables"].split(',') unless definition["variables"].is_a?(Array)
     definition["variables"]
   end
 
@@ -172,7 +181,7 @@ class Tr8n::LanguageContext < ActiveRecord::Base
   end
 
   def fallback_rule
-    rules.detect{|rule| rule.fallback?}
+    @fallback_rule ||= rules.detect{|rule| rule.fallback?}
   end
 
   def rule_by_keyword(keyword)

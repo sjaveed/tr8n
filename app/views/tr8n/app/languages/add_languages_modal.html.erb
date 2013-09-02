@@ -1,0 +1,47 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">
+          <%=tra("Add Languages To Application")%>
+      </h4>
+    </div>
+
+    <div class="modal-body" style="min-height:300px">
+      <%= form_tag({}, {:method => :post, :role => "form", :class => "form-inline", :id => "context_form"}) do |f| %>
+
+        <div class="form-group">
+          <p>
+            Enter a list of languages you want to support in your application.
+          </p>
+
+          <%=hidden_field_tag(:locales, "") %>
+
+          <select id="new_locales" data-placeholder="Languages" multiple class="chzn-select" style="width:400px;">
+            <option value=""></option>
+            <% Tr8n::Language.enabled_languages.each do |lang| %>
+              <option value="<%=lang.locale%>"><%=lang.english_name%></option>
+            <% end %>
+          </select>
+
+          <p style="padding-top:20px; color:#666">
+            Start typing a language name.
+          </p>
+
+        </div>
+
+      <% end %>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+      <button type="submit" class="btn btn-primary" onClick="$('#locales').val($('#new_locales').val()); $('#context_form').submit();"><%=tra("Submit") %></button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script>
+  (function() {
+    $("#new_locales").chosen({});
+  })();
+</script>

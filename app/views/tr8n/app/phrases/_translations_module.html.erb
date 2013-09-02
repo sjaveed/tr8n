@@ -32,7 +32,7 @@
     </div>
     
   <% if @grouping.empty? %>
-      <%= render :partial => "/tr8n/translations/list", :locals => {:language => tr8n_current_language, :translations => @translations, :mode => :view} %>
+      <%= render :partial => "/tr8n/app/translations/list", :locals => {:language => tr8n_current_language, :translations => @translations, :mode => :view} %>
   <% else %>
       <% @grouping.keys.sort.each_with_index do |key, index| %>
         <div class="section_title">
@@ -48,7 +48,7 @@
 					</span>
         </div>
         <div id="translations_section_<%=index%>">
-          <%= render :partial => "/tr8n/translations/list", :locals => {:language => tr8n_current_language, :translations => @grouping[key], :mode => :view} %>
+          <%= render :partial => "/tr8n/app/translations/list", :locals => {:language => tr8n_current_language, :translations => @grouping[key], :mode => :view} %>
         </div>
       <% end %>
   <% end %>

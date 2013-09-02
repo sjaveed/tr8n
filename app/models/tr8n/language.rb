@@ -130,6 +130,13 @@ class Tr8n::Language < ActiveRecord::Base
     end
   end
 
+  def reset!
+    @contexts = nil
+    @cases = nil
+    @bad_words = nil
+    reload
+  end
+
   def context_by_keyword(keyword, opts = {})
     contexts.detect{|ctx| ctx.keyword == keyword}
   end

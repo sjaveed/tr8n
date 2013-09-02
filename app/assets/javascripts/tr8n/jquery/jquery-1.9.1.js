@@ -1,14 +1,16 @@
-var tr8n_page_$ = null;
-var tr8n_page_jquery = null;
-
-if (!(typeof $ === "undefined")) {
-  tr8n_page_$ = $;
-}
-
-if (!(typeof jQuery === "undefined")) {
-  tr8n_page_jquery = jQuery.noConflict(true);
-}
-
+/*!
+ * jQuery JavaScript Library v1.9.1
+ * http://jquery.com/
+ *
+ * Includes Sizzle.js
+ * http://sizzlejs.com/
+ *
+ * Copyright 2005, 2012 jQuery Foundation, Inc. and other contributors
+ * Released under the MIT license
+ * http://jquery.org/license
+ *
+ * Date: 2013-2-4
+ */
 (function( window, undefined ) {
 
 // Can't do this because several apps including ASP.NET trace
@@ -977,7 +979,28 @@ function createOptions( options ) {
 	return object;
 }
 
-
+/*
+ * Create a callback list using the following parameters:
+ *
+ *	options: an optional list of space-separated options that will change how
+ *			the callback list behaves or a more traditional option object
+ *
+ * By default a callback list will act like an event callback list and can be
+ * "fired" multiple times.
+ *
+ * Possible options:
+ *
+ *	once:			will ensure the callback list can only be fired once (like a Deferred)
+ *
+ *	memory:			will keep track of previous values and will call any callback added
+ *					after the list has been fired right away with the latest "memorized"
+ *					values (like a Deferred)
+ *
+ *	unique:			will ensure a callback can only be added once (no duplicate in the list)
+ *
+ *	stopOnFalse:	interrupt callings when a callback returns false
+ *
+ */
 jQuery.Callbacks = function( options ) {
 
 	// Convert options from String-formatted to Object-formatted if needed
@@ -1158,7 +1181,7 @@ jQuery.extend({
 					deferred.done( arguments ).fail( arguments );
 					return this;
 				},
-				then: function(  ) {
+				then: function( /* fnDone, fnFail, fnProgress */ ) {
 					var fns = arguments;
 					return jQuery.Deferred(function( newDefer ) {
 						jQuery.each( tuples, function( i, tuple ) {
@@ -1230,7 +1253,7 @@ jQuery.extend({
 	},
 
 	// Deferred helper
-	when: function( subordinate  ) {
+	when: function( subordinate /* , ..., subordinateN */ ) {
 		var i = 0,
 			resolveValues = core_slice.call( arguments ),
 			length = resolveValues.length,
@@ -1525,7 +1548,7 @@ jQuery.support = (function() {
 var rbrace = /(?:\{[\s\S]*\}|\[[\s\S]*\])$/,
 	rmultiDash = /([A-Z])/g;
 
-function internalData( elem, name, data, pvt  ){
+function internalData( elem, name, data, pvt /* Internal Use Only */ ){
 	if ( !jQuery.acceptData( elem ) ) {
 		return;
 	}
@@ -2684,7 +2707,10 @@ function returnFalse() {
 	return false;
 }
 
-
+/*
+ * Helper functions for managing events -- not part of the public interface.
+ * Props to Dean Edwards' addEvent library for many of the ideas.
+ */
 jQuery.event = {
 
 	global: {},
@@ -3543,7 +3569,7 @@ if ( !jQuery.support.focusinBubbles ) {
 
 jQuery.fn.extend({
 
-	on: function( types, selector, data, fn,  one ) {
+	on: function( types, selector, data, fn, /*INTERNAL*/ one ) {
 		var type, origFn;
 
 		// Types can be a map of types/handlers
@@ -3658,7 +3684,12 @@ jQuery.fn.extend({
 		}
 	}
 });
-
+/*!
+ * Sizzle CSS Selector Engine
+ * Copyright 2012 jQuery Foundation and other contributors
+ * Released under the MIT license
+ * http://sizzlejs.com/
+ */
 (function( window, undefined ) {
 
 var i,
@@ -3803,12 +3834,20 @@ try {
 	};
 }
 
-
+/**
+ * For feature detection
+ * @param {Function} fn The function to test for native support
+ */
 function isNative( fn ) {
 	return rnative.test( fn + "" );
 }
 
-
+/**
+ * Create key-value caches of limited size
+ * @returns {Function(string, Object)} Returns the Object data after storing it on itself with
+ *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
+ *	deleting the oldest entry
+ */
 function createCache() {
 	var cache,
 		keys = [];
@@ -3823,13 +3862,19 @@ function createCache() {
 	});
 }
 
-
+/**
+ * Mark a function for special use by Sizzle
+ * @param {Function} fn The function to mark
+ */
 function markFunction( fn ) {
 	fn[ expando ] = true;
 	return fn;
 }
 
-
+/**
+ * Support testing using an element
+ * @param {Function} fn Passed the created div and expects a boolean result
+ */
 function assert( fn ) {
 	var div = document.createElement("div");
 
@@ -3953,7 +3998,10 @@ function Sizzle( selector, context, results, seed ) {
 	return select( selector.replace( rtrim, "$1" ), context, results, seed );
 }
 
-
+/**
+ * Detect xml
+ * @param {Element|Object} elem An element or a document
+ */
 isXML = Sizzle.isXML = function( elem ) {
 	// documentElement is verified for cases where it doesn't yet exist
 	// (such as loading iframes in IE - #4833)
@@ -3961,7 +4009,11 @@ isXML = Sizzle.isXML = function( elem ) {
 	return documentElement ? documentElement.nodeName !== "HTML" : false;
 };
 
-
+/**
+ * Sets document-related variables once based on the current document
+ * @param {Element|Object} [doc] An element or document object to use to set the document
+ * @returns {Object} Returns the current document
+ */
 setDocument = Sizzle.setDocument = function( node ) {
 	var doc = node ? node.ownerDocument || node : preferredDoc;
 
@@ -4450,7 +4502,10 @@ function createPositionalPseudo( fn ) {
 	});
 }
 
-
+/**
+ * Utility function for retrieving the text value of an array of DOM nodes
+ * @param {Array|Element} elem
+ */
 getText = Sizzle.getText = function( elem ) {
 	var node,
 		ret = "",
@@ -4515,7 +4570,16 @@ Expr = Sizzle.selectors = {
 		},
 
 		"CHILD": function( match ) {
-			
+			/* matches from matchExpr["CHILD"]
+				1 type (only|nth|...)
+				2 what (child|of-type)
+				3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
+				4 xn-component of xn+y argument ([+-]?\d*n|)
+				5 sign of xn-component
+				6 x of xn-component
+				7 sign of y-component
+				8 y of y-component
+			*/
 			match[1] = match[1].toLowerCase();
 
 			if ( match[1].slice( 0, 3 ) === "nth" ) {
@@ -5355,7 +5419,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 		superMatcher;
 }
 
-compile = Sizzle.compile = function( selector, group  ) {
+compile = Sizzle.compile = function( selector, group /* Internal Use Only */ ) {
 	var i,
 		setMatchers = [],
 		elementMatchers = [],
@@ -6497,7 +6561,7 @@ jQuery.extend({
 		return safe;
 	},
 
-	cleanData: function( elems,  acceptData ) {
+	cleanData: function( elems, /* internal */ acceptData ) {
 		var elem, type, id, data,
 			i = 0,
 			internalKey = jQuery.expando,
@@ -7362,10 +7426,22 @@ var
 	// Keep a copy of the old load method
 	_load = jQuery.fn.load,
 
-	
+	/* Prefilters
+	 * 1) They are useful to introduce custom dataTypes (see ajax/jsonp.js for an example)
+	 * 2) These are called:
+	 *    - BEFORE asking for a transport
+	 *    - AFTER param serialization (s.data is a string if s.processData is true)
+	 * 3) key is the dataType
+	 * 4) the catchall symbol "*" can be used
+	 * 5) execution will start with transport dataType and THEN continue down to "*" if needed
+	 */
 	prefilters = {},
 
-	
+	/* Transports bindings
+	 * 1) key is the dataType
+	 * 2) the catchall symbol "*" can be used
+	 * 3) selection will start with transport dataType and THEN go to "*" if needed
+	 */
 	transports = {},
 
 	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
@@ -7562,7 +7638,17 @@ jQuery.extend({
 		processData: true,
 		async: true,
 		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-		
+		/*
+		timeout: 0,
+		data: null,
+		dataType: null,
+		username: null,
+		password: null,
+		cache: null,
+		throws: false,
+		traditional: false,
+		headers: {},
+		*/
 
 		accepts: {
 			"*": allTypes,
@@ -8023,7 +8109,11 @@ jQuery.extend({
 	}
 });
 
-
+/* Handles responses to an ajax request:
+ * - sets all responseXXX fields accordingly
+ * - finds the right dataType (mediates between content-type and expected dataType)
+ * - returns the corresponding response
+ */
 function ajaxHandleResponses( s, jqXHR, responses ) {
 	var firstDataType, ct, finalDataType, type,
 		contents = s.contents,
@@ -8361,7 +8451,12 @@ function createActiveXHR() {
 // Create the request object
 // (This is still attached to ajaxSettings for backward compatibility)
 jQuery.ajaxSettings.xhr = window.ActiveXObject ?
-	
+	/* Microsoft failed to properly
+	 * implement the XMLHttpRequest in IE7 (can't request local files),
+	 * so we use the ActiveXObject when it is available
+	 * Additionally XMLHttpRequest can be disabled in IE7/IE8 so
+	 * we need a fallback.
+	 */
 	function() {
 		return !this.isLocal && createStandardXHR() || createActiveXHR();
 	} :
@@ -8780,7 +8875,7 @@ jQuery.Animation = jQuery.extend( Animation, {
 });
 
 function defaultPrefilter( elem, props, opts ) {
-	
+	/*jshint validthis:true */
 	var prop, index, length,
 		value, dataShow, toggle,
 		tween, hooks, oldfire,
@@ -9500,67 +9595,3 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 }
 
 })( window );
-window.tr8nJQ = $.noConflict(true);
-window.$ = tr8n_page_$;
-window.jQuery = tr8n_page_jquery;
-tr8n_page_$ = null;
-tr8n_page_jquery = null;
-
-
-(function(jQuery) {
-  var special = {'\b': '\\b', '\t': '\\t', '\n': '\\n', '\f': '\\f', '\r': '\\r', '"' : '\\"', '\\': '\\\\'}, 
-    escape = function(chr){ return special[chr] || '\\u' + ('0000' + chr.charCodeAt(0).toString(16)).slice(-4); };
-   
-  jQuery.stringifyJSON = function(data){
-    switch (jQuery.type(data)){
-      case 'string':
-        return '"' + data.replace(/[\x00-\x1f\\"]/g, escape) + '"';
-      case 'array':
-        return '[' + jQuery.map(data, jQuery.stringifyJSON) + ']';
-      case 'object':
-        var string = [];
-        jQuery.each(data, function(key, val){
-          var json = jQuery.stringifyJSON(val);
-          if (json) 
-            string.push(jQuery.stringifyJSON(key) + ':' + json);
-        });
-        return '{' + string + '}';
-      case 'number': 
-      case 'boolean': 
-        return '' + data;
-      case 'undefined':
-      case 'null': 
-        return 'null';
-    }
-    
-    return data;
-  };
-
-  jQuery.parseJSON = function(data) {
-    if (data === null) {
-      return data;
-    }
-
-    if (jQuery.type(data) == "object") {
-      return data;
-    }
-
-    if (jQuery.type(data) == "string") {
-      // Make sure leading/trailing whitespace is removed (IE can't handle it)
-      data = jQuery.trim( data );
-      if ( data ) {
-        // Make sure the incoming data is actual JSON
-        // Logic borrowed from http://json.org/json2.js
-        if ( rvalidchars.test( data.replace( rvalidescape, "@" )
-          .replace( rvalidtokens, "]" )
-          .replace( rvalidbraces, "")) ) {
-
-          return ( new Function( "return " + data ) )();
-        }
-      }
-    }
-
-    jQuery.error( "Invalid JSON: " + data );
-  };
-
-})(window.tr8nJQ);

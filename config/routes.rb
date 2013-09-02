@@ -22,7 +22,7 @@
 #++
 
 Tr8n::Engine.routes.draw do
-  [:dashboard, :awards, :forum, :glossary, :phrases, :sitemap, :translations].each do |ctrl|
+  [:dashboard, :awards, :forum, :glossary, :phrases, :sitemap, :translations, :translators, :wizards, :settings, :languages].each do |ctrl|
     match "app/#{ctrl}(/:action)", :controller => "app/#{ctrl}"
   end
 
@@ -34,7 +34,7 @@ Tr8n::Engine.routes.draw do
     match "translator/#{ctrl}(/:action)", :controller => "translator/#{ctrl}"
   end
 
-  [:applications, :components, :sources, :chart, :clientsdk, :forum, :glossary, :settings, :translation,
+  [:applications, :components, :sources, :chart, :clientsdk, :forum, :glossary, :language, :translation,
    :translation_key, :dashboard, :domain, :metrics].each do |ctrl|
     match "admin/#{ctrl}(/:action)", :controller => "admin/#{ctrl}"
   end

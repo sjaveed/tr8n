@@ -3,7 +3,7 @@
 	  <%=tra("Translation for {language} Language", nil, :language => tr8n_current_language.native_name)%>
 	</div>
 	
-	<%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/translations", :action => :submit}, :html => {:id => 'translation_form', :method => :post}) do |f| %>
+	<%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :submit}, :html => {:id => 'translation_form', :method => :post}) do |f| %>
 			<%= hidden_field_tag(:destination_url, "/tr8n/phrases/view?translation_key_id=#{@translation_key.id}") %>
 		  <%= hidden_field_tag(:translation_id, @translation.id) %>
 		  <%= hidden_field_tag(:new_translation, (@translation.id == nil).to_s ) %>
@@ -15,7 +15,7 @@
 		    <%= f.text_area(:label, :id => "tr8n_translation_label_#{@translation_key.id}", :style=>"width:99%;height:60px;border:1px solid #ccc;background-color:white;padding:3px;", :class => "keyboardInput" ) %>
 		  </div>
 			
-		  <% if @translation_key.rules? %>
+		  <% if @translation_key.tokens? %>
           <%= render(:partial => "tokens") %>
 			<% end %>		
 	

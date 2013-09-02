@@ -36,12 +36,7 @@
     </div>
 
     <div class="section">
-      <div style="float:right">
-        <%= page_entries_info(@translation_keys).html_safe %>
-      </div>
-      <div style="float:left">
-        <%= paginate(@translation_keys) %>
-      </div>
+      <%= tr8n_paginator_tag(@translation_keys, :subject => 'phrase') if @translation_keys.any? %>
 
       <table style="width:100%">
         <tr style="border-bottom:2px solid #ccc;">
@@ -89,8 +84,6 @@
       <% if @translation_keys.empty? %>
           <div class="tr8n_txtl" style="padding-top:10px; font-size:12px;"><%=trla("No phrases found")%></div>
       <% end %>
-
-      <%= tr8n_paginator_tag(@translation_keys, :subject => 'phrase') if @translation_keys.any? %>
     </div>
 
   </div>

@@ -24,6 +24,12 @@
 class String
 
   def translate(desc = "", tokens = {}, options = {}, language = Tr8n::Config.current_language)
+    if desc.is_a?(Hash)
+      options = tokens
+      tokens = desc
+      desc = ""
+    end
+
     language.translate(self, desc, tokens, options)
   end
 

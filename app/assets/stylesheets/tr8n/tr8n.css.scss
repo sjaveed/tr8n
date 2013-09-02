@@ -53,26 +53,27 @@
 	font-size:11px; 
 	font-family:arial;
 	
-	.section {
-		background-color:#fff;
-		padding:10px;
-		margin-bottom:15px;
-		border:solid 1px #e8e8e8;
-		border-color:#e8e8e8 #bababa #bababa #e8e8e8;
-	 	@include rounded-corners(10px);	
-		
-		&.grey {
-			background-color:#f9f8f7;
-		}
+	//.section {
+	//	background-color:#fff;
+	//	padding:10px;
+	//	margin-bottom:15px;
+	//	border:solid 1px #e8e8e8;
+	//	border-color:#e8e8e8 #bababa #bababa #e8e8e8;
+	// 	@include rounded-corners(10px);
+	//
+	//	&.grey {
+	//		background-color:#f9f8f7;
+	//	}
+    //
+	//	&.blue {
+	//		background-color:#EFF8FF;
+	//	}
+	//
+	//	&.yellow {
+	//		background-color:#FDFFF0;
+	//	}
+	//}
 
-		&.blue {
-			background-color:#EFF8FF;
-		}
-		
-		&.yellow {
-			background-color:#FDFFF0;	
-		}
-	}
 	div {
 		font-family:arial;
 	}   

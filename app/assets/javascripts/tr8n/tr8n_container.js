@@ -10,3 +10,12 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
+//= require ./jquery/jquery-1.9.1.js
+//= require ./jquery/jquery-ui-1.10.3.custom.min.js
+//= require ./jquery/chosen.jquery.js
+//= require ./jquery/highcharts.js
+//= require ./jquery/jquery.autocomplete-min.js
+//= require ./jquery/jquery.tagsinput.js
+//= require ./bootstrap/bootstrap.js
+//= require ./bootstrap/bootstrap-wizard.min.js
+

@@ -1,0 +1,44 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">
+        <% if @context.id %>
+          <%=tra("Update Language Context")%>
+        <% else %>
+          <%=tra("Add Language Context")%>
+        <% end %>
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <%= form_for(@context, :as => :context, :url => {:id => params[:id]}, :html => {:method => :post, :role => "form", :class => "form-inline", :id => "context_form"}) do |f| %>
+        <div class="form-group">
+          <label for="context[keyword]"><%=tra("Keyword")%></label>
+          <%=f.text_field(:keyword, :placeholder => "Enter context keyword", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="context[description]"><%=tra("Description")%></label>
+          <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:50px;") %>
+        </div>
+        <div class="form-group">
+          <label for="context[token_expression]"><%=tra("Tokens")%></label>
+          <%= text_field_tag("context[token_expression]", @context.definition["token_expression"], :placeholder => "Enter regular expression for tokens to be associated with this context", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="context[variables]"><%=tra("Variables")%></label>
+          <%= text_field_tag("context[variables]", @context.variables.join(', '), :placeholder => "Enter variable names used in the rules, separated by comma", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="context[token_mapping]"><%=tra("Token Substitution Forms")%></label>
+          <%= text_area_tag("context[token_mapping]", @context.definition["token_mapping"].collect{|tm| tm.is_a?(Hash) ? tm.to_json : tm}.join("\n"), :placeholder => "Enter token mapping, where each line corresponds to the number of params passed.", :class => "form-control input-block-level", :style=>"height:200px;") %>
+        </div>
+      <% end %>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+      <button type="submit" class="btn btn-primary" onClick="$('#context_form').submit();"><%=tra("Submit") %></button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

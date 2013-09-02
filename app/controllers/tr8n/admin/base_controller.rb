@@ -99,7 +99,7 @@ private
         {"title" => "Applications", "description" => "Admin tab", "controller" => "applications"},
         {"title" => "Components", "description" => "Admin tab", "controller" => "components"},
         {"title" => "Sources", "description" => "Admin tab", "controller" => "sources"},
-        {"title" => "Languages", "description" => "Admin tab", "controller" => "settings"},
+        {"title" => "Languages", "description" => "Admin tab", "controller" => "language"},
         {"title" => "Translation Keys", "description" => "Admin tab", "controller" => "translation_key"},
         {"title" => "Translations", "description" => "Admin tab", "controller" => "translation"},
         {"title" => "Translators", "description" => "Admin tab", "controller" => "dashboard"},

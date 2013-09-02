@@ -40,7 +40,7 @@ describe Tr8n::TranslationKey do
       end
     end
 
-    context "translating simple strings with default settings" do
+    context "translating simple strings with default language" do
       it "should return original value" do
         key = Tr8n::TranslationKey.find_or_create("Hello World")
         key.translate(@english).should eq("Hello World")
@@ -81,7 +81,7 @@ describe Tr8n::TranslationKey do
       end
     end
 
-    describe "translating labels into a foreign settings" do
+    describe "translating labels into a foreign language" do
       context "labels with no rules" do
         it "should return correct translations" do
           key = Tr8n::TranslationKey.find_or_create("Hello World")
@@ -261,18 +261,18 @@ describe Tr8n::TranslationKey do
   #    context "labels with mixed rules and tokens" do
   #      it "should return correct translations" do
   #        definition = {operator: "is", value: "male"}
-  #        grule1 = Tr8n::GenderRule.create(:settings => @russian, :definition => definition)
+  #        grule1 = Tr8n::GenderRule.create(:language => @russian, :definition => definition)
   #        definition = {operator: "is", value: "female"}
-  #        grule2 = Tr8n::GenderRule.create(:settings => @russian, :definition => definition)
+  #        grule2 = Tr8n::GenderRule.create(:language => @russian, :definition => definition)
   #        definition = {operator: "is", value: "unknown"}
-  #        grule3 = Tr8n::GenderRule.create(:settings => @russian, :definition => definition)
+  #        grule3 = Tr8n::GenderRule.create(:language => @russian, :definition => definition)
   #
   #        definition = {multipart: true, part1: "ends_in", value1: "1", operator: "and", part2: "does_not_end_in", value2: "11"}
-  #        nrule1 = Tr8n::NumericRule.create(:settings => @russian, :definition => definition)
+  #        nrule1 = Tr8n::NumericRule.create(:language => @russian, :definition => definition)
   #        definition = {multipart: true, part1: "ends_in", value1: "2,3,4", operator: "and", part2: "does_not_end_in", value2: "12,13,14"}
-  #        nrule2 = Tr8n::NumericRule.create(:settings => @russian, :definition => definition)
+  #        nrule2 = Tr8n::NumericRule.create(:language => @russian, :definition => definition)
   #        definition = {multipart: false, part1: "ends_in", value1: "0,5,6,7,8,9,11,12,13,14"}
-  #        nrule3 = Tr8n::NumericRule.create(:settings => @russian, :definition => definition)
+  #        nrule3 = Tr8n::NumericRule.create(:language => @russian, :definition => definition)
   #
   #        male = mock("male")
   #        male.stub!(:to_s).and_return("Michael")
@@ -287,22 +287,22 @@ describe Tr8n::TranslationKey do
   #        key = Tr8n::TranslationKey.find_or_create("Dear {user}, you have [bold: {count||message}].")
   #        key.add_translation("Dorogoi {user}, u vas est' [bold: {count} soobshenie].", [
   #              {:token=>"user", :rule_id=>[grule1.id]}, {:token=>"count", :rule_id=>[nrule1.id]}
-  #        ], @russian, @dashboard)
+  #        ], @russian, @translator)
   #        key.add_translation("Dorogoi {user}, u vas est' [bold: {count} soobsheniya].", [
   #              {:token=>"user", :rule_id=>[grule1.id]}, {:token=>"count", :rule_id=>[nrule2.id]}
-  #        ], @russian, @dashboard)
+  #        ], @russian, @translator)
   #        key.add_translation("Dorogoi {user}, u vas est' [bold: {count} soobshenii].", [
   #              {:token=>"user", :rule_id=>[grule1.id]}, {:token=>"count", :rule_id=>[nrule3.id]}
-  #        ], @russian, @dashboard)
+  #        ], @russian, @translator)
   #        key.add_translation("Dorogaya {user}, u vas est' [bold: {count} soobshenie].", [
   #              {:token=>"user", :rule_id=>[grule2.id]}, {:token=>"count", :rule_id=>[nrule1.id]}
-  #        ], @russian, @dashboard)
+  #        ], @russian, @translator)
   #        key.add_translation("Dorogaya {user}, u vas est' [bold: {count} soobsheniya].", [
   #              {:token=>"user", :rule_id=>[grule2.id]}, {:token=>"count", :rule_id=>[nrule2.id]}
-  #        ], @russian, @dashboard)
+  #        ], @russian, @translator)
   #        key.add_translation("Dorogaya {user}, u vas est' [bold: {count} soobshenii].", [
   #              {:token=>"user", :rule_id=>[grule2.id]}, {:token=>"count", :rule_id=>[nrule3.id]}
-  #        ], @russian, @dashboard)
+  #        ], @russian, @translator)
   #
   #        key.translate(@english, {:user => male, :count => 1, :bold => "<b>{$0}</b>"}).should eq("Dear Michael, you have <b>1 message</b>.")
   #        key.translate(@english, {:user => female, :count => 1, :bold => "<b>{$0}</b>"}).should eq("Dear Anna, you have <b>1 message</b>.")
@@ -331,21 +331,21 @@ describe Tr8n::TranslationKey do
   #          anna.stub!(:to_s).and_return("Anna")
   #          anna.stub!(:gender).and_return("female")
   #
-  #          language_case = Tr8n::LanguageCase.create(:settings => @english,
-  #                        :dashboard => @dashboard, :keyword => "pos",
+  #          language_case = Tr8n::LanguageCase.create(:language => @english,
+  #                        :translator => @translator, :keyword => "pos",
   #                        :latin_name => "Possessive", :application => "phrase")
   #
   #          language_case.add_rule({
   #                                  part1: "ends_in", value1: "s",
   #                                  operation: "append",
   #                                  operation_value: "'"
-  #                                 }, :dashboard => @dashboard)
+  #                                 }, :translator => @translator)
   #          language_case.add_rule({
   #                                  part1: "does_not_end_in",
   #                                  value1: "s",
   #                                  operation: "append",
   #                                  operation_value: "'s"
-  #                                  }, :dashboard => @dashboard)
+  #                                  }, :translator => @translator)
   #
   #          key = Tr8n::TranslationKey.find_or_create("{actor} updated {target::pos} profile.")
   #          key.translate(@english, {:actor => michael, :target => anna}).should eq("Michael updated Anna's profile.")
@@ -355,8 +355,8 @@ describe Tr8n::TranslationKey do
   #      describe "when using a full ordinal case in English" do
   #        it "should use first, second, or add th to the end of numbers" do
   #          lcase = Tr8n::LanguageCase.create(
-  #              :settings => @english,
-  #              :dashboard => @dashboard,
+  #              :language => @english,
+  #              :translator => @translator,
   #              :keyword => "ord",
   #              :description => "The adjective form of the cardinal numbers",
   #              :latin_name => "Ordinal",
@@ -367,19 +367,19 @@ describe Tr8n::TranslationKey do
   #              value1:               "1",
   #              operation:            "replace",
   #              operation_value:      "first"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #          lcase.add_rule({
   #              part1:                "is",
   #              value1:               "2",
   #              operation:            "replace",
   #              operation_value:      "second"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #          lcase.add_rule({
   #              part1:                "is",
   #              value1:               "3",
   #              operation:            "replace",
   #              operation_value:      "third"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #          lcase.add_rule({
   #              multipart:            "true",
   #              part1:                "ends_in",
@@ -389,7 +389,7 @@ describe Tr8n::TranslationKey do
   #              value2:               "11",
   #              operation:            "append",
   #              operation_value:      "st"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #          lcase.add_rule({
   #              multipart:            "true",
   #              part1:                "ends_in",
@@ -399,7 +399,7 @@ describe Tr8n::TranslationKey do
   #              value2:               "12",
   #              operation:            "append",
   #              operation_value:      "nd"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #          lcase.add_rule({
   #              multipart:            "true",
   #              part1:                "ends_in",
@@ -409,13 +409,13 @@ describe Tr8n::TranslationKey do
   #              value2:               "13",
   #              operation:            "append",
   #              operation_value:      "rd"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #          lcase.add_rule({
   #              part1:                "ends_in",
   #              value1:               "0,4,5,6,7,8,9,11,12,13",
   #              operation:            "append",
   #              operation_value:      "th"
-  #          }, :dashboard => @dashboard)
+  #          }, :translator => @translator)
   #
   #          @english = Tr8n::Language.find(@english.id)
   #

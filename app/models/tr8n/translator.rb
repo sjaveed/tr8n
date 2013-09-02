@@ -118,6 +118,8 @@ class Tr8n::Translator < ActiveRecord::Base
     translator = Tr8n::Translator.find_or_create(user)
     return nil unless translator
 
+    Tr8n::Config.default_application.add_translator(translator)
+
     translator
   end
   

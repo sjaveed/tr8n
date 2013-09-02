@@ -10,21 +10,27 @@
     <%= form_for(tr8n_current_language, :as => :language, :url => {:action => :index}, :html => {:id => 'language_cases_form', :method => :post}) do |f| %>
       <div id="language_cases_content" class="section grey">
         <div class="tr8n_fltr" style="padding-right:5px;">
-            <%=tr8n_help_icon_tag %>
+            <%=tr8n_help_icon_tag("Language Cases") %>
         </div>
 
         <div>
           <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:15px;font-size:12px;">
-            <%=tra("A settings case is an inflection or use of a noun (or pronoun) to show its relation to other words in the sentence.")%>
-            <%=tra("In some languages, like Russian, the form of a token {actor} will changed based on where and how the token is used in a sentence.", "", :actor => "{actor}")%>
-            <%=tra("For instance, in {example}, {actor} token will be in the genitive form of the settings.", "",
+            <%=tra("A language case is an inflection or use of a noun (or pronoun) to show its relation to other words in the sentence.")%>
+            <%=tra("In some languages, like Russian, the form of a token {actor} will change based on where and how the token is used in a sentence.", "", :actor => "{actor}")%>
+            <%=tra("For instance, in {example}, {actor} token will be in the genitive form of the language.", "",
                     :example => "<span dir='ltr' style='display:inline-block;font-weight:bold;'>{target} received a gift from {actor}</span>",
                     :actor => "{actor}")%>
+
+            <div style="float:right; font-size: 12px; color: grey; padding:5px; padding-top:35px;">
+              <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/language/cases/case_modal">
+                <%= tra("Add Language Case") %>
+              </button>
+            </div>
+
             <br><br>
-            <%=tra("This section allows you to define the various cases of your settings so that translators can provide the correct form for each dynamic value of any token.")%>
-            <br><br>
-            <%=tra("The translation engine evaluates rules in the order you have specified here until it finds the first rule that matches the criteria and applies that rule.")%>
-            <%=tra("If you are dealing with an exceptional case for a specific word, you can add exceptions by following the link below.")%>
+
+            <%=tra("This section allows you to define language cases for the language.")%>
+
           </div>
         </div>
       </div>
@@ -41,97 +47,28 @@
           <% tr8n_current_language.language_cases.each_with_index do |lcase, case_index| %>
             <div class="sub_section">
                 <div class="header">
-                  <div style="float:right">
-                    <%=link_to_function(image_tag("tr8n/pencil.png"), "editLanguageCase('#{case_index}')", :id => "language_case_edit_link_#{case_index}")%>
-                    <%=link_to_function(image_tag("tr8n/delete.png"), "deleteLanguageCase('#{case_index}')")%>
+                  <div class="rule_buttons">
+                    <%=link_to("<i class='icon-wrench'></i>".html_safe, {:action => :case_modal, :id => lcase.id}, {"data-toggle" => "dynamic_modal"})%>
+                    <%=link_to("<i class='icon-remove-circle'></i>".html_safe, {:action => :delete_case, :id => lcase.id}, :confirm => trla("Are you sure you want to delete this language case?"))%>
                   </div>
                   <div>
                     <div class="tr8n_txtl" style="padding-bottom:5px; font-size:18px;">
-                      <strong><%= lcase.latin_name %></strong>
-                        <span style="color:grey; font-size:10px;">
-                          <% if lcase.application == 'phrase' %>
-                            <%= tra("applied to the entire phrase of the token value") -%>
-                          <% else %>
-                            <%= tra("applied to every word in the token value") -%>
-                          <% end %>
+                      <%=link_to(lcase.name, {:action => :view, :id => lcase.id})%> <span style="font-size:12px; color:#666; font-weight:normal; padding-left:5px;"><%= lcase.latin_name %></span>
+                      <div style="font-size:12px; color:#666; font-weight:normal; padding-top:5px;">
+                        <%= lcase.description %>
+                      </div>
+                      <div style="color:grey; font-size:10px;" dir="ltr">
+                        {::<%= lcase.keyword %>} -
+                        <span style="font-size:12px; color:#666; font-weight:normal;margin-top:5px;">
+                          <%=link_to(tra("{count|| rule}", :count => lcase.rules.size), {:action => :view, :id => lcase.id})%>
                         </span>
-                      <br>
-                      <span style="color:grey; font-size:10px;" dir="ltr">{::<%= lcase.keyword %>} <%= lcase.description %> </span>
+                      </div>
+
                     </div>
                   </div>
                 </div>
-
-                <div id="language_case_rules_<%=case_index%>" style="padding:5px; margin-top:0px; margin-bottom:5px; border-top: 0px; background-color:white;">
-                    <% if lcase.language_case_rules.empty? %>
-                      <div class="tr8n_txtl" style="padding:10px;padding-left:15px;color:#ccc; font-size:10px;">
-                        <%=tra("No rules have been configured for this language case") %>
-                      </div>
-                    <% end %>
-
-                    <% lcase.language_case_rules.each_with_index do |rule, rule_index| %>
-                        <div class="rule" style="">
-                          <div style="float:right">
-                            <%=link_to_function(image_tag("tr8n/pencil.png"), "editLanguageCaseRule('#{lcase.id}', '#{rule.id}')", :id => "language_case_edit_link_#{rule_index}")%>
-                            <%=link_to_function(image_tag("tr8n/cross.png"), "deleteLanguageCaseRule('#{lcase.id}', '#{rule.id}')")%>
-                          </div>
-
-                          <div>
-                            <span dir="ltr" style="font-weight:bold;color:black;padding-right:5px;"><%=rule_index+1%>.</span>
-
-                            <% if rule_index == 0 %>
-                              <%=image_tag('tr8n/arrow_up_grey.png') %>
-                            <% else %>
-                              <%=link_to_function(image_tag('tr8n/arrow_up.png'), "moveLanguageCaseRule('#{case_index}', '#{rule_index}', 'up')") %>
-                            <% end %>
-
-                            <% if rule_index == lcase.language_case_rules.size - 1 %>
-                              <%=image_tag('tr8n/arrow_down_grey.png') %>
-                            <% else %>
-                              <%=link_to_function(image_tag('tr8n/arrow_down.png'), "moveLanguageCaseRule('#{case_index}', '#{rule_index}', 'down')") %>
-                            <% end %>
-
-                            <%=link_to_function(image_tag("tr8n/add.png"), "addLanguageCaseRule('#{lcase.id}', '#{rule_index+1}')", :id => "language_case_edit_link_#{rule_index}")%>
-
-                            <span style="padding-left:10px;">
-                              <span dir="ltr"><%=rule.description || "no description" %></span>
-                            </span>
-                          </div>
-
-                          <div style="padding-left:80px;padding-top:10px;">
-
-                            <div class="labeled_box">
-                              <span class="title">conditions</span>
-                              <div style="padding:5px;padding-left:25px;">
-                                <%= Tr8n::RulesEngine::Parser.new(rule.conditions).decorate %>
-                              </div>
-                            </div>
-
-                            <div class="labeled_box">
-                              <span class="title">operations</span>
-                              <div style="padding:5px;padding-left:25px;">
-                                <%= Tr8n::RulesEngine::Parser.new(rule.operations).decorate %>
-                              </div>
-                            </div>
-
-                          </div>
-
-                        </div>
-                    <% end %>
-
-                    <div class="tr8n_txtl" style="font-size: 12px; color: grey; padding:5px; padding-top:10px;">
-                      <%=link_to_function(tra(" + Add Language Case Rule"), "addLanguageCaseRule('#{lcase.id}', '0')")%>
-                    </div>
-              </div>
             </div>
           <% end %>
-
-          <div class="tr8n_txtl" style="color:grey; font-size:12px; padding-top:15px;">
-           <%=link_to_function(tra("+ Add Language Case"), "addLanguageCase('#{tr8n_current_language.language_cases.size}')")%>
-          </div>
-
-          <div class="tr8n_txtl" style="color:grey; font-size:10px; padding-top:15px; padding-bottom:5px;">
-            <%=tra("Modifying the case keyword value will invalidate all translated values provided for the case.")%>
-          </div>
         <% end %>
       </div>
     <% end %>
@@ -140,88 +77,3 @@
 <%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>
-
-<script>
-  function updateLanguageCases(language_id) {
-    performLanguageCasesOperation(Tr8n.Utils.serializeForm('language_cases_form'));
-  }
-  
-  function addLanguageCase(position) {
-    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
-    form_hash['case_action'] = "add_at_" + position;
-    performLanguageCasesOperation(form_hash);
-  }
-
-  function editLanguageCase(position) {
-    Tr8n.Effects.hide("language_case_labels_" + position);
-    Tr8n.Effects.hide("language_case_edit_link_" + position);
-    Tr8n.Effects.show("language_case_fields_" + position);
-  }
-
-  function deleteLanguageCase(position) {
-    if (!confirm("<%=tra('Are you sure you want to delete this settings case?')%>"))
-      return;
-      
-    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
-    form_hash['case_action'] = "delete_at_" + position;
-    performLanguageCasesOperation(form_hash);
-  }
-  
-  function clearLanguageCases() {
-    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
-    form_hash['case_action'] = "clear_all";
-    performLanguageCasesOperation(form_hash);
-  } 
-  
-  function performLanguageCasesOperation(params){
-    Tr8n.Utils.update('language_cases', '/tr8n/settings/update_language_cases', {
-      parameters: params,
-      method: 'post'
-    });
-  }
-  
-  var edit_case_index, edit_rule_index, case_action;
-  function addLanguageCaseRule(case_id, position) {
-    var form_hash = {'case_id': case_id, 'position': position};
-    Tr8n.UI.Lightbox.show('/tr8n/settings/lb_language_case_rule?' + Tr8n.Utils.toQueryParams(form_hash), {width:600, height:270});
-  }
-
-  function editLanguageCaseRule(case_id, rule_id) {
-    var form_hash = {'case_id': case_id, 'rule_id': rule_id};
-    Tr8n.UI.Lightbox.show('/tr8n/settings/lb_language_case_rule?' + Tr8n.Utils.toQueryParams(form_hash), {width:600, height:300});
-  }
-
-  function updateLanguageCaseRule(rule_hash) {
-    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
-    form_hash['case_index'] = edit_case_index;
-    form_hash['rule_index'] = edit_rule_index;
-    form_hash['case_action'] = edit_case_action;
-    
-    for (attrname in rule_hash) { form_hash[attrname] = rule_hash[attrname]; }
-
-    performLanguageCaseRuleOperation(edit_case_index, form_hash);
-  }
-
-  function moveLanguageCaseRule(case_index, position, dir) {
-    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
-    form_hash['case_index'] = case_index;
-    form_hash['rule_index'] = position;
-    form_hash['case_action'] = "move_rule_" + dir + "_at_" + position;;
-    
-    performLanguageCaseRuleOperation(case_index, form_hash);
-  }
-  
-  function deleteLanguageCaseRule(case_index, position) {
-    var form_hash = Tr8n.Utils.serializeForm('language_cases_form');
-    form_hash['case_index'] = case_index;
-    form_hash['case_action'] = "delete_rule_at_" + position;
-    performLanguageCaseRuleOperation(case_index, form_hash);
-  }
-
-  function performLanguageCaseRuleOperation(case_index, params){
-    Tr8n.Utils.update('language_case_rules_' + case_index, '/tr8n/settings/update_language_case_rules', {
-      parameters: params,
-      method: 'post'
-    });
-  }
-</script>

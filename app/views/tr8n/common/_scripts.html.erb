@@ -1,5 +1,5 @@
 <% if Tr8n::Config.enabled? and not params[:disable_tr8n_js] %>
-  <%=stylesheet_link_tag("tr8n/tr8n.css") -%>
+  <%=stylesheet_link_tag("tr8n/tools.css") -%>
 
 	<%= tr8n_splash_screen_tag %>
 
@@ -16,6 +16,9 @@
   .tr8n_txtl {
     <%=tr8n_style_attribute_tag('text-align', 'left')%> !important;
   }
+
+  <%=Tr8n::Config.current_application.styles%>
+
   </style>
 
   <script type="text/javascript">
@@ -57,7 +60,7 @@
         }
         function initTr8n() {
           if (window.tr8nJQ) return;
-          addTr8nScript(window.document, 'tr8n-jssdk', "<%= params[:tr8n_debug_js] ? '/assets/tr8n/tr8n.debug.js': '/assets/tr8n/tr8n.js' %>", function() {
+          addTr8nScript(window.document, 'tr8n-jssdk', "<%= params[:tr8n_debug_js] ? '/assets/tr8n/tools.js': '/assets/tr8n/tools.js' %>", function() {
             addTr8nScript(window.document, 'tr8n-proxy', '/tr8n/api/proxy/init.js', function() {
               // alert("Done");  
             });

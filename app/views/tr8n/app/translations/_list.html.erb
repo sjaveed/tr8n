@@ -26,30 +26,30 @@
 <% if [:edit, :view].include?(mode) %>
 	<script>
 	  function deleteTranslationRow(translation_id, section_key) {
-	    if (!confirm("<%=trl('Are you sure you want to delete this translation?')%>")) {
+	    if (!confirm("<%=trla('Are you sure you want to delete this translation?')%>")) {
 	      return;
 	    }
 	    
-	    Tr8n.Effects.hide('tr8n_votes_for_' + translation_id);
-	    Tr8n.Effects.show('tr8n_spinner_for_' + translation_id);
-	    location = "/tr8n/translations/delete?translation_id=" + translation_id + "&section_key=" + section_key;
+	    Tr8n.Utils.Effects.hide('tr8n_votes_for_' + translation_id);
+	    Tr8n.Utils.Effects.show('tr8n_spinner_for_' + translation_id);
+	    location = "/tr8n/app/translations/delete?translation_id=" + translation_id;
 	  }
 	  
 	  function updateTranslationRow(translation_id, mode) {
-	    Tr8n.Effects.hide('tr8n_votes_for_' + translation_id);
-	    Tr8n.Effects.show('tr8n_spinner_for_' + translation_id);
+	    Tr8n.Utils.Effects.hide('tr8n_votes_for_' + translation_id);
+	    Tr8n.Utils.Effects.show('tr8n_spinner_for_' + translation_id);
 	    
-      Tr8n.Utils.update('translation_row_' + translation_id, '/tr8n/translations/update', {
+      Tr8n.Utils.update('translation_row_' + translation_id, '/tr8n/app/translations/update', {
         evalScripts: true,
         parameters: "translation_id=" + translation_id + "&mode=" + mode
       });
 	  }
 	  
 	  function submitTranslationRow(translation_id) {
-	    Tr8n.Effects.hide('tr8n_votes_for_' + translation_id);
-	    Tr8n.Effects.show('tr8n_spinner_for_' + translation_id);
+	    Tr8n.Utils.Effects.hide('tr8n_votes_for_' + translation_id);
+	    Tr8n.Utils.Effects.show('tr8n_spinner_for_' + translation_id);
 	    
-      Tr8n.Utils.update('translation_row_' + translation_id, '/tr8n/translations/update', {
+      Tr8n.Utils.update('translation_row_' + translation_id, '/tr8n/app/translations/update', {
         evalScripts: true,
         parameters: {translation_id: translation_id, label: Tr8n.value("translation_row_value_" + translation_id)},
         method: 'post'

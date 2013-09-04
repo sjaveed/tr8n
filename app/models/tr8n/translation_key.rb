@@ -198,8 +198,9 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   end
 
   # determines whether the key can have rules generated for the settings
-  def permutatable?(language = Tr8n::Config.current_language)
-    language_context_dependant_tokens(language).any?
+  def permutable?(language = Tr8n::Config.current_language)
+    @permutable ||= {}
+    @permutable[language.locale] ||= language_context_dependant_tokens(language).any?
   end
 
   def glossary
@@ -606,9 +607,9 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       classes << (options[:translated] ? 'tr8n_translated' : 'tr8n_not_translated')
     end  
 
-    html = "<tr8n class='#{classes.join(' ')}' translation_key_id='#{id}'>"
+    html = "<span class='#{classes.join(' ')}' translation_key_id='#{id}'>"
     html << translated_label
-    html << "</tr8n>"
+    html << "</span>"
     html
   end
       

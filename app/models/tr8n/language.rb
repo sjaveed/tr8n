@@ -195,7 +195,7 @@ class Tr8n::Language < ActiveRecord::Base
   end
 
   def name
-    return native_name if native_name
+    return native_name unless native_name.blank?
     english_name
   end
 

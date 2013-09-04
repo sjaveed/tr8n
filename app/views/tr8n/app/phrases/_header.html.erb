@@ -10,7 +10,7 @@
   </div>
 	
   <div class="tr8n_txtl" style="color:grey;font-size:20px;padding-bottom:10px;">
-    <%=tra(@translation_key.title, :language => @translation_key.language)%>
+    <%=tra("Original Phrase in {language}", :language => "<span dir='ltr'>#{translation_key.language.name}</span>".html_safe)%>
   </div>
   
   <div  class="tr8n_txtl" style="padding-top:5px;padding-bottom:10px;font-size:14px">

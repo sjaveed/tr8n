@@ -3,7 +3,7 @@
 </td>
 <td class="tr8n_txtl" style="padding:5px; width:100px;">
   <%=tr8n_user_tag(message.translator, :linked => true)%>
-  <div class="tr8n_txtl" style="color:grey;font-size:10px;"><%=tr8n_when_string_tag(message.created_at) %></div>
+  <div class="tr8n_txtl" style="color:grey;font-size:10px;"><%=tr8n_when_string_tag(message.created_at).html_safe %></div>
   <div class="tr8n_txtl" style="font-size:10px;padding-top:5px;">
     <% if tr8n_current_user_is_translator? and message.translator == tr8n_current_translator %>  
       <%=link_to(tra("Delete", "Link to delete forum message"), {:action => :delete_message, :message_id => message.id}, {:confirm => trl("Are you sure you want to delete this message?")})%>
@@ -12,6 +12,6 @@
     <% end %>
   </div>
 </td>
-<td class="tr8n_txtl" style="padding:5px; width:700px;">
+<td class="tr8n_txtl" style="vertical-align: top;">
   <%=message.toHTML %>
 </td>

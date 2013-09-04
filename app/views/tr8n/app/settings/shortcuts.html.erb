@@ -1,0 +1,49 @@
+<style>
+  label {
+    font-weight:bold;
+    padding-top:15px;
+  }
+</style>
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Shortcuts") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Shortcuts") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("You can configure the shortcuts for the application.") %>
+      </div>
+    </div>
+
+    <%= form_for(selected_application, :as => :application, :url => {}, :html => {:method => :post}) do |f| %>
+      <div class="section">
+        <% selected_application.shortcuts.each do |keys, data| %>
+          <div class="section grey" style="padding:5px; margin-bottom: 10px; ">
+            <div style="font-weight:bold; padding-bottom:10px; float:right"><button class="close">&times;</button></div>
+            <%=text_field_tag("shortcuts[][keys]", keys, :placeholder => "Enter a style for phrases with translations", :class => "form-control") %>
+            <%=text_field_tag("shortcuts[][description]", data["description"], :placeholder => "Enter a style for phrases with translations", :class => "form-control input-block-level") %>
+            <%=text_area_tag("shortcuts[][script]", data["script"], :placeholder => "Enter a style for phrases with translations", :class => "form-control input-block-level", :style=>"resize:vertical") %>
+          </div>
+        <% end %>
+
+        <div class="form-group" style="padding-top:15px;">
+          <button type="submit" class="btn btn-primary">
+            <%=tra("Update")%>
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>

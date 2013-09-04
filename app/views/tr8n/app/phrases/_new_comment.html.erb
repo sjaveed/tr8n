@@ -1,8 +1,5 @@
 <div class="section grey">
-  <%= form_tag({:action => :submit_comment}, {:method => :post, :id => "translation_key_comments_form"}) do %>
-    <%= hidden_field_tag(:translation_key_id, @translation_key.id)%>
-    <%= hidden_field_tag(:section_key, @section_key) %>
-    
+  <%= form_tag({:action => :submit_comment, :id => translation_key.id}, {:method => :post, :id => "translation_key_comments_form"}) do %>
     <table style="width:99%">
       <tr>
         <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold;">
@@ -22,8 +19,8 @@
     </table>
     
     <div style="padding-top:20px; padding-bottom:10px;text-align:center">
-        <button type="submit" class="translator_btn translator_submit_btn" onClick="Tr8n.Effects.submit('translation_key_comments_form'); return false;">
-            <span><%=tra("Submit Comment")%></span>
+        <button type="submit" class="btn btn-primary">
+            <%=tra("Submit Comment")%>
         </button>
     </div>
   <% end %>

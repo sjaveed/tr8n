@@ -1,36 +1,40 @@
-<%= form_tag({:controller => "/tr8n/app/translations", :action => :update}, {:id => :tr8n_translator_form, :method => :post}) do |f| %>
-    <%= hidden_field_tag(:translation_key_id, @translation_key.id, :id => :tr8n_translator_translation_key_id) %>
-    <%= hidden_field_tag(:origin, params[:origin]) %>
-    
-    <div style="padding:10px;">
-        <%= render(:partial => "header")%>
-        <div id="tr8n_translator_translation_container"> 
-            <div class="strong small" style="padding-top:10px; padding-bottom:10px;">
-              <%=tra("Enter {language} Translation For Each Context Rule:", nil, :language => tr8n_current_language.native_name)%>
+<%= form_tag({:controller => "/tr8n/app/translations", :action => :update, :id => @translation_key.id}) do |f| %>
+  <%= hidden_field_tag(:origin, params[:origin]) %>
+
+  <%= render(:partial => "header")%>
+  <div id="tr8n_translator_translation_container">
+
+    <% if @permutations.empty? %>
+      <%=tra("No new contexts have been generated.") %>
+      <%=link_to(tra("View all available translations for this phrase."), {:controller => "/tr8n/app/phrases", :action => :view, :id => translation_key.id, :grouped_by => :context}, {:target => "_top"}) %>
+    <% else %>
+      <div class="small" style="padding-top:10px;">
+        <%=tra("The following {count||context has, contexts have} been generated for this phrase.", :count => @permutations.count) %>
+      </div>
+
+      <div class="strong small" style="padding-top:10px; padding-bottom:10px;">
+        <%=tra("Enter {language} translation for each context:", :language => tr8n_current_language.native_name)%>
+      </div>
+
+      <div style="max-height:400px;overflow:auto;padding-bottom:15px;">
+        <% @permutations.each_with_index do |trn, index| %>
+          <div style="background: #eee; padding:5px; margin-bottom:10px; border:1px solid #ccc;">
+            <div style="font-size: 10px; color: #666; padding-top:3px;padding-top:5px; padding-bottom:15px;">
+              <strong><%=index+1%>. </strong> &nbsp; <%= trn.context_description.html_safe %>
             </div>
 
-            <div style="max-height:400px;overflow:auto;padding-bottom:15px;">
-              <% if @permutations.empty? %>
-                <%=tra("No new rule pemutations have been generated.") %> 
-                <%=link_to(tra("View all available translations for this phrase."), {:controller => "/tr8n/phrases", :action => :view, :translation_key_id => @translation_key.id, :grouped_by => :context}, {:target => "_top"}) %>
-              <% end %>
+            <%= text_area_tag("translations[#{trn.id}]", trn.label, :class => 'keyboardInput') %>
 
-              <% @permutations.each do |trn| %>
-                <%= text_area_tag("translations[#{trn.id}]", trn.label, :style=>"height:60px; background:#feffef; border:solid 1px #ccc; padding: 5px 3px; width:97%; border-radius:10px;") %>
-                <div style="font-size: 10px; color: grey; padding-top:3px;padding-top:5px; padding-bottom:15px; padding-left:5px;">
-                  <%=trla("Context:")%> <%= trn.context_description.html_safe %>
-                </div>
-              <% end %>
-            </div>
-        </div>
-    </div>         
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="buttons_container">
+    <button type="submit" class="btn-submit"><%=tra("Translate")%></button>
+  </div>
 <% end %>
-
-<div id="tr8n_translator_buttons_container" class="buttons_container">
-    <button type="submit" class="translator_btn translator_submit_btn" onClick="Tr8n.Translation.submit(); resizeFrame(); return false;">
-        <span><%=tra("Translate")%></span>
-    </button>
-</div>
 
 
 

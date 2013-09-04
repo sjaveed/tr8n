@@ -3,38 +3,39 @@
   <%= render :partial => "/tr8n/app/common/header" %>
   <div class="tr8n tr8n_container">
 	
-	<% if @topic %>
-    <ul class="breadcrumb">
-      <li>
-        <% if @topic.language %>
-          <%=link_to(tra("{language} Language Forum", nil, :language => @topic.language.native_name), :action => :index)%>
-        <% else %>
-          <%=link_to(tra("General Forum"), :action => :index)%>
-        <% end %>
-        <span class="divider">/</span>
-      </li>
+    <% if @topic %>
+      <ul class="breadcrumb">
+        <li>
+          <% if @topic.language %>
+            <%=link_to(tra("{language} Language Forum", nil, :language => @topic.language.native_name), :action => :index)%>
+          <% else %>
+            <%=link_to(tra("General Forum"), :action => :index)%>
+          <% end %>
+          <span class="divider">/</span>
+        </li>
 
-      <li class="active"><%=link_to(@topic.topic, :topic_id => @topic.id)%></li>
-    </ul>
+        <li class="active"><%=link_to(@topic.topic, :topic_id => @topic.id)%></li>
+      </ul>
 
-	  <div class="section_title tr8n_txtl">
-	    <div class="tr8n_fltr" style="font-size:12px; color: #ccc;">
-	      <%=link_to(image_tag("tr8n/reply.png") + " " + tra("Reply", "Reply button for forum topics"), :topic_id => @topic.id, :page => params[:page], :anchor => :reply_message) %> 
-	      &nbsp; |  &nbsp; 
-	      <%=link_to(image_tag("tr8n/plus.png") + " " + tra("Start a new discussion topic"), :mode => :create) %>
-	    </div>
+      <div class="section_title tr8n_txtl">
+        <div class="tr8n_fltr" style="font-size:12px; color: #ccc;">
+          <%=link_to("<i class='icon-edit'></i> #{tra("Reply")}".html_safe, :topic_id => @topic.id, :page => params[:page], :anchor => :reply_message) %>
+          &nbsp; | &nbsp;
+          <%=link_to("<i class='icon-plus-sign'></i> #{tra("Start a new discussion topic")}".html_safe, :mode => :create) %>
+        </div>
 
-	    <div class="tr8n_txtl" style="color:grey;font-size:12px;font-style:italic;padding-top:3px;padding-bottom:3px;">
-	       <%= tra("Started by {user} on {date}", "", 
-	            {:user => [@topic.translator.user, tr8n_user_tag(@topic.translator, :linked => true)], :date => @topic.created_at.trl}) %>
-	    </div>
-	  </div>
-	  <%= render :partial => "messages" %>
-	  <%= render :partial => "new_message" %>  
-	<% else %>
-	  <%= render :partial => "new_topic", :locals => {:include_cancel_button => true} %>
-	<% end %>
-	
+        <div class="tr8n_txtl" style="color:grey;font-size:12px;font-style:italic;padding-top:3px;padding-bottom:3px;">
+           <%= tra("Started by {user} on {date}", "",
+                {:user => [@topic.translator.user, tr8n_user_tag(@topic.translator, :linked => true)], :date => @topic.created_at.trl}) %>
+        </div>
+      </div>
+      <%= render :partial => "messages" %>
+      <%= render :partial => "new_message" %>
+    <% else %>
+      <%= render :partial => "new_topic", :locals => {:include_cancel_button => true} %>
+    <% end %>
+
+  </div>
 	<%= render :partial => "/tr8n/app/common/footer" %>
 	
 <% end %>

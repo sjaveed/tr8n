@@ -1,57 +1,64 @@
 <%
    paginator = Kaminari::Helpers::Paginator.new(self, options.reverse_merge(:current_page => collection.current_page, :total_pages => collection.num_pages, :per_page => collection.limit_value, :param_name => Kaminari.config.param_name, :remote => false, :params => params))
 %>
+<div style="margin-top:-10px;">
+  <div style="float:right;padding-top:5px;">
+  <%
+     entry_name = options[:subject] || (collection.empty? ? 'entry' : collection.first.class.name.underscore.sub('_', ' ').split('/').last)
+  %>
 
-<div style="float:right;padding-top:10px;">
-<%
-   entry_name = options[:subject] || (collection.empty? ? 'entry' : collection.first.class.name.underscore.sub('_', ' ').split('/').last)
-%>
-
-<%=
-     if collection.num_pages < 2
-       case collection.size
-         when 0
-           tra("None found", {}, options)
-         when 1
-           tra("Displaying [strong: {count}] {count|#{entry_name}}", {:count => 1}, options)
-         else
-           tra("Displaying [strong: all {count}] {count|#{entry_name}}", {:count => collection.size}, options)
+  <%=
+       if collection.num_pages < 2
+         case collection.size
+           when 0
+             tra("None found", {}, options)
+           when 1
+             tra("Displaying [strong: {count}] {count|#{entry_name}}", {:count => 1}, options)
+           else
+             tra("Displaying [strong: all {count}] {count|#{entry_name}}", {:count => collection.size}, options)
+         end
+       else
+         tra("Displaying #{entry_name.pluralize} [strong: {start_num} - {end_num}] of [strong: {total_count}] in total",
+            "", {
+                 :start_num    => collection.offset_value + 1,
+                 :end_num      => collection.offset_value + collection.length,
+                 :total_count  => collection.total_count
+             }, options
+         )
        end
-     else
-       tra("Displaying #{entry_name.pluralize} [strong: {start_num} - {end_num}] of [strong: {total_count}] in total",
-          "", {
-               :start_num    => collection.offset_value + 1,
-               :end_num      => collection.offset_value + collection.length,
-               :total_count  => collection.num_pages
-           }, options
-       )
-     end
-%>
+  %>
 
-</div>
+  </div>
 
-<div class="pagination">
-  <ul>
-    <% unless collection.current_page == 1 %>
-      <li class="<%= "disabled" if collection.current_page == 1 %>">
-        <%=link_to(tra("{laquo} First", 'First page'), params.merge(:page => 1))%>
-      </li>
-      <li class="<%= "disabled" if collection.current_page == 1 %>">
-        <%=link_to(tra('{lsaquo} Previous', 'Previous page'), params.merge(:page => collection.current_page - 1))%>
-      </li>
-    <% end %>
+  <div class="pagination">
+    <ul>
+      <% unless collection.current_page == 1 %>
+        <li class="<%= "disabled" if collection.current_page == 1 %>">
+          <%=link_to(tra('{lsaquo} Previous', 'Previous page'), params.merge(:page => collection.current_page - 1))%>
+        </li>
+      <% end %>
 
-    <% collection.num_pages.times do |page| %>
-      <li class="<%= "active" if collection.current_page == (page+1) %>"><%=link_to(page+1, params.merge(:page => page+1))%></li>
-    <% end %>
+      <% collection.num_pages.times do |page| %>
+        <% if page == 0 or page == (collection.num_pages - 1) %>
+          <li class="<%= "active" if collection.current_page == (page+1) %>"><%=link_to(page+1, params.merge(:page => page+1))%></li>
+        <% elsif collection.current_page < page - 2 %>
+          <% next %>
+        <% elsif collection.current_page == page - 2 %>
+          <li class=""><%=link_to('...', params.merge(:page => page+1))%></li>
+        <% elsif collection.current_page == page + 4 %>
+          <li class=""><%=link_to('...', params.merge(:page => page+1))%></li>
+        <% elsif collection.current_page > page + 4 %>
+          <% next %>
+        <% else %>
+          <li class="<%= "active" if collection.current_page == (page+1) %>"><%=link_to(page+1, params.merge(:page => page+1))%></li>
+        <% end %>
+      <% end %>
 
-    <% unless collection.current_page == collection.num_pages %>
-      <li class="<%= "disabled" if collection.current_page == collection.num_pages %>">
-        <%=link_to(tra("Next {rsaquo}", 'Next page'), params.merge(:page => collection.current_page + 1))%>
-      </li>
-      <li class="<%= "disabled" if collection.current_page == collection.num_pages %>">
-        <%=link_to(tra('Last {raquo}', 'Last page'), params.merge(:page => collection.num_pages))%>
-      </li>
-    <% end %>
-  </ul>
+      <% unless collection.current_page == collection.num_pages %>
+        <li class="<%= "disabled" if collection.current_page == collection.num_pages %>">
+          <%=link_to(tra("Next {rsaquo}", 'Next page'), params.merge(:page => collection.current_page + 1))%>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 </div>

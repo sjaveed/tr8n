@@ -24,6 +24,7 @@
 class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
 
   def index
+
   end
 
 end

@@ -42,14 +42,14 @@ class Tr8n::Tools::TranslatorController < Tr8n::BaseController
     end
 
     unless tr8n_current_user_is_translator?
-      return redirect_to(:action => :login, :translation_key_id => translation_key.id, :origin => params[:origin])
+      return redirect_to(:action => :login, :id => translation_key.id, :origin => params[:origin])
     end
 
     translations = translation_key.inline_translations_for(tr8n_current_language)
     if translations.any?
-      redirect_to(:action => :vote, :translation_key_id => translation_key.id, :origin => params[:origin])
+      redirect_to(:action => :vote, :id => translation_key.id, :origin => params[:origin])
     else
-      redirect_to(:action => :submit, :translation_key_id => translation_key.id, :origin => params[:origin])
+      redirect_to(:action => :submit, :id => translation_key.id, :origin => params[:origin])
     end
   end
 
@@ -71,7 +71,7 @@ class Tr8n::Tools::TranslatorController < Tr8n::BaseController
 
   def permutations
     translation_key
-    @permutations = Tr8n::Translation.where("id in (?)", params[:ids].split(',')).all if params[:ids]
+    @permutations = Tr8n::Translation.where("id in (?)", params[:translation_ids].split(',')).all if params[:translation_ids]
     @permutations ||= []
   end
 
@@ -83,7 +83,7 @@ class Tr8n::Tools::TranslatorController < Tr8n::BaseController
 private
   
   def translation_key
-    @translation_key ||= Tr8n::TranslationKey.find_by_id(params[:translation_key_id])
+    @translation_key ||= Tr8n::TranslationKey.find_by_id(params[:id])
   end
   helper_method :translation_key
 

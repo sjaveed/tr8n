@@ -1,50 +1,53 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
   <%= render :partial => "/tr8n/app/common/header" %>
+
   <div class="tr8n tr8n_container">
-	<%= render :partial => "breadcrumb" %>
-	<%= render :partial => "header" %>
-  <%= render :partial => "toolbar" %>
-	
-	<script>
-		function addTranslation() {
-			Tr8n.Effects.hide('translation_key_toolbar');
-			Tr8n.Effects.hide('tranlsations_module'); 
-	    Tr8n.Effects.hide('comments_module'); 
-	    Tr8n.Effects.hide('permutations_module');
-			Tr8n.Effects.show('translation_module');
-		}
-		
-	  function addContextRules() {
-      Tr8n.Effects.hide('translation_key_toolbar');
-	    Tr8n.Effects.hide('tranlsations_module'); 
-	    Tr8n.Effects.hide('comments_module'); 
-	    Tr8n.Effects.hide('translation_module');
-	    Tr8n.Effects.show('permutations_module');
-	  }
-	
-	  function viewTranslations() {
-      Tr8n.Effects.show('translation_key_toolbar');
-	    Tr8n.Effects.hide('translation_module');
-	    Tr8n.Effects.hide('permutations_module');
-	    Tr8n.Effects.show('tranlsations_module'); 
-	    Tr8n.Effects.show('comments_module'); 
-	  }
-	</script>	
-	
-	<%= render :partial => "translations_module" %>
-	<%= render :partial => "translation_module" %>
-	<%= render :partial => "permutations_module" %>
-	<%= render :partial => "comments_module" %>
-	
-	<% if @show_add_dialog and not @translation_key.locked? %>
-		<script>
-			window.setTimeout(function() {
-				addTranslation();
-			}, 1000);
-		</script>	
-	<% end %>
+    <%= render :partial => "breadcrumb" %>
+    <%= render :partial => "header" %>
+    <%= render :partial => "toolbar" %>
+
+    <%= render :partial => "translations_module" %>
+    <%= render :partial => "translation_module" %>
+    <%= render :partial => "permutations_module" %>
+    <%= render :partial => "comments_module" %>
+
+    <% if @show_add_dialog and not @translation_key.locked? %>
+      <script>
+        window.setTimeout(function() {
+          addTranslation();
+        }, 1000);
+      </script>
+    <% end %>
 
   </div>
+
+  <script>
+    function addTranslation() {
+      Tr8n.Utils.Effects.hide('translation_key_toolbar');
+      Tr8n.Utils.Effects.hide('translations_module');
+      Tr8n.Utils.Effects.hide('comments_module');
+      Tr8n.Utils.Effects.hide('permutations_module');
+      Tr8n.Utils.Effects.show('translation_module');
+    }
+
+    function addContextRules() {
+      Tr8n.Utils.Effects.hide('translation_key_toolbar');
+      Tr8n.Utils.Effects.hide('translations_module');
+      Tr8n.Utils.Effects.hide('comments_module');
+      Tr8n.Utils.Effects.hide('translation_module');
+      Tr8n.Utils.Effects.show('permutations_module');
+    }
+
+    function viewTranslations() {
+      Tr8n.Utils.Effects.show('translation_key_toolbar');
+      Tr8n.Utils.Effects.hide('translation_module');
+      Tr8n.Utils.Effects.hide('permutations_module');
+      Tr8n.Utils.Effects.show('translations_module');
+      Tr8n.Utils.Effects.show('comments_module');
+    }
+  </script>
+
 	<%= render :partial => "/tr8n/app/common/footer" %>
+
 <% end %>

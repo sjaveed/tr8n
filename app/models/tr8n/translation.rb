@@ -310,12 +310,12 @@ class Tr8n::Translation < ActiveRecord::Base
   end
   
   def self.filter_submitter_options
-    [["anyone", "anyone"], 
-     ["me", "me"]].collect{|option| [option.first.trl("Translation filter submitter option"), option.last]}
+    [["by anyone", "anyone"],
+     ["by me", "me"]].collect{|option| [option.first.trl("Translation filter submitter option"), option.last]}
   end
   
   def self.filter_date_options
-    [["any date", "any"], 
+    [["on any date", "any"],
      ["today", "today"], 
      ["yesterday", "yesterday"], 
      ["in the last week", "last_week"]].collect{|option| [option.first.trl("Translation filter date option"), option.last]}

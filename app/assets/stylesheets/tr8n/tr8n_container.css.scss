@@ -25,6 +25,10 @@ div.tagsinput span.tag {
 
 .tr8n_container {
 
+  label {
+    font-weight:bold;
+  }
+
   .section {
     background-color:#fff;
     padding:10px;
@@ -44,6 +48,14 @@ div.tagsinput span.tag {
     &.yellow {
       background-color:#FDFFF0;
     }
+  }
+
+  .section_title {
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+    color: #888;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 
   .sub_section {

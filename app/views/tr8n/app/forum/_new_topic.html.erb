@@ -12,7 +12,7 @@
     
     <table style="width:99%">
       <tr>
-        <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold;">
+        <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold; vertical-align: top">
           <%=tra("Topic:")%>
         </td>
         <td>
@@ -20,7 +20,7 @@
         </td>
       </tr>
       <tr>
-        <td style="width:80px; text-align:right; padding-right:10px; padding-top:5px; font-weight:bold;">
+        <td style="width:80px; text-align:right; padding-right:10px; padding-top:5px; font-weight:bold; vertical-align: top">
           <%=tra("Message:") %>
         </td>
         <td style="padding-top:5px;">
@@ -36,12 +36,12 @@
     </table>
     
     <div style="padding-top:20px; padding-bottom:10px;text-align:center">
-        <button type="submit" class="translator_btn translator_submit_btn" onClick=" Tr8n.Effects.submit('forum_topic_form'); return false;">
-            <span><%=tra("Start a New Discussion")%></span>
+        <button type="submit" class="btn btn-primary">
+          <%=tra("Start a New Discussion")%>
         </button>
         <% if include_cancel_button %>
-        or 
-        <%=link_to(tra("Cancel"), :action => :index)%>
+          <%=tra("or") %>
+          <%=link_to(tra("Cancel"), :action => :index)%>
         <% end %>  
     </div>
   <% end %>

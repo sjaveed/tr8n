@@ -31,12 +31,13 @@ shortcut.add('<%=key%>', function() {
   end
 %>
 
-Tr8n.SDK.Proxy.init(<%=opts.to_json.html_safe %>);
-Tr8n.SDK.Proxy.registerTranslationKeys(<%=translations.to_json.html_safe%>);
+<% if params[:sdk] %>
+  Tr8n.SDK.Proxy.init(<%=opts.to_json.html_safe %>);
+  Tr8n.SDK.Proxy.registerTranslationKeys(<%=translations.to_json.html_safe%>);
 
-if ( Tr8n.SDK.Proxy.text_enabled ) {
-  Tr8n.SDK.Proxy.initText();
-} else if ( Tr8n.SDK.Proxy.tml_enabled ) {
-  Tr8n.SDK.Proxy.initTml();
-}
-
+  if ( Tr8n.SDK.Proxy.text_enabled ) {
+    Tr8n.SDK.Proxy.initText();
+  } else if ( Tr8n.SDK.Proxy.tml_enabled ) {
+    Tr8n.SDK.Proxy.initTml();
+  }
+<% end %>

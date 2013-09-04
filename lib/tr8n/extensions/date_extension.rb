@@ -65,7 +65,7 @@ class Date
       end
     end
 
-    language.tr(label, nil, tokens, options)
+    language.tr(label, nil, tokens, options).html_safe
   end
   alias :tr :translate  
   

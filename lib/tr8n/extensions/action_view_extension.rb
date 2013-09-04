@@ -463,18 +463,23 @@ module Tr8n
 
     def tr8n_when_string_tag(time, opts = {})
       elapsed_seconds = Time.now - time
-      if elapsed_seconds < 0
-        tr('In the future, Marty!', 'Time reference')
-      elsif elapsed_seconds < 2.minutes
-        tr('a moment ago', 'Time reference')
-      elsif elapsed_seconds < 55.minutes
+      return tr('In the future, Marty!')  if elapsed_seconds < 0
+      return tr('a moment ago', 'Time reference') if elapsed_seconds < 2.minutes
+
+      if elapsed_seconds < 55.minutes
         elapsed_minutes = (elapsed_seconds / 1.minute).to_i
-        tr("{minutes||minute} ago", 'Time reference', :minutes => elapsed_minutes)
-      elsif elapsed_seconds < 1.75.hours
-        tr("about an hour ago", 'Time reference')
-      elsif elapsed_seconds < 12.hours
+        return tr("{minutes||minute} ago", 'Time reference', :minutes => elapsed_minutes)
+      end
+
+      if elapsed_seconds < 1.75.hours
+        return tr("about an hour ago", 'Time reference')
+      end
+
+      if elapsed_seconds < 12.hours
         elapsed_hours = (elapsed_seconds / 1.hour).to_i
-        tr("{hours||hour} ago", 'Time reference', :hours => elapsed_hours)
+        return tr("{hours||hour} ago", 'Time reference', :hours => elapsed_hours)
+      end
+
       # elsif time.today_in_time_zone?
       #   display_time(time, :time_am_pm)
       # elsif time.yesterday_in_time_zone?
@@ -483,9 +488,8 @@ module Tr8n
       #   time.tr(:day_time).gsub('/ ', '/').sub(/^[0:]*/,"")
       # elsif time.same_year_in_time_zone?
       #   time.tr(:monthname_abbr_time).gsub('/ ', '/').sub(/^[0:]*/,"")
-      else
-        time.tr(:verbose).gsub('/ ', '/').sub(/^[0:]*/,"")
-      end
+
+      time.tr(:monthname_abbr_year).gsub('/ ', '/').sub(/^[0:]*/,"")
     end
 
     def tr8n_actions_tag(actions, opts = {}) 

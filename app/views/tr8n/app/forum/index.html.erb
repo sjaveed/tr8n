@@ -5,7 +5,7 @@
     <% unless @topics.empty? %>
     <div class="section_title">
       <div class="tr8n_fltr" style="font-size:12px; color: #ccc;">
-        <%= link_to(tra("+ Start a new discussion topic"), :action => :topic, :mode => :create) %>
+        <%=link_to("<i class='icon-plus-sign'></i> #{tra("Start a new discussion topic")}".html_safe, :action => :topic, :mode => :create) %>
       </div>
       <div class="tr8n_txtl">
         <%=tra("{language} Language Discussion Topics", nil, :language => tr8n_current_language.native_name) %>
@@ -33,7 +33,7 @@
                     <td style="vertical-align:top;padding:5px;">
                       <%=tr8n_user_tag(topic.translator, :linked => true)%>
                       <div style="color:grey;">
-                        <%=tr8n_when_string_tag(topic.created_at) %>
+                        <%=tr8n_when_string_tag(topic.created_at).html_safe %>
                       </div>
                       <div style="font-size:10px;padding-top:5px;">
                         <% if tr8n_current_user_is_translator? and topic.translator == tr8n_current_translator %>
@@ -46,13 +46,13 @@
                   </tr>
                 </table>
               </td>
-              <td class="tr8n_txtl" style="padding:5px;">
+              <td class="tr8n_txtl" style="vertical-align: top">
                 <%=link_to(topic.topic, :action => :topic, :topic_id => topic.id)%><br>
               </td>
-              <td class="tr8n_txtl" style="padding:5px;">
+              <td class="tr8n_txtl" style="vertical-align: top">
                 <%=topic.post_count %>
               </td>
-              <td class="topic_value" style="padding:5px;">
+              <td class="topic_value" style="vertical-align: top">
                 <% if topic.last_post %>
                    <div class="tr8n_txtl" style="font-size:10px;"><%=topic.last_post.created_at.trl(:date_time) %>
                     <% if topic.translator and topic.translator.user %>

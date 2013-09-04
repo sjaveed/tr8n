@@ -1,4 +1,12 @@
 <ul class="breadcrumb">
-  <li><%=link_to(selected_application.name, :app_id => selected_application.id)%> <span class="divider">/</span></li>
-  <li class="active"><%=link_to(tra("All Phrases"), :action => :index)%></li>
+  <li class="active">
+    <%=link_to(tra("All Phrases"), :action => :index)%>
+    <% if @translation_key %>
+      <span class="divider">/</span>
+    <% end %>
+  </li>
+  <% if @translation_key %>
+    <li class="active"><%=link_to(@translation_key.sanitized_label, :action => :view, :id => @translation_key.id)%>
+    </li>
+  <% end %>
 </ul>

@@ -1,14 +1,14 @@
 <html>
   <head>
-    <%= stylesheet_link_tag('tr8n/tr8n.css') %>
-    <%= javascript_include_tag('tr8n/tr8n.js') %>
+    <%= stylesheet_link_tag('tr8n/tools.css') %>
+    <%= javascript_include_tag('tr8n/tools.js') %>
     <script type="text/javascript">
       function resizeFrame() {
         var height = document.body.scrollHeight;
-        Tr8n.postMessage({'subject': 'lightbox', 'action': 'resize', 'height': height}, '<%=params[:origin]%>');
+        Tr8n.Dispatcher.postMessage({'subject': 'lightbox', 'action': 'resize', 'height': height}, '<%=params[:origin]%>');
       }
       function reloadOrigin() {
-        Tr8n.postMessage({'subject': 'window', 'action': 'reload'}, '<%=params[:origin]%>');
+        Tr8n.Dispatcher.postMessage({'subject': 'window', 'action': 'reload'}, '<%=params[:origin]%>');
       }
     </script>
   </head> 
@@ -28,7 +28,7 @@
     <% 
       if @generate_signed_request
     %>
-        Tr8n.postMessage({'subject': 'cookie', 'action': 'set', 'name': '<%= Tr8n::Config.signed_request_name%>', 'value': '<%=Tr8n::Config.signed_request_body%>'}, '<%=params[:origin]%>');
+        Tr8n.Dispatcher.postMessage({'subject': 'cookie', 'action': 'set', 'name': '<%= Tr8n::Config.signed_request_name%>', 'value': '<%=Tr8n::Config.signed_request_body%>'}, '<%=params[:origin]%>');
     <%
       end 
     %>

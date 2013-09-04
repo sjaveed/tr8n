@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -22,8 +22,6 @@
 #++
 
 class Tr8n::App::TranslationsController < Tr8n::App::BaseController
-
-  before_filter :validate_current_translator
 
   # for ssl access to the dashboard - using ssl_requirement plugin
   ssl_allowed :submit  if respond_to?(:ssl_allowed)
@@ -63,15 +61,7 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
 
   # main translation method used by the dashboard and translation screens
   def submit
-    return redirect_to_source unless request.post?
-
-    destination_url = params[:destination_url] || {:controller => '/tr8n/tools/translator', :action => 'done', :translation_key_id => params[:translation_key_id], :origin => params[:origin]}
-
-    translation_key = Tr8n::TranslationKey.find_by_id(params[:translation_key_id].to_i)
-    unless translation_key
-      trfe("Invalid translation key id")
-      return redirect_to(destination_url)
-    end
+    destination_url = params[:destination_url] || {:controller => '/tr8n/tools/translator', :action => 'done', :id => params[:id], :origin => params[:origin]}
 
     if params[:lock] == "true"
       if tr8n_current_translator.manager?
@@ -132,58 +122,52 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
   # generates phrase context rules permutations
   # can be called from the dashboard or from a page
   def permutate
-    translation_key = Tr8n::TranslationKey.find(params[:translation_key_id])
-
-    if params[:translator]
-      destination_url = {:controller => '/tr8n/tools/dashboard', :action => :permutations, :translation_key_id => translation_key.id, :origin => params[:origin]}
-    else
-      destination_url = {:controller => "/tr8n/phrases", :action => :view, :translation_key_id => translation_key.id, :grouped_by => :context}
-    end
-
     new_translations = translation_key.generate_translations_for_rules_combinations(tr8n_current_language, tr8n_current_translator, params[:token_contexts])
 
     if params[:translator]
-      ids = new_translations.collect{|trn| trn.id}
-      destination_url.merge!(:ids => ids.join(','))
-    else
-      if params[:token_contexts].blank?
-        trfe("No context rules were specified.")
-      elsif new_translations.nil? or new_translations.empty?
-        trfn("The context rules already exist. Please provide a translation for each rule.")
-      else
-        trfn("All possible combinations of the context rules for this phrase have been generated. Please provide a translation for each rule.")
-      end  
+      return redirect_to(:controller => '/tr8n/tools/translator',
+                         :action => :permutations,
+                         :id => translation_key.id,
+                         :origin => params[:origin],
+                         :translation_ids => new_translations.collect{|trn| trn.id}.join(','))
+
     end
-    
-    redirect_to(destination_url)
+
+    if params[:token_contexts].blank?
+      trfe('No context rules were specified.')
+    elsif new_translations.nil? or new_translations.empty?
+      trfn('The context rules already exist. Please provide a translation for each rule.')
+    else
+      trfn('All possible combinations of the context rules for this phrase have been generated. Please provide a translation for each rule.')
+    end
+
+    redirect_to(:controller => "/tr8n/app/phrases", :action => :view, :id => translation_key.id, :grouped_by => :context)
   end
   
   # ajax based method - collects votes for a translation
   def vote
-    translation = Tr8n::Translation.find(params[:translation_id])
     translation.vote!(tr8n_current_translator, params[:vote])
-    translation_key = translation.translation_key
 
-    # this is called from page translations page
+    # this is called from translations page
     if params[:short_version] == "true"
       return render(:text => translation.rank_label) 
     end
     
     # this is called from the inline dashboard with reordering the translations based on ranks
-    translations = translation_key.inline_translations_for(tr8n_current_language)
-    render(:partial => '/tr8n/common/translation_votes', :locals => {:translation_key => translation_key, :translations => translations, :section_key => ""})
+    render(:partial => '/tr8n/common/translation_votes',
+           :locals => {:translation_key => translation.translation_key,
+           :translations => translation.translation_key.inline_translations_for(tr8n_current_language)})
   end
+
 
   # ajax based method for updating individual translations
   def update
-    #coming from dashboard window
+    #coming from translator window
     if params[:translations]
-      translation_key = Tr8n::TranslationKey.find(params[:translation_key_id])
       params[:translations].each do |tid, label|
         trn = Tr8n::Translation.find_by_id(tid)
         next unless trn
         trn.label = sanitize_label(label)
-        next unless trn.can_be_edited_by?(tr8n_current_translator)
         next if trn.blank?
         next unless trn.uniq?
         next unless trn.clean?
@@ -191,8 +175,7 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
         trn.reset_votes!(tr8n_current_translator)
       end
 
-      destination_url = {:controller => '/tr8n/tools/dashboard', :action => 'done', :translation_key_id => translation_key.id, :origin => params[:origin]}
-      return redirect_to(destination_url)
+      return redirect_to(:controller => '/tr8n/tools/translator', :action => 'done', :id => translation_key.id, :origin => params[:origin])
     end
 
     @translation = Tr8n::Translation.find(params[:translation_id])
@@ -232,7 +215,6 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
   
   # deletes an individual translation
   def delete
-    translation = Tr8n::Translation.find(params[:translation_id])
     translator = translation.translator
 
     unless translation.can_be_deleted_by?(tr8n_current_translator)
@@ -244,10 +226,20 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
       trfn("Your translation has been removed.")
     end
     
-    redirect_to(:controller => "/tr8n/phrases", :action => :view, :translation_key_id => translation.translation_key.id, :section_key => @section_key)
+    redirect_to(:controller => "/tr8n/phrases", :action => :view, :id => translation.translation_key.id, :section_key => @section_key)
   end
     
 private
+
+  def translation_key
+    @translation_key ||= Tr8n::TranslationKey.find_by_id(params[:id] || params[:translation_key_id])
+  end
+  helper_method :translation_key
+
+  def translation
+    @translation ||= Tr8n::Translation.find_by_id(params[:translation_id])
+  end
+  helper_method :translation
 
   def parse_rules
     return nil unless params[:has_rules] == "true" and params[:rules] 

@@ -1,0 +1,74 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <%= render :partial => "breadcrumb" %>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Translators") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%=tra("This section provides a list of all translators that have been assigned to the application.") %>
+        <%=tra("Only these translators can be assigned to application components that have not been released yet.") %>
+      </div>
+    </div>
+
+    <div class="section blue">
+      <%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
+        <%=hidden_field_tag(:section_key, @section_key) %>
+        <div class="tr8n_fltr">
+          <button type="submit" class="btn btn-primary" onClick="Tr8n.Effects.submit('translations_search_form'); return false;">
+            <%=tra("Search")%>
+          </button>
+        </div>
+
+        <div class="tr8n_txtl">
+          <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translators")})%>
+        </div>
+
+        <div class="tr8n_txtl" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+          <%=select_tag(:language, options_for_select([["all languages", "all"]] + Tr8n::Language.options, params[:language]))%>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="section">
+      <table class="table table-hover ">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Languages</th>
+          <th>Level</th>
+          <th>Rank</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% selected_application.translators.each do |translator| %>
+          <tr>
+            <td>
+              <%=tr8n_user_mugshot_tag(translator, :linked => true)%> &nbsp;
+              <%=translator.name%>
+            </td>
+            <td>
+              <%=translator.languages.collect{|lang| lang.name}.join(', ')%>
+            </td>
+            <td>
+              <%=translator.level%>
+            </td>
+            <td>
+              <%=tr8n_translator_rank_tag(translator)%>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-remove-circle'></i>".html_safe, {:action => :remove_language, :id => translator.id}, :confirm => trla("Are you sure you want to remove this translator from the application?"))%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+<% end %>

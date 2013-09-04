@@ -27,4 +27,28 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
 
   end
 
+  def basics
+    if request.post?
+      selected_application.name = params[:application][:name]
+      selected_application.description = params[:application][:description]
+      selected_application.save
+      trfn("Application has been updated")
+    end
+  end
+
+  def stylesheets
+    if request.post?
+      selected_application.definition ||= {}
+      selected_application.definition["classes"] ||= {}
+      selected_application.definition["classes"].merge!(params[:classes])
+      selected_application.save
+      trfn("Application style guides have been updated")
+    end
+  end
+
+  def generate_secret
+    selected_application.reset_secret!
+    redirect_back
+  end
+
 end

@@ -1,4 +1,4 @@
-<div id="tranlsations_module">
+<div id="translations_module">
 	<div class="section_title">
 		<% unless @translation_key.locked? %>
 	    <div class="tr8n_fltr" style="font-size: 12px; font-weight:normal;">
@@ -16,12 +16,11 @@
   <div class="section tr8n_txtl" id="translations_content">
     <div class="section blue tr8n_txtl">
       <%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
-         <%=hidden_field_tag(:section_key, @section_key) %>
-         <%=hidden_field_tag(:translation_key_id, @translation_key.id) %>
+         <%=hidden_field_tag(:id, translation_key.id) %>
          <div class="tr8n_txtl" style="padding-top:5px;">
             <%=tra("Show", "Show translations")%>
             <%=select_tag(:with_status, options_for_select(Tr8n::Translation.filter_status_options, params[:with_status]), :onChange => "Tr8n.Effects.submit('translations_search_form')")%>
-            <%=tra("submitted by", "Translations subbmitted by")%>
+            <%=tra("submitted by", "Translations submitted by")%>
             <%=select_tag(:submitted_by, options_for_select(Tr8n::Translation.filter_submitter_options, params[:submitted_by]), :onChange => "Tr8n.Effects.submit('translations_search_form')")%>
             <%=tra("created on", "Translations created on")%>
             <%=select_tag(:submitted_on, options_for_select(Tr8n::Translation.filter_date_options, params[:submitted_on]), :onChange => "Tr8n.Effects.submit('translations_search_form')")%>
@@ -31,40 +30,40 @@
       <% end %>
     </div>
     
-  <% if @grouping.empty? %>
+    <% if @grouping.empty? %>
       <%= render :partial => "/tr8n/app/translations/list", :locals => {:language => tr8n_current_language, :translations => @translations, :mode => :view} %>
-  <% else %>
+    <% else %>
       <% @grouping.keys.sort.each_with_index do |key, index| %>
         <div class="section_title">
           <% if params[:grouped_by] == "context" %>
             <div style="float:right; font-size: 12px; font-weight:normal; padding-top:5px;">
               <%= link_to_function(trla("+ add translation"), "addTranslation()") %>
-            </div> 
+            </div>
           <% end %>
-          
+
           <%=tr8n_toggler_tag("translations_section_#{index}", "", true)%>
-					<span style="font-size:14px;">
+          <span style="font-size:14px;">
             <%=key.html_safe %>
-					</span>
+          </span>
         </div>
         <div id="translations_section_<%=index%>">
           <%= render :partial => "/tr8n/app/translations/list", :locals => {:language => tr8n_current_language, :translations => @grouping[key], :mode => :view} %>
         </div>
       <% end %>
-  <% end %>
-  
-  <% unless @translation_key.locked? %>
-    <div class="tr8n_txtl" style="font-size: 12px; color: grey; padding-top:15px; padding-bottom:15px;">
-    <%= tra("You can only edit or delete translations submitted by you.") %>
-     
-    <%= tra("If you don't like any of the translations for this phrase, [link: add your own translation].", nil, :link => lambda{|str| link_to_function(str, "addTranslation()")}) %>
+    <% end %>
 
-    <% if @translation_key.permutatable? %>
-        <%=tra("If this translation depends on a {token} or a gender of the viewing user, then [link: generate context rules for this phrase].", nil,
-              :token => "{token}", :link => lambda{|str| link_to_function(str, "addContextRules()")}) %>
-    <% end %>        
-    </div>
-  <% end %>
+    <% unless translation_key.locked? %>
+      <div class="tr8n_txtl" style="font-size: 12px; color: grey; padding-top:15px; padding-bottom:15px;">
+        <%= tra("You can only edit or delete translations submitted by you.") %>
+
+        <%= tra("If you don't like any of these translations, [link: add your own translation].", :link => lambda{|str| link_to_function(str, "addTranslation()")}) %>
+
+        <% if translation_key.permutable? %>
+            <%=tra("If this translation depends on a {token} or a gender of the viewing user, then [link: generate context rules for this phrase].", nil,
+                  :token => "{token}", :link => lambda{|str| link_to_function(str, "addContextRules()")}) %>
+        <% end %>
+      </div>
+    <% end %>
 
   </div>
 </div>

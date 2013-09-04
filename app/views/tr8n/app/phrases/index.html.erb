@@ -6,14 +6,13 @@
     <%= render :partial => "breadcrumb" %>
 
     <div class="section blue">
-      <%= form_tag({:action => :index}, {:method => :get, :id => "translations_search_form"}) do %>
-          <%=hidden_field_tag(:section_key, @section_key) %>
+      <%= form_tag({:action => :index}, {:method => :get}) do %>
           <%=hidden_field_tag(:source_id, params[:source_id]) %>
           <%=hidden_field_tag(:component_id, params[:component_id]) %>
           <%=hidden_field_tag(:sources, params[:sources]) %>
           <div class="tr8n_fltr">
-            <button type="submit" class="translator_btn translator_small_btn" onClick="Tr8n.Effects.submit('translations_search_form'); return false;">
-                <span><%=tra("Search")%></span>
+            <button type="submit" class="btn btn-primary">
+                <%=tra("Search")%>
             </button>
           </div>
 
@@ -22,13 +21,10 @@
           </div>
 
           <div class="tr8n_txtl" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
-              <%=tra("Search phrases")%>
               <%=select_tag(:phrase_type, tr8n_options_for_select(Tr8n::TranslationKey.filter_phrase_type_options, params[:phrase_type]), :onChange => "toggleFilterOptions()")%>
               <span id="extended_filter_options" style="<%='display:none' unless params[:phrase_type]=="with" %>">
-                <%=tra("marked as", "Phrases marked as some status")%>
                 <%=select_tag(:phrase_status, tr8n_options_for_select(Tr8n::TranslationKey.filter_phrase_status_options, params[:phrase_status]))%>
               </span>
-              <%=tra("include", "Phrases that include some information")%>
               <%=select_tag(:phrase_lock, tr8n_options_for_select(Tr8n::TranslationKey.filter_phrase_lock_options, params[:phrase_lock]))%>
           </div>
 
@@ -92,9 +88,9 @@
 	<script>
 	  function toggleFilterOptions() {
 	    if (Tr8n.element("phrase_type").value == "with") {
-	      Tr8n.Effects.show("extended_filter_options");
+	      Tr8n.Utils.Effects.show("extended_filter_options");
 	    } else {
-	      Tr8n.Effects.hide("extended_filter_options");
+	      Tr8n.Utils.Effects.hide("extended_filter_options");
 	    }
 	  }
 	</script>

@@ -1,27 +1,23 @@
-<%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :permutate, :translator => true}, :html => {:id => 'tr8n_translator_form', :method => :post}) do |f| %>
-    <%= hidden_field_tag(:translation_key_id, @translation_key.id) %>
-    <%= hidden_field_tag(:translation_has_dependencies, "true") %>
-    <%= hidden_field_tag(:origin, params[:origin]) %>
+<%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :permutate, :id => translation_key.id, :translator => true}) do |f| %>
+  <%= hidden_field_tag(:origin, params[:origin]) %>
+  <%= hidden_field_tag(:translation_has_dependencies, "true") %>
 
-    <div style="padding:10px;">
-      <%= render(:partial => "header")%>
+  <%= render(:partial => "header")%>
 
-      <div id="tr8n_translator_translation_container">
-         <div class="small_section_title">
-            <%=tra("Context Rules")%>
-         </div>
-        
-	      <div style="padding-bottom:15px;">
-	        <%=render :partial => "/tr8n/common/permutations" %>
-	      </div>
+  <div class="small_section_title">
+    <%=tra("Context Rules")%>
+  </div>
 
-        <%=link_to(tra("Click here if there are no context rules for this phrase"), {:action => :submit, :translation_key_id => @translation_key.id, :origin => params[:origin]}, :style => "font-size:10px;") %>
-     </div>      
-    </div>
+  <div style="padding-bottom:15px;">
+  <%=render :partial => "/tr8n/common/permutations" %>
+  </div>
+
+  <%=link_to(tra("Click here if this phrase does not require context rules"), {:action => :submit, :id => translation_key.id, :origin => params[:origin]}, :style => "font-size:10px;") %>
+
+  <div class="buttons_container">
+    <button type="submit" class="btn-submit">
+      <%=tra("Continue...")%>
+    </button>
+  </div>
 <% end %>
 
-<div id="tr8n_translator_buttons_container" class="buttons_container">
-    <button type="submit" class="translator_btn translator_submit_btn" onClick="Tr8n.Translation.submit(); resizeFrame(); return false;">
-        <span><%=tra("Continue...")%></span>
-    </button>
-</div>

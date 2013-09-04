@@ -1,0 +1,217 @@
+/****************************************************************************
+  Copyright (c) 2010-2012 Michael Berkovich, Ian McDaniel
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+****************************************************************************/
+@import './utils/keyboard_1_49.css.scss';
+
+@mixin rounded-corners($radius) {
+  -webkit-border-radius: $radius;
+   -khtml-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+       -o-border-radius: $radius;
+          border-radius: $radius;
+}
+
+@mixin shadow($info) {
+	box-shadow:$info;
+	-moz-box-shadow:$info;
+	-webkit-box-shadow:$info;
+}
+
+@mixin transition($info) {
+	-webkit-transition: all 1500ms cubic-bezier $info; 
+	   -moz-transition: all 1500ms cubic-bezier $info; 
+	    -ms-transition: all 1500ms cubic-bezier $info; 
+	     -o-transition: all 1500ms cubic-bezier $info; 
+	        transition: all 1500ms cubic-bezier $info; 	
+}
+
+
+.tr8n_translator {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-family: verdana; 
+	font-size:11px; 
+	width: 400px;
+	background: #f4f4f4;
+	border:solid 1px #e8e8e8;
+	border-color:#e8e8e8 #bababa #bababa #e8e8e8;
+	padding: 0;
+	margin: 0;
+	z-index: 10000;
+
+ 	@include rounded-corners(10px);
+ 	@include shadow(2px 3px 3px 2px rgba(0,0,0,0.6));
+
+	img {
+		vertical-align:text-top !important;
+	}
+	
+	a {
+		text-decoration:none; 
+		color:#16b; 
+		outline:none; 
+		border:0px;
+	}
+
+	.original_text {
+		background-color:#f9f8f7;
+		border: 1px solid #ccc;
+		padding:5px;
+		margin-bottom:5px;
+	 	@include rounded-corners(10px);	
+	}
+
+	.keyboardInput {
+		padding:10px;
+		height:60px;
+		background:#feffef;
+		border:solid 1px #ccc;
+		min-width:365px;
+		max-width:365px;
+		min-height:60px;
+		max-height:400px;
+	 	@include rounded-corners(10px);	
+	}
+
+    .stem {
+      position:absolute;margin:0;
+    }
+    .top_left {
+      top:-12px;
+    }
+    .top_right {
+      top:-12px;-moz-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); filter: fliph;
+    }
+    .bottom_left {
+      bottom:-12px;-moz-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: flipv;
+    }
+    .bottom_right  {
+      bottom:-12px;-moz-transform: scaleX(-1), scaleY(-1); -webkit-transform: scaleX(-1), scaleY(-1); transform: scaleX(-1), scaleY(-1); filter: fliph, flipv;
+    }
+}
+
+.language_selector_trigger                      {cursor: pointer; font-family:arial; font-size:12px; vertical-algin:middle}
+.language_selector                              {position: absolute;top: 0;left: 0;font-family: verdana;width: 14em;background: #f9f8f7;padding: 0;}
+
+
+.tr8n_language_selector {
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	border:solid 1px #e8e8e8;
+	border-color:#e8e8e8 #bababa #bababa #e8e8e8;
+	border-width:1px 2px 2px 1px;
+	padding:0 5px;
+	text-align:left;
+	width:300px;
+	background:#f4f4f4 !important;
+	font-size:10px;
+	font-family:arial; 
+	z-index: 11000;
+ 	@include rounded-corners(10px);	
+ 	@include shadow(2px 3px 3px 2px rgba(0,0,0,0.6));	
+	.head {
+		font-size:10px;
+		text-transform: uppercase;
+		color:#444;
+		padding-bottom:5px;
+	}
+	.inner {
+		background:#fff;
+		border:solid 1px #bababa;
+		border-color:#bababa #e8e8e8 #e8e8e8 #bababa;
+		padding:5px;
+	 	@include rounded-corners(10px);	
+		font-size:11px;
+	}
+	.action {
+		float:right
+	}
+	.foot {
+		text-align:left;
+		padding:5px;
+		font-size:11px;
+	}
+	a {
+		text-decoration:none; 
+		color:#16b; 
+		outline:none; 
+		border:0px;
+		img {
+			border:0px;
+		}
+	}
+	a:hover {
+		text-decoration:underline
+	}
+}
+
+.tr8n_language_case_manager                               {position: absolute;top: 0;left: 0;font-family: verdana; font-size:11px; width: 400px;background: #f4f4f4;border:solid 1px #e8e8e8;border-color:#e8e8e8 #bababa #bababa #e8e8e8;padding: 0;margin: 0;z-index: 10000;border-radius:10px;-webkit-box-shadow:2px 3px 3px 2px rgba(0,0,0,0.6);-moz-box-shadow:2px 3px 3px 2px rgba(0,0,0,0.6);box-shadow:2px 3px 3px 2px rgba(0,0,0,0.6);}
+.tr8n_language_case_manager img                           {vertical-align:text-top !important;}
+.tr8n_language_case_manager a                             {text-decoration:none; color:#16b; outline:none; border:0px;}
+.tr8n_language_case_manager a:hover                       {text-decoration:underline}
+.tr8n_language_case_manager a img                         {border:0px}
+.tr8n_language_case_manager .supplemental                 {float:right; padding:2px;}
+.tr8n_language_case_manager .quiet                        {color: #666;}  
+.tr8n_language_case_manager .small                        {font-size:11px;}  
+.tr8n_language_case_manager .desc                         {color:grey;font-size:10px;padding-left:5px;padding-top:1px;border-left:solid 1px #ccc;margin-left:3px;}
+.tr8n_language_case_manager .strong                       {font-weight:bold;}
+.tr8n_language_case_manager .stem                         {position:absolute;margin:0;}
+.tr8n_language_case_manager .stem.top_left                {top:-12px;}
+.tr8n_language_case_manager .stem.top_right               {top:-12px;-moz-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); filter: fliph;}
+.tr8n_language_case_manager .stem.bottom_left             {bottom:-12px;-moz-transform: scaleY(-1); -webkit-transform: scaleY(-1); transform: scaleY(-1); filter: flipv;}
+.tr8n_language_case_manager .stem.bottom_right            {bottom:-12px;-moz-transform: scaleX(-1), scaleY(-1); -webkit-transform: scaleX(-1), scaleY(-1); transform: scaleX(-1), scaleY(-1); filter: fliph, flipv;}
+.tr8n_language_case_manager .hd                           {font-size:10px;text-transform: uppercase;color:#444;padding:5px;margin: 5px;}
+.tr8n_language_case_manager .bd                           {border:solid 1px #bababa;border-color:#bababa #e8e8e8 #e8e8e8 #bababa;margin:5px;background-color: white;border-radius:10px;}
+.tr8n_language_case_manager .spinner                      {text-align:center;padding:10px;}
+.tr8n_language_case_manager .votes_container              {border-bottom:1px dotted #ccc; max-height:350px; overflow:auto; font-size:11px;}
+.tr8n_language_case_manager .hints_container              {font-size:10px; padding-left:10px;}
+.tr8n_language_case_manager .tokens_container             {padding-top:10px; font-size:10px; padding-bottom:5px; border-bottom:dotted 1px #ccc;}
+.tr8n_language_case_manager .buttons_container            {padding-top:10px; padding-bottom:15px;text-align:center;}
+.tr8n_language_case_manager .original_text                {background-color:#f9f8f7;border: 1px dotted #ccc;padding:5px;margin-bottom:5px;}
+.tr8n_language_case_manager .quote                        {padding:10px;}
+.tr8n_language_case_manager .quote img                    {vertical-align:middle !important}
+
+.tr8n_language_strip                            {text-align:center; color:#777;}
+.tr8n_language_strip a                          {text-decoration:none; color:#777; outline:none; border:0px; font-size:10px;}
+.tr8n_language_strip a img                      {border:0px;}
+.tr8n_language_strip a:hover                    {text-decoration:underline}
+
+.language_list                                  {overflow:hidden;list-style-type:none;margin:0px;padding:0px;}
+.language_list li                               {background: white;font-size:11px;font-family:verdana;border-bottom:solid 1px #eee;margin-bottom:-1px;margin:0px;padding:2px;cursor:pointer;}
+.language_list li:hover                         {background: #F1F5FF;}
+
+.tr8n_lightbox_overlay                          {position: fixed; top: 0%; left: 0%; width: 100%; height: 100%; background-color: white; z-index:1001; -moz-opacity: 0.5; opacity:.50; filter: alpha(opacity=50); }
+.tr8n_lightbox                                  {position: fixed; top: 50%; left: 50%; width: 50%; height: 80%; margin-left:-25%; margin-top:-40%; border:solid 10px rgba(0,0,0, 0.2); border-radius:10px; z-index:1002;}
+
+.tr8n_lightbox_content .inner                   {height:100%; background-color:#f8f7f6; position:relative;}
+.tr8n_lightbox_content .inner .hd               {background-color:#f1f4fa; padding: 10px; border-bottom:1px dotted #ccc; font-size:14px; font-weight:bold;}
+.tr8n_lightbox_content .inner .bd               {padding: 10px;}
+.tr8n_lightbox_content .inner .ft               {background-color:white; text-align:center; padding:15px; position:absolute; left:0px; right:0px; bottom:0px; height:30px;}
+
+.keyboardInputInitiator {
+  margin:0px 3px;
+  vertical-align:middle;
+  cursor:pointer;
+}

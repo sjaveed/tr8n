@@ -105,37 +105,7 @@ class Tr8n::Application < ActiveRecord::Base
     al
   end
 
-  def to_api_hash(opts = {})
-    hash = {
-      :key => self.key,
-      :name => self.name,
-      :description => self.description,
-    }
-
-    if opts[:definition]
-      defs = {}
-      defs.merge!({
-        :default_data_tokens        => Tr8n::Config.default_data_tokens, 
-        :default_decoration_tokens  =>  Tr8n::Config.default_decoration_tokens,
-        :enable_language_cases      => Tr8n::Config.config[:enable_language_cases],
-        :enable_language_flags      => Tr8n::Config.config[:enable_language_flags],
-      })
-      
-      defs[:rules] = {}
-      Tr8n::Config.language_rule_classes.each do |rule_class|
-        defs[:rules][rule_class.keyword] = rule_class.config
-      end
-
-      hash[:definition] = defs
-      hash[:languages] = languages.collect{|l| l.to_api_hash(opts)}
-      hash[:sources] = sources.collect{|s| s.to_api_hash(opts)}
-      hash[:components] = components.collect{|c| c.to_api_hash(opts)}
-    end
-
-    hash
-  end
-
-  def create_oauth_token(klass, translator, scope, expire_in) 
+  def create_oauth_token(klass, translator, scope, expire_in)
     token = klass.new
     token.application = self
     token.translator = translator
@@ -190,6 +160,86 @@ class Tr8n::Application < ActiveRecord::Base
 
     valid_token
   end  
+
+  def reset_secret!
+    self.secret = Tr8n::Config.guid
+    save
+  end
+
+  def classes
+    self.definition ||= {}
+    definition["classes"] ||= {
+      "tr8n_not_translated" => "border-bottom: 2px solid red !important;",
+      "tr8n_translated"     => "border-bottom: 2px solid green !important;",
+      "tr8n_fallback"       => "border-bottom: 2px solid yellow !important;",
+      "tr8n_language_case"  => "border: 1px dotted blue !important;",
+      "tr8n_locked"         => "border-bottom: 2px solid blue !important;"
+    }
+  end
+
+  def shortcuts
+    self.definition ||= {}
+    definition["shortcuts"] ||= {
+        "Ctrl+Shift+S"  =>  {"description"=>"Displays Tr8n shortcuts", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_shortcuts', {width:400, height:480});"},
+        "Ctrl+Shift+I"  =>  {"description"=>"Turns on/off inline translations", "script"=>"Tr8n.UI.LanguageSelector.toggleInlineTranslations();"},
+        "Ctrl+Shift+L"  =>  {"description"=>"Shows/hides settings selector", "script"=>"Tr8n.UI.LanguageSelector.show(true);"},
+        "Ctrl+Shift+N"  =>  {"description"=>"Displays notifications", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_notifications', {height:600, width:600});"},
+        "Ctrl+Shift+A"  =>  {"description"=>"Displays all available languages", "script"=>"window.location = Tr8n.host + '/tr8n/settings/table';"},
+        "Ctrl+Shift+K"  =>  {"description"=>"Adds software keyboard for each entry field", "script"=>"Tr8n.Utils.toggleKeyboards();"},
+        "Ctrl+Shift+C"  =>  {"description"=>"Display current component status", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_source?source=' + source, {width:420, height:400});"},
+        "Ctrl+Shift+T"  =>  {"description"=>"Displays Tr8n statistics", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_stats', {width:420, height:400});"},
+        "Ctrl+Shift+D"  =>  {"description"=>"Debug Tr8n Proxy", "script"=>"Tr8n.SDK.Proxy.debug();"},
+        "Alt+Shift+C"   =>  {"description"=>"Displays Tr8n credits", "script"=>"window.location = Tr8n.host + '/tr8n/help/credits';"},
+        "Alt+Shift+D"   =>  {"description"=>"Opens dashboard", "script"=>"window.location = Tr8n.host + '/tr8n/dashboard';"},
+        "Alt+Shift+M"   =>  {"description"=>"Opens sitemap", "script"=>"window.location = Tr8n.host + '/tr8n/phrases/map';"},
+        "Alt+Shift+P"   =>  {"description"=>"Opens phrases", "script"=>"window.location = Tr8n.host + '/tr8n/phrases';"},
+        "Alt+Shift+T"   =>  {"description"=>"Opens translations", "script"=>"window.location = Tr8n.host + '/tr8n/translations';"},
+        "Alt+Shift+A"   =>  {"description"=>"Opens awards", "script"=>"window.location = Tr8n.host + '/tr8n/awards';"},
+        "Alt+Shift+B"   =>  {"description"=>"Opens message board", "script"=>"window.location = Tr8n.host + '/tr8n/forum';"},
+        "Alt+Shift+G"   =>  {"description"=>"Opens glossary", "script"=>"window.location = Tr8n.host + '/tr8n/glossary';"},
+        "Alt+Shift+H"   =>  {"description"=>"Opens help", "script"=>"window.location = Tr8n.host + '/tr8n/help';"}
+    }
+  end
+
+  def styles
+    html = []
+    classes.each do |name, value|
+      html << ".#{name} { #{value} }"
+    end
+    html.join("\n").html_safe
+  end
+
+  def to_api_hash(opts = {})
+    hash = {
+        :key => self.key,
+        :name => self.name,
+        :description => self.description,
+    }
+
+    if opts[:definition]
+      defs = {}
+      defs.merge!({
+                      :default_data_tokens        => Tr8n::Config.default_data_tokens,
+                      :default_decoration_tokens  =>  Tr8n::Config.default_decoration_tokens,
+                      :enable_language_cases      => Tr8n::Config.config[:enable_language_cases],
+                      :enable_language_flags      => Tr8n::Config.config[:enable_language_flags],
+                  })
+
+      defs[:rules] = {}
+      Tr8n::Config.language_rule_classes.each do |rule_class|
+        defs[:rules][rule_class.keyword] = rule_class.config
+      end
+
+      hash[:definition] = defs
+      hash[:languages] = languages.collect{|l| l.to_api_hash(opts)}
+      hash[:sources] = sources.collect{|s| s.to_api_hash(opts)}
+      hash[:components] = components.collect{|c| c.to_api_hash(opts)}
+
+      hash[:styles] = classes
+    end
+
+    hash
+  end
 
 protected
 

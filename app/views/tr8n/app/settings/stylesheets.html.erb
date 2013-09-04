@@ -1,0 +1,81 @@
+<style>
+  label {
+    font-weight:bold;
+    padding-top:15px;
+  }
+</style>
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Style Guides") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Settings") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("You can configure what the page elements look like for each state.") %>
+      </div>
+    </div>
+
+    <%= form_for(selected_application, :as => :application, :url => {}, :html => {:method => :post}) do |f| %>
+      <div class="section grey">
+        <div class="form-group">
+          <label for="styles[tr8n_translated]">
+            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_translated"]%>">sample</span>
+            <%=tra("Translated Phrases:")%>
+          </label>
+          <%=text_field_tag("classes[tr8n_translated]", selected_application.classes["tr8n_translated"], :placeholder => "Enter a style for phrases with translations", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="classes[tr8n_not_translated]">
+            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_not_translated"]%>">sample</span>
+            <%=tra("Phrases Without Translations:")%>
+          </label>
+          <%=text_field_tag("classes[tr8n_not_translated]", selected_application.classes["tr8n_not_translated"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="classes[tr8n_fallback]">
+            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_fallback"]%>">sample</span>
+            <%=tra("Phrases With Fallback Translations:")%>
+          </label>
+          <%=text_field_tag("classes[tr8n_fallback]", selected_application.classes["tr8n_fallback"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="classes[tr8n_locked]">
+            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_locked"]%>">sample</span>
+            <%=tra("Locked Phrases:")%>
+          </label>
+          <%=text_field_tag("classes[tr8n_locked]", selected_application.classes["tr8n_locked"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="classes[tr8n_language_case]">
+            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_language_case"]%>">sample</span>
+            <%=tra("Language Cases:")%>
+          </label>
+          <%=text_field_tag("classes[tr8n_language_case]", selected_application.classes["tr8n_language_case"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group" style="padding-top:15px;">
+          <button type="submit" class="btn btn-primary">
+            <%=tra("Update")%>
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>
+

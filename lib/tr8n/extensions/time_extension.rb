@@ -71,8 +71,7 @@ class Time
         when "{day_of_month}" then tokens[:day_of_month] = strftime("%e")
       end
     end
-  
-    language.tr(label, nil, tokens, options)
+    language.tr(label, nil, tokens, options).html_safe
   end
   alias :tr :translate
 

@@ -1,13 +1,25 @@
-function addTr8nCSS(doc, src) {
-  var css = doc.createElement('link');
-  css.setAttribute('type', 'text/css');
-  if (src.indexOf('//') != -1) {
-    css.setAttribute('href', src);
+function addTr8nCSS(doc, value, inline) {
+  var css = null;
+  if (inline) {
+    css = doc.createElement('style');
+    css.type = 'text/css';
+    if (css.styleSheet){
+      css.styleSheet.cssText = value;
+    } else {
+      css.appendChild(document.createTextNode(value));
+    }
   } else {
-    css.setAttribute('href', '<%=uri.scheme%>://<%=uri.host%><%=":#{uri.port}" unless uri.port==80 %>' + src);
+    css = doc.createElement('link');
+    css.setAttribute('type', 'text/css');
+    css.setAttribute('rel', 'stylesheet');
+    css.setAttribute('media', 'screen');
+
+    if (src.indexOf('//') != -1) {
+      css.setAttribute('href', value);
+    } else {
+      css.setAttribute('href', '<%=uri.scheme%>://<%=uri.host%><%=":#{uri.port}" unless uri.port==80 %>' + value);
+    }
   }
-  css.setAttribute('rel', 'stylesheet');
-  css.setAttribute('media', 'screen');
   doc.getElementsByTagName('head')[0].appendChild(css);
   return css;
 }
@@ -48,7 +60,9 @@ function addTr8nScript(doc, id, src, onload) {
     if (window.tr8n_enabled) return;
     window.tr8n_enabled = true;
 
-    addTr8nCSS(window.document, '/assets/tr8n/tr8n.css');
+    addTr8nCSS(window.document, '/assets/tr8n/tools.css', false);
+    addTr8nCSS(window.document, "<%=Tr8n::Config.current_application.styles%>", true);
+
     <% if Tr8n::Config.enable_software_keyboard? %>
       addTr8nCSS(window.document, '/assets/tr8n/keyboard_1_49.css');
     <% end %>  

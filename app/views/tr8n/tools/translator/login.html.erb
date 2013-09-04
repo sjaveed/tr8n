@@ -2,7 +2,7 @@
   <div class="section" style="text-align:center;font-size:14px;padding:20px;">
     <%=tra("You must be a registered dashboard.") %>
     <div style="font-size:12px;text-align:center;padding-top:15px;">
-      <%=tra("[link: Click here] to login or create a dashboard account.", nil, :link => lambda{|txt| link_to(txt, Tr8n::Config.login_url, :target => "_top")} ) %>
+      <%=tra("[link: Click here] to login or create a dashboard account.", :link => lambda{|txt| link_to(txt, Tr8n::Config.login_url, :target => "_top")} ) %>
     </div>
   </div>
 </div>

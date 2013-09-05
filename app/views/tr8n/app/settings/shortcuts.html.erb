@@ -22,28 +22,51 @@
       <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
         <%= tra("You can configure the shortcuts for the application.") %>
       </div>
+
+      <div class="text-right" style="font-size: 12px; color: grey; padding:5px; padding-top:20px;">
+        <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/app/settings/shortcut_modal">
+          <%= tra("Add New Shortcut") %>
+        </button>
+      </div>
+
     </div>
 
-    <%= form_for(selected_application, :as => :application, :url => {}, :html => {:method => :post}) do |f| %>
-      <div class="section">
-        <% selected_application.shortcuts.each do |keys, data| %>
-          <div class="section grey" style="padding:5px; margin-bottom: 10px; ">
-            <div style="font-weight:bold; padding-bottom:10px; float:right"><button class="close">&times;</button></div>
-            <%=text_field_tag("shortcuts[][keys]", keys, :placeholder => "Enter a style for phrases with translations", :class => "form-control") %>
-            <%=text_field_tag("shortcuts[][description]", data["description"], :placeholder => "Enter a style for phrases with translations", :class => "form-control input-block-level") %>
-            <%=text_area_tag("shortcuts[][script]", data["script"], :placeholder => "Enter a style for phrases with translations", :class => "form-control input-block-level", :style=>"resize:vertical") %>
-          </div>
-        <% end %>
+    <div class="section">
 
-        <div class="form-group" style="padding-top:15px;">
-          <button type="submit" class="btn btn-primary">
-            <%=tra("Update")%>
-          </button>
-        </div>
-      </div>
-    <% end %>
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th>Keys</th>
+          <th>Description/Script</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% selected_application.shortcuts.keys.sort.each do |key| %>
+          <tr>
+            <td>
+              <strong><%= key %></strong>
+            </td>
+            <td>
+              <% if selected_application.shortcuts[key] %>
+                <%= tra(selected_application.shortcuts[key]["description"]) %>
+                <pre><code class="language-javascript"><%= selected_application.shortcuts[key]["script"] %></code></pre>
+              <% end %>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-wrench'></i>".html_safe, {:action => :shortcut_modal, :keys => key}, {"data-toggle" => "dynamic_modal"})%>
+              <%=link_to("<i class='icon-remove-circle'></i>".html_safe, {:action => :delete_shortcut, :keys => key}, :confirm => trla("Are you sure you want to delete this shortcut?"))%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
 
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
 
+  <%=javascript_include_tag('tr8n/vendor/prism.js') %>
+  <%= stylesheet_link_tag('tr8n/vendor/prism.css') %>
 <% end %>

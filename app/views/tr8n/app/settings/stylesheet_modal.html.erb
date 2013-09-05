@@ -1,0 +1,26 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">
+        <%=tra("Update Style")%>
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <%= form_tag({:key => params["key"]}, {:method => :post, :role => "form", :class => "form-inline", :id => "stylesheet_form"}) do |f| %>
+        <div class="form-group">
+          <strong><%= params["key"] %></strong>
+        </div>
+        <div class="form-group" style="padding-top:10px;">
+          <%=text_area_tag("style", @style, :placeholder => "Enter stylesheet", :class => "form-control input-block-level", :style => "height:100px;") %>
+        </div>
+      <% end %>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+      <button type="submit" class="btn btn-primary" onClick="$('#stylesheet_form').submit();"><%=tra("Submit") %></button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

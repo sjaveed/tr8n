@@ -105,6 +105,10 @@ module Tr8n
       Tr8n::Config.application
     end
 
+    def tr8n_current_application
+      Tr8n::Config.current_application
+    end
+
     def tr8n_current_user
       Tr8n::Config.current_user
     end

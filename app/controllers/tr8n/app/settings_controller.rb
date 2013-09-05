@@ -36,14 +36,55 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     end
   end
 
+  def set_default_language
+    selected_application.default_language = Tr8n::Language.by_locale(params["default_locale"])
+    selected_application.save
+    redirect_back
+  end
+
   def stylesheets
+  end
+
+  def stylesheet_modal
+    @style = selected_application.classes[params[:key]]
+
     if request.post?
-      selected_application.definition ||= {}
-      selected_application.definition["classes"] ||= {}
-      selected_application.definition["classes"].merge!(params[:classes])
+      selected_application.classes[params[:key]] = params[:style]
       selected_application.save
-      trfn("Application style guides have been updated")
+      trfn("Style has been updated")
+      return redirect_to(:action => :stylesheets)
     end
+
+    render :layout => false
+  end
+
+  def shortcuts
+  end
+
+  def shortcut_modal
+    @shortcut = selected_application.shortcuts[params[:keys]] if params[:keys]
+    @shortcut ||= {}
+
+    @shortcut["keys"] = params[:keys]
+
+    if request.post?
+      selected_application.shortcuts.delete(params[:keys]) if params[:keys]
+      selected_application.shortcuts[params[:shortcut][:keys]] = {
+          "description" => params[:shortcut][:description],
+          "script" => params[:shortcut][:script],
+      }
+      selected_application.save
+      trfn("Shortcut has been updated")
+      return redirect_to(:action => :shortcuts)
+    end
+
+    render :layout => false
+  end
+
+  def delete_shortcut
+    selected_application.shortcuts.delete(params[:keys])
+    selected_application.save
+    return redirect_to(:action => :shortcuts)
   end
 
   def generate_secret
@@ -51,4 +92,11 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     redirect_back
   end
 
+  def features
+  end
+
+  def toggle_feature
+    selected_application.toggle_feature(params[:key], params[:flag] == "true")
+    render :text => {"result" => "Ok"}.to_json
+  end
 end

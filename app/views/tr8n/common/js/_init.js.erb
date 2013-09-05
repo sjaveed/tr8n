@@ -4,7 +4,7 @@ VKI_default_layout = '<%=Tr8n::KeyboardMapping.current_1_49%>';
 
 Tr8n.source = '<%=source.html_safe %>';
 Tr8n.default_locale = '<%=Tr8n::Config.default_language.locale%>';
-Tr8n.app_key = '<%=Tr8n::Config.current_application.id%>';
+Tr8n.app_key = '<%=Tr8n::Config.current_application.key%>';
 
 <% params[:page_locale] ||= "en-US" %>
 
@@ -14,16 +14,16 @@ Tr8n.app_key = '<%=Tr8n::Config.current_application.id%>';
 
 Tr8n.locale = '<%=Tr8n::Config.current_language.locale%>';
 
-<% if Tr8n::Config.enable_google_suggestions? and Tr8n::Config.current_user_is_translator? %>
+<% if Tr8n::Config.enable_google_suggestions? and Tr8n::Config.current_user_is_translator? and tr8n_current_application.feature_enabled?(:google_suggestions) %>
   Tr8n.google_api_key = '<%=Tr8n::Config.google_api_key%>';
 <% end %>
 
 <% 
-  if Tr8n::Config.enable_keyboard_shortcuts? 
-    Tr8n::Config.default_shortcuts.each do |key, data|       
+  if tr8n_current_application.feature_enabled?(:shortcuts)
+    Tr8n::Config.current_application.shortcuts.each do |keys, data|
 %>    
 
-shortcut.add('<%=key%>', function() {
+shortcut.add('<%=keys%>', function() {
   <%=data['script'].html_safe%>
 });
 <%     
@@ -31,7 +31,7 @@ shortcut.add('<%=key%>', function() {
   end
 %>
 
-<% if params[:sdk] %>
+<% if tr8n_current_application.feature_enabled?(:javascript_sdk) %>
   Tr8n.SDK.Proxy.init(<%=opts.to_json.html_safe %>);
   Tr8n.SDK.Proxy.registerTranslationKeys(<%=translations.to_json.html_safe%>);
 

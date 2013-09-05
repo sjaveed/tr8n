@@ -143,7 +143,7 @@ module Tr8n
 
     def self.default_language
       return Tr8n::Language.new(:locale => default_locale) if disabled?
-      @default_language ||= Tr8n::Language.for(default_locale) || Tr8n::Language.new(:locale => default_locale)
+      @default_language ||= Tr8n::Language.by_locale(default_locale) || Tr8n::Language.new(:locale => default_locale)
     end
     
     # only one allowed per system

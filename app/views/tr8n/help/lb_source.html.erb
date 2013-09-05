@@ -2,7 +2,7 @@
 <div class="inner" style="font-size:12px; font-family:arial;">
   <div class="hd">
     <div style='float:<%=tr8n_current_language.align(:right)%>'>
-      <%= link_to(image_tag("tr8n/arrow_rotate_clockwise.png", :style => "vertical-align:bottom"), {:controller => "/tr8n/phrases", :action => :recalculate_metric, :id => @translation_source_metric.id}) %>
+      <%= link_to(image_tag("tr8n/arrow_rotate_clockwise.png", :style => "vertical-align:bottom"), {:controller => "/tr8n/app/phrases", :action => :recalculate_metric, :id => @translation_source_metric.id}) %>
       <%= link_to_function(image_tag("tr8n/close.gif"), "hideLightbox();") %>
     </div>
     <%= image_tag("tr8n/flags/#{@translation_source_metric.language.flag}.png", :style => 'vertical-align:top') %>
@@ -18,7 +18,7 @@
     </div>
 
 
-    <%=render :partial => "/tr8n/dashboard/translation_source_metric", :locals => {:translation_source => @translation_source, :translation_source_metric => @translation_source_metric} %>
+    <%=render :partial => "/tr8n/translator/dashboard/translation_source_metric", :locals => {:translation_source => @translation_source, :translation_source_metric => @translation_source_metric} %>
 
     <div>
       <div style="padding:5px;">

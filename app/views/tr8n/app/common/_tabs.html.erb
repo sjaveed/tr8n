@@ -43,19 +43,19 @@
   </div>
 
   <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
-    <% [
-           ["Dashboard", "dashboard"],
-           ["Site Map", "sitemap"],
-           ["Phrases", "phrases"],
-           ["Translations", "translations"],
-           ["Translators", "translators"],
-           ["Awards", "awards"],
-           ["Forum", "forum"],
-           ["Glossary", "glossary"],
-           ["Languages", "languages"],
-           ["Settings", "settings"],
-       ].each do |tab| %>
+    <% features = []
+       features << ["Dashboard", "dashboard"]
+       features << ["Site Map", "sitemap"]
+       features << ["Phrases", "phrases"]
+       features << ["Translations", "translations"]
+       features << ["Translators", "translators"]
+       features << ["Awards", "awards"]               if tr8n_current_application.feature_enabled?(:awards)
+       features << ["Forum", "forum"]                 if tr8n_current_application.feature_enabled?(:forum)
+       features << ["Glossary", "glossary"]           if tr8n_current_application.feature_enabled?(:glossary)
+       features << ["Languages", "languages"]
+       features << ["Settings", "settings"]
 
+       features.each do |tab| %>
       <li class="<%='active' if controller.controller_name == tab.last %>">
         <%=link_to(tra(tab.first), "/tr8n/app/#{tab.last}")%>
       </li>

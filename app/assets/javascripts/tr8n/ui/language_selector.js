@@ -34,18 +34,18 @@ Tr8n.UI.LanguageSelector = {
   },
 
   show: function() {
-    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector', {height:500, width:400});
+    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector', {width:400});
   },
 
   change: function(locale) {
-    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/change?locale=' + locale, {width:400, height:480, message:"Changing settings..."});
+    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/change?locale=' + locale, {width:400, message:"Changing settings..."});
   },
 
   toggleInlineTranslations: function() {
     if (Tr8n.inline_translations_enabled) {
-        Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/toggle_inline_translations', {width:400, height:480, message:"Disabling inline translations..."});      
+        Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/toggle_inline_translations', {width:400, message:"Disabling inline translations..."});
     } else {
-        Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/toggle_inline_translations', {width:400, height:480, message:"Enabling inline translations..."});      
+        Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector/toggle_inline_translations', {width:400, message:"Enabling inline translations..."});
     }
   }
 }

@@ -166,47 +166,120 @@ class Tr8n::Application < ActiveRecord::Base
     save
   end
 
+  def default_classes
+    {
+        "tr8n_not_translated" => "border-bottom: 2px solid red !important;",
+        "tr8n_translated"     => "border-bottom: 2px solid green !important;",
+        "tr8n_fallback"       => "border-bottom: 2px solid yellow !important;",
+        "tr8n_language_case"  => "border: 1px dotted blue !important;",
+        "tr8n_locked"         => "border-bottom: 2px solid blue !important;"
+    }
+  end
+
   def classes
     self.definition ||= {}
-    definition["classes"] ||= {
-      "tr8n_not_translated" => "border-bottom: 2px solid red !important;",
-      "tr8n_translated"     => "border-bottom: 2px solid green !important;",
-      "tr8n_fallback"       => "border-bottom: 2px solid yellow !important;",
-      "tr8n_language_case"  => "border: 1px dotted blue !important;",
-      "tr8n_locked"         => "border-bottom: 2px solid blue !important;"
+    unless definition["classes"]
+      definition["classes"] = default_classes
+      save
+    end
+    definition["classes"]
+  end
+
+  def styles
+    html = []
+    cls = feature_enabled?(:decorations) ? classes : default_classes
+    cls.each do |name, value|
+      html << ".#{name} { #{value} }"
+    end
+    html.join("\n").html_safe
+  end
+
+  def default_shortcuts
+    {
+        "Ctrl+Shift+S"  =>  {"description"=>"Displays Tr8n shortcuts", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_shortcuts', {width:400});"},
+        "Ctrl+Shift+I"  =>  {"description"=>"Turns on/off inline translations", "script"=>"Tr8n.UI.LanguageSelector.toggleInlineTranslations();"},
+        "Ctrl+Shift+L"  =>  {"description"=>"Shows/hides settings selector", "script"=>"Tr8n.UI.LanguageSelector.show(true);"},
+        "Ctrl+Shift+N"  =>  {"description"=>"Displays notifications", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/translator/notifications/lb_notifications', {width:600});"},
+        "Ctrl+Shift+K"  =>  {"description"=>"Adds software keyboard for each entry field", "script"=>"Tr8n.Utils.toggleKeyboards();"},
+        "Ctrl+Shift+C"  =>  {"description"=>"Display current component status", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_source?source=' + Tr8n.source, {width:420});"},
+        "Ctrl+Shift+T"  =>  {"description"=>"Displays Tr8n statistics", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_stats', {width:420});"},
+        "Ctrl+Shift+D"  =>  {"description"=>"Debug Tr8n Proxy", "script"=>"Tr8n.SDK.Proxy.debug();"},
+
+        "Alt+Shift+C"   =>  {"description"=>"Displays Tr8n credits", "script"=>"window.location = Tr8n.host + '/tr8n/help/credits';"},
+        "Alt+Shift+D"   =>  {"description"=>"Opens dashboard", "script"=>"window.location = Tr8n.host + '/tr8n/translator/dashboard';"},
+        "Alt+Shift+M"   =>  {"description"=>"Opens sitemap", "script"=>"window.location = Tr8n.host + '/tr8n/app/sitemap';"},
+        "Alt+Shift+P"   =>  {"description"=>"Opens phrases", "script"=>"window.location = Tr8n.host + '/tr8n/app/phrases';"},
+        "Alt+Shift+T"   =>  {"description"=>"Opens translations", "script"=>"window.location = Tr8n.host + '/tr8n/app/translations';"},
+        "Alt+Shift+A"   =>  {"description"=>"Opens awards", "script"=>"window.location = Tr8n.host + '/tr8n/app/awards';"},
+        "Alt+Shift+B"   =>  {"description"=>"Opens message board", "script"=>"window.location = Tr8n.host + '/tr8n/app/forum';"},
+        "Alt+Shift+G"   =>  {"description"=>"Opens glossary", "script"=>"window.location = Tr8n.host + '/tr8n/app/glossary';"},
+        "Alt+Shift+H"   =>  {"description"=>"Opens help", "script"=>"window.location = Tr8n.host + '/tr8n/help';"}
     }
   end
 
   def shortcuts
     self.definition ||= {}
-    definition["shortcuts"] ||= {
-        "Ctrl+Shift+S"  =>  {"description"=>"Displays Tr8n shortcuts", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_shortcuts', {width:400, height:480});"},
-        "Ctrl+Shift+I"  =>  {"description"=>"Turns on/off inline translations", "script"=>"Tr8n.UI.LanguageSelector.toggleInlineTranslations();"},
-        "Ctrl+Shift+L"  =>  {"description"=>"Shows/hides settings selector", "script"=>"Tr8n.UI.LanguageSelector.show(true);"},
-        "Ctrl+Shift+N"  =>  {"description"=>"Displays notifications", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/dashboard/lb_notifications', {height:600, width:600});"},
-        "Ctrl+Shift+A"  =>  {"description"=>"Displays all available languages", "script"=>"window.location = Tr8n.host + '/tr8n/settings/table';"},
-        "Ctrl+Shift+K"  =>  {"description"=>"Adds software keyboard for each entry field", "script"=>"Tr8n.Utils.toggleKeyboards();"},
-        "Ctrl+Shift+C"  =>  {"description"=>"Display current component status", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_source?source=' + source, {width:420, height:400});"},
-        "Ctrl+Shift+T"  =>  {"description"=>"Displays Tr8n statistics", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_stats', {width:420, height:400});"},
-        "Ctrl+Shift+D"  =>  {"description"=>"Debug Tr8n Proxy", "script"=>"Tr8n.SDK.Proxy.debug();"},
-        "Alt+Shift+C"   =>  {"description"=>"Displays Tr8n credits", "script"=>"window.location = Tr8n.host + '/tr8n/help/credits';"},
-        "Alt+Shift+D"   =>  {"description"=>"Opens dashboard", "script"=>"window.location = Tr8n.host + '/tr8n/dashboard';"},
-        "Alt+Shift+M"   =>  {"description"=>"Opens sitemap", "script"=>"window.location = Tr8n.host + '/tr8n/phrases/map';"},
-        "Alt+Shift+P"   =>  {"description"=>"Opens phrases", "script"=>"window.location = Tr8n.host + '/tr8n/phrases';"},
-        "Alt+Shift+T"   =>  {"description"=>"Opens translations", "script"=>"window.location = Tr8n.host + '/tr8n/translations';"},
-        "Alt+Shift+A"   =>  {"description"=>"Opens awards", "script"=>"window.location = Tr8n.host + '/tr8n/awards';"},
-        "Alt+Shift+B"   =>  {"description"=>"Opens message board", "script"=>"window.location = Tr8n.host + '/tr8n/forum';"},
-        "Alt+Shift+G"   =>  {"description"=>"Opens glossary", "script"=>"window.location = Tr8n.host + '/tr8n/glossary';"},
-        "Alt+Shift+H"   =>  {"description"=>"Opens help", "script"=>"window.location = Tr8n.host + '/tr8n/help';"}
+    unless definition["shortcuts"]
+      definition["shortcuts"] = default_shortcuts
+      save
+    end
+    definition["shortcuts"]
+  end
+
+  def default_feature
+    {
+      "javascript_sdk" => {"description" => "JavaScript SDK", "enabled" => false},
+      "google_suggestions" => {"description" => "Google Translation Suggestions", "enabled" => false},
+      "shortcuts" => {"description" => "Keyboard Shortcuts", "enabled" => true},
+      "decorations" => {"description" => "Custom Decorations", "enabled" => true},
+      "glossary" => {"description" => "Application Glossary", "enabled" => true},
+      "forum" => {"description" => "Translator Forum", "enabled" => true},
+      "awards" => {"description" => "Awards", "enabled" => true},
     }
   end
 
-  def styles
-    html = []
-    classes.each do |name, value|
-      html << ".#{name} { #{value} }"
+  def features
+    self.definition ||= {}
+    definition["features"] ||= {}
+
+    @features ||= begin
+      feats = default_feature.clone
+      feats.each do |key, data|
+        next unless definition["features"][key]
+        feats[key]["enabled"] = definition["features"][key]["enabled"]
+      end
+
+      feats
     end
-    html.join("\n").html_safe
+  end
+
+  def toggle_feature(key, flag)
+    self.definition ||= {}
+    definition["features"] ||= {}
+    definition["features"][key.to_s] ||= {}
+    definition["features"][key.to_s]["enabled"] = flag
+    save
+
+    definition["features"][key.to_s]["enabled"]
+  end
+
+  def feature_enabled?(key)
+    features[key.to_s]["enabled"]
+  end
+
+  def shortcuts_enabled?
+    self.definition ||= {}
+    definition["shortcuts_enabled"].nil? ? true : definition["shortcuts_enabled"]
+  end
+
+  def javascript_sdk_enabled?
+    self.definition ||= {}
+    definition["javascript_sdk_enabled"].nil? ? false : definition["javascript_sdk_enabled"]
+  end
+
+  def google_suggestions_enabled?
+    self.definition ||= {}
+    definition["google_suggestions_enabled"].nil? ? true : definition["google_suggestions_enabled"]
   end
 
   def to_api_hash(opts = {})

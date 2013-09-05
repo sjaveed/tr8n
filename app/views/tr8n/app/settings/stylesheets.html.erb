@@ -24,58 +24,40 @@
       </div>
     </div>
 
-    <%= form_for(selected_application, :as => :application, :url => {}, :html => {:method => :post}) do |f| %>
-      <div class="section grey">
-        <div class="form-group">
-          <label for="styles[tr8n_translated]">
-            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_translated"]%>">sample</span>
-            <%=tra("Translated Phrases:")%>
-          </label>
-          <%=text_field_tag("classes[tr8n_translated]", selected_application.classes["tr8n_translated"], :placeholder => "Enter a style for phrases with translations", :class => "form-control input-block-level") %>
-        </div>
+    <div class="section">
 
-        <div class="form-group">
-          <label for="classes[tr8n_not_translated]">
-            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_not_translated"]%>">sample</span>
-            <%=tra("Phrases Without Translations:")%>
-          </label>
-          <%=text_field_tag("classes[tr8n_not_translated]", selected_application.classes["tr8n_not_translated"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
-        </div>
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th style="width:150px;">Class</th>
+          <th>Style</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% selected_application.classes.each do |key, style| %>
+          <tr>
+            <td>
+              <strong><%= key %></strong>
+            </td>
+            <td>
+              <div> <span style="<%=style%>">sample</span> </div>
+              <pre><code class="language-css"><%= style %></code></pre>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-wrench'></i>".html_safe, {:action => :stylesheet_modal, :key => key}, {"data-toggle" => "dynamic_modal"})%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
 
-        <div class="form-group">
-          <label for="classes[tr8n_fallback]">
-            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_fallback"]%>">sample</span>
-            <%=tra("Phrases With Fallback Translations:")%>
-          </label>
-          <%=text_field_tag("classes[tr8n_fallback]", selected_application.classes["tr8n_fallback"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
-        </div>
-
-        <div class="form-group">
-          <label for="classes[tr8n_locked]">
-            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_locked"]%>">sample</span>
-            <%=tra("Locked Phrases:")%>
-          </label>
-          <%=text_field_tag("classes[tr8n_locked]", selected_application.classes["tr8n_locked"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
-        </div>
-
-        <div class="form-group">
-          <label for="classes[tr8n_language_case]">
-            <span style="float:right; font-size:12px; font-weight:normal; <%=selected_application.classes["tr8n_language_case"]%>">sample</span>
-            <%=tra("Language Cases:")%>
-          </label>
-          <%=text_field_tag("classes[tr8n_language_case]", selected_application.classes["tr8n_language_case"], :placeholder => "Enter a style for phrases without translations", :class => "form-control input-block-level") %>
-        </div>
-
-        <div class="form-group" style="padding-top:15px;">
-          <button type="submit" class="btn btn-primary">
-            <%=tra("Update")%>
-          </button>
-        </div>
-      </div>
-    <% end %>
+    </div>
 
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
+  <%=javascript_include_tag('tr8n/vendor/prism.js') %>
+  <%= stylesheet_link_tag('tr8n/vendor/prism.css') %>
 
 <% end %>
 

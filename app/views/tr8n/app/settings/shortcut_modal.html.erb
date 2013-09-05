@@ -1,0 +1,36 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">
+        <% if @shortcut["keys"] %>
+          <%=tra("Update Shortcut")%>
+        <% else %>
+          <%=tra("Add New Shortcut")%>
+        <% end %>
+      </h4>
+    </div>
+
+    <div class="modal-body">
+      <%= form_tag({:keys => params["keys"]}, {:method => :post, :role => "form", :class => "form-inline", :id => "shortcut_form"}) do |f| %>
+        <div class="form-group">
+          <label for="shortcut[keys]"><%=tra("Keys")%></label>
+          <%=text_field_tag("shortcut[keys]", @shortcut["keys"], :placeholder => "Shortcut keys", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="shortcut[description]"><%=tra("Description")%></label>
+          <%=text_area_tag("shortcut[description]", @shortcut["description"], :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:100px;") %>
+        </div>
+        <div class="form-group">
+          <label for="shortcut[script]"><%=tra("JavaScript")%></label>
+          <%=text_area_tag("shortcut[script]", @shortcut["script"], :placeholder => "Enter JavaScript to be executed when the keys are pressed.", :class => "form-control input-block-level", :style => "height:100px;") %>
+        </div>
+      <% end %>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+      <button type="submit" class="btn btn-primary" onClick="$('#shortcut_form').submit();"><%=tra("Submit") %></button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

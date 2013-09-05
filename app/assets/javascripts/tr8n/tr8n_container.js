@@ -18,4 +18,3 @@
 //= require ./vendor/jquery/jquery.tagsinput.js
 //= require ./vendor/bootstrap/bootstrap.js
 //= require ./vendor/bootstrap/bootstrap-wizard.min.js
-//= require ./vendor/bootstrap/bootstrap-switch.min.js

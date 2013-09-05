@@ -328,11 +328,11 @@ class Tr8n::Translation < ActiveRecord::Base
   
 
   def self.filter_group_by_options
-    [["nothing", "nothing"], 
-     ["dashboard", "dashboard"],
-     ["context rule", "context"], 
-     ["rank", "rank"], 
-     ["date", "date"]].collect{|option| [option.first.trl("Translation filter group by option"), option.last]}
+    [["not grouped", "nothing"],
+     ["grouped by translator", "translator"],
+     ["grouped by context rule", "context"],
+     ["grouped by rank", "rank"],
+     ["grouped by date", "date"]].collect{|option| [option.first.trl("Translation filter group by option"), option.last]}
   end
   
   def self.for_params(params, language = Tr8n::Config.current_language)

@@ -13,7 +13,6 @@
 //= require ./vendor/jquery/jquery-1.9.1.js
 //= require ./vendor/jquery/jquery-ui-1.10.3.custom.min.js
 //= require ./vendor/jquery/chosen.jquery.js
-//= require ./vendor/jquery/highcharts.js
 //= require ./vendor/jquery/jquery.autocomplete-min.js
 //= require ./vendor/jquery/jquery.tagsinput.js
 //= require ./vendor/bootstrap/bootstrap.js

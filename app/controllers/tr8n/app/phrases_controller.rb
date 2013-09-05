@@ -77,7 +77,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     if params[:grouped_by] != "nothing"
       @translations.each do |tr|
         case params[:grouped_by]
-          when "dashboard" then
+          when "translator" then
             if tr.translator.user
               key = trl("Translations Created by {user}", "", :user => [tr.translator.user, tr.translator.name])
             else
@@ -88,7 +88,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
             if tr.context.blank?
               key = trl("Translations Without Context Rules")
             else
-              key = tr.context
+              key = tr.context_description
             end
             (@grouping[key] ||= []) << tr
           when "rank" then

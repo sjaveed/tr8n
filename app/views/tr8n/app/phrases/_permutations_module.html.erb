@@ -21,8 +21,8 @@
 	<% end %>
 
   <div id="buttons_container" style="padding-top:15px;padding-bottom:5px;text-align:center">
-	    <button type="submit" class="translator_btn translator_submit_btn" onClick="Tr8n.Effects.submit('permutation_form'); return false;">
-	        <span><%=trla("Generate")%></span>
+	    <button type="submit" class="btn btn-primary" onClick="Tr8n.Effects.submit('permutation_form'); return false;">
+	        <%=trla("Generate")%>
 	    </button>
        <%=trla("or") %> <%= link_to_function(trla("Cancel"), "viewTranslations()") %>
 	</div>

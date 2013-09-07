@@ -34,7 +34,7 @@ module Tr8n
   module Tokens
     class Method < Tr8n::Tokens::Base
       def self.expression
-        /(\{[^_:.][\w]*(\.[\w]+)(:[\w]+)?(::[\w]+)?\})/
+        /(\{[^_:.][\w]*(\.[\w]+)(:[\w]+)*(::[\w]+)*\})/
       end
     
       def object_name

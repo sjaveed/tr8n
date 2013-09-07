@@ -19,7 +19,10 @@
           <%=f.text_area(:description, :placeholder => "Optional. Enter description.", :class => "form-control input-block-level", :style => "height:50px;") %>
         </div>
         <div class="form-group">
-          <label for="case_rule[conditions]"><%=tra("Conditions")%></label>
+          <label for="case_rule[conditions]">
+            <div style="float:right"><%=tr8n_help_icon_tag("Tr8n Symbolic Expressions") %></div>
+            <%=tra("Conditions")%>
+          </label>
           <%= text_area_tag("case_rule[conditions]", @case_rule.definition["conditions"], :placeholder => "Required. Enter symbolic notation for matching the token value.", :class => "form-control input-block-level", :style=>"height:100px;") %>
         </div>
         <div class="form-group">

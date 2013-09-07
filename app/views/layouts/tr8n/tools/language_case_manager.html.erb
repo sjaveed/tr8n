@@ -3,21 +3,7 @@
 <head>
   <%= stylesheet_link_tag('tr8n/tools/translator.css') %>
   <%= csrf_meta_tags %>
-
-  <% if Tr8n::Config.enable_software_keyboard? %>
-    <script> 
-      VKI_default_layout = "<%=Tr8n::KeyboardMapping.current_1_49%>";
-      VKI_default_keyboard_image = "/assets/tr8n/keyboard.png";
-    </script>     
-  <% end %>
-
   <%= javascript_include_tag('tr8n/tools.js') %>
-
-  <% if Tr8n::Config.enable_google_suggestions? %>  
-    <script type="text/javascript">
-      Tr8n.google_api_key = "<%=Tr8n::Config.google_api_key %>";
-    </script>
-  <% end %>
 
   <script type="text/javascript">
     function resizeFrame() {
@@ -42,7 +28,7 @@
       }
     });
   </script>
-</head> 
+</head>
 <body onload="resizeFrame()" <%=tr8n_dir_attribute_tag%>>
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
   <div class="container" <%=tr8n_dir_attribute_tag%>>
@@ -52,7 +38,7 @@
           <%=link_to_function(image_tag("tr8n/close.gif", :title=>trla("Close")), "hideTranslator()")%>
         </div>
         <%= tr8n_language_flag_tag(tr8n_current_language) %>
-        <%= tra("{language} Translation", :language => tr8n_current_language.native_name) %>
+        <%=@lcase.native_name%>
       </div>
       <div class="inner_with_header">
         <div id="tr8n_translator_content">

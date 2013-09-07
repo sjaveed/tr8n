@@ -1,0 +1,21 @@
+<%= render(:partial => "header")%>
+
+<div class="small_section_title">
+  <div style="<%=tr8n_style_attribute_tag('float', 'right')%>;font-weight:normal;font-size:10px;color:grey;">
+    {::<%=@lcase.keyword%>}
+  </div>
+  <strong><%=tra("Rules")%></strong>
+</div>
+
+<div style="padding-bottom:25px;">
+<% @lcase.rules.each_with_index do |rule, index| %>
+    <div style="padding:3px;margin-top:5px;<%='border: 1px solid #eee; border-radius:5px' if rule == @rule %>">
+      <% if rule == @rule %>
+        <div style="float:right"><%=image_tag("tr8n/accept.png") %></div>
+      <% end %>
+      <%=index+1%>. <%= rule.describe %>
+    </div>
+<% end %>
+</div>
+
+

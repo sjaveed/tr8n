@@ -43,7 +43,7 @@ module Tr8n
       attr_reader :pipe_separator, :piped_params
 
       def self.expression
-        /(\{[^_:|][\w]*(:[\w]+)?(::[\w]+)?\s*\|\|?[^{^}]+\})/
+        /(\{[^_:|][\w]*(:[\w]+)*(::[\w]+)*\s*\|\|?[^{^}]+\})/
       end
 
       def parse_elements
@@ -85,7 +85,7 @@ module Tr8n
 
         values = generate_value_map(piped_params, context)
 
-        substitution_value << values[context.default_rule]
+        substitution_value << (values[context.default_rule] || values.values.first)
         
         label.gsub(full_name, substitution_value)    
       end
@@ -95,7 +95,7 @@ module Tr8n
         context = context_for_language(language)
         values = generate_value_map(piped_params, context)
 
-        label.gsub(full_name, values[context.default_rule])
+        label.gsub(full_name, values[context.default_rule] || values.values.first)
       end
 
       # token:      {count|| one: message, many: messages}

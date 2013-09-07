@@ -54,16 +54,6 @@ module Tr8n
       @tokens = data_tokens + decoration_tokens
     end
 
-    def sanitized_tokens_hash
-      @sanitized_tokens_hash ||= begin
-        hash = {}
-        tokens.each do |token|
-          hash[token.sanitized_name] = token
-        end
-        hash
-      end
-    end
-
     def implied_tokens
       # if the implied token is also a translatable token, it is not really implied
       @implied_tokens ||= tokens.select{|token| token.implied? and not translation_token_names.include?(token.name)} 
@@ -102,12 +92,20 @@ module Tr8n
         end
         toks
       end
-    end 
-  
+    end
 
-  
+    def tokens_by_short_name
+      @tokens_by_short_name ||= begin
+        hash = {}
+        tokens.each do |token|
+          hash[token.short_name] = token
+        end
+        hash
+      end
+    end
+
     def allowed_token?(token)
-      not sanitized_tokens_hash[token.sanitized_name].nil?
+      tokens_by_short_name.keys.include?(token.short_name)
     end
   end
 end

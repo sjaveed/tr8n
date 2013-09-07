@@ -45,7 +45,7 @@ module Tr8n
   module Tokens
     class Data < Tr8n::Tokens::Base
       def self.expression
-        /(\{[^_:][\w]*(:[\w]+)?(::[\w]+)?\})/
+        /(\{[^_:][\w]*(:[\w]+)*(::[\w]+)*\})/
       end
     end
   end

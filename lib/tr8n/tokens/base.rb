@@ -90,8 +90,10 @@ module Tr8n
           end
         end
 
+        return value unless Tr8n::Config.current_application.feature_enabled?(:language_cases)
+
         case_keys.each do |key|
-          value = apply_case(key, object, value, options, language)
+          value = apply_case(key, value, object, options, language)
         end
 
         value
@@ -126,11 +128,10 @@ module Tr8n
       # tr("This is {user::pos} toy", "", :user => current_user)
       #
       ##############################################################################
-      def apply_case(key, object, value, options, language)
-        return value unless Tr8n::Config.enable_language_cases?
-        lcase = language.case_for(case_key)
+      def apply_case(key, value, object, options, language)
+        lcase = language.case_for(key)
         return value unless lcase
-        lcase.apply(object, value, options)
+        lcase.apply(value, object, options)
       end
 
       def decoration?
@@ -317,10 +318,12 @@ module Tr8n
             return raise Tr8n::TokenException.new("Hash token is missing an object key for a token: #{full_name}")
           end
 
-          value = object[:value]
+          value = object[:value]      || object["value"]
+          obj   = object[:object]     || object["object"]
+          attr  = object[:attribute]  || object["attribute"]
 
-          unless object[:attribute].blank?
-            value = object[:object][object[:attribute]]
+          unless attr.blank?
+            value = obj[attr.to_s] || obj[attr.to_sym]
           end
 
           if value.blank?

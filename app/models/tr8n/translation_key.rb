@@ -467,7 +467,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       return find_all_valid_translations(cached_translations_for_language(language))
     end
 
-    if Tr8n::Config.disabled? or language.default?
+    if Tr8n::Config.disabled? or (language == self.language)
       return substitute_tokens(language, label, token_values, options.merge(:fallback => false)).html_safe
     end
 
@@ -485,15 +485,15 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     if translation
       # if you want to present the label in it's sanitized form - for the phrase list
       if options[:default_language]
-        translation = decorate_translation(language, sanitized_label, options.merge(:translated => true)).html_safe
+        translation = decorate_translation(language, sanitized_label, options.merge(:translated => true, :language => self.language)).html_safe
       else
         translated_label = substitute_tokens(translation.language, translation.label, token_values, options)
-        translation = decorate_translation(translation.language, translated_label, options.merge(:translated => true, :fallback => (translation.language != language))).html_safe
+        translation = decorate_translation(translation.language, translated_label, options.merge(:translated => true, :language => self.language, :fallback => (translation.language != language))).html_safe
       end
     else
       # no translation found
       translated_label = substitute_tokens(self.language, label, token_values, options)
-      translation = decorate_translation(self.language, translated_label, options.merge(:translated => false)).html_safe
+      translation = decorate_translation(self.language, translated_label, options.merge(:translated => false, :language => self.language)).html_safe
     end
 
     translation
@@ -516,13 +516,13 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   def substitute_tokens(language, translated_label, token_values, options = {})
     processed_label = translated_label.to_s.dup
 
-    # substitute all data tokens
+    # substitute data tokens
     Tr8n::Tokens::Base.register_tokens(processed_label, :data).each do |token|
       next unless allowed_token?(token)
       processed_label = token.substitute(self, language, processed_label, token_values, options)
     end
 
-    # substitute all decoration tokens
+    # substitute decoration tokens
     tokens = Tr8n::Tokens::Base.register_tokens(processed_label, :decoration, :exclude_nested => true)
     while tokens.any? do
       tokens.each do |token|
@@ -587,6 +587,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   
   def decorate_translation(language, translated_label, options = {})
     return translated_label if options[:skip_decorations]
+    return translated_label if options[:language] == Tr8n::Config.current_language
     return translated_label if Tr8n::Config.current_user_is_guest?
     return translated_label unless Tr8n::Config.current_user_is_translator?
     return translated_label if Tr8n::Config.current_translator.blocked?
@@ -594,6 +595,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     return translated_label unless can_be_translated?
     #return translated_label if self.settings == settings
     return translated_label if locked?(language) and not Tr8n::Config.current_translator.manager?
+
 
     classes = ['tr8n_translatable']
 

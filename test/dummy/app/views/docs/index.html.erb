@@ -1,6 +1,395 @@
-<p>
+<div style="background:white;padding-top:10px;padding-bottom:600px;margin-bottom:20px; border-radius:10px;">
+  <div class="row">
 
-  <%= tr("{count||message, messages}", :count => 1) %>
+    <div class="span3">
+      <div id="toc"></div>
+    </div>
+    <div class="span9">
+      <div class="hero-unit" style="margin-right:10px;">
+        <div class="text-center">
+          <%= image_tag('tr8n_logo.png') %>
+        </div>
+        <h2 class="text-center"><%= tr("Tr8n Documentation & Samples") %></h2>
+      </div>
+
+      <h1><%= tr("Introduction") %></h1>
+      <p>
+        <%= tr("This document will provide you with some examples of how to use TML for internationalizing your application.") %>
+        The same document is present with every Tr8n Client SDK to ensure that all samples work the same.
+      </p>
+
+      <h1>Translation Markup Language (TML)</h1>
+
+      <h2>Basics</h2>
+
+      <p>
+        Tr8n extends Controller helpers and provides a translation function, called "tr".
+      </p>
+      <p>
+        The function has two flavors, either one case be used throughout the site:
+
+        <pre><code class="language-ruby">tr(label, description, tokens = {}, options = {})</code></pre>
+
+        If you don't need description, then you can use:
+
+        <pre><code class="language-ruby">tr(label, tokens = {}, options = {})</code></pre>
+
+        Alternatively, you can use string extensions:
+
+        <pre><code class="language-ruby">"some text".translate(description, tokens = {}, options = {}, language = Tr8n::Config.current_language)
+
+"some text".translate(tokens = {}, options = {}, language = Tr8n::Config.current_language)
+        </code></pre>
+
+        You can also go directly to the language:
+
+        <pre><code class="language-ruby">Tr8n::Config.current_language.translate(label, description, tokens = {}, options = {})
+
+Tr8n::Config.current_language.translate(label, tokens = {}, options = {})
+        </code></pre>
+
+        <pre><code class="language-ruby">tr8n_current_language.translate(label, description, tokens = {}, options = {})
+        </code></pre>
+
+        <pre><code class="language-ruby">Tr8n::Language.by_locale('ru').translate(label, description, tokens = {}, options = {})
+        </code></pre>
+
+      </p>
+
+      <h4>Setup</h4>
+      <p>
+
+        <p>
+          Before we begin, we need to setup a couple of users we will be using in all of the examples:
+        </p>
+
+        <pre><code class="language-ruby">male = User.new(:name => "Michael", :gender => "male")
+
+female = User.new(:name => "Anna", :gender => "female")
+        </code></pre>
+
+        <%
+           male = User.new(:name => "Michael", :gender => "male")
+           female = User.new(:name => "Anna", :gender => "female")
+        %>
+      </p>
+
+      <h2>Data Tokens</h2>
+      <p>
+        <pre><code class="language-ruby">tr("Hello {user}", :user => "Michael")</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user}", :user => "Michael") %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello {user}", :user => male)</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user}", :user => male) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello {user}", :user => [male, "Michael B."])</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user}", :user => [male, "Michael B."]) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello {user}", :user => [male, :name])</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user}", :user => [male, :name]) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello {user}", :user => {:object => male, :attribute => :name})</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user}", :user => {:object => male, :attribute => :name}) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello {user}", :user => {:object => {:name => "Alex"}, :attribute => :name})</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user}", :user => {:object => {:name => "Alex"}, :attribute => :name}) %>
+          </div>
+        </div>
+
+      </p>
+
+      <h2>Method Tokens</h2>
+      <p>
+        <pre><code class="language-ruby">tr("Hello {user.name}, you are a {user.gender}", :user => male)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello {user.name}, you are a {user.gender}", :user => male) %>
+          </div>
+        </div>
+      </p>
+
+      <h2>Piped Tokens</h2>
+      <p>
+        <pre><code class="language-ruby">tr("You have {count|| message}", :count => 5)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("You have {count|| message}", :count => 5) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("You have {count|| message, messages}", :count => 5)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("You have {count|| message, messages}", :count => 5) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("You have {count|| one: message, other: messages}", :count => 5)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("You have {count|| one: message, other: messages}", :count => 5) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("{user|| male: родился, female: родилась, other: родился/лась } в Ленинграде.", {:user => male}, {:locale => 'ru'})</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("{user|| male: родился, female: родилась, other: родился/лась } в Ленинграде.", {:user => male}, {:locale => 'ru'}) %>
+          </div>
+        </div>
+
+      </p>
+
+      <h2>Implied Tokens</h2>
+      <p>
+        Implied token is a piped token that uses a single pipe. It indicates that the sentence translation may depend on the token value. At the same time, the token itself is
+        not displayed in the phrase. Below are some examples:
+      </p>
+      <p>
+        <pre><code class="language-ruby">tr("{user| He, She} likes this movie. ", :user => male)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("{user| He, She } likes this movie.", :user => male) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("{user| male: He, female: She} likes this movie.", :user => male)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("{user| male: He, female: She} likes this movie.", :user => male) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("{user| Born on}: ", :user => male)</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("{user| Born on}: ", :user => male) %>
+          </div>
+        </div>
+      </p>
+
+      <h2>Decoration Tokens</h2>
+
+      <p>
+        Decoration tokens are used to inject HTML styling into translations.
+
+        <pre><code class="language-ruby">tr("Hello [bold: World]", :bold => lambda{|value| "&lt;strong&gt;#{value}&lt;/strong&gt;"})</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello [bold: World]", :bold => lambda{|value| "<strong>#{value}</strong>"}) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello [bold: World]", :bold => "&lt;strong&gt;{$0}&lt;/strong&gt;")</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello [bold: World]", :bold => "<strong>{$0}</strong>") %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("Hello [bold: World]")</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("Hello [bold: World]") %>
+          </div>
+        </div>
+      </p>
+
+      <h2>Nested Tokens</h2>
+
+      <p>
+        <pre><code class="language-ruby">tr("You have [link: {count||message}]", :count => 10, :link => lambda{|value| link_to(value, "")})</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("You have [link: {count||message}]", :count => 10, :link => lambda{|value| link_to(value, "")}) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("You have [link: [bold: {count}] {count|message}]", :count => 10, :link => lambda{|value| link_to(value.html_safe, "")})</code></pre>
+
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("You have [link: [bold: {count}] {count|message}]", :count => 10, :link => lambda{|value| link_to(value.html_safe, "")}) %>
+          </div>
+        </div>
+
+      </p>
 
 
-</p>
+      <h1>Context Rules</h1>
+
+      <p>
+        <pre><code class="language-ruby">[Date.today, Date.today - 1.day, Date.today+1.day].each do |date|
+  tr("{user} {date| past: celebrated, present: celebrates, future: will celebrate} {user| his, her} birthday on {date}", :user => male, :date => date)
+end</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <% [Date.today, Date.today - 1.day, Date.today+1.day].each do |date| %>
+              <%=tr("{user} {date| past: celebrated, present: celebrates, future: will celebrate} {user| his, her} birthday on {date}", :user => male, :date => date) %><br>
+            <% end %>
+          </div>
+        </div>
+      </p>
+
+      <h1>Language Cases</h1>
+
+      <p>
+
+        <pre><code class="language-ruby">tr("This is {user::pos} reply", :user => male)</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("This is {user::pos} reply", :user => male) %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">tr("You have already sent this message {count::times}", :count => 1)
+tr("You have already sent this message {count::times}", :count => 2)
+tr("You have already sent this message {count::times}", :count => 3)
+</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <%=tr("You have already sent this message {count::times}", :count => 1) %><br>
+            <%=tr("You have already sent this message {count::times}", :count => 2) %><br>
+            <%=tr("You have already sent this message {count::times}", :count => 3) %><br>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">1.upto(5) do |index|
+  tr("This is your {count::ord} warning", :count => index)
+end
+</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <% 1.upto(5) do |index| %>
+              <%=tr("This is your {count::ord} warning", :count => index) %><br>
+            <% end %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">1.upto(10) do |index|
+  tr("This is your {count::ordinal} warning", :count => index)
+end</code></pre>
+        <div class="example">
+          <div class="title">results in</div>
+          <div class="content">
+            <% 1.upto(10) do |index| %>
+              <%=tr("This is your {count::ordinal} warning", :count => index) %><br>
+            <% end %>
+          </div>
+        </div>
+
+        <pre><code class="language-ruby">1.upto(10) do |index|
+  tr("This is your {count::ordinal::ord} warning", :count => index)
+end</code></pre>
+      <div class="example">
+        <div class="title">results in</div>
+        <div class="content">
+          <% 1.upto(10) do |index| %>
+            <%=tr("This is your {count::ordinal::ord} warning", :count => index) %><br>
+          <% end %>
+        </div>
+      </div>
+
+      </p>
+    </div>
+  </div>
+</div>
+
+<%= stylesheet_link_tag('jquery.tocify.css') %>
+<%= javascript_include_tag('jquery-ui-1.10.3.custom.min.js') %>
+<%= javascript_include_tag('jquery.tocify.min.js') %>
+
+<%= stylesheet_link_tag('prism.css') %>
+<%= stylesheet_link_tag('prism_rails.css') %>
+<%= javascript_include_tag('prism.js') %>
+<%= javascript_include_tag('prism_rails.js') %>
+
+<style>
+  .example {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .example .title {
+    color: white;
+    width: 80px;
+    text-align:center;
+    padding:3px;
+    background: #ccc;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-top-left-radius:5px;
+    border-bottom-right-radius:5px;
+  }
+
+  .example .content {
+    padding:10px;
+  }
+
+  h4 {
+    margin-top: 35px;
+  }
+</style>
+
+<script>
+  $(function() {
+    $("#toc").tocify();
+  });
+</script>

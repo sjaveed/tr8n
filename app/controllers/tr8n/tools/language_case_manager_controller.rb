@@ -27,11 +27,13 @@ class Tr8n::Tools::LanguageCaseManagerController < Tr8n::BaseController
   skip_before_filter :validate_guest_user
   skip_before_filter :validate_current_translator
 
-  layout 'tr8n/tools/lightbox'
+  layout 'tr8n/tools/language_case_manager'
 
   # settings selector window
   def index
-
+    @rule = Tr8n::LanguageCaseRule.find_by_id(params[:id])
+    @lcase = @rule.language_case
+    @label = params[:label]
   end
 
   #

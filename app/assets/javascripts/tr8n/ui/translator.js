@@ -227,10 +227,20 @@ Tr8n.UI.Translator = {
     var url = '';
     self.translation_key_id = translatable_node.getAttribute('translation_key_id');   // switch to data
 
-    var params = {
-      type: 'translator',
-      id: self.translation_key_id
-    };
+    var params = {};
+
+    if (is_language_case) {
+      params = {
+        type: 'language_case',
+        id:  translatable_node.getAttribute('rule_id'),
+        label: translatable_node.getAttribute('case_key')
+      }
+    } else {
+      params = {
+        type: 'translator',
+        id: self.translation_key_id
+      }
+    }
 
     this.content_frame.style.width = '100%';
     this.content_frame.style.height = '10px';

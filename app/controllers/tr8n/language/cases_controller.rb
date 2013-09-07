@@ -82,7 +82,9 @@ class Tr8n::Language::CasesController < Tr8n::Language::BaseController
       @case_rule.examples = params[:case_rule][:examples]
       @case_rule.definition ||= {}
       @case_rule.definition["conditions"] = params[:case_rule][:conditions]
+      @case_rule.definition["conditions_expression"] = Tr8n::RulesEngine::Parser.new(@case_rule.definition["conditions"]).parse
       @case_rule.definition["operations"] = params[:case_rule][:operations]
+      @case_rule.definition["operations_expression"] = Tr8n::RulesEngine::Parser.new(@case_rule.definition["operations"]).parse
 
       if @case_rule.save
         @positions.insert(@position, @case_rule.id)

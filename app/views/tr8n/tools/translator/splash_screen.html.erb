@@ -9,7 +9,11 @@
 			Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'height': height}, '<%=params[:origin]%>');
 
       window.setTimeout(function() {
-        location = "/tr8n/tools/translator?id=<%=params[:id]%>&origin=<%=params[:origin]%>";
+        <% if params[:type] == 'translator' %>
+          location = "/tr8n/tools/translator?id=<%=params[:id]%>&origin=<%=params[:origin]%>";
+        <% else %>
+          location = "/tr8n/tools/language_case_manager?id=<%=params[:id]%>&label=<%=params[:label]%>&origin=<%=params[:origin]%>";
+        <% end %>
       }, 500);
 	  }
 	</script>

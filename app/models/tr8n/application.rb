@@ -235,6 +235,8 @@ class Tr8n::Application < ActiveRecord::Base
       "glossary" => {"description" => "Application Glossary", "enabled" => true},
       "forum" => {"description" => "Translator Forum", "enabled" => true},
       "awards" => {"description" => "Awards", "enabled" => true},
+      "language_cases" => {"description" => "Language Cases", "enabled" => true},
+      "context_rules" => {"description" => "Context Rules", "enabled" => true},
     }
   end
 

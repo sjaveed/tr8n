@@ -54,4 +54,34 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
     render(:json => {"status" => "ok"}.to_json)
   end
 
+  def register_component
+    domains = params[:domains].split("\n")
+    translators_emails = params[:translators].split(',')
+
+    if Tr8n::TranslationDomain.where("name in (?)", domains).any?
+      return render(:json => {"error" => "Application with this domain already exists. Please contact application administrator to be added to the application"}.to_json)
+    end
+
+    default_language = Tr8n::Language.by_locale(params[:default_locale])
+    app = Tr8n::Application.create(:name => params[:name], :description => params[:description], :default_language => default_language)
+
+    domains.each do |domain|
+      Tr8n::TranslationDomain.create(:name => domain, :appliction => app)
+    end
+
+    app.add_language(default_language)
+    params[:locales].each do |locale|
+      app.add_language(Tr8n::Language.by_locale(locale))
+    end
+
+    translators_emails.each do |email|
+      # TODO: generate translator join request
+    end
+
+    app.add_translator(tr8n_current_translator)
+
+    session[:tr8n_selected_app_id] = app.id
+
+    render(:json => {"status" => "ok"}.to_json)
+  end
 end

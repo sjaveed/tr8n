@@ -15,7 +15,7 @@ gem 'bootstrap-sass'
 gem 'kaminari'
 gem 'will_filter', '~> 3.1.10'
 
-group :development do
+group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'pry'
@@ -23,6 +23,7 @@ group :development do
   gem 'spork'
   gem 'watchr'
   gem 'rr'
+  gem 'jasmine'
 end
 
 group :assets do

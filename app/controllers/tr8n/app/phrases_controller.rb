@@ -23,27 +23,18 @@
 
 class Tr8n::App::PhrasesController < Tr8n::App::BaseController
 
+  before_filter :init_breadcrumb
+
   def index
-    ## In the embedded mode - there should be only one application
+    @translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => selected_application, :component => @component, :source => @source))
+
+    ## get a list of all restricted keys
+    #restricted_keys = Tr8n::TranslationKey.all_restricted_ids
     #
-    #sources = sources_from_params
-    #
-    #if sources.any?
-    #  @selected_application = sources.first.application
-    #  @translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => @selected_application))
-    #  @translation_keys = translation_keys_for_sources(sources, @translation_keys)
-    #  return
+    ## exclude all restricted keys
+    #if restricted_keys.any?
+    #  @translation_keys =  @translation_keys.where("id not in (?)", restricted_keys)
     #end
-
-    @translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => selected_application))
-
-    # get a list of all restricted keys
-    restricted_keys = Tr8n::TranslationKey.all_restricted_ids
-
-    # exclude all restricted keys
-    if restricted_keys.any?
-      @translation_keys =  @translation_keys.where("id not in (?)", restricted_keys)
-    end
 
     @translation_keys = @translation_keys.order("created_at desc").page(page).per(per_page)
 
@@ -136,7 +127,8 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
   end
 
   def lb_sources
-    render_lightbox
+    translation_key
+    render :layout => 'tr8n/tools/lightbox'
   end
     
   def recalculate_metric
@@ -225,5 +217,16 @@ private
       collect_sitemap_section_sources(section, sources)
     end
   end  
+
+private
+
+  def init_breadcrumb
+    if params[:component_id]
+      @component = Tr8n::TranslationSource.find_by_id(params[:component_id])
+    end
+    if params[:source_id]
+      @source = Tr8n::TranslationSource.find_by_id(params[:source_id])
+    end
+  end
 
 end

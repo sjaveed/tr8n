@@ -49,24 +49,26 @@ module Tr8n
             "-"       => lambda { |l, r|      l - r },                                              # ["-", 1, 2]
             "*"       => lambda { |l, r|      l * r },                                              # ["*", 1, 2]
             "%"       => lambda { |l, r|      l % r },                                              # ["%", 14, 10]
+            "mod"     => lambda { |l, r|      l % r },                                              # ["mod", "@n", 10]
             "/"       => lambda { |l, r|      (l * 1.0) / r },                                      # ["/", 1, 2]
             "!"       => lambda { |expr|      not expr },                                           # ["!", ["true"]]
+            "not"     => lambda { |val|       not val },                                            # ["not", ["true"]]
             "&&"      => lambda { |*expr|     expr.all?{|e| eval(e)}  },                            # ["&&", [], [], ...]
+            "and"     => lambda { |*expr|     expr.all?{|e| eval(e)}  },                            # ["and", [], [], ...]
             "||"      => lambda { |*expr|     expr.any?{|e| eval(e)} },                             # ["||", [], [], ...]
+            "or"      => lambda { |*expr|     expr.any?{|e| eval(e)} },                             # ["or", [], [], ...]
             "if"      => lambda { |c, t, f|   eval(c) ? eval(t) : eval(f) },                        # ["if", "cond", "true", "false"]
             "let"     => lambda { |l, r|      @env[l] = @vars[l] = r },                             # ["let", "n", 5]
-            "and"     => lambda { |*expr|     expr.all?{|e| eval(e)}  },                            # ["and", [], [], ...]
-            "or"      => lambda { |*expr|     expr.any?{|e| eval(e)} },                             # ["or", [], [], ...]
-            "not"     => lambda { |val|       not val },                                            # ["not", ["true"]]
-            "mod"     => lambda { |l, r|      l % r },                                              # ["mod", "@n", 10]
-            "append"  => lambda { |l, r|      r.to_s + l.to_s},                                     # ["append", "world", "hello "]
-            "prepend" => lambda { |l, r|      l.to_s + r.to_s},                                     # ["prepend", "hello  ", "world"]
             "true"    => lambda { true },                                                           # ["true"]
             "false"   => lambda { false },                                                          # ["false"]
+
             "date"    => lambda { |date|      Date.strptime(date, '%Y-%m-%d')},                     # ["date", "2010-01-01"]
             "today"   => lambda { Time.now.to_date},                                                # ["today"]
             "time"    => lambda { |expr|      Time.strptime(expr, '%Y-%m-%d %H:%M:%S')},            # ["time", "2010-01-01 10:10:05"]
             "now"     => lambda { Time.now},                                                        # ["now"]
+
+            "append"  => lambda { |l, r|      r.to_s + l.to_s},                                     # ["append", "world", "hello "]
+            "prepend" => lambda { |l, r|      l.to_s + r.to_s},                                     # ["prepend", "hello  ", "world"]
             "match"   => lambda { |search, subject|                                                 # ["match", /a/, "abc"]
               search = regexp_from_string(search)
               not search.match(subject).nil?
@@ -143,7 +145,7 @@ module Tr8n
         fn = expr[0]
         args = expr.drop(1)
 
-        unless ["quote", "cdr", "cond", "if", "&&", "||", "and", "or", "true", "false", "let", "count", "all", "any"].member?(fn)
+        unless ["quote", "car", "cdr", "cond", "if", "&&", "||", "and", "or", "true", "false", "let", "count", "all", "any"].member?(fn)
           args = args.map { |a| self.eval(a) }
         end
         apply(fn, args)

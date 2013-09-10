@@ -3,9 +3,9 @@
     actions = []
     if tr8n_current_user_is_translator? and tr8n_current_translator.manager?
       if translation_key.locked?
-        actions << link_to("#{image_tag('tr8n/lock_delete.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Unlock")}".html_safe,{:action => :unlock, :translation_key_id => @translation_key.id}, :confirm => trla("Once the key is unlocked, users will be able to submit or vote on translations for this key. Are you sure you want to unlock it?") )
+        actions << link_to("#{image_tag('tr8n/lock_delete.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Unlock")}".html_safe,{:action => :unlock, :id => @translation_key.id}, :confirm => trla("Once the key is unlocked, users will be able to submit or vote on translations for this key. Are you sure you want to unlock it?") )
       else  
-        actions << link_to("#{image_tag('tr8n/lock_add.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Lock")}".html_safe, {:action => :lock, :translation_key_id => @translation_key.id}, :confirm => trla("Once the key is locked, users will no longer be able to submit or vote on translations for this key. Are you sure you want to lock it?") )
+        actions << link_to("#{image_tag('tr8n/lock_add.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Lock")}".html_safe, {:action => :lock, :id => @translation_key.id}, :confirm => trla("Once the key is locked, users will no longer be able to submit or vote on translations for this key. Are you sure you want to lock it?") )
       end
     end    
 
@@ -16,7 +16,7 @@
     end
 		
 		if translation_key.sources?
-      actions << link_to_function("#{image_tag('tr8n/table_multiple.png', :style=>'height:15px; vertical-align:bottom')} #{tra("View Sources")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/phrases/lb_sources?translation_key_id=#{@translation_key.id}', {width:600, height:340});")
+      actions << link_to_function("#{image_tag('tr8n/table_multiple.png', :style=>'height:15px; vertical-align:bottom')} #{tra("View Sources")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/app/phrases/lb_sources?translation_key_id=#{@translation_key.id}', {width:600});")
 		end
 			
     if translation_key.followed?

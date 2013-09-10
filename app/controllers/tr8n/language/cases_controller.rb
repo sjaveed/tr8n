@@ -68,6 +68,8 @@ class Tr8n::Language::CasesController < Tr8n::Language::BaseController
   end
 
   def case_rule_modal
+    Tr8n::Logger.debug(params.inspect)
+
     @lcase = Tr8n::LanguageCase.find_by_id(params[:id]) if params[:id]
     return render(:text => "Invalid context id") unless @lcase
 

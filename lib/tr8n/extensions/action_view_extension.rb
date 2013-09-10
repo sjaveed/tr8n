@@ -238,12 +238,12 @@ module Tr8n
       html = "<span id='#{content_id}_open' "
       html << "style='display:none'" unless open
       html << ">"
-      html << link_to_function("#{image_tag("tr8n/arrow_down.gif", :style=>'text-align:center; vertical-align:middle')} #{label}".html_safe, "Tr8n.Effects.hide('#{content_id}_open'); Tr8n.Effects.show('#{content_id}_closed'); Tr8n.Effects.blindUp('#{content_id}');", :style=> "text-decoration:none")
+      html << link_to_function("#{image_tag("tr8n/arrow_down.gif", :style=>'text-align:center; vertical-align:middle')} #{label}".html_safe, "Tr8n.Utils.Effects.hide('#{content_id}_open'); Tr8n.Utils.Effects.show('#{content_id}_closed'); Tr8n.Utils.Effects.blindUp('#{content_id}');", :style=> "text-decoration:none")
       html << "</span>" 
       html << "<span id='#{content_id}_closed' "
       html << "style='display:none'" if open
       html << ">"
-      html << link_to_function("#{image_tag("tr8n/arrow_right.gif", :style=>'text-align:center; vertical-align:middle')} #{label}".html_safe, "Tr8n.Effects.show('#{content_id}_open'); Tr8n.Effects.hide('#{content_id}_closed'); Tr8n.Effects.blindDown('#{content_id}');", :style=> "text-decoration:none")
+      html << link_to_function("#{image_tag("tr8n/arrow_right.gif", :style=>'text-align:center; vertical-align:middle')} #{label}".html_safe, "Tr8n.Utils.Effects.show('#{content_id}_open'); Tr8n.Utils.Effects.hide('#{content_id}_closed'); Tr8n.Utils.Effects.blindDown('#{content_id}');", :style=> "text-decoration:none")
       html << "</span>" 
       html.html_safe
     end  

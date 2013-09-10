@@ -14,7 +14,7 @@ function addTr8nCSS(doc, value, inline) {
     css.setAttribute('rel', 'stylesheet');
     css.setAttribute('media', 'screen');
 
-    if (src.indexOf('//') != -1) {
+    if (value.indexOf('//') != -1) {
       css.setAttribute('href', value);
     } else {
       css.setAttribute('href', '<%=uri.scheme%>://<%=uri.host%><%=":#{uri.port}" unless uri.port==80 %>' + value);
@@ -63,11 +63,7 @@ function addTr8nScript(doc, id, src, onload) {
     addTr8nCSS(window.document, '/assets/tr8n/tools.css', false);
     addTr8nCSS(window.document, "<%=Tr8n::Config.current_application.styles%>", true);
 
-    <% if Tr8n::Config.enable_software_keyboard? %>
-      addTr8nCSS(window.document, '/assets/tr8n/keyboard_1_49.css');
-    <% end %>  
-
-    addTr8nScript(window.document, 'tr8n-jssdk', "<%= params[:debug] ? '/assets/tr8n/tr8n.debug.js': '/assets/tr8n/tr8n.js' %>", function() {
+    addTr8nScript(window.document, 'tr8n-jssdk', "<%= params[:debug] ? '/assets/tr8n/tools.js': '/assets/tr8n/tr8n.js' %>", function() {
       addTr8nScript(window.document, 'tr8n-proxy', "/tr8n/api/proxy/init.js?<%=params.slice(:debug, :tml, :text, :source, :page_locale).merge(:t => Time.now.to_i).to_query.html_safe%>", function() {
         if (typeof(onTr8nReady) === 'function') {
            onTr8nReady();

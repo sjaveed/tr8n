@@ -1,4 +1,5 @@
 <!-- Modal -->
+
 <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
@@ -12,8 +13,8 @@
       </h4>
     </div>
 
+    <%= form_for(@case_rule, :as => :case_rule, :url => {:id => @lcase.id, :rule_id => @case_rule.id, :position => @position}, :html => {:method => :post, :role => "form", :id => "context_form", :style=>"margin:0px;"}) do |f| %>
     <div class="modal-body">
-      <%= form_for(@case_rule, :as => :case_rule, :url => {:id => @lcase.id, :rule_id => @case_rule.id, :position => @position}, :html => {:method => :post, :role => "form", :class => "form-inline", :id => "context_form"}) do |f| %>
         <div class="form-group">
           <label for="case_rule[description]"><%=tra("Description")%></label>
           <%=f.text_area(:description, :placeholder => "Optional. Enter description.", :class => "form-control input-block-level", :style => "height:50px;") %>
@@ -33,11 +34,13 @@
           <label for="case_rule[examples]"><%=tra("Examples")%></label>
           <%= f.text_area(:examples, :placeholder => "Optional. Provide some examples for translators.", :class => "form-control input-block-level", :style=>"height:100px;") %>
         </div>
-      <% end %>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
-      <button type="submit" class="btn btn-primary" onClick="$('#context_form').submit();"><%=tra("Submit") %></button>
+      <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
     </div>
+    <% end %>
+
   </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+

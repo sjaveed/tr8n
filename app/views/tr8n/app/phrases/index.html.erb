@@ -9,7 +9,6 @@
       <%= form_tag({:action => :index}, {:method => :get}) do %>
           <%=hidden_field_tag(:source_id, params[:source_id]) %>
           <%=hidden_field_tag(:component_id, params[:component_id]) %>
-          <%=hidden_field_tag(:sources, params[:sources]) %>
           <div class="tr8n_fltr">
             <button type="submit" class="btn btn-primary">
                 <%=tra("Search")%>
@@ -52,7 +51,7 @@
                 <div class="tr8n_fltr"><%=image_tag("tr8n/lock.png", :style=>"width:12px", :title => trla("This phrase is locked"))%></div>
               <% end %>
               <span dir='ltr'>
-                <%=link_to(tk.default_decoration, :action => :view, :translation_key_id => tk.id, :section_key => @section_key)%>
+                <%=link_to(tk.default_decoration, :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])%>
               </span>
               <div class="tr8n_txtl" dir='ltr' style="color:grey;font-size:10px;padding-top:3px;"><%=tk.description%></div>
             </td>
@@ -64,11 +63,11 @@
                 <%= tra("There are no translations for this phrase.") %>
 
                 <% unless tk.locked? %>
-                  <%= tra("Be the first one to [link: translate it].", nil, :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :view, :translation_key_id => tk.id, :section_key => @section_key)}  ) %>
+                  <%= tra("Be the first one to [link: translate it].", nil, :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])}  ) %>
                 <% end %>
 
               <% else %>
-                <%= render :partial => "/tr8n/common/translation_votes", :locals => {:translation_key => tk, :translations => translations[0..4], :section_key => @section_key} %>
+                <%= render :partial => "/tr8n/common/translation_votes", :locals => {:translation_key => tk, :translations => translations[0..4], :source_id => params[:source_id], :component_id => params[:component_id]} %>
               <% end %>
               </div>
             </td>

@@ -95,8 +95,8 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
   end
 
-  def sources
-    translation_sources
+  def sources(app = Tr8n::Config.current_application)
+    translation_sources.where(:application_id => app.id)
   end
 
   # creates associations between the translation keys and sources
@@ -818,6 +818,10 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     # only show keys for the current applications - determined through sources
     if params[:application]
       results = results.joins(:translation_sources).where("tr8n_translation_sources.application_id = ?", params[:application].id)
+    end
+
+    if params[:source]
+      results = results.joins(:translation_sources).where("tr8n_translation_sources.id = ?", params[:source].id)
     end
 
     # only show keys translators has rights to view

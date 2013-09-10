@@ -191,7 +191,7 @@ class Tr8n::Application < ActiveRecord::Base
     cls.each do |name, value|
       html << ".#{name} { #{value} }"
     end
-    html.join("\n").html_safe
+    html.join(" ").html_safe
   end
 
   def default_shortcuts
@@ -255,6 +255,16 @@ class Tr8n::Application < ActiveRecord::Base
     end
   end
 
+  def features_flags
+    @features_flags ||= begin
+      flags = {}
+      features.each do |key, data|
+        flags[key] = data["enabled"]
+      end
+      flags
+    end
+  end
+
   def toggle_feature(key, flag)
     self.definition ||= {}
     definition["features"] ||= {}
@@ -266,7 +276,7 @@ class Tr8n::Application < ActiveRecord::Base
   end
 
   def feature_enabled?(key)
-    features[key.to_s]["enabled"]
+    features_flags[key.to_s]
   end
 
   def shortcuts_enabled?
@@ -292,25 +302,13 @@ class Tr8n::Application < ActiveRecord::Base
     }
 
     if opts[:definition]
-      defs = {}
-      defs.merge!({
-                      :default_data_tokens        => Tr8n::Config.default_data_tokens,
-                      :default_decoration_tokens  =>  Tr8n::Config.default_decoration_tokens,
-                      :enable_language_cases      => Tr8n::Config.config[:enable_language_cases],
-                      :enable_language_flags      => Tr8n::Config.config[:enable_language_flags],
-                  })
-
-      defs[:rules] = {}
-      Tr8n::Config.language_rule_classes.each do |rule_class|
-        defs[:rules][rule_class.keyword] = rule_class.config
-      end
-
-      hash[:definition] = defs
+      hash[:definition] = {
+          :styles  => classes,
+          :features => features_flags,
+      }
       hash[:languages] = languages.collect{|l| l.to_api_hash(opts)}
       hash[:sources] = sources.collect{|s| s.to_api_hash(opts)}
       hash[:components] = components.collect{|c| c.to_api_hash(opts)}
-
-      hash[:styles] = classes
     end
 
     hash

@@ -61,7 +61,13 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
 
   # main translation method used by the dashboard and translation screens
   def submit
-    destination_url = params[:destination_url] || {:controller => '/tr8n/tools/translator', :action => 'done', :id => params[:id], :origin => params[:origin]}
+    if params[:destination_url]
+      destination_url = params[:destination_url]
+    elsif params[:origin]
+      destination_url = {:controller => '/tr8n/tools/translator', :action => 'done', :id => params[:id], :origin => params[:origin]}
+    else
+      destination_url = {:controller => '/tr8n/app/phrases', :action => :view, :id => translation_key.id, :component_id => params[:component_id], :source_id => params[:source_id]}
+    end
 
     if params[:lock] == "true"
       if tr8n_current_translator.manager?

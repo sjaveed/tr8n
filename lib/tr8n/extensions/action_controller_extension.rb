@@ -87,6 +87,8 @@ module Tr8n
 
       def tr8n_init_current_user
         self.send(Tr8n::Config.current_user_method)
+      rescue
+        nil
       end
 
       def tr8n_application

@@ -21,12 +21,6 @@ describe Tr8n::LanguageContextRule do
         rule.evaluate({"@n" => 2}).should be_false
         rule.evaluate({"@n" => 0}).should be_false
 
-        rule = Tr8n::LanguageContextRule.create(:keyword => "one", :definition => {"conditions" => "(= 1 @n)"}, :examples => "1")
-        rule.evaluate().should be_false
-        rule.evaluate({"@n" => 1}).should be_true
-        rule.evaluate({"@n" => 2}).should be_false
-        rule.evaluate({"@n" => 0}).should be_false
-
         one = Tr8n::LanguageContextRule.create(:keyword => "one", :definition => {"conditions" => "(&& (= 1 (mod @n 10)) (!= 11 (mod @n 100)))"}, :description => "{n} mod 10 is 1 and {n} mod 100 is not 11", :examples => "1, 21, 31, 41, 51, 61...")
         few = Tr8n::LanguageContextRule.create(:keyword => "few", :definition => {"conditions" => "(&& (in '2..4' (mod @n 10)) (not (in '12..14' (mod @n 100))))"}, :description => "{n} mod 10 in 2..4 and {n} mod 100 not in 12..14", :examples => "2-4, 22-24, 32-34...")
         many = Tr8n::LanguageContextRule.create(:keyword => "many", :definition => {"conditions" => "(|| (= 0 (mod @n 10)) (in '5..9' (mod @n 10)) (in '11..14' (mod @n 100)))"}, :description => "{n} mod 10 is 0 or {n} mod 10 in 5..9 or {n} mod 100 in 11..14", :examples => "0, 5-20, 25-30, 35-40...")

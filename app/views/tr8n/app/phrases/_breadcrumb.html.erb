@@ -1,12 +1,25 @@
+<%
+    links = []
+    links << [tra("All Phrases"), {:action => :index}]
+    if @component
+      links << [@component.name, {:action => :index, :component_id => params[:component_id]}]
+    end
+    if @source
+      links << [@source.name || @source.source, {:action => :index, :component_id => params[:component_id], :source_id => params[:source_id]}]
+    end
+    if @translation_key
+      links << [@translation_key.sanitized_label, {:action => :view, :id => @translation_key.id, :component_id => params[:component_id], :source_id => params[:source_id]}]
+    end
+
+%>
+
 <ul class="breadcrumb">
-  <li class="active">
-    <%=link_to(tra("All Phrases"), :action => :index)%>
-    <% if @translation_key %>
-      <span class="divider">/</span>
-    <% end %>
-  </li>
-  <% if @translation_key %>
-    <li class="active"><%=link_to(@translation_key.sanitized_label, :action => :view, :id => @translation_key.id)%>
+  <% links.each_with_index do |link, index| %>
+    <li class="<%='active' if index == links.size-1 %>">
+      <%=link_to(link.first, link.last)%>
+      <% if index < links.size-1 %>
+        <span class="divider">/</span>
+      <% end %>
     </li>
   <% end %>
 </ul>

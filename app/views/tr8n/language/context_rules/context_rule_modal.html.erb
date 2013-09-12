@@ -1,5 +1,6 @@
 <!-- Modal -->
 <div class="modal-dialog">
+  <%= form_for(@context_rule, :as => :context_rule, :url => {:id => @context.id, :rule_id => @context_rule.id}, :html => {:method => :post, :role => "form", :class => "form-inline", :id => "context_form", :style=>"margin:0px;"}) do |f| %>
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -13,7 +14,6 @@
     </div>
 
     <div class="modal-body">
-      <%= form_for(@context_rule, :as => :context_rule, :url => {:id => @context.id, :rule_id => @context_rule.id}, :html => {:method => :post, :role => "form", :class => "form-inline", :id => "context_form"}) do |f| %>
         <div class="form-group">
           <label for="context_rule[keyword]"><%=tra("Keyword")%></label>
           <%=f.text_field(:keyword, :placeholder => "Required. Enter context keyword", :class => "form-control input-block-level") %>
@@ -30,11 +30,11 @@
           <label for="context_rule[examples]"><%=tra("Examples")%></label>
           <%= f.text_area(:examples, :placeholder => "Optional. Provide some examples for translators", :class => "form-control input-block-level", :style=>"height:100px;") %>
         </div>
-      <% end %>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
-      <button type="submit" class="btn btn-primary" onClick="$('#context_form').submit();"><%=tra("Submit") %></button>
+      <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
     </div>
   </div><!-- /.modal-content -->
+  <% end %>
 </div><!-- /.modal-dialog -->

@@ -1,0 +1,96 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/translator/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Languages") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Translator Languages") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%=tra("This section allows you to add and remove languages from the application.") %>
+        <%=tra("When a language is removed no language data is lost.") %> <%=tra("The language will not appear in the language selector") %>
+      </div>
+
+      <div class="text-right">
+        <%=link_to(tra("Add Languages"), {:action => :add_languages_modal}, {"class" => "btn btn-small btn-primary", "data-toggle" => "dynamic_modal"})%>
+      </div>
+
+    </div>
+
+    <% if Tr8n::Config.enable_translator_language? %>
+      <%= form_for(tr8n_current_translator, :as => :translator, :url => {}, :html => {:id => 'basic_info_form', :method => :post}) do |f| %>
+        <div class="section blue">
+          <table>
+              <tr>
+                <th style="text-align:left;padding:3px;vertical-align:middle;font-weight:bold;"><%=tra("Fallback Language:", "Language to fall back onto if the language phrase is not translated")%></th>
+                <td style="padding:3px;vertical-align:middle;">
+                  <%=select_tag("translator[fallback_language_id]", options_for_select(tr8n_current_translator.languages.collect{|lang| [lang.english_name, lang.id]}, tr8n_current_translator.fallback_language_id))%>
+                </td>
+              </tr>
+          </table>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="section">
+      <table class="table table-hover ">
+        <thead>
+        <tr>
+          <th style="width:8px;"></th>
+          <th><%=tra("English Name") %></th>
+          <th><%=tra("Native Name") %></th>
+          <th><%=tra("Locale") %></th>
+          <th><%=tra("Direction") %></th>
+        </tr>
+        </thead>
+        <tbody id="languages" data-update-url="/tr8n/translator/settings/update_languages_order">
+        <% tr8n_current_translator.translator_languages.each do |tran_lang| %>
+          <% lang = tran_lang.language %>
+          <tr id="languages_<%=tran_lang.id%>">
+            <td><i class='icon-align-justify handle'></i></td>
+            <td>
+              <%= image_tag("tr8n/flags/#{lang.flag}.png", :style => "align:middle") %>  &nbsp;
+              <%=lang.english_name%>
+            </td>
+            <td><%=lang.native_name%></td>
+            <td><%=lang.locale%></td>
+            <td><%= (lang.dir == "ltr" ? "&rarr;" : "&larr;").html_safe %></td>
+            <td style="text-align:right">
+              <%=link_to("&times;".html_safe, {:action => :remove_language, :locale => lang.locale}, :confirm => trla("Are you sure you want to remove this language?"))%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/translator/common/footer" %>
+
+<% end %>
+
+<style>
+  #languages .handle {
+    cursor: move;
+  }
+</style>
+
+<script>
+  $(function() {
+    $( "#languages" ).sortable({
+      handle: '.handle',
+      update: function() {
+        $.post($(this).data('update-url'), $(this).sortable('serialize'))
+      }
+    });
+    $( "#languages" ).disableSelection();
+  });
+</script>

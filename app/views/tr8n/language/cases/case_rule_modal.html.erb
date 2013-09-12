@@ -1,6 +1,7 @@
 <!-- Modal -->
 
 <div class="modal-dialog">
+  <%= form_for(@case_rule, :as => :case_rule, :url => {:id => @lcase.id, :rule_id => @case_rule.id, :position => @position}, :html => {:method => :post, :role => "form", :id => "context_form", :style=>"margin:0px;"}) do |f| %>
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -13,7 +14,6 @@
       </h4>
     </div>
 
-    <%= form_for(@case_rule, :as => :case_rule, :url => {:id => @lcase.id, :rule_id => @case_rule.id, :position => @position}, :html => {:method => :post, :role => "form", :id => "context_form", :style=>"margin:0px;"}) do |f| %>
     <div class="modal-body">
         <div class="form-group">
           <label for="case_rule[description]"><%=tra("Description")%></label>
@@ -39,8 +39,8 @@
       <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
       <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
     </div>
-    <% end %>
 
   </div><!-- /.modal-content -->
+  <% end %>
 </div><!-- /.modal-dialog -->
 

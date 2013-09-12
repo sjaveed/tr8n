@@ -265,6 +265,10 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     translation
   end
 
+  def add_source(src)
+    Tr8n::TranslationKeySource.find_or_create(self, src)
+  end
+
   # returns all translations for the key, settings and minimal rank
   def translations_for(language = nil, rank = nil)
     translations = Tr8n::Translation.where("translation_key_id = ?", self.id)

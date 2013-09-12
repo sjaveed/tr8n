@@ -41,7 +41,7 @@ module Tr8n
       # register source with component
       unless component.nil?
         set_current_component(component)
-        component.register_source(current_source)
+        component.add_source(current_source)
       else
         set_current_component(nil)
       end
@@ -173,7 +173,7 @@ module Tr8n
          Tr8n::TranslationKeySource, Tr8n::TranslationKeyComment, Tr8n::TranslationKeyLock,
          Tr8n::TranslationSource, Tr8n::TranslationDomain, Tr8n::TranslationSourceLanguage, 
          Tr8n::Translation, Tr8n::TranslationVote, Tr8n::TranslationSourceMetric,
-         Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric, 
+         Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric,  Tr8n::TranslatorLanguage,
          Tr8n::TranslatorFollowing, Tr8n::TranslatorReport, 
          Tr8n::LanguageForumTopic, Tr8n::LanguageForumMessage,
          Tr8n::Glossary, Tr8n::IpLocation, Tr8n::SyncLog,

@@ -130,6 +130,10 @@ class Tr8n::TranslationSource < ActiveRecord::Base
     end
   end
 
+  def add_translation_key(tkey)
+    Tr8n::TranslationKeySource.find_or_create(tkey, self)
+  end
+
   def translation_key_for_key(key)
     (cache[key] || {})["translation_key"]
   end

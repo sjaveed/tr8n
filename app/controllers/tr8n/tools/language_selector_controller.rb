@@ -33,31 +33,26 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::BaseController
   def index
     @inline_translations_allowed = false
     @inline_translations_enabled = false
+
+    @application = Tr8n::Config.remote_application || Tr8n::Config.current_application
   
-    if tr8n_current_user_is_translator? 
-      unless tr8n_current_translator.blocked?
-        @inline_translations_allowed = true
-        @inline_translations_enabled = tr8n_current_translator.enable_inline_translations?
-      end
-    else
-      @inline_translations_allowed = Tr8n::Config.open_registration_mode?
+    if tr8n_current_user_is_translator? and not tr8n_current_translator.blocked? and @application.translators.include?(tr8n_current_translator)
+      @inline_translations_allowed = true
+      @inline_translations_enabled = tr8n_current_translator.enable_inline_translations?
     end
   
-    @inline_translations_allowed = true if tr8n_current_user_is_admin?
+    # @inline_translations_allowed = true if tr8n_current_user_is_admin?
   
     @source_url = request.env['HTTP_REFERER']
     @source_url.gsub!("locale", "previous_locale") if @source_url
-  
-    @all_languages = Tr8n::Language.enabled_languages
+
+    @all_languages = @application.languages
+
     @user_languages = []
     unless tr8n_current_user_is_guest?
       @user_languages = Tr8n::LanguageUser.languages_for(tr8n_current_user).collect{|ul| ul.language}
     end
-
-    if Tr8n::Config.remote_application
-      @all_languages = @all_languages & Tr8n::Config.remote_application.languages
-      @user_languages = @user_languages & @all_languages
-    end
+    @user_languages = @user_languages & @all_languages
   end
 
   def change

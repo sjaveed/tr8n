@@ -23,65 +23,91 @@
 
 class Tr8n::App::WizardsController < Tr8n::App::BaseController
 
-  def register_application
-    domains = params[:domains].split("\n")
-    translators_emails = params[:translators].split(',')
+  def application
+    if request.post?
+      domains = params[:domains].split("\n")
+      translators_emails = params[:translators].split(',')
 
-    if Tr8n::TranslationDomain.where("name in (?)", domains).any?
-      return render(:json => {"error" => "Application with this domain already exists. Please contact application administrator to be added to the application"}.to_json)
+      if Tr8n::TranslationDomain.where("name in (?)", domains).any?
+        return render(:json => {"error" => tra("Application with this domain already exists. Please contact application administrator to be added to the application")}.to_json)
+      end
+
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      app = Tr8n::Application.create(:name => params[:name], :description => params[:description], :default_language => default_language)
+
+      domains.each do |domain|
+        Tr8n::TranslationDomain.create(:name => domain, :application => app)
+      end
+
+      app.add_language(default_language)
+      unless params[:locales].blank?
+        params[:locales].each do |locale|
+          app.add_language(Tr8n::Language.by_locale(locale))
+        end
+      end
+
+      translators_emails.each do |email|
+        # TODO: generate translator join request
+      end
+
+      app.add_translator(tr8n_current_translator)
+
+      session[:tr8n_selected_app_id] = app.id
+
+      return render(:json => {"status" => "Ok", "msg" => tra("[bold: {application}] was registered successfully.", :application => app.name)}.to_json)
     end
 
-    default_language = Tr8n::Language.by_locale(params[:default_locale])
-    app = Tr8n::Application.create(:name => params[:name], :description => params[:description], :default_language => default_language)
-
-    domains.each do |domain|
-      Tr8n::TranslationDomain.create(:name => domain, :appliction => app)
-    end
-
-    app.add_language(default_language)
-    params[:locales].each do |locale|
-      app.add_language(Tr8n::Language.by_locale(locale))
-    end
-
-    translators_emails.each do |email|
-      # TODO: generate translator join request
-    end
-
-    app.add_translator(tr8n_current_translator)
-
-    session[:tr8n_selected_app_id] = app.id
-
-    render(:json => {"status" => "ok"}.to_json)
+    render :layout => false
   end
 
-  def register_component
-    domains = params[:domains].split("\n")
-    translators_emails = params[:translators].split(',')
+  def component
+    if request.post?
+      component = Tr8n::Component.create(:application => selected_application, :name => params[:name], :description => params[:description])
 
-    if Tr8n::TranslationDomain.where("name in (?)", domains).any?
-      return render(:json => {"error" => "Application with this domain already exists. Please contact application administrator to be added to the application"}.to_json)
+      unless params[:locales].blank?
+        params[:locales].each do |locale|
+          component.add_language(Tr8n::Language.by_locale(locale))
+        end
+      end
+
+      unless params[:sources].blank?
+        params[:sources].each do |src_id|
+          src = Tr8n::TranslationSource.find_by_id(src_id)
+          component.add_source(src) if src
+        end
+      end
+
+      #translators_emails = params[:translators].split(',')
+      #translators_emails.each do |email|
+      #  # TODO: generate translator join request
+      #end
+
+      component.add_translator(tr8n_current_translator)
+
+      return render(:json => {"status" => "Ok", "msg" => tra("[bold: {component}] was registered successfully.", :component => component.name)}.to_json)
     end
 
-    default_language = Tr8n::Language.by_locale(params[:default_locale])
-    app = Tr8n::Application.create(:name => params[:name], :description => params[:description], :default_language => default_language)
-
-    domains.each do |domain|
-      Tr8n::TranslationDomain.create(:name => domain, :appliction => app)
-    end
-
-    app.add_language(default_language)
-    params[:locales].each do |locale|
-      app.add_language(Tr8n::Language.by_locale(locale))
-    end
-
-    translators_emails.each do |email|
-      # TODO: generate translator join request
-    end
-
-    app.add_translator(tr8n_current_translator)
-
-    session[:tr8n_selected_app_id] = app.id
-
-    render(:json => {"status" => "ok"}.to_json)
+    render :layout => false
   end
+
+  def translation_key
+    if request.post?
+      Tr8n::Logger.debug(params.inspect)
+
+      src = Tr8n::TranslationSource.find_or_create("/manual_keys", selected_application)
+      tkey = Tr8n::TranslationKey.find_or_create(params[:label], params[:description], {:locale => params[:default_locale], :source => src})
+
+      unless params[:sources].blank?
+        params[:sources].each do |src_id|
+          src = Tr8n::TranslationSource.find_by_id(src_id)
+          src.add_translation_key(tkey) if src
+        end
+      end
+
+      return render(:json => {"status" => "Ok", "msg" => tra("The translation key has been registered successfully.")}.to_json)
+    end
+
+    render :layout => false
+  end
+
 end

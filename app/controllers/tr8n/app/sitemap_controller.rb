@@ -27,4 +27,40 @@ class Tr8n::App::SitemapController < Tr8n::App::BaseController
 
   end
 
+  def delete_component
+    comp = Tr8n::Component.find_by_id(params[:id])
+    if comp
+      comp.destroy
+      trfn("Component has been deleted")
+    end
+
+    redirect_back
+  end
+
+  def remove_source
+    cs = Tr8n::ComponentSource.find_by_id(params[:id])
+    if cs
+      cs.destroy
+      trfn("Source has been removed")
+    end
+
+    redirect_back
+  end
+
+  def update_components_order
+    params[:components].each_with_index do |id, index|
+      Tr8n::Component.update_all({:position => index+1}, {:id => id})
+    end
+
+    render :nothing => true
+  end
+
+  def update_component_sources_order
+    params[:component_sources].each_with_index do |id, index|
+      Tr8n::ComponentSource.update_all({:position => index+1}, {:id => id})
+    end
+
+    render :nothing => true
+  end
+
 end

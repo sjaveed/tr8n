@@ -74,16 +74,17 @@ class Tr8n::Translator < ActiveRecord::Base
   has_many  :translations,                  :class_name => "Tr8n::Translation",               :dependent => :destroy
   has_many  :translation_votes,             :class_name => "Tr8n::TranslationVote",           :dependent => :destroy
   has_many  :translation_key_locks,         :class_name => "Tr8n::TranslationKeyLock",        :dependent => :destroy
-  has_many  :language_users,                :class_name => "Tr8n::LanguageUser",              :dependent => :destroy
+
+  has_many  :translator_languages,          :class_name => "Tr8n::TranslatorLanguage",        :dependent => :destroy, :order => "position asc"
+  has_many  :languages,                     :class_name => "Tr8n::Language",                  :through => :translator_languages, :order => "tr8n_translator_languages.position asc"
+
   has_many  :language_forum_topics,         :class_name => "Tr8n::LanguageForumTopic",        :dependent => :destroy
   has_many  :language_forum_messages,       :class_name => "Tr8n::LanguageForumMessage",      :dependent => :destroy
-  has_many  :languages,                     :class_name => "Tr8n::Language",                  :through => :language_users
 
   has_many  :application_translators,       :class_name => 'Tr8n::ApplicationTranslator',     :dependent => :destroy
   has_many  :applications,                  :class_name => 'Tr8n::Application',               :through => :application_translators
   has_many  :component_translators,         :class_name => 'Tr8n::ComponentTranslator',       :dependent => :destroy
   has_many  :components,                    :class_name => 'Tr8n::Component',                 :through => :component_translators
-
 
   belongs_to :fallback_language,            :class_name => 'Tr8n::Language',                  :foreign_key => :fallback_language_id
     
@@ -411,6 +412,24 @@ class Tr8n::Translator < ActiveRecord::Base
 
   def clear_cache
     Tr8n::Cache.delete(cache_key)
+  end
+
+  def toggle_feature(keyword, flag)
+    Tr8n::Feature.toggle(self, keyword, flag)
+  end
+
+  def feature_enabled?(keyword)
+    Tr8n::Feature.enabled?(self, keyword)
+  end
+
+  def add_language(language)
+    Tr8n::TranslatorLanguage.find_or_create(self, language)
+  end
+
+  def remove_language(language)
+    al = Tr8n::TranslatorLanguage.where(:translator_id => self.id, :language_id => language.id).first
+    al.destroy if al
+    al
   end
 
   ###############################################################

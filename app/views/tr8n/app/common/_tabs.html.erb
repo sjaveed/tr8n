@@ -33,7 +33,7 @@
             <% end %>
             <li class="divider"></li>
             <li>
-              <a href="#" id="create_app_button"><%= tra("Register New Application") %></a>
+              <%=link_to(tra("Create New Application"), {:controller => "/tr8n/app/wizards", :action => :application}, {"class" => "", "data-toggle" => "dynamic_wizard"})%>
             </li>
           </ul>
         </li>
@@ -52,7 +52,6 @@
        features << ["Awards", "awards"]               if tr8n_current_application.feature_enabled?(:awards)
        features << ["Forum", "forum"]                 if tr8n_current_application.feature_enabled?(:forum)
        features << ["Glossary", "glossary"]           if tr8n_current_application.feature_enabled?(:glossary)
-       features << ["Languages", "languages"]
        features << ["Settings", "settings"]
 
        features.each do |tab| %>

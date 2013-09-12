@@ -126,8 +126,10 @@ module Tr8n
         else lang.full_name
       end
 
+      name ||= lang.english_name
+
       if linked
-        html << link_to(name.html_safe, "/tr8n/settings/switch?locale=#{lang.locale}&language_action=switch_language&source_url=#{CGI.escape(opts[:source_url]||'')}")
+        html << link_to(name.html_safe, {:locale => lang.locale})
       else    
         html << name
       end

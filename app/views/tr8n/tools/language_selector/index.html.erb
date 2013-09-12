@@ -13,23 +13,23 @@ function removeLanguage(language_id) {
         <%=link_to_function(image_tag("tr8n/close.gif", :style => "border:0px; padding:5px;", :alt=>trla("Close")), "hideLightbox()") %>
     </div>
     <div style="padding-top:3px">
-        <%=tra("Select your settings") %>
+        <%=tra("Select your language") %>
     </div>
   </div>
   <div class="bd">
     <div style="margin-top:2px; margin-bottom: 5px;">
         <% if @user_languages and not @user_languages.empty? %>
-        <div style="color:grey; font-size:11px; padding-bottom:3px; font-weight:bold;">
+        <div style="color:grey; font-size:11px; padding-bottom:5px; font-weight:bold;">
             <%=tra("Your Languages") %>
         </div>
-        <div style="max-height:65px; overflow: auto; margin-bottom:5px; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
+        <div style="max-height:100px; overflow: auto; margin-bottom:5px; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
             <ul class="language_list">
                 <% @user_languages.each do |language| %>
                 <% next unless language %>
                 <li id="lang_<%=language.id%>">
                     <% if language.default? %>
                       <div style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;">
-                         <%=tra('default', 'Default settings label') %>
+                         <%=tra('default', 'Default language') %>
                       </div>
                     <% else %>
                       <div style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;">
@@ -54,12 +54,12 @@ function removeLanguage(language_id) {
                 <% end %>
             </ul>
         </div>
-        <div style="color:grey; font-size:11px; padding-bottom:3px; font-weight:bold;">
+        <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
             <%=tra("Other Languages") %>
         </div>
         <% end %>
 
-        <div id="tr8n_languages_list" style="max-height: 200px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
+        <div id="tr8n_languages_list" style="max-height: 210px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
             <ul class="language_list">
                 <% @all_languages.each do |language| %>
                 <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
@@ -98,7 +98,7 @@ function removeLanguage(language_id) {
             <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
                 <%=link_to(tra("Manage Language"), "/tr8n/language/settings", :target => "_top") %>
                 <span style="color: grey; font-size: 10px; padding-left:0.5em; font-style:italic;">language admins only</span>
-                <div style="font-weight:normal; color:grey;"><%=tra("Change settings native name and define settings rules.") %></div>
+                <div style="font-weight:normal; color:grey;"><%=tra("Change language native name and define language rules.") %></div>
             </div>
           <% end %>
 

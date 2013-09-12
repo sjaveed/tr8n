@@ -8,18 +8,103 @@
 
       </div>
 
-      Application Site Map
+      <%= tra("Application Site Map") %>
     </div>
 
-    <% selected_application.components.each do |comp| %>
-      <%= comp.name %>
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Site Map") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%=tra("This section provides a list of application components and sources associated with them.") %>
+        <%=tra("You can click on any component to navigate directly to the list of phrases under it.") %>
+      </div>
+      <div class="text-right">
+        <%=link_to(tra("Create New Component"), {:controller => "/tr8n/app/wizards", :action => :component}, {"class" => "btn btn-small btn-primary", "data-toggle" => "dynamic_wizard"})%>
+      </div>
+    </div>
+
+    <% if selected_application.components.empty? %>
+      <%=tra("There are currently no components setup for this application") %>
     <% end %>
 
-    <a href="#" id="create_component_button" class="btn btn-small"><%= tra("Create New Component") %></a>
 
+    <ul id="components" data-update-url="/tr8n/app/sitemap/update_components_order">
+      <% selected_application.components.each_with_index do |comp, index| %>
+        <li class="ui-state-default" id="components_<%=comp.id%>">
+          <div class="section grey">
+            <div class="section_title">
+              <div style="float:right">
+                <%=link_to_function("<i class='icon-pencil'></i>".html_safe, '')%>
+                <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :delete_component, :id => comp.id}, {:confirm => trla("Are you sure you want to delete this component?")})%>
+              </div>
+              <i class='icon-align-justify handle'></i>
+              <%= comp.name || "unnamed" %>
+            </div>
+            <div>
+              <div style="padding-bottom:10px; color: #888; font-size:11px;">
+                <%=comp.description %>
+              </div>
+              <ul id="component_<%=comp.id%>" data-update-url="/tr8n/app/sitemap/update_component_sources_order">
+                <% comp.component_sources.each do |comp_src| %>
+                  <% src = comp_src.translation_source %>
+                  <li id="component_sources_<%=comp_src.id%>">
+                    <div style="float:right">
+                      <%=link_to("&times;".html_safe, {:action => :remove_source, :id => comp_src.id}, {:confirm => trla("Are you sure you want to remove this source?")})%>
+                    </div>
+                    <i class='icon-align-justify handle2'></i> <%=link_to(src.name || src.source, :controller => "/tr8n/app/phrases", :action => :index, :source_id => src.id)%>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
 
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
-  <%= render :partial=>"/tr8n/app/wizards/component" %>
-
 <% end %>
+
+<style>
+  #components .handle {
+    cursor: move;
+  }
+
+  #components .handle2 {
+    cursor: move;
+  }
+
+  .placeholder {
+    border: 1px dashed #cccccc;
+    height:200px;
+    border-radius:5px;
+    margin: 10px 0px;
+  }
+  #components { list-style-type: none; margin: 0; padding: 0; width: 100%; margin-left:1px;}
+  #components .ui-state-default { margin-right: 5px; padding: 1px; float: left; width: 383px;}
+</style>
+
+<script>
+  $(function() {
+    $( "#components" ).sortable({
+      handle: '.handle',
+      update: function() {
+        $.post($(this).data('update-url'), $(this).sortable('serialize'))
+      }
+    });
+    $( "#components" ).disableSelection();
+
+    <% selected_application.components.each do |comp| %>
+      $( "#component_<%=comp.id%>" ).sortable({
+        axis: 'y',
+        handle: '.handle2',
+        update: function() {
+          $.post($(this).data('update-url'), $(this).sortable('serialize'))
+        }
+      });
+      $( "#component_<%=comp.id%>" ).disableSelection();
+    <% end %>
+  });
+</script>

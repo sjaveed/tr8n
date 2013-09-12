@@ -21,25 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Tr8n::App::LanguagesController < Tr8n::App::BaseController
+class Tr8n::Translator::TranslationsController < Tr8n::Translator::BaseController
 
+  # list of translations
   def index
-
+    @translations = Tr8n::Translation.for_params(params.merge(:submitted_by => tr8n_page_translator), nil)
+    @translations = @translations.order("created_at desc, rank desc").page(page).per(per_page)
   end
 
-  def add_languages_modal
-    if request.post?
-      params[:locales].split(',').each do |locale|
-        selected_application.add_language(Tr8n::Language.by_locale(locale))
-      end
-      return redirect_to(:action => :index)
-    end
-
-    render :layout => false
-  end
-
-  def remove_language
-    selected_application.remove_language(Tr8n::Language.by_locale(params[:locale]))
-    redirect_back
-  end
 end

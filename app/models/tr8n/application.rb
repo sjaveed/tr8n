@@ -43,7 +43,7 @@ class Tr8n::Application < ActiveRecord::Base
   self.table_name = :tr8n_applications
   attr_accessible :key, :name, :description, :default_language
 
-  has_many :components, :class_name => 'Tr8n::Component', :dependent => :destroy
+  has_many :components, :class_name => 'Tr8n::Component', :order => "position asc", :dependent => :destroy
 
   has_many :translation_domains, :class_name => 'Tr8n::TranslationDomain', :dependent => :destroy
   alias :domains :translation_domains
@@ -52,8 +52,8 @@ class Tr8n::Application < ActiveRecord::Base
   alias :sources :translation_sources
 
   belongs_to :default_language, :class_name => 'Tr8n::Language', :foreign_key => :default_language_id
-  has_many :application_languages, :class_name => 'Tr8n::ApplicationLanguage', :dependent => :destroy
-  has_many :languages, :class_name => 'Tr8n::Language', :through => :application_languages
+  has_many :application_languages, :class_name => 'Tr8n::ApplicationLanguage', :order => "position asc", :dependent => :destroy
+  has_many :languages, :class_name => 'Tr8n::Language', :order => "tr8n_application_languages.position asc", :through => :application_languages
 
   has_many :application_translators, :class_name => 'Tr8n::ApplicationTranslator', :dependent => :destroy
   has_many :translators, :class_name => 'Tr8n::Translator', :through => :application_translators
@@ -226,72 +226,16 @@ class Tr8n::Application < ActiveRecord::Base
     definition["shortcuts"]
   end
 
-  def default_feature
-    {
-      "javascript_sdk" => {"description" => "JavaScript SDK", "enabled" => false},
-      "google_suggestions" => {"description" => "Google Translation Suggestions", "enabled" => false},
-      "shortcuts" => {"description" => "Keyboard Shortcuts", "enabled" => true},
-      "decorations" => {"description" => "Custom Decorations", "enabled" => true},
-      "glossary" => {"description" => "Application Glossary", "enabled" => true},
-      "forum" => {"description" => "Translator Forum", "enabled" => true},
-      "awards" => {"description" => "Awards", "enabled" => true},
-      "language_cases" => {"description" => "Language Cases", "enabled" => true},
-      "context_rules" => {"description" => "Context Rules", "enabled" => true},
-    }
-  end
-
   def features
-    self.definition ||= {}
-    definition["features"] ||= {}
-
-    @features ||= begin
-      feats = default_feature.clone
-      feats.each do |key, data|
-        next unless definition["features"][key]
-        feats[key]["enabled"] = definition["features"][key]["enabled"]
-      end
-
-      feats
-    end
+    @features ||= Tr8n::Feature.by_object(self)
   end
 
-  def features_flags
-    @features_flags ||= begin
-      flags = {}
-      features.each do |key, data|
-        flags[key] = data["enabled"]
-      end
-      flags
-    end
+  def toggle_feature(keyword, flag)
+    Tr8n::Feature.toggle(self, keyword, flag)
   end
 
-  def toggle_feature(key, flag)
-    self.definition ||= {}
-    definition["features"] ||= {}
-    definition["features"][key.to_s] ||= {}
-    definition["features"][key.to_s]["enabled"] = flag
-    save
-
-    definition["features"][key.to_s]["enabled"]
-  end
-
-  def feature_enabled?(key)
-    features_flags[key.to_s]
-  end
-
-  def shortcuts_enabled?
-    self.definition ||= {}
-    definition["shortcuts_enabled"].nil? ? true : definition["shortcuts_enabled"]
-  end
-
-  def javascript_sdk_enabled?
-    self.definition ||= {}
-    definition["javascript_sdk_enabled"].nil? ? false : definition["javascript_sdk_enabled"]
-  end
-
-  def google_suggestions_enabled?
-    self.definition ||= {}
-    definition["google_suggestions_enabled"].nil? ? true : definition["google_suggestions_enabled"]
+  def feature_enabled?(keyword)
+    features[keyword.to_s]["enabled"]
   end
 
   def to_api_hash(opts = {})
@@ -304,7 +248,7 @@ class Tr8n::Application < ActiveRecord::Base
     if opts[:definition]
       hash[:definition] = {
           :styles  => classes,
-          :features => features_flags,
+          :features => Tr8n::Feature.by_object(self),
       }
       hash[:languages] = languages.collect{|l| l.to_api_hash(opts)}
       hash[:sources] = sources.collect{|s| s.to_api_hash(opts)}

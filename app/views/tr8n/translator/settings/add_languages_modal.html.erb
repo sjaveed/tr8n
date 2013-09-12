@@ -1,19 +1,19 @@
 <!-- Modal -->
-<div class="modal-dialog">
+<div class="modal-dialog" id="languages_modal">
   <div class="modal-content">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h4 class="modal-title">
-          <%=tra("Add Languages To Application")%>
+          <%=tra("Add Your Languages")%>
       </h4>
     </div>
 
+    <%= form_tag({}, {:method => :post, :role => "form", :class => "form-inline", :id => "context_form", :style=>"margin:0px;"}) do |f| %>
     <div class="modal-body" style="min-height:300px">
-      <%= form_tag({}, {:method => :post, :role => "form", :class => "form-inline", :id => "context_form"}) do |f| %>
 
         <div class="form-group">
           <p>
-            Enter a list of languages you want to support in your application.
+            <%= tra("Enter a list of languages you are able to translate.") %>
           </p>
 
           <%=hidden_field_tag(:locales, "") %>
@@ -26,13 +26,14 @@
           </select>
 
           <p style="padding-top:20px; color:#666">
-            Start typing a language name.
+            <%= tra("Start typing a language name.") %>
           </p>
 
         </div>
 
-      <% end %>
     </div>
+    <% end %>
+
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
       <button type="submit" class="btn btn-primary" onClick="$('#locales').val($('#new_locales').val()); $('#context_form').submit();"><%=tra("Submit") %></button>
@@ -44,4 +45,7 @@
   (function() {
     $("#new_locales").chosen({});
   })();
+  $('#languages_modal').on('hidden', function(){
+    $(this).data('modal', null);
+  });
 </script>

@@ -34,7 +34,7 @@ Tr8n.UI.LanguageSelector = {
   },
 
   show: function() {
-    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector', {width:400});
+    Tr8n.UI.Lightbox.show('/tr8n/tools/language_selector', {width:500});
   },
 
   change: function(locale) {

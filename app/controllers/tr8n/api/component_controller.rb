@@ -87,7 +87,7 @@ class Tr8n::Api::ComponentController < Tr8n::Api::BaseController
     ensure_application
     ensure_authorized_call
 
-    component.register_source(params[:source])
+    component.add_source(params[:source])
   end
 
 private

@@ -1,0 +1,31 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+  <%= render :partial => "/tr8n/translator/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section blue">
+      <%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
+        <%=hidden_field_tag(:section_key, @section_key) %>
+        <div class="tr8n_fltr">
+          <button type="submit" class="btn btn-primary" onClick="Tr8n.Effects.submit('translations_search_form'); return false;">
+            <%=tra("Search")%>
+          </button>
+        </div>
+
+        <div class="tr8n_txtl">
+          <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translations")})%>
+        </div>
+
+        <div class="tr8n_txtl" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+          <%=select_tag(:with_status, options_for_select(Tr8n::Translation.filter_status_options, params[:with_status]))%>
+          <%=select_tag(:submitted_on, options_for_select(Tr8n::Translation.filter_date_options, params[:submitted_on]))%>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="section">
+      <%= render :partial => "/tr8n/app/translations/list", :locals => {:language => tr8n_current_language, :translations => @translations, :mode => :list} %>
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/translator/common/footer" %>
+<% end %>

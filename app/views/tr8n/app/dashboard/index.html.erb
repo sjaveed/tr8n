@@ -12,12 +12,33 @@
     </div>
 
     <div class="section_title">
-      Completenss By Language
+      Completeness By Language
     </div>
 
     <div class="section grey">
       <% selected_application.languages.each do |lang| %>
-        <div><%=lang.name%></div>
+        <div class="row">
+          <div class="span2" >
+            <%= tr8n_language_flag_tag(lang) %>
+            <%=lang.name%>
+          </div>
+          <div class="span9">
+            <% value = rand(100) %>
+            <div id="progressbar_<%=lang.locale%>">
+            </div>
+
+            <script type="text/javascript">
+              $('#progressbar_<%=lang.locale%>').progressbar({
+                progressMarker: 65,
+                successMarker: 85,
+                maximum: 100,
+                step: 1
+              });
+              $('#progressbar_<%=lang.locale%>').progressbar('setPosition', <%=value%>);
+            </script>
+
+          </div>
+        </div>
       <% end %>
     </div>
 

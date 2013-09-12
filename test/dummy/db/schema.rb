@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130904011924) do
+ActiveRecord::Schema.define(:version => 20130912053004) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(:version => 20130904011924) do
     t.integer  "language_id",    :null => false
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.integer  "position"
   end
 
   add_index "tr8n_application_languages", ["application_id"], :name => "tr8n_app_lang_app_id"
@@ -79,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20130904011924) do
     t.integer  "translation_source_id"
     t.datetime "created_at",            :null => false
     t.datetime "updated_at",            :null => false
+    t.integer  "position"
   end
 
   add_index "tr8n_component_sources", ["component_id"], :name => "tr8n_comp_comp_id"
@@ -105,9 +107,21 @@ ActiveRecord::Schema.define(:version => 20130904011924) do
     t.string   "description"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.integer  "position"
   end
 
   add_index "tr8n_components", ["application_id"], :name => "tr8n_comp_app_id"
+
+  create_table "tr8n_features", :force => true do |t|
+    t.string   "object_type"
+    t.integer  "object_id"
+    t.string   "keyword"
+    t.boolean  "enabled"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "tr8n_features", ["object_type", "object_id", "keyword"], :name => "tr8n_feats"
 
   create_table "tr8n_glossary", :force => true do |t|
     t.string   "keyword"
@@ -474,6 +488,17 @@ ActiveRecord::Schema.define(:version => 20130904011924) do
   end
 
   add_index "tr8n_translator_following", ["translator_id"], :name => "tr8n_tf_t"
+
+  create_table "tr8n_translator_languages", :force => true do |t|
+    t.integer  "translator_id"
+    t.integer  "language_id"
+    t.boolean  "primary"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "position"
+  end
+
+  add_index "tr8n_translator_languages", ["translator_id", "language_id"], :name => "tr8n_trn_lang"
 
   create_table "tr8n_translator_logs", :force => true do |t|
     t.integer  "translator_id"

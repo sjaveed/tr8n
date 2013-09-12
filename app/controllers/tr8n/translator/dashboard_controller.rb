@@ -29,7 +29,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   def index
     @translator = Tr8n::Translator.find_by_id(params[:id]) if params[:id]
     @translator ||= Tr8n::Config.current_translator
-    @languages = Tr8n::LanguageUser.languages_for(@translator.user)
+    @languages = tr8n_page_translator.translator_languages
   end
 
   def registration

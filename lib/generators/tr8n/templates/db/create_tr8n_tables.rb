@@ -81,13 +81,10 @@ class CreateTr8nTables < ActiveRecord::Migration
     create_table :tr8n_language_users do |t|
       t.integer :language_id,   :null => false
       t.integer :user_id,       :null => false
-      t.integer :translator_id
-      t.boolean :manager,       :default => false
       t.timestamps
     end
     add_index :tr8n_language_users, [:user_id], :name => :tr8n_lu_u
     add_index :tr8n_language_users, [:language_id, :user_id], :name => :tr8n_lu_lu
-    add_index :tr8n_language_users, [:language_id, :translator_id], :name => :tr8n_lu_lt
     add_index :tr8n_language_users, [:created_at], :name => :tr8n_lu_ca
     add_index :tr8n_language_users, [:updated_at], :name => :tr8n_lu_ua
     

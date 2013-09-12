@@ -1,0 +1,71 @@
+<style>
+  label {
+    font-weight:bold;
+    padding-top:15px;
+  }
+</style>
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/translator/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Features") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Features") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("Here you can enable and disable various application features") %>
+      </div>
+
+    </div>
+
+    <div class="section">
+
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th><%=tra("Feature") %></th>
+          <th style="width:150px"><%=tra("Enable/Disable") %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% Tr8n::Feature.by_object(tr8n_current_translator).each do |key, data| %>
+          <tr>
+            <td>
+              <%=tra(data["description"])%>
+            </td>
+            <td>
+              <div class="make-switch switch_<%=key%>" data-on="primary" data-off="info">
+                <input type="checkbox" <%= "checked" if data["enabled"] %> >
+              </div>
+              <script>
+                (function() {
+                  $('.switch_<%=key%>').on('switch-change', function (e, data) {
+                    $.ajax({
+                      url: "/tr8n/translator/settings/toggle_feature?key=<%=key%>&flag=" + data.value
+                    }).done(function() {
+                    });
+                  });
+                })();
+              </script>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/translator/common/footer" %>
+
+  <%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+  <%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>
+
+<% end %>

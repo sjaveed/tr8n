@@ -91,7 +91,6 @@
               if @translator.manager?
                links << link_to(tra("manage", "Language action link"), "/tr8n/language/settings/index?locale=#{lang.locale}")
               end
-              links << link_to(tra("remove", "Language action link"), "/tr8n/language/settings/remove?language_id=#{lang.id}")
             end
           %>
           <%= links.join(" | ").html_safe %>

@@ -43,10 +43,11 @@
 class Tr8n::Component < ActiveRecord::Base
   self.table_name = :tr8n_components
   attr_accessible :application_id, :key, :name, :description, :state
+  attr_accessible :application
   
   belongs_to :application, :class_name => 'Tr8n::Application'
 
-  has_many :component_sources, :class_name => 'Tr8n::ComponentSource', :dependent => :destroy
+  has_many :component_sources, :class_name => 'Tr8n::ComponentSource', :order => "position asc", :dependent => :destroy
   has_many :translation_sources, :class_name => 'Tr8n::TranslationSource', :through => :component_sources
   has_many :translation_key_sources, :class_name => 'Tr8n::TranslationKeySource', :through => :translation_sources
   has_many :translation_keys, :class_name => 'Tr8n::TranslationKey', :through => :translation_key_sources
@@ -79,7 +80,15 @@ class Tr8n::Component < ActiveRecord::Base
     end  
   end
 
-  def register_source(source)
+  def add_translator(translator)
+    Tr8n::ComponentTranslator.find_or_create(self, translator)
+  end
+
+  def add_language(language)
+    Tr8n::ComponentLanguage.find_or_create(self, language)
+  end
+
+  def add_source(source)
     Tr8n::ComponentSource.find_or_create(self, source)
   end
 

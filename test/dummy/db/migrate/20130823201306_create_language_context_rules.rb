@@ -9,5 +9,7 @@ class CreateLanguageContextRules < ActiveRecord::Migration
       t.text    :definition
       t.timestamps
     end
+
+    add_index :tr8n_language_context_rules, [:language_context_id, :keyword], :name => :tr8n_lctxr_lci
   end
 end

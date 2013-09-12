@@ -304,9 +304,9 @@ class Tr8n::Translation < ActiveRecord::Base
   ###############################################################
   def self.filter_status_options
     [["all translations", "all"], 
-     ["accepted translations", "accepted"], 
-     ["pending translations", "pending"], 
-     ["rejected translations", "rejected"]].collect{|option| [option.first.trl("Translation filter status option"), option.last]}    
+     ["accepted", "accepted"],
+     ["pending", "pending"],
+     ["rejected", "rejected"]].collect{|option| [option.first.trl("Translation filter status option"), option.last]}
   end
   
   def self.filter_submitter_options
@@ -336,7 +336,11 @@ class Tr8n::Translation < ActiveRecord::Base
   end
   
   def self.for_params(params, language = Tr8n::Config.current_language)
-    results = self.where("language_id = ?", language.id)
+    if language.nil?
+      results = self.where("language_id is not null")
+    else
+      results = self.where("language_id = ?", language.id)
+    end
 
     # only translations from the selected application
     if params[:application]
@@ -351,8 +355,10 @@ class Tr8n::Translation < ActiveRecord::Base
       results = results.where("tr8n_translation_keys.type is null or tr8n_translation_keys.type = ? or tr8n_translation_keys.type = ?", 'Tr8n::TranslationKey', 'TranslationKey')
     end
 
-    results = results.where("tr8n_translations.label like ?", "%#{params[:search]}%") unless params[:search].blank?
-  
+    unless params[:search].blank?
+      results = results.where("tr8n_translations.label like ?", "%#{params[:search]}%")
+    end
+
     if params[:with_status] == "accepted"
       results = results.where("tr8n_translations.rank >= ?", Tr8n::Config.translation_threshold)
     elsif params[:with_status] == "pending"
@@ -360,11 +366,15 @@ class Tr8n::Translation < ActiveRecord::Base
     elsif params[:with_status] == "rejected"
       results = results.where("tr8n_translations.rank < 0")
     end
-    
-    if params[:submitted_by] == "me"
-      results = results.where("tr8n_translations.translator_id = ?", Tr8n::Config.current_user_is_translator? ? Tr8n::Config.current_translator.id : 0)
+
+    unless params[:submitted_by].blank?
+      if params[:submitted_by] == "me"
+        results = results.where("tr8n_translations.translator_id = ?", Tr8n::Config.current_user_is_translator? ? Tr8n::Config.current_translator.id : 0)
+      else
+        results = results.where("tr8n_translations.translator_id = ?", params[:submitted_by].id)
+      end
     end
-    
+
     if params[:submitted_on] == "today"
       date = Date.today
       results = results.where("tr8n_translations.created_at >= ? and tr8n_translations.created_at < ?", date, date + 1.day)

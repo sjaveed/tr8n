@@ -99,4 +99,33 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     selected_application.toggle_feature(params[:key], params[:flag] == "true")
     render :text => {"result" => "Ok"}.to_json
   end
+
+  def languages
+
+  end
+
+  def add_languages_modal
+    if request.post?
+      params[:locales].split(',').each do |locale|
+        selected_application.add_language(Tr8n::Language.by_locale(locale))
+      end
+      return redirect_to(:action => :languages)
+    end
+
+    render :layout => false
+  end
+
+  def remove_language
+    selected_application.remove_language(Tr8n::Language.by_locale(params[:locale]))
+    redirect_back
+  end
+
+  def update_languages_order
+    params[:languages].each_with_index do |id, index|
+      Tr8n::ApplicationLanguage.update_all({:position => index+1}, {:id => id})
+    end
+
+    render :nothing => true
+  end
+
 end

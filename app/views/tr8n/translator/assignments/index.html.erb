@@ -12,7 +12,7 @@
       <%=tra("Your Assignments") %>
     </div>
 
-    <div class="section_box" style="background-color:#EFF8FF;">
+    <div class="section" style="background-color:#EFF8FF;">
       <% if @components.any? %>
         <%= tra("You have [bold: {count||assignment}]: {assignments}.", nil, :count => @components.size, :assignments => @components.collect{|comp| link_to(comp.title, :anchor => "comp-#{comp.id}")}.join(", ")) %>
       <% else %>
@@ -23,7 +23,7 @@
     <% @components.each do |comp| %>
       <div class="section_title">
         <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px; font-weight:normal; padding-top:5px;">
-          <%=link_to(tra("view all phrases"), :controller => "/tr8n/phrases", :action => :index, :component_id => comp.id)%>
+          <%=link_to(tra("view all phrases"), :controller => "/tr8n/app/phrases", :action => :index, :component_id => comp.id)%>
         </div>
 
         <%=tr8n_toggler_tag("comp_content_#{comp.id}")%>
@@ -33,14 +33,15 @@
         </span>
       </div>
 
-      <div id="comp_content_<%=comp.id%>" class="section_box colored">
-        <div class="section_box" style="background-color:#FDFFF0; margin-bottom:10px; margin-top:0px;">
+      <div id="comp_content_<%=comp.id%>" class="section grey">
+        <div style="margin-bottom:10px; margin-top:0px; font-size:11px; color: #888">
           <% if comp.languages.any? %>
-            <%=tr("This assignment contains [bold: {count||section}], which {count|needs, need} to be translated into the following languages: {languages}", nil, :count => comp.sources.size, :languages => comp.languages.collect{|lang| link_to(lang.english_name, params.merge(:locale => lang.locale))}.join(", ")) %>
-            <% else %>
-              <%=tr("This assignment contains [bold: {count||section}], which {count|needs, need} to be translated into all available languages.", nil, :count => comp.sources.size) %>
-            <% end %>
+              <%=tra("This assignment contains [bold: {count||section}], which {count|needs, need} to be translated into the following languages: {languages}", nil, :count => comp.sources.size, :languages => comp.languages.collect{|lang| link_to(lang.english_name, params.merge(:locale => lang.locale))}.join(", ")) %>
+          <% else %>
+              <%=tra("This assignment contains [bold: {count||section}], which {count|needs, need} to be translated into all available languages.", nil, :count => comp.sources.size) %>
+          <% end %>
         </div>
+
         <% comp.sources.each do |source| %>
           <%
             background = "#FDFFCF"
@@ -60,7 +61,7 @@
               <strong><%=source.title%></strong>
             </div>
             <div id="comp_source_<%=source.id%>" style="width:450px;">
-              <%=render :partial => "/tr8n/dashboard/translation_source_metric", :locals => {:translation_source => source, :translation_source_metric => source.total_metric} %>
+              <%=render :partial => "/tr8n/translator/dashboard/translation_source_metric", :locals => {:translation_source => source, :translation_source_metric => source.total_metric} %>
             </div>
           </div>
         <% end %>

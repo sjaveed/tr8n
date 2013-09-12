@@ -28,8 +28,7 @@
 #  id               INTEGER     not null, primary key
 #  language_id      integer     not null
 #  user_id          integer     not null
-#  translator_id    integer     
-#  manager          boolean     
+#  manager          boolean
 #  created_at       datetime    not null
 #  updated_at       datetime    not null
 #
@@ -37,35 +36,25 @@
 #
 #  tr8n_lu_ua    (updated_at) 
 #  tr8n_lu_ca    (created_at) 
-#  tr8n_lu_lt    (language_id, translator_id) 
-#  tr8n_lu_lu    (language_id, user_id) 
+#  tr8n_lu_lu    (language_id, user_id)
 #  tr8n_lu_u     (user_id) 
 #
 #++
 
 class Tr8n::LanguageUser < ActiveRecord::Base
   self.table_name = :tr8n_language_users
-  attr_accessible :language_id, :user_id, :translator_id, :manager
+  attr_accessible :language_id, :user_id, :manager
   attr_accessible :language, :translator, :user
 
   belongs_to :user, :class_name => Tr8n::Config.user_class_name, :foreign_key => :user_id
   belongs_to :language, :class_name => "Tr8n::Language"
   belongs_to :translator, :class_name => "Tr8n::Translator"
   
-  # this object can belong to both the user and the dashboard
-  # users may choose to switch to a settings without becoming translators
-  # once user becomes a dashboard, this record will be associated with both for ease of use
-  # when users get promoted, they are automatically get associated with a settings and marked as translators
-
   def self.find_or_create(user, language)
     lu = where("user_id = ? and language_id = ?", user.id, language.id).first
     lu || create(:user_id => user.id, :language_id => language.id)
   end
   
-  def self.delete_all_languages_for_translator(translator)
-    Tr8n::LanguageUser.connection.execute("delete from #{Tr8n::LanguageUser.table_name} where translator_id = #{translator.id}")
-  end
-
   def self.check_default_language_for(user)
      find_or_create(user, Tr8n::Config.default_language)
   end
@@ -82,8 +71,5 @@ class Tr8n::LanguageUser < ActiveRecord::Base
     lu.touch
     lu
   end
-  
-  def translator?
-    translator != nil
-  end
+
 end

@@ -1,19 +1,17 @@
 <% if Tr8n::Config.enabled? %>
 <style>
 .tr8n_language_strip                            {text-align:center; color:#777;}
-.tr8n_language_strip a                          {text-decoration:none; color:#777; outline:none; border:0px; font-size:10px;}
+.tr8n_language_strip a                          {text-decoration:none; color:#777; outline:none; border:0px; font-size:12px;}
 .tr8n_language_strip a img                      {border:0px;}
 .tr8n_language_strip a:hover                    {text-decoration:underline}  
 </style>
-<div class="tr8n_language_strip" style="font-size:12px;">
-    <% featured_languages = Tr8n::Language.featured_languages %>
-    
-    <% featured_languages.each do |lang| %>
+<div class="tr8n_language_strip">
+    <% tr8n_current_application.languages[0..9].each do |lang| %>
         <%= tr8n_language_name_tag(lang, opts) %> &nbsp;
     <% end %>
     
-    <% if featured_languages.size > 0 %>
-        <%=link_to_function("&raquo;".html_safe, "Tr8n.UI.LanguageSelector.show(true)") %>
+    <% if tr8n_current_application.languages.size > 9 %>
+        <%=link_to_function("&raquo;".html_safe, "Tr8n.UI.LanguageSelector.show()") %>
     <% end %> 
 </div>
 <% end %>

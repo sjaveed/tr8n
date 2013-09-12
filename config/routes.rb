@@ -30,7 +30,7 @@ Tr8n::Engine.routes.draw do
     match "language/#{ctrl}(/:action)", :controller => "language/#{ctrl}"
   end
 
-  [:dashboard, :assignments, :following, :registration, :notifications, :settings].each do |ctrl|
+  [:dashboard, :assignments, :following, :registration, :notifications, :settings, :translations].each do |ctrl|
     match "translator/#{ctrl}(/:action)", :controller => "translator/#{ctrl}"
   end
 

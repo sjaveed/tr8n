@@ -25,4 +25,12 @@ class Tr8n::Translator::BaseController < Tr8n::BaseController
 
   before_filter :validate_current_translator
 
+private
+
+  def tr8n_page_translator
+    @page_translator = Tr8n::Translator.find_by_id(params[:id]) if params[:id]
+    @page_translator ||= tr8n_current_translator
+  end
+  helper_method :tr8n_page_translator
+
 end

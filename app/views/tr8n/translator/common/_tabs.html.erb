@@ -26,16 +26,16 @@
 
   <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
     <% [
-           ["Dashboard", "dashboard"],
-           ["Translations", "translations"],
-           ["Assignments", "assignments"],
-           ["Notifications", "notifications"],
-           ["Following", "following"],
-           ["Preferences", "settings"],
+           ["Dashboard", "dashboard", true],
+           ["Translations", "translations", true],
+           ["Assignments", "assignments", false],
+           ["Notifications", "notifications", false],
+           ["Following", "following", false],
+           ["Preferences", "settings", false],
        ].each do |tab| %>
-
-      <li class="<%='active' if controller.controller_name == tab.last %>">
-        <%=link_to(tra(tab.first), "/tr8n/translator/#{tab.last}")%>
+      <% next if tab.last and not self? %>
+      <li class="<%='active' if controller.controller_name == tab[1] %>">
+        <%=link_to(tra(tab.first), "/tr8n/translator/#{tab[1]}")%>
       </li>
     <% end %>
   </ul>

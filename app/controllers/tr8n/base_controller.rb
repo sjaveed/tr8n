@@ -124,22 +124,6 @@ module Tr8n
       redirect_to("/tr8n/translator/registration")
     end
 
-    # make sure that the current user is a settings manager
-    def validate_language_management
-      # admins can do everything
-      return if tr8n_current_user_is_admin?
-    
-      if tr8n_current_language.default?
-        trfe("Only administrators can modify this settings")
-        return redirect_to(tr8n_features_tabs.first[:link])
-      end
-
-      unless tr8n_current_user_is_translator? and tr8n_current_translator.manager? 
-        trfe("In order to manage a settings you first must request to become a manager of that settings.")
-        return redirect_to(tr8n_features_tabs.first[:link])
-      end
-    end
-  
     def validate_language
       return unless params[:language]
       return if params[:language][:fallback_language_id].blank? # default

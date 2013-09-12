@@ -26,4 +26,26 @@ class Tr8n::Language::BaseController < Tr8n::BaseController
   before_filter :validate_current_translator
   before_filter :validate_language_management
 
+private
+
+  # make sure that the current user is a settings manager
+  def validate_language_management
+    # admins can do everything
+    return if tr8n_current_user_is_admin?
+
+    if tr8n_current_language.default?
+      trfe("Only administrators can modify this settings")
+      return redirect_to(tr8n_features_tabs.first[:link])
+    end
+
+    unless tr8n_current_user_is_translator? and tr8n_current_translator.manager?
+      trfe("In order to manage a settings you first must request to become a manager of that settings.")
+      return redirect_to(tr8n_features_tabs.first[:link])
+    end
+  end
+
+  def language_manager?
+    tr8n_current_user.admin?
+  end
+  helper_method :language_manager?
 end

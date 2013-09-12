@@ -68,4 +68,9 @@ private
   end
   helper_method :translator_applications
 
+  def application_admin?
+    tr8n_current_user.admin?
+  end
+  helper_method :application_admin?
+
 end

@@ -33,4 +33,9 @@ private
   end
   helper_method :tr8n_page_translator
 
+  def self?
+    tr8n_page_translator == tr8n_current_translator
+  end
+  helper_method :self?
+
 end

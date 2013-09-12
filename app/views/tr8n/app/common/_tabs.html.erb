@@ -44,19 +44,20 @@
 
   <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
     <% features = []
-       features << ["Dashboard", "dashboard"]
-       features << ["Site Map", "sitemap"]
-       features << ["Phrases", "phrases"]
-       features << ["Translations", "translations"]
-       features << ["Translators", "translators"]
-       features << ["Awards", "awards"]               if tr8n_current_application.feature_enabled?(:awards)
-       features << ["Forum", "forum"]                 if tr8n_current_application.feature_enabled?(:forum)
-       features << ["Glossary", "glossary"]           if tr8n_current_application.feature_enabled?(:glossary)
-       features << ["Settings", "settings"]
+       features << ["Dashboard", "dashboard", false]
+       features << ["Site Map", "sitemap", false]
+       features << ["Phrases", "phrases", false]
+       features << ["Translations", "translations", false]
+       features << ["Translators", "translators", true]
+       features << ["Awards", "awards", false]               if tr8n_current_application.feature_enabled?(:awards)
+       features << ["Forum", "forum", false]                 if tr8n_current_application.feature_enabled?(:forum)
+       features << ["Glossary", "glossary", false]           if tr8n_current_application.feature_enabled?(:glossary)
+       features << ["Settings", "settings", true]
 
        features.each do |tab| %>
-      <li class="<%='active' if controller.controller_name == tab.last %>">
-        <%=link_to(tra(tab.first), "/tr8n/app/#{tab.last}")%>
+      <% next if tab.last and not application_admin? %>
+      <li class="<%='active' if controller.controller_name == tab[1] %>">
+        <%=link_to(tra(tab.first), "/tr8n/app/#{tab[1]}")%>
       </li>
     <% end %>
   </ul>

@@ -24,7 +24,10 @@
 class Tr8n::App::SitemapController < Tr8n::App::BaseController
 
   def index
-
+    @editable = application_admin?
+    @column_width = 383    # 3 columns
+    # @column_width = 1165   # 1 column
+    # @column_width = 578     # 2 columns
   end
 
   def delete_component
@@ -61,6 +64,40 @@ class Tr8n::App::SitemapController < Tr8n::App::BaseController
     end
 
     render :nothing => true
+  end
+
+  def component_modal
+    @component = Tr8n::Component.find(params[:id])
+    if request.post?
+      @component.update_attributes(params[:component])
+      return redirect_to(:action => :index)
+    end
+    render :layout => false
+  end
+
+  def source_modal
+    @source = Tr8n::TranslationSource.find(params[:id])
+    if request.post?
+      @source.update_attributes(params[:source])
+      return redirect_to(:action => :index)
+    end
+    render :layout => false
+  end
+
+  def add_sources_modal
+    @component = Tr8n::Component.find(params[:id])
+    if request.post?
+
+      unless params[:sources].blank?
+        params[:sources].split(',').each do |src_id|
+          src = Tr8n::TranslationSource.find_by_id(src_id)
+          @component.add_source(src) if src
+        end
+      end
+
+      return redirect_to(:action => :index)
+    end
+    render :layout => false
   end
 
 end

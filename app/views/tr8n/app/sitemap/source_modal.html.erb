@@ -1,0 +1,32 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <%= form_for(@source, :as => :source, :url => {:id => @source.id}, :html => {:method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <%=tra("Update Source")%>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group" style="font-weight:bold; background:#eee; padding:3px;">
+          <%=@source.source%>
+        </div>
+
+        <div class="form-group">
+          <label for="source[name]"><%=tra("Name")%></label>
+          <%=f.text_field(:name, :placeholder => "Enter name", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="source[description]"><%=tra("Description")%></label>
+          <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:100px;") %>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+        <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
+      </div>
+    </div><!-- /.modal-content -->
+  <% end %>
+</div><!-- /.modal-dialog -->

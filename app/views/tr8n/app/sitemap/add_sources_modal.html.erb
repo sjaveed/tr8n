@@ -1,0 +1,48 @@
+<!-- Modal -->
+<div class="modal-dialog" id="languages_modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">
+        <%=tra("Add Sources To Component")%>
+      </h4>
+    </div>
+
+    <%= form_tag({:id => @component.id}, {:method => :post, :role => "form", :class => "form-inline", :id => "sources_form", :style=>"margin:0px;"}) do |f| %>
+      <div class="modal-body" style="min-height:300px">
+
+        <div class="form-group">
+          <p>
+            <%=tra("Enter a list of sources you want to be part of this component.") %>
+          </p>
+
+          <%=hidden_field_tag(:sources, "") %>
+
+          <select id="component_sources" data-placeholder="Sources" multiple class="chzn-select" style="width:400px;">
+            <option value=""></option>
+            <% selected_application.sources.each do |src| %>
+              <option value="<%=src.id%>"><%=src.name || src.source%></option>
+            <% end %>
+          </select>
+
+          <p style="padding-top:20px; color:#666">
+            <%= tra("Start typing a source name.") %>
+          </p>
+
+        </div>
+
+      </div>
+    <% end %>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+      <button type="submit" class="btn btn-primary" onClick="$('#sources').val($('#component_sources').val()); $('#sources_form').submit();"><%=tra("Submit") %></button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script>
+  (function() {
+    $("#component_sources").chosen({});
+  })();
+</script>

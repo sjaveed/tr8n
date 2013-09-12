@@ -13,17 +13,15 @@
   <%= render :partial => '/tr8n/common/translation_votes', :locals => {:translation_key => @translation_key, :translations => @translations, :section_key => @section_key} %>
 </div>
 
+<% unless @translation_key.locked? %>
 <div style="padding-top:10px;font-size:11px">
   <%=tra("Don't like any of these?", "Don't like any of these translations?")%>
   <%=link_to(tra('Translate it yourself.', 'Translate this phrase yourself.'), :action => :submit, :id => @translation_key.id, :origin => params[:origin]) %>
 </div>
+<% end %>
 
 <% if tr8n_current_translator.manager? %>
   <div id="tr8n_translator_footer_container">
-    <div style="padding-top:10px;color:#ccc;">
-      <%=tra('Lock this phrase so it will no longer be translatable.') %>
-    </div>
-
     <%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
       <%= hidden_field_tag(:origin, params[:origin]) %>
       <%= hidden_field_tag(:id, @translation_key.id) %>

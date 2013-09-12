@@ -154,7 +154,7 @@
 <script>
   function performTranslatorAction(action) {
     var reason = prompt("Please provide a reason why you want to " + action + " this dashboard:");
-    location = "/tr8n/admin/dashboard/" + action + "?translator_id=<%=@translator.id%>&reason=" + reason;
+    location = "/tr8n/admin/translator/" + action + "?translator_id=<%=@translator.id%>&reason=" + reason;
   }  
 </script>
 
@@ -183,6 +183,6 @@
 	function updateTranslatorLevel() {
 		var reason = prompt("Please provide the reason for promoting/demoting this dashboard:");
 		if (reason) reason = "";
-		location = "/tr8n/admin/dashboard/update_level?translator_id=<%=@translator.id%>&new_level=" + Tr8n.value('translator_level') + "&reason=" + reason;
+		location = "/tr8n/admin/translator/update_level?translator_id=<%=@translator.id%>&new_level=" + Tr8n.value('translator_level') + "&reason=" + reason;
 	}
 </script>

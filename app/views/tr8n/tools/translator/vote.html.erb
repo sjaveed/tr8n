@@ -14,10 +14,10 @@
 </div>
 
 <% unless @translation_key.locked? %>
-<div style="padding-top:10px;font-size:11px">
-  <%=tra("Don't like any of these?", "Don't like any of these translations?")%>
-  <%=link_to(tra('Translate it yourself.', 'Translate this phrase yourself.'), :action => :submit, :id => @translation_key.id, :origin => params[:origin]) %>
-</div>
+  <div style="padding-top:10px;font-size:11px">
+    <%=tra("Don't like any of these?", "Don't like any of these translations?")%>
+    <%=link_to(tra('Translate it yourself.', 'Translate this phrase yourself.'), :action => :submit, :id => @translation_key.id, :origin => params[:origin]) %>
+  </div>
 <% end %>
 
 <% if tr8n_current_translator.manager? %>

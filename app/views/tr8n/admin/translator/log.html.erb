@@ -7,7 +7,7 @@
     :created_at, 
     [:translator_id, lambda{|log|
       if log.translator
-        link_to(log.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :translator_id => log.translator.id)
+        link_to(log.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :translator_id => log.translator.id)
       else
         "Unknown" 
       end  

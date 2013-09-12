@@ -5,7 +5,7 @@
         <%=tr8n_user_mugshot_tag(translation.translator, :linked => true)%>
       </td>
       <td class="tr8n_txtl">
-        <%=tr8n_user_tag(translation.translator, :linked => true)%>
+        <%=tr8n_translator_tag(translation.translator, :linked => true)%>
         <div style="font-size:11px;color:grey;<%=tr8n_style_attribute_tag('text-align', 'left')%>;">
             <%=tr8n_when_string_tag(translation.created_at).html_safe %>
         </div>
@@ -38,11 +38,11 @@
 <td class="tr8n_txtl" style="vertical-align:top; padding-top:5px;">
   <% if mode == :view and translation.can_be_edited_by?(tr8n_current_translator) %>
     <span onDblClick="updateTranslationRow('<%=translation.id%>', 'edit')" title="Translation for: <%=translation.key.label%>">
-      <%= translation.label %> 
+      <%= translation.label %>
     </span>
   <% elsif mode == :edit %>
     <%= text_area_tag("translation_row_value_#{translation.id}", translation.label, :style=>"width:100%;height:60px;", :class => "keyboardInput" ) %>
-	<% else %>	
+	<% else %>
     <%= translation.label %>
   <% end %>
 
@@ -57,15 +57,15 @@
   <% end %>
 </td>
 
-<% if [:view, :edit].include?(mode) %> 
+<% if [:view, :edit].include?(mode) %>
 	<td style="text-align:right; vertical-align:top; padding-top:3px;">
-	 <% if mode == :view %> 
+	 <% if mode == :view %>
 	    <% if translation.can_be_edited_by?(tr8n_current_translator) %>
 	        <%=link_to_function("<i class='icon-pencil'></i>".html_safe, "updateTranslationRow('#{translation.id}', 'edit')")%>
 	        <%=link_to_function("<i class='icon-remove'></i>".html_safe, "deleteTranslationRow('#{translation.id}', '#{@section_key}')")%>
 	    <% elsif translation.can_be_deleted_by?(tr8n_current_translator)  %>
 	        <%=link_to_function(image_tag("tr8n/cross.png"), "deleteTranslationRow('#{translation.id}', '#{@section_key}')")%>
-	    <% end %>   
+	    <% end %>
 	<% elsif mode == :edit %>
 	    <%=link_to_function("<i class='icon-ok'></i>".html_safe, "submitTranslationRow('#{translation.id}')")%>
 	    <%=link_to_function("<i class='icon-remove'></i>".html_safe, "updateTranslationRow('#{translation.id}', 'view')")%>

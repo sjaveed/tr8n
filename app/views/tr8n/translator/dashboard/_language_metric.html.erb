@@ -1,12 +1,60 @@
-<div class="section_box" style="text-align:center; width:95%; background-color:white;">
-  <div style="font-size:14px; padding:3px;">
-    <%=tra("Language Phrases", "Dashboard section header")%>
-    <span style="font-size:10px;color:#ccc;">
-      <%= tra("{count}% Complete", "Completeness of a settings", :count => (language_metric.completeness || 0)) %>
-    </span>
-  </div>
+<div class="section" style="text-align:center; width:95%; background-color:white;">
+  <% @metric = lang.total_metric %>
+  <% @chart_id = "language_chart_#{@metric.id}" %>
+  <div id="<%=@chart_id%>" style="min-width: 200px; height: 200px; margin: 0 auto"></div>
 
-  <%= tr8n_language_completeness_chart_tag(lang)%>
+  <script>
+    $(function () {
+      $('#<%=@chart_id%>').highcharts({
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false
+        },
+        title: {
+          text: '<%= trla("Total Translations in {language}", :language => lang.native_name) %>'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              color: '#000000',
+              connectorColor: '#000000',
+              formatter: function() {
+                return this.point.name;
+              }
+            }
+          }
+        },
+        series: [{
+          type: 'pie',
+          name: 'Progress',
+          data: [
+            {
+              name: '<%=trla("Approved", "Approved translations") %>',
+              y: <%=@metric.locked_key_count || 0%>,
+              color: '#00FF00'
+            },
+            {
+              name: '<%=trla("Pending", "Pending translations") %>',
+              y: <%=@metric.pending_approval_count || 0%>,
+              color: '#FFFF00'
+            },
+            {
+              name: '<%=trla("Not Translated") %>',
+              y: <%=@metric.not_translated_count || 0%>,
+              color: '#FF0000'
+            }
+          ]
+        }]
+      });
+    });
+  </script>
 
   <div style="margin:5px; color:#666;">
 	  <span style="white-space:nowrap;">
@@ -43,7 +91,4 @@
 		   
 		
 	</div>	
-  <div style="margin:10px; color:#ccc; text-align:center; width:100%;">
-      <%=tra("The statistics are calculated nightly", "Dashboard section header")%>
-  </div>
 </div>

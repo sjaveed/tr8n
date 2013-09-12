@@ -35,7 +35,7 @@ Tr8n::Engine.routes.draw do
   end
 
   [:applications, :components, :sources, :chart, :clientsdk, :forum, :glossary, :language, :translation,
-   :translation_key, :dashboard, :domain, :metrics].each do |ctrl|
+   :translation_key, :translator, :domain, :metrics].each do |ctrl|
     match "admin/#{ctrl}(/:action)", :controller => "admin/#{ctrl}"
   end
   

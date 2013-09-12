@@ -294,6 +294,16 @@ module Tr8n
       end
     end
 
+    def tr8n_translator_tag(translator, options = {})
+      return "Deleted Translator" unless translator
+
+      if options[:linked]
+        link_to(translator.name, :controller => "/tr8n/translator/dashboard", :action => :index, :id => translator.id).html_safe
+      else
+        translator.name
+      end
+    end
+
     def tr8n_user_mugshot_tag(translator, options = {})
       if translator and !translator.mugshot.blank?
         img_url = translator.mugshot
@@ -410,16 +420,6 @@ module Tr8n
 
     def tr8n_dir_attribute_tag(lang = Tr8n::Config.current_language)
       "dir='#{lang.dir}'".html_safe
-    end
-
-    def tr8n_translator_tag(translator, options = {})
-      return "Deleted Translator" unless translator
-      
-      if options[:linked]
-        link_to(translator.name, translator.url)
-      else
-        translator.name
-      end
     end
 
     def tr8n_translator_mugshot_tag(translator, options = {})

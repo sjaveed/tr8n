@@ -45,8 +45,8 @@
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
 
-  <script src="http://code.highcharts.com/highcharts.js"></script>
-  <script src="http://code.highcharts.com/modules/exporting.js"></script>
+  <%=javascript_include_tag("tr8n/vendor/jquery/highcharts.js") %>
+  <%=javascript_include_tag("tr8n/vendor/jquery/exporting.js") %>
 
   <script>
     $(function () {

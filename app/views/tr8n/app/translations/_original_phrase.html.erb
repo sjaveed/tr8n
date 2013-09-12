@@ -4,12 +4,12 @@
     <div class="tr8n_fltr"><%=image_tag("tr8n/lock.png", :style=>"width:12px", :title => trla("This phrase is locked"))%></div>
   <% end %>
 
-  <%=tra("Original Phrase:")%> 
+  <%=tra("Original Phrase:")%>
   <span dir='ltr'>
-  <%=link_to(translation.key.sanitized_label, :controller => "/tr8n/app/phrases", :action => :view, :locale => translation.language.locale, :translation_key_id => translation.key.id) %>
+    <%=link_to(translation.key.label, :controller => "/tr8n/app/phrases", :action => :view, :locale => translation.language.locale, :translation_key_id => translation.key.id) %>
   </span>
 
   <% unless translation.key.description.blank? %>
     <div class="tr8n_txtl" style="padding-top:10px;"><%= translation.key.description %></div>
-  <% end %>  
+  <% end %>
 </div>

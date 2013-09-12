@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -31,9 +31,9 @@ module Tr8n
         obj = obj.constantize
       end
 
-      # Tr8n::Logger.logger(:offline).debug("*********************")
-      # Tr8n::Logger.logger(:offline).debug(obj.inspect)
-      # Tr8n::Logger.logger(:offline).debug(method_name)
+      #Tr8n::Logger.logger(:offline).debug("*********************")
+      #Tr8n::Logger.logger(:offline).debug(obj.inspect)
+      #Tr8n::Logger.logger(:offline).debug(method_name)
       # Tr8n::Logger.logger(:offline).debug(opts.inspect)
       # Tr8n::Logger.logger(:offline).debug(caller.to_s)
 

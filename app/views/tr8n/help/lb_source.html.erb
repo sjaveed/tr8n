@@ -1,10 +1,14 @@
 <%= tr8n_lightbox_header_tag %>
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery-1.9.1.js") %>
+<%=javascript_include_tag("tr8n/vendor/jquery/highcharts.js") %>
+
 <div class="inner" style="font-size:12px; font-family:arial;">
   <div class="hd">
     <div style='float:<%=tr8n_current_language.align(:right)%>'>
       <%= link_to(image_tag("tr8n/arrow_rotate_clockwise.png", :style => "vertical-align:bottom"), {:controller => "/tr8n/app/phrases", :action => :recalculate_metric, :id => @translation_source_metric.id}) %>
       <%= link_to_function(image_tag("tr8n/close.gif"), "hideLightbox();") %>
     </div>
+
     <%= image_tag("tr8n/flags/#{@translation_source_metric.language.flag}.png", :style => 'vertical-align:top') %>
     <%= @translation_source_metric.language.native_name %>
   </div>

@@ -7,14 +7,14 @@
     [:icn, image_tag("tr8n/icons/lightbulb.png"), :title => "", :style => "width:12px;"],
     [:language_id, lambda{|rule|
       if rule.language
-        link_to(rule.language.english_name, :controller => "/tr8n/admin/settings", :action => :view, :lang_id => rule.language.id)
+        link_to(rule.language.english_name, :controller => "/tr8n/admin/language", :action => :view, :lang_id => rule.language.id)
       else
          "Deleted Language"    
       end  
     }], :type, :description, 
     [:translator_id, lambda{|rule|
       if rule.translator
-        link_to(rule.translator.name, :controller => "/tr8n/admin/dashboard", :action => :view, :translator_id => rule.translator.id)
+        link_to(rule.translator.name, :controller => "/tr8n/admin/translator", :action => :view, :translator_id => rule.translator.id)
       else
         "System Generated" 
       end  

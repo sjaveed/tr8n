@@ -121,11 +121,8 @@ class Tr8n::Translation < ActiveRecord::Base
   end
 
   def vote!(translator, score)
-    Tr8n::Logger.debug("Voting ##{translator.id} #{score}")
-
     score = score.to_i
     vote = Tr8n::TranslationVote.find_or_create(self, translator)
-    Tr8n::Logger.debug("Vote #{vote.inspect}")
 
     vote.update_attributes(:vote => score.to_i)
     

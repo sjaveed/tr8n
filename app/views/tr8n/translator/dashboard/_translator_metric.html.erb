@@ -1,27 +1,75 @@
-<div  class="section_box" style="text-align:center; width:95%; background-color:white;">
-  <div style="font-size:14px; padding:3px;"> 
-    <% if @translator == tr8n_current_translator %>
-      <% if lang %>
-        <%=tra("Your Translations") %>
-      <% else %>  
-        <%=tra("Your Total Translations") %>
-      <% end %>  
-    <% else %>
-      <% if lang %>
-        <%=tra("{user}'s Translations", nil, :user => [@translator, :name]) %>
-      <% else %>  
-        <%=tra("{user}'s Total Translations", nil, :user => [@translator, :name]) %>
-      <% end %>  
-    <% end %>     
+<div  class="section" style="text-align:center; width:95%; background-color:white;">
+  <%
+     @title = begin
+       if self?
+         lang ? trla("Your Translations in {language}", :language => lang.name) : trla("Your Translations in All languages")
+       else
+         lang ? trla("{user::pos} Translations in {language}", :user => tr8n_current_translator, :language => lang.name) : trla("{user::pos} Translations in All Languages", :user => tr8n_current_translator)
+       end
+     end
+  %>
 
-	</div>
-	
-	<%= tr8n_translator_rank_chart_tag(@translator, lang)%>
-	 
+  <% @metric = lang ? @translator.metric_for(lang) : @translator.total_metric %>
+  <% @chart_id = "translator_chart_#{@metric.id}" %>
+  <div id="<%=@chart_id%>" style="min-width: 200px; height: 200px; margin: 0 auto"></div>
+
+  <script>
+    $(function () {
+      $('#<%=@chart_id%>').highcharts({
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false
+        },
+        title: {
+          text: '<%= @title %>'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              color: '#000000',
+              connectorColor: '#000000',
+              formatter: function() {
+                return this.point.name;
+              }
+            }
+          }
+        },
+        series: [{
+          type: 'pie',
+          name: 'Progress',
+          data: [
+            {
+              name: '<%=trla("Accepted", "Accepted translations") %>',
+              y: <%=@metric.accepted_translations||0%>,
+              color: '#00FF00'
+            },
+            {
+              name: '<%=trla("Rejected", "Rejected translations") %>',
+              y: <%=@metric.rejected_translations||0%>,
+              color: '#FF0000'
+            },
+            {
+              name: '<%=trla("Pending", "Pending translations") %>',
+              y: <%=@metric.pending_vote_translations||0%>,
+              color: '#FFFF00'
+            }
+          ]
+        }]
+      });
+    });
+  </script>
+
 	<div style="margin:5px; color:#666;"> 
     <span style="white-space:nowrap;">
       <span style="background-color:#00FF00;display:inline;white-space:nowrap;">&nbsp;&nbsp;&nbsp</span>
-	 	  <%=tra("Accepted:", "Header for accepted settings translations") %>
+	 	  <%=tra("Accepted:", "Accepted translations") %>
 	    <% if lang %>
 	      <%=link_to(translator_metric.accepted_translations || 0, 
 	                :controller => "/tr8n/app/translations", :action => :index, :locale => lang.locale,
@@ -35,7 +83,7 @@
 		
     <span style="white-space:nowrap;">
       <span style="background-color:#FFFF00;display:inline;white-space:nowrap;">&nbsp;&nbsp;&nbsp</span>
-			<%=tra("Pending:", "Header for pending settings translations") %>
+			<%=tra("Pending:", "Pending translations") %>
 	    <% if lang %>
 	      <%=link_to(translator_metric.pending_vote_translations || 0, 
 	                :controller => "/tr8n/app/translations", :action => :index, :locale => lang.locale,
@@ -49,7 +97,7 @@
 		
     <span style="white-space:nowrap;">
       <span style="background-color:#FF0000;display:inline;white-space:nowrap;">&nbsp;&nbsp;&nbsp</span>
-	    <%=tra("Rejected:", "Header for rejected settings translations") %>
+      <%=tra("Rejected:", "Rejected translations") %>
 	    <% if lang %>
 	      <%=link_to(translator_metric.rejected_translations || 0, 
 	                :controller => "/tr8n/app/translations", :action => :index, :locale => lang.locale,
@@ -61,7 +109,7 @@
 
     <br><br>      
 		
-	  <%=tra("Total Translations:", "Header for total translations count") %>
+	  <%=tra("Total Translations:") %>
     <% if lang %>
       <%=link_to(translator_metric.total_translations || 0, 
                 :controller => "/tr8n/app/translations", :action => :index, :locale => lang.locale,
@@ -71,7 +119,4 @@
     <% end %>           
   </div> 
 
-  <div style="margin:10px; color:#ccc; text-align:center; width:100%;">
-      <%=tra("The ranks are calculated realtime", "Dashboard section header")%>
-  </div>
 </div>

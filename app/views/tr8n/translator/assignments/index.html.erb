@@ -22,7 +22,7 @@
 
     <% @components.each do |comp| %>
       <div class="section_title">
-        <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px; font-weight:normal; padding-top:5px;">
+        <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px; font-weight:normal;">
           <%=link_to(tra("view all phrases"), :controller => "/tr8n/app/phrases", :action => :index, :component_id => comp.id)%>
         </div>
 
@@ -51,15 +51,13 @@
               background = "#FFB5B5"
             end
           %>
-          <div style="width:450px;display:inline-block; padding:7px; padding-bottom:0px; font-size:13px; background:<%=background%>; margin-bottom:10px; border-radius:10px;margin-right:3px;">
-            <div>
+          <div class="section" style="width:450px;display:inline-block; padding:7px; padding-bottom:0px; font-size:13px; background:<%=background%>; margin-bottom:10px; margin-right:3px;">
               <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px; font-weight:normal;">
                 <% unless source.url.blank? %>
                   <%= link_to("view page", source.url, :target => "_new")%>
                 <% end %>
               </div>
               <strong><%=source.title%></strong>
-            </div>
             <div id="comp_source_<%=source.id%>" style="width:450px;">
               <%=render :partial => "/tr8n/translator/dashboard/translation_source_metric", :locals => {:translation_source => source, :translation_source_metric => source.total_metric} %>
             </div>
@@ -73,3 +71,6 @@
   <%= render :partial => "/tr8n/translator/common/footer" %>
 
 <% end %>
+
+<%=javascript_include_tag("tr8n/vendor/jquery/highcharts.js") %>
+<%=javascript_include_tag("tr8n/vendor/jquery/exporting.js") %>

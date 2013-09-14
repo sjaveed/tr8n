@@ -68,6 +68,7 @@ class Tr8n::Feature < ActiveRecord::Base
 
   def self.language_defaults
     {
+        "fallback_language"   => {"enabled" => true, "description" => "Fallback language"},
     }
   end
 

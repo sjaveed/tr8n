@@ -4,6 +4,7 @@
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%>>
 
     <div class="section_title">
+      <%=render(:partial => "sections") %>
       <%= tra("Basic Information") %>
     </div>
 
@@ -15,7 +16,7 @@
         <div>
           <table cellpadding="0px" cellspacing="0px">
             <tr>
-              <th class="tr8n_txtl" style="width:120px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("English Name:")%></th>
+              <th class="tr8n_txtl" style="width:220px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("English Name:")%></th>
               <td class="tr8n_txtl" style="padding:3px;">
                 <%=f.text_field(:english_name)%>
               </td>

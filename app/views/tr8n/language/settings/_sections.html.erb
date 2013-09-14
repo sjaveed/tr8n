@@ -1,0 +1,8 @@
+<div style="float:right; font-size:12px;">
+  <%= [
+          link_to(tra("basic information"), :action => :index),
+          link_to(tra("countries"), :action => :countries),
+          link_to(tra("features"), :action => :features),
+      ].join(" | ").html_safe
+  %>
+</div>

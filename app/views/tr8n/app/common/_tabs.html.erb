@@ -9,13 +9,17 @@
     </div>
     <div style="font-size:14px; font-weight: bold;padding-bottom:15px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
 
+      <%=image_tag("tr8n/gears.png", :style=>"width:50px;float:left;") %>
       <ul class="nav nav-pills" style="margin-bottom:-20px;padding-bottom:0px;margin-left:-10px;">
-        <li class="dropdown" id="menu1">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1" style="font-size:25px;">
+        <li class="dropdown" id="menu1" style="width:600px;">
+
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1" style="color:#666; font-size:25px;">
             <%= selected_application.name %>
             <b class="caret"></b>
-
           </a>
+          <div style="font-size:14px; font-weight:normal; color: #888; padding-left:13px;">
+            <%=selected_application.description%>
+          </div>
           <ul class="dropdown-menu">
             <% translator_applications.each do |app| %>
               <li>
@@ -44,20 +48,23 @@
 
   <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
     <% features = []
-       features << ["Dashboard", "dashboard", false]
-       features << ["Site Map", "sitemap", false]
-       features << ["Phrases", "phrases", false]
-       features << ["Translations", "translations", false]
-       features << ["Translators", "translators", true]
-       features << ["Awards", "awards", false]               if tr8n_current_application.feature_enabled?(:awards)
-       features << ["Forum", "forum", false]                 if tr8n_current_application.feature_enabled?(:forum)
-       features << ["Glossary", "glossary", false]           if tr8n_current_application.feature_enabled?(:glossary)
-       features << ["Settings", "settings", true]
+       features << ["icon-home", "Dashboard", "dashboard", false]
+       features << ["icon-th", "Site Map", "sitemap", false]
+       features << ["icon-th-list", "Phrases", "phrases", false]
+       features << ["icon-globe", "Translations", "translations", false]
+       features << ["icon-user", "Translators", "translators", true]
+       features << ["icon-certificate", "Awards", "awards", false]                if selected_application.feature_enabled?(:awards)
+       features << ["icon-comment", "Forum", "forum", false]                      if selected_application.feature_enabled?(:forum)
+       features << ["icon-book", "Glossary", "glossary", false]                   if selected_application.feature_enabled?(:glossary)
+       features << ["icon-cog", "Settings", "settings", true]
 
        features.each do |tab| %>
       <% next if tab.last and not application_admin? %>
-      <li class="<%='active' if controller.controller_name == tab[1] %>">
-        <%=link_to(tra(tab.first), "/tr8n/app/#{tab[1]}")%>
+      <li class="<%='active' if controller.controller_name == tab[2] %>">
+        <%=link_to("/tr8n/app/#{tab[2]}") do %>
+          <i class='<%=tab[0]%>'></i>
+          <%= tra(tab[1]) %>
+        <% end %>
       </li>
     <% end %>
   </ul>

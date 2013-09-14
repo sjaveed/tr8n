@@ -31,6 +31,30 @@ class Tr8n::Language::SettingsController < Tr8n::Language::BaseController
     end
   end
 
+  def countries
+
+  end
+
+  def add_countries_modal
+    if request.post?
+      params[:codes].split(',').each do |code|
+        tr8n_current_language.add_country(Tr8n::Country.by_code(code))
+      end
+      return redirect_to(:action => :countries)
+    end
+
+    render :layout => false
+  end
+
+  def features
+  end
+
+  def toggle_feature
+    tr8n_current_language.toggle_feature(params[:key], params[:flag] == "true")
+    render :text => {"result" => "Ok"}.to_json
+  end
+
+
 #  before_filter :validate_guest_user, :except => [:select, :switch, :toggle_inline_translations, :change, :table]
 #  before_filter :validate_current_translator, :except => [:select, :switch, :toggle_inline_translations, :change, :table]
 #  before_filter :validate_language_management, :only => [:index]

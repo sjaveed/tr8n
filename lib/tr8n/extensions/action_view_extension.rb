@@ -105,12 +105,14 @@ module Tr8n
 
     def tr8n_language_flag_tag(lang = Tr8n::Config.current_language, opts = {})
       return "" unless Tr8n::Config.enable_language_flags?
+      return "" unless lang
       html = image_tag("tr8n/flags/#{lang.flag}.png", :style => "vertical-align:middle;", :title => lang.native_name)
       html << "&nbsp;".html_safe 
       html.html_safe
     end
 
     def tr8n_language_name_tag(lang = Tr8n::Config.current_language, opts = {})
+      return "" unless lang
       show_flag = opts[:flag].nil? ? true : opts[:flag]
       name_type = opts[:name].nil? ? :full : opts[:name] # :full, :native, :english, :locale
       linked = opts[:linked].nil? ? true : opts[:linked] 
@@ -311,7 +313,9 @@ module Tr8n
         img_url = Tr8n::Config.silhouette_image
       end
 
-      img_tag = "<img src='#{img_url}' style='width:48px; padding:2px; border:1px solid #ccc;'>".html_safe
+      width = options[:width] || 48
+
+      img_tag = "<img src='#{img_url}' style='width:#{width}px; padding:2px; border:1px solid #ccc;'>".html_safe
 
       if translator and options[:linked]
         link_to(img_tag, translator.link).html_safe

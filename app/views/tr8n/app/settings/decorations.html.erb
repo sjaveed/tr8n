@@ -1,0 +1,88 @@
+<style>
+  label {
+    font-weight:bold;
+    padding-top:15px;
+  }
+</style>
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Decorations") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Settings") %>
+      </div>
+
+      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("You can configure what the page elements look like for each state.") %>
+      </div>
+    </div>
+
+    <div class="section_title"><%=tra("Decoration Options") %></div>
+    <div class="section grey">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <% Tr8n::Decorator.keys.each do |key| %>
+            <th style="width:150px;"><%=key%></th>
+          <% end %>
+          <th style="width:80px; text-align: right"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% Tr8n::Decorator.css_options.each_with_index do |styles, index| %>
+        <tr>
+          <% Tr8n::Decorator.keys.each do |key| %>
+             <td><span style="<%=styles[key]%>">sample</span></td>
+          <% end %>
+          <td style="text-align: right"><%=link_to(tra("select"), {:action => :select_decoration, :index => index}, :class => "btn")%></td>
+        </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section_title"><%=tra("Custom Decorations") %></div>
+    <div class="section">
+
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th style="width:150px;">Class</th>
+          <th>Style</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% selected_application.decorator.css.each do |key, style| %>
+          <tr>
+            <td>
+              <strong><%= key %></strong>
+            </td>
+            <td>
+              <div> <span style="<%=style%>">sample</span> </div>
+              <pre><code class="language-css"><%= style %></code></pre>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-wrench'></i>".html_safe, {:action => :decoration_modal, :key => key}, {"data-toggle" => "dynamic_modal"})%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+  <%=javascript_include_tag('tr8n/vendor/prism.js') %>
+  <%= stylesheet_link_tag('tr8n/vendor/prism.css') %>
+
+<% end %>
+

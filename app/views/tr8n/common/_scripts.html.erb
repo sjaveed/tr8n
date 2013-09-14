@@ -1,8 +1,6 @@
 <% if Tr8n::Config.enabled? and not params[:disable_tr8n_js] %>
   <%=stylesheet_link_tag("tr8n/tools.css") -%>
 
-	<%= tr8n_splash_screen_tag %>
-
   <style type="text/css">
   .tr8n_fltr {
     <%=tr8n_style_attribute_tag('float', 'right')%> !important;
@@ -16,10 +14,9 @@
   .tr8n_txtl {
     <%=tr8n_style_attribute_tag('text-align', 'left')%> !important;
   }
-
-  <%=Tr8n::Config.current_application.styles%>
-
   </style>
+
+  <%=Tr8n::Config.current_application.decorator.css_tag%>
 
   <script type="text/javascript">
   <!--

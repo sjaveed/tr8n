@@ -30,23 +30,23 @@
             <td style="width:50%; padding-top:3px; vertical-align: top">
               <table>
                 <tr>
-                  <td style="width:150px"><%=tra("{user|Registered on}:", nil, :user => @translator) %></td>
-                  <td><%=@translator.created_at.trl%></td>
+                  <td style="width:150px"><%=tra("{user|Joined on}:", nil, :user => @translator) %></td>
+                  <td><%=tr8n_page_translator.created_at.trl%></td>
                 </tr>
                 <tr>
                   <td><%=tra("Total translations:") %></td>
-                  <td><%=@translator.total_metric.total_translations%></td>
+                  <td><%=tr8n_page_translator.total_metric.total_translations%></td>
                 </tr>
                 <tr>
                   <td><%=tra("Total votes:") %></td>
                   <td>
-                    <span style="color:green"><%=@translator.total_metric.positive_votes || 0 %></span>/<span style="color:red"><%=@translator.total_metric.negative_votes || 0 %></span>
+                    <span style="color:green"><%=tr8n_page_translator.total_metric.positive_votes || 0 %></span>/<span style="color:red"><%=@translator.total_metric.negative_votes || 0 %></span>
                   </td>
                 </tr>
                 <tr>
                   <td><%=tra("Forum messages:") %></td>
                   <td>
-                     <%=@translator.language_forum_messages.count %>
+                     <%=tr8n_page_translator.language_forum_messages.count %>
                   </td>
                 </tr>
                 <tr>

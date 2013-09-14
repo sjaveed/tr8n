@@ -8,7 +8,7 @@ class CreateFeatures < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :tr8n_features, [:object_type, :object_id], :name => :tr8n_feats
+    add_index :tr8n_features, [:object_type, :object_id], :name => :tr8n_feats_obj
   end
 
   def down

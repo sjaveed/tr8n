@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130912053004) do
+ActiveRecord::Schema.define(:version => 20130913230605) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -111,6 +111,41 @@ ActiveRecord::Schema.define(:version => 20130912053004) do
   end
 
   add_index "tr8n_components", ["application_id"], :name => "tr8n_comp_app_id"
+
+  create_table "tr8n_countries", :force => true do |t|
+    t.string   "code"
+    t.string   "english_name"
+    t.string   "native_name"
+    t.string   "telephone_code"
+    t.string   "currency"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "tr8n_countries", ["code"], :name => "tr8n_countries_code"
+
+  create_table "tr8n_country_languages", :force => true do |t|
+    t.integer  "position"
+    t.integer  "country_id"
+    t.integer  "language_id"
+    t.boolean  "official"
+    t.boolean  "primary"
+    t.integer  "population"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "tr8n_country_languages", ["country_id"], :name => "tr8n_cl_cid"
+  add_index "tr8n_country_languages", ["language_id"], :name => "tr8n_cl_lid"
+
+  create_table "tr8n_decorators", :force => true do |t|
+    t.integer  "application_id"
+    t.text     "css"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "tr8n_decorators", ["application_id"], :name => "tr8n_decors_app"
 
   create_table "tr8n_features", :force => true do |t|
     t.string   "object_type"

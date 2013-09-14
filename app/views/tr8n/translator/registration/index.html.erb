@@ -11,12 +11,12 @@
       <span style="font-size:12px;color:#888;"><%= tr("updated {date}", nil, :date => Date.new(2013, 5, 15).tr(:monthname_year)) %></span>
     </div>
 
-    <div style="padding:10px;border:1px solid #ccc;overflow:auto;height:600px;margin:10px;font-family:Arial;font-size:12px;">
+    <div class="section grey" style="padding:10px;border:1px solid #ccc;overflow:auto;height:600px;margin:10px;">
       <%=render :partial => Tr8n::Config.registration_disclaimer_path %>
     </div>
 
     <div style="text-align:center; padding:15px;">
-      <button type="submit" class="translator_btn translator_submit_btn" onClick="location='/tr8n/translator/registration?agree=yes';">
+      <button type="submit" class="btn btn-primary" onClick="location='/tr8n/translator/registration?agree=yes';">
           <span><%=tra("Agree")%></span>
       </button>
       <%=tr("or")%>

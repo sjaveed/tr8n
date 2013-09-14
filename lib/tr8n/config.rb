@@ -166,21 +166,22 @@ module Tr8n
 
     def self.models
       [ 
-         Tr8n::LanguageUser, Tr8n::Language, Tr8n::LanguageMetric,
-         Tr8n::LanguageContext, Tr8n::LanguageContextRule,
-         Tr8n::LanguageCase, Tr8n::LanguageCaseRule, Tr8n::LanguageCaseValueMap,
-         Tr8n::TranslationKey, Tr8n::RelationshipKey, Tr8n::ConfigurationKey, 
-         Tr8n::TranslationKeySource, Tr8n::TranslationKeyComment, Tr8n::TranslationKeyLock,
-         Tr8n::TranslationSource, Tr8n::TranslationDomain, Tr8n::TranslationSourceLanguage, 
-         Tr8n::Translation, Tr8n::TranslationVote, Tr8n::TranslationSourceMetric,
-         Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric,  Tr8n::TranslatorLanguage,
-         Tr8n::TranslatorFollowing, Tr8n::TranslatorReport, 
-         Tr8n::LanguageForumTopic, Tr8n::LanguageForumMessage,
-         Tr8n::Glossary, Tr8n::IpLocation, Tr8n::SyncLog,
-         Tr8n::Application, Tr8n::ApplicationLanguage,  Tr8n::ApplicationTranslator,
-         Tr8n::Component, Tr8n::ComponentSource, Tr8n::ComponentTranslator, Tr8n::ComponentLanguage,
-         Tr8n::Notification,
-         Tr8n::Oauth::OauthToken
+       Tr8n::LanguageUser, Tr8n::Language, Tr8n::LanguageMetric,
+       Tr8n::LanguageContext, Tr8n::LanguageContextRule,
+       Tr8n::LanguageCase, Tr8n::LanguageCaseRule, Tr8n::LanguageCaseValueMap,
+       Tr8n::TranslationKey, Tr8n::RelationshipKey, Tr8n::ConfigurationKey,
+       Tr8n::TranslationKeySource, Tr8n::TranslationKeyComment, Tr8n::TranslationKeyLock,
+       Tr8n::TranslationSource, Tr8n::TranslationDomain, Tr8n::TranslationSourceLanguage,
+       Tr8n::Translation, Tr8n::TranslationVote, Tr8n::TranslationSourceMetric,
+       Tr8n::Translator, Tr8n::TranslatorLog, Tr8n::TranslatorMetric,  Tr8n::TranslatorLanguage,
+       Tr8n::TranslatorFollowing, Tr8n::TranslatorReport,
+       Tr8n::LanguageForumTopic, Tr8n::LanguageForumMessage,
+       Tr8n::Glossary, Tr8n::IpLocation, Tr8n::SyncLog,
+       Tr8n::Application, Tr8n::ApplicationLanguage,  Tr8n::ApplicationTranslator,
+       Tr8n::Component, Tr8n::ComponentSource, Tr8n::ComponentTranslator, Tr8n::ComponentLanguage,
+       Tr8n::Notification,
+       Tr8n::Oauth::OauthToken,
+       Tr8n::Feature, Tr8n::Decorator, Tr8n::Country, Tr8n::CountryLanguage
       ]    
     end
 
@@ -202,6 +203,7 @@ module Tr8n
       end
       puts "Done."
 
+      init_countries
       init_languages
       init_glossary
       init_application
@@ -254,10 +256,25 @@ module Tr8n
       language
     end
 
+    def self.data_path
+      File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "config", "data"))
+    end
+
+    def self.init_countries
+      puts "Initializing countries..."
+      countries_file = File.expand_path(File.join(data_path, "countries.json"))
+      json = load_json(countries_file)
+      json.each do |code, name|
+        puts ">> Importing #{name}..."
+        Tr8n::Country.create(:code => code, :english_name => name)
+      end
+      puts "Created #{Tr8n::Country.count} countries."
+    end
+
     def self.init_languages
       puts "Initializing languages..."
 
-      folder = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "config", "data", "languages"))
+      folder = File.expand_path(File.join(data_path, "languages"))
 
       language_files = {}
 

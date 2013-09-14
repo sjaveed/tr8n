@@ -28,7 +28,7 @@ class Tr8n::Translator::RegistrationController < Tr8n::Translator::BaseControlle
   def index
     if params[:agree] == "yes"
       Tr8n::Translator.register
-      trfn("Thank you! You have been register as a dashboard")
+      trfn("Thank you for joining!")
       return redirect_to("/tr8n/app/phrases")
     end
   end

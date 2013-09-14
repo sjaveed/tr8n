@@ -57,7 +57,7 @@ class Tr8n::Language < ActiveRecord::Base
   after_save      :update_cache
   after_destroy   :update_cache
 
-  belongs_to :fallback_language,    :class_name => 'Tr8n::Language', :foreign_key => :fallback_language_id
+  belongs_to :fallback_language,    :class_name => 'Tr8n::Language',            :foreign_key => :fallback_language_id
 
   has_many :language_contexts,      :class_name => 'Tr8n::LanguageContext',     :dependent => :destroy
   has_many :language_cases,         :class_name => 'Tr8n::LanguageCase',        :dependent => :destroy
@@ -66,6 +66,9 @@ class Tr8n::Language < ActiveRecord::Base
   has_many :translations,           :class_name => 'Tr8n::Translation',         :dependent => :destroy
   has_many :translation_key_locks,  :class_name => 'Tr8n::TranslationKeyLock',  :dependent => :destroy
   has_many :language_metrics,       :class_name => 'Tr8n::LanguageMetric'
+
+  has_many :country_languages,      :class_name => 'Tr8n::CountryLanguage',    :order => "position asc", :dependent => :destroy
+  has_many :countries,              :class_name => 'Tr8n::Country',             :through => :country_languages, :order => "tr8n_country_languages.position asc"
 
   ###############################################################
   ## CACHE METHODS
@@ -100,6 +103,14 @@ class Tr8n::Language < ActiveRecord::Base
     Tr8n::Cache.delete(language_cases_cache_key)
     Tr8n::Cache.delete(self.class.featured_languages_cache_key)
     Tr8n::Cache.delete(self.class.enabled_languages_cache_key)
+  end
+
+  def toggle_feature(keyword, flag)
+    Tr8n::Feature.toggle(self, keyword, flag)
+  end
+
+  def feature_enabled?(keyword)
+    Tr8n::Feature.enabled?(self, keyword)
   end
 
   ###############################################################
@@ -475,6 +486,9 @@ class Tr8n::Language < ActiveRecord::Base
     language
   end
 
+  def add_country(country)
+    Tr8n::CountryLanguage.find_or_create(country, self)
+  end
 
 end
 

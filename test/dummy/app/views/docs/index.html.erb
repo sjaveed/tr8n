@@ -505,7 +505,7 @@ tr("{actor} думает {target::pre}", {:actor => michael, :target => anna}, {
 </div>
 
 <%= stylesheet_link_tag('jquery.tocify.css') %>
-<%= javascript_include_tag('jquery-ui-1.10.3.custom.min.js') %>
+<%= javascript_include_tag('tr8n/vendor/jquery/jquery-ui-1.10.3.custom.min.js') %>
 <%= javascript_include_tag('jquery.tocify.min.js') %>
 
 <%= stylesheet_link_tag('prism.css') %>
@@ -546,6 +546,8 @@ tr("{actor} думает {target::pre}", {:actor => michael, :target => anna}, {
 
 <script>
   $(function() {
-    $("#toc").tocify();
+    $("#toc").tocify({
+      "selectors": "h1,h2,h3"
+    });
   });
 </script>

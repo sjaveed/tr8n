@@ -3,23 +3,8 @@
 @import "bootstrap-wizard";
 
 .tr8n_container {
-}
 
-body {
-  padding-top: 60px;
-  padding-bottom: 40px;
-  background: white url(/assets/bg-pattern.png);
 }
-
-.hr {
-  background: url(/assets/hr.png) center center no-repeat;
-  text-align: center;
-}
-
-.text-center {
-  text-align: center;
-}
-
 
 .modal-body {
   max-height: 600px;
@@ -27,4 +12,9 @@ body {
     padding-top:10px;
     font-weight:bold;
   }
+}
+.open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav > li.dropdown.open.active > a:hover, .nav > li.dropdown.open.active > a:focus {
+  color: black;
+  background-color: #eee;
+  border-color: #eee;
 }

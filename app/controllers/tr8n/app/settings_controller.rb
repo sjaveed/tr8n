@@ -42,17 +42,22 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     redirect_back
   end
 
-  def stylesheets
+  def decorations
   end
 
-  def stylesheet_modal
-    @style = selected_application.classes[params[:key]]
+  def select_decoration
+    selected_application.decorator.select(params[:index])
+    redirect_back
+  end
+
+  def decoration_modal
+    @style = selected_application.decorator.css[params[:key]]
 
     if request.post?
-      selected_application.classes[params[:key]] = params[:style]
-      selected_application.save
+      selected_application.decorator.css[params[:key]] = params[:style]
+      selected_application.decorator.save
       trfn("Style has been updated")
-      return redirect_to(:action => :stylesheets)
+      return redirect_to(:action => :decorations)
     end
 
     render :layout => false

@@ -58,6 +58,8 @@ class Tr8n::Application < ActiveRecord::Base
   has_many :application_translators, :class_name => 'Tr8n::ApplicationTranslator', :dependent => :destroy
   has_many :translators, :class_name => 'Tr8n::Translator', :through => :application_translators
 
+  has_one :decorator, :class_name => 'Tr8n::Decorator', :dependent => :destroy
+
   before_create :generate_keys
 
   serialize :definition
@@ -166,32 +168,8 @@ class Tr8n::Application < ActiveRecord::Base
     save
   end
 
-  def default_classes
-    {
-        "tr8n_not_translated" => "border-bottom: 2px solid red !important;",
-        "tr8n_translated"     => "border-bottom: 2px solid green !important;",
-        "tr8n_fallback"       => "border-bottom: 2px solid yellow !important;",
-        "tr8n_language_case"  => "border: 1px dotted blue !important;",
-        "tr8n_locked"         => "border-bottom: 2px solid blue !important;"
-    }
-  end
-
-  def classes
-    self.definition ||= {}
-    unless definition["classes"]
-      definition["classes"] = default_classes
-      save
-    end
-    definition["classes"]
-  end
-
-  def styles
-    html = []
-    cls = feature_enabled?(:decorations) ? classes : default_classes
-    cls.each do |name, value|
-      html << ".#{name} { #{value} }"
-    end
-    html.join(" ").html_safe
+  def decorator
+    @decorator ||= Tr8n::Decorator.find_or_create(self)
   end
 
   def default_shortcuts
@@ -247,7 +225,7 @@ class Tr8n::Application < ActiveRecord::Base
 
     if opts[:definition]
       hash[:definition] = {
-          :styles  => classes,
+          :styles  => decorator.css,
           :features => Tr8n::Feature.by_object(self),
       }
       hash[:languages] = languages.collect{|l| l.to_api_hash(opts)}

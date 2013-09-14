@@ -3,20 +3,37 @@
 <div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:#f1f4f9;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
   <div style="padding:15px;padding-bottom:10px;">
     <div style="float:right">
-      <div style="float:right">
-        <%=tr8n_translator_rank_tag(tr8n_page_translator)%>
+      <div style="float:right; text-align:right;">
+        <div>
+          <%=tr8n_translator_rank_tag(tr8n_page_translator)%>
+        </div>
+        <div>
+          <%= tra("{count||translation}", :count => tr8n_page_translator.total_metric.total_translations) %>
+        </div>
+        <div>
+          <%= tra("{count||vote}", :count => tr8n_page_translator.total_metric.total_votes) %>
+        </div>
       </div>
     </div>
-    <div style="font-size:22px; font-weight: bold;padding-bottom:15px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+    <div style="font-size:22px; font-weight: bold;padding-bottom:10px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
       <table>
         <tr>
-          <td style="vertical-align:top;padding-right:2px; width:60px;">
-            <%=tr8n_user_mugshot_tag(tr8n_page_translator, :linked => true)%>
+          <td style="vertical-align:top;padding-right:2px; width:75px;">
+            <%=tr8n_user_mugshot_tag(tr8n_page_translator, :linked => true, :width => 65)%>
           </td>
           <td style="vertical-align:top">
             <%= tr8n_page_translator.name %>
-            <div style="color:#999; font-size:14px; padding-top:8px;">
-              translator
+            <div style="color:#999; font-size:14px; padding-top:7px; font-weight:normal;">
+              <% if tr8n_page_translator.admin? %>
+                Administrator
+              <% elsif tr8n_page_translator.manager? %>
+                Manager
+              <% else %>
+                Translator
+              <% end %>
+            </div>
+            <div style="color:#999; font-size:14px; padding-top:5px; font-weight:normal;">
+              <%= tr8n_page_translator.languages.collect{|lang| "#{image_tag("tr8n/flags/#{lang.flag}.png", :style => "align:middle")} #{lang.name}"}.join("&nbsp; ").html_safe %>
             </div>
           </td>
         </tr>
@@ -26,16 +43,19 @@
 
   <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
     <% [
-           ["Dashboard", "dashboard", true],
-           ["Translations", "translations", true],
-           ["Assignments", "assignments", false],
-           ["Notifications", "notifications", false],
-           ["Following", "following", false],
-           ["Preferences", "settings", false],
+           ["icon-home", "Dashboard", "dashboard", true],
+           ["icon-globe", "Translations", "translations", true],
+           ["icon-check", "Assignments", "assignments", false],
+           ["icon-flag", "Notifications", "notifications", false],
+           ["icon-bookmark", "Bookmarks", "following", false],
+           ["icon-cog", "Preferences", "settings", false],
        ].each do |tab| %>
       <% next if tab.last and not self? %>
-      <li class="<%='active' if controller.controller_name == tab[1] %>">
-        <%=link_to(tra(tab.first), "/tr8n/translator/#{tab[1]}")%>
+      <li class="<%='active' if controller.controller_name == tab[2] %>">
+        <%=link_to("/tr8n/translator/#{tab[2]}") do %>
+          <i class='<%=tab[0]%>'></i>
+          <%= tra(tab[1]) %>
+        <% end %>
       </li>
     <% end %>
   </ul>

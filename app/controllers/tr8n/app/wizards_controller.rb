@@ -92,8 +92,6 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
 
   def translation_key
     if request.post?
-      Tr8n::Logger.debug(params.inspect)
-
       src = Tr8n::TranslationSource.find_or_create("/manual_keys", selected_application)
       tkey = Tr8n::TranslationKey.find_or_create(params[:label], params[:description], {:locale => params[:default_locale], :source => src})
 
@@ -110,4 +108,22 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
     render :layout => false
   end
 
+  def email_template
+    if request.post?
+      Tr8n::Logger.debug(params.inspect)
+
+      if Tr8n::EmailTemplate.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
+        return render(:json => {"error" => tra("Template keyword must be unique")}.to_json)
+      end
+
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      Tr8n::EmailTemplate.create(:application => selected_application, :keyword => params[:keyword], :language => default_language,
+                                       :name => params[:name], :description => params[:description],
+                                       :subject => params[:subject], :body => params[:body])
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Email template has been registered")}.to_json)
+    end
+
+    render :layout => false
+  end
 end

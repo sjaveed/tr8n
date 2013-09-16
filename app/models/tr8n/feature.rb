@@ -44,7 +44,6 @@ class Tr8n::Feature < ActiveRecord::Base
 
   belongs_to :object, :polymorphic => true
 
-
   def self.application_defaults
     {
         "javascript_sdk"      => {"enabled" => false, "description" => "JavaScript SDK",                  },

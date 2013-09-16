@@ -1,0 +1,106 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Email Templates") %>
+    </div>
+
+    <%=render :partial=>"email_breadcrumb" %>
+
+    <div class="section_title">
+      <%=tra("Email Details") %>
+    </div>
+
+    <div class="section blue">
+      <div class="tr8n_fltr" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Email Templates") %>
+      </div>
+      <table>
+        <tr>
+          <th style="text-align:left;">Keyword:</th>
+          <td><%=@et.keyword%></td>
+        </tr>
+        <tr>
+          <th style="text-align:left;">Name:</th>
+          <td><%=@et.name%></td>
+        </tr>
+        <tr>
+          <th style="text-align:left;padding-right:15px;">Description:</th>
+          <td><%=@et.description%></td>
+        </tr>
+      </table>
+    </div>
+
+    <%= form_for(@et, :as => :email_template, :url => {:id => @et.id}, :html => {:method => :post}) do |f| %>
+      <div class="section_title">
+        <%=tra("Email Subject") %>
+      </div>
+
+      <div class="section">
+        <%=f.text_area(:subject, :id => :template_subject, :style => "height:50px; width:100%") %>
+      </div>
+
+      <div class="section_title">
+        <%=tra("Email Body") %>
+      </div>
+
+      <div class="section">
+        <%=f.text_area(:body, :id => :template_body, :style => "height:350px; width:100%") %>
+      </div>
+
+      <div class="section_title">
+        <%=tra("Sample Tokens") %>
+      </div>
+
+      <div class="section">
+        <%=text_area_tag("email_template[tokens]", JSON.pretty_generate(JSON.parse(@et.tokens.to_json)), :id => :template_tokens, :style => "height:150px; width:100%") %>
+      </div>
+
+      <div>
+        <div style="float:right">
+          <button type="button" class="btn" onClick="previewEmail()">
+            <%=tra("Preview") %>
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <%=tra("Save") %>
+          </button>
+        </div>
+
+        <button type="button" class="btn btn-danger">
+          <%=tra("Delete") %>
+        </button>
+      </div>
+    <% end %>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+  <%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+  <%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>
+
+<% end %>
+
+<%=javascript_include_tag('tr8n/vendor/ace/ace.js') %>
+<%=javascript_include_tag('tr8n/vendor/ace/theme-chrome.js') %>
+<%=javascript_include_tag('tr8n/vendor/ace/mode-html.js') %>
+<%=javascript_include_tag('tr8n/vendor/ace/mode-json.js') %>
+<%=javascript_include_tag('tr8n/vendor/jquery/jquery-ace.js') %>
+
+<script>
+  $('#template_subject').ace({ theme: 'chrome', lang: 'html' })
+  $('#template_body').ace({ theme: 'chrome', lang: 'html' })
+  $('#template_tokens').ace({ theme: 'chrome', lang: 'json' })
+
+  function previewEmail() {
+    var w = 800;
+    var h = 600;
+    var left = (screen.width/2)-(w/2);
+    var top = (screen.height/2)-(h/2);
+    var url = "/tr8n/app/settings/email_preview?id=<%=@et.id%>";
+    return window.open(url, "Tr8n Email Preview", 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  }
+</script>
+

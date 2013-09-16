@@ -1,8 +1,15 @@
 <div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:#f1f4f9;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
   <div style="padding:15px;padding-bottom:10px;">
-    <div style="font-size:22px; font-weight: bold;padding-bottom:15px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
-      <!--<%=image_tag("tr8n/flags/round/Russia.png", :style=>"width:60px;") %>-->
-      <%=tra("{language} Language", nil, :language => tr8n_current_language.english_name)%>
+    <div style="font-size:22px; font-weight: bold;padding-bottom:25px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+      <div style="float:right">
+        <% tr8n_current_language.countries.each do |country| %>
+          <%= image_tag("tr8n/flags/small/48/Russian Federation.png", :style => "width:50px;") %>
+        <% end %>
+      </div>
+
+      <div style="padding-top:15px;">
+        <%=tra("{language} Language", nil, :language => tr8n_current_language.english_name)%>
+      </div>
     </div>
   </div>
 
@@ -10,10 +17,11 @@
     <% [
           ["icon-home", "Dashboard", "dashboard", true],
           ["icon-globe", "Translations", "translations", true],
-          ["icon-book", "Context Rules", "context_rules"],
-          ["icon-briefcase", "Language Cases", "cases"],
-          ["icon-info-sign", "Censorship", "censorship"],
-          ["icon-cog", "Settings", "settings"],
+          ["icon-user", "Translators", "translators", true],
+          ["icon-book", "Context Rules", "context_rules", true],
+          ["icon-briefcase", "Language Cases", "cases", true],
+          ["icon-info-sign", "Censorship", "censorship", true],
+          ["icon-cog", "Settings", "settings", true],
        ].each do |tab| %>
 
       <li class="<%='active' if controller.controller_name == tab[2] %>">

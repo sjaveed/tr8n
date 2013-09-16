@@ -1139,5 +1139,23 @@ module Tr8n
     def self.default_configuration_keys
       @default_configuration_keys ||= load_yml("/config/tr8n/data/default_configuration_keys.yml", nil)
     end
+
+
+    #########################################################
+    # Rendering Email Templates
+    #########################################################
+
+    def self.render_email_with_options(opts)
+      Thread.current[:tr8n_email_render_options] = opts
+      if block_given?
+        yield
+      end
+      Thread.current[:tr8n_email_render_options] = {}
+    end
+
+    def self.email_render_options
+      Thread.current[:tr8n_email_render_options]
+    end
+
   end
 end

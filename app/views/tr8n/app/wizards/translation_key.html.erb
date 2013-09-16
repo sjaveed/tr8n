@@ -111,11 +111,6 @@
       });
 
       wizard.on("submit", function(wizard) {
-        $.ajaxSetup({
-          headers: {
-            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-          }
-        });
         var jqxhr = $.post("/tr8n/app/wizards/translation_key", {
           "default_locale": $("#new_translation_key_language").val(),
           "label": $("#new_translation_key_label").val(),

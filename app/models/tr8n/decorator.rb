@@ -42,7 +42,7 @@ class Tr8n::Decorator < ActiveRecord::Base
 
   attr_accessible :application, :css
 
-  belongs_to :application
+  belongs_to :application, :class_name => 'Tr8n::Application'
 
   serialize :css
 

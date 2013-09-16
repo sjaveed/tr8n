@@ -3,6 +3,7 @@ PATH
   specs:
     tr8n (3.2.4)
       faraday
+      liquid
       rails (~> 3.2.3)
       will_filter (~> 3.1.10)
 
@@ -84,6 +85,7 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
       railties (>= 3.0.0)
+    liquid (2.4.1)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)

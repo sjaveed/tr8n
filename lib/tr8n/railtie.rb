@@ -23,6 +23,8 @@
 
 require 'rails'
 require 'pp'
+require 'ap'
+require 'liquid'
 
 module Tr8n
   module Tokens
@@ -39,6 +41,7 @@ end
     "./tokens",
     "./decorators/base.rb",
     "./decorators",
+    "./liquid",
 ].each do |f|
   if f.index('.rb')
     file = File.expand_path(File.join(File.dirname(__FILE__), f))

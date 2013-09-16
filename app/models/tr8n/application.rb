@@ -60,6 +60,8 @@ class Tr8n::Application < ActiveRecord::Base
 
   has_one :decorator, :class_name => 'Tr8n::Decorator', :dependent => :destroy
 
+  has_many :email_templates, :class_name => 'Tr8n::EmailTemplate', :dependent => :destroy
+
   before_create :generate_keys
 
   serialize :definition

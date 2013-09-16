@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=tr8n_current_language.locale%>" lang="<%=tr8n_current_language.locale%>" <%=tr8n_dir_attribute_tag%>>
+<head>
+  <title><%=@title%></title>
+  <%= csrf_meta_tags %>
+  <%= tr8n_scripts_tag %>
+
+  <script type="text/javascript">
+    function resizeFrame() {
+//      var height = Tr8n.element('tr8n_translator_content').offsetHeight + 50;
+//      if (document.getElementById('tr8n_translator_translation_label')) {
+//        height += 60;
+//      }
+//      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'height':  + height}, '<%=params[:origin]%>');
+    }
+
+    function hideTranslator() {
+      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'hide'}, '<%=params[:origin]%>');
+    }
+
+    function reloadOrigin() {
+      Tr8n.Dispatcher.postMessage({'subject': 'window', 'action': 'reload'}, '<%=params[:origin]%>');
+    }
+
+    Tr8n.Utils.addEvent(document, "keyup", function(event) {
+      if (event.keyCode == 27) {
+        hideTranslator();
+      }
+    });
+  </script>
+  <style>
+    body {
+      margin: 0px;
+      padding:0px;
+      font-family: Verdana;
+      font-size: 12px;
+    }
+    .email_header {
+      border: 1px solid #ccc;
+      background: #eee;
+    }
+    .email_header .row {
+      padding:5px;
+    }
+    .email_header .label {
+      width: 80px;
+      font-weight: bold;
+      text-align: right;
+      color: #888;
+      display: inline-block;
+    }
+    .email_header .value {
+      padding-left:10px;
+      display: inline-block;
+    }
+    .email_body {
+      padding: 30px;
+      max-height: 400px;
+      overflow: auto;
+    }
+  </style>
+</head>
+
+<body onload="resizeFrame()" <%=tr8n_dir_attribute_tag%>>
+  <div class="email_header">
+    <div class="row">
+      <div class="label">
+        From
+      </div>
+      <div class="value">
+        <%= @from %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">
+        Subject
+      </div>
+      <div class="value">
+        <%= @subject %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">
+        Reply To:
+      </div>
+      <div class="value">
+        <%= @reply_to %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="label">
+        To:
+      </div>
+      <div class="value">
+        <%= @to %>
+      </div>
+    </div>
+  </div>
+  <div class="email_body">
+    <%= yield %>
+  </div>
+</body>
+</html>

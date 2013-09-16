@@ -133,4 +133,27 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     render :nothing => true
   end
 
+  def email_templates
+
+  end
+
+  def email_template
+    @et = Tr8n::EmailTemplate.find_by_id(params[:id])
+    if request.post?
+      if params[:email_template][:tokens].blank?
+        params[:email_template][:tokens] = "{}"
+      end
+      params[:email_template][:tokens] = JSON.parse(params[:email_template][:tokens])
+      @et.update_attributes(params[:email_template])
+    end
+  end
+
+  def email_preview
+    @et = Tr8n::EmailTemplate.find_by_id(params[:id])
+    @title = @et.name
+    @subject = @et.render_subject
+    @body = @et.render_body
+    render :layout => "/tr8n/emails/translate"
+  end
+
 end

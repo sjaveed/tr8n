@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", '~> 3.2.3'
   s.add_dependency 'will_filter', '~> 3.1.10'
   s.add_dependency 'faraday', '>= 0'
+  s.add_dependency 'liquid', '>= 0'
+  s.add_dependency 'awesome_print', '>= 0'
 end

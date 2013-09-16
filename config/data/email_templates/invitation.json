@@ -1,0 +1,8 @@
+{
+  "keyword": "invitation",
+  "name": "Invitation email",
+  "description": "Invites translators to translate the application",
+  "locale": "en-US",
+  "subject": "{actor} is requesting your help to translate {application}",
+  "body": ""
+}

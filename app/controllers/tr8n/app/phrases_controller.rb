@@ -222,7 +222,7 @@ private
 
   def init_breadcrumb
     if params[:component_id]
-      @component = Tr8n::TranslationSource.find_by_id(params[:component_id])
+      @component = Tr8n::Component.find_by_id(params[:component_id])
     end
     if params[:source_id]
       @source = Tr8n::TranslationSource.find_by_id(params[:source_id])

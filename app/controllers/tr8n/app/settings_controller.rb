@@ -156,4 +156,10 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     render :layout => "/tr8n/emails/translate"
   end
 
+  def delete_email_template
+    et = Tr8n::EmailTemplate.find_by_id(params[:id]) if params[:id]
+    et.destroy if et
+    redirect_to :action => :email_templates
+  end
+
 end

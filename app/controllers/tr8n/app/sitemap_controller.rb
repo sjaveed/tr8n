@@ -75,11 +75,16 @@ class Tr8n::App::SitemapController < Tr8n::App::BaseController
     render :layout => false
   end
 
+  def sources
+    @sources = selected_application.sources.order("created_at desc").page(page).per(per_page)
+  end
+
   def source_modal
-    @source = Tr8n::TranslationSource.find(params[:id])
+    @source = Tr8n::TranslationSource.find_by_id(params[:id]) if params[:id]
+    @source ||= Tr8n::TranslationSource.new
     if request.post?
-      @source.update_attributes(params[:source])
-      return redirect_to(:action => :index)
+      @source.update_attributes(params[:source].merge(:application => selected_application))
+      return redirect_to(:action => (params[:forward_to] || :index))
     end
     render :layout => false
   end
@@ -98,6 +103,15 @@ class Tr8n::App::SitemapController < Tr8n::App::BaseController
       return redirect_to(:action => :index)
     end
     render :layout => false
+  end
+
+  def delete_source
+    src = Tr8n::TranslationSource.find_by_id(params[:id]) if params[:id]
+    if src
+      src.destroy
+      trfn("Source has been deleted")
+    end
+    redirect_back
   end
 
 end

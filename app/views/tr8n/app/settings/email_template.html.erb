@@ -10,31 +10,31 @@
 
     <%=render :partial=>"email_breadcrumb" %>
 
-    <div class="section_title">
-      <%=tra("Email Details") %>
-    </div>
-
-    <div class="section blue">
-      <div class="tr8n_fltr" style="padding-right:5px;">
-        <%=tr8n_help_icon_tag("Email Templates") %>
-      </div>
-      <table>
-        <tr>
-          <th style="text-align:left;">Keyword:</th>
-          <td><%=@et.keyword%></td>
-        </tr>
-        <tr>
-          <th style="text-align:left;">Name:</th>
-          <td><%=@et.name%></td>
-        </tr>
-        <tr>
-          <th style="text-align:left;padding-right:15px;">Description:</th>
-          <td><%=@et.description%></td>
-        </tr>
-      </table>
-    </div>
-
     <%= form_for(@et, :as => :email_template, :url => {:id => @et.id}, :html => {:method => :post}) do |f| %>
+      <div class="section_title">
+        <%=tra("Basic Details") %>
+      </div>
+
+      <div class="section blue">
+        <div class="tr8n_fltr" style="padding-right:5px;">
+          <%=tr8n_help_icon_tag("Email Templates") %>
+        </div>
+        <table>
+          <tr>
+            <th style="text-align:left;vertical-align: top">Keyword:</th>
+            <td><%=f.text_field(:keyword, :style=>"width:800px;")%></td>
+          </tr>
+          <tr>
+            <th style="text-align:left;vertical-align: top">Name:</th>
+            <td><%=f.text_field(:name, :style=>"width:800px;")%></td>
+          </tr>
+          <tr>
+            <th style="text-align:left;padding-right:15px;vertical-align: top">Description:</th>
+            <td><%=f.text_area(:description, :style=>"width:800px; height: 50px;")%></td>
+          </tr>
+        </table>
+      </div>
+
       <div class="section_title">
         <%=tra("Email Subject") %>
       </div>
@@ -62,16 +62,14 @@
       <div>
         <div style="float:right">
           <button type="button" class="btn" onClick="previewEmail()">
-            <%=tra("Preview") %>
+            <%=tra("Translate", "Translate email template") %>
           </button>
           <button type="submit" class="btn btn-primary">
             <%=tra("Save") %>
           </button>
         </div>
 
-        <button type="button" class="btn btn-danger">
-          <%=tra("Delete") %>
-        </button>
+        <%= link_to(tra("Delete"), {:action => :delete_email_template}, :class => "btn btn-danger", :confirm => trla("Are you sure you want to delete this email template?")) %>
       </div>
     <% end %>
 

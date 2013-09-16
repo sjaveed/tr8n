@@ -23,7 +23,6 @@
 
 require 'rails'
 require 'pp'
-require 'ap'
 require 'liquid'
 
 module Tr8n

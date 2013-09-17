@@ -37,7 +37,7 @@ Tr8n.UI.Translator = {
   init: function() {
     var self = this;
 
-    tr8nJQ(document).bind(Tr8n.Utils.isOpera() ? 'click' : 'contextmenu', function(e) {
+    Tr8n.Utils.addEvent(document, Tr8n.Utils.isOpera() ? 'click' : 'contextmenu', function(e) {
       if (Tr8n.Utils.isOpera() && !e.ctrlKey) return;
 
       var translatable_node = Tr8n.Utils.findElement(e, ".tr8n_translatable");

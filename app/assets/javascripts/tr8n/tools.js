@@ -10,9 +10,6 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require ./boot/jquery.before.js
-//= require ./vendor/jquery/jquery-1.9.1.js
-//= require ./boot/jquery.after.js
 //= require ./vendor/shortcut.js
 //= require ./vendor/keyboard_1_49.js
 //= require ./base.js

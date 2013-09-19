@@ -26,6 +26,18 @@ require 'pp'
 require 'liquid'
 
 module Tr8n
+  module Filters
+  end
+
+  module Metrics
+  end
+
+  module Notifications
+  end
+
+  module Oauth
+  end
+
   module Tokens
   end
 
@@ -38,8 +50,6 @@ end
     "./rules_engine",
     "./tokens/base.rb",
     "./tokens",
-    "./decorators/base.rb",
-    "./decorators",
     "./liquid",
 ].each do |f|
   if f.index('.rb')

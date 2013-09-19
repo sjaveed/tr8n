@@ -58,7 +58,7 @@ class Tr8n::TranslationSource < ActiveRecord::Base
   has_many    :translation_key_sources,       :class_name => "Tr8n::TranslationKeySource",      :dependent => :destroy
   has_many    :translation_keys,              :class_name => "Tr8n::TranslationKey",            :through => :translation_key_sources
   has_many    :translation_source_languages,  :class_name => "Tr8n::TranslationSourceLanguage", :dependent => :destroy
-  has_many    :translation_source_metrics,    :class_name => 'Tr8n::TranslationSourceMetric',   :dependent => :destroy
+  has_many    :translation_source_metrics,    :class_name => 'Tr8n::Metrics::TranslationSource',:dependent => :destroy
   has_many    :component_sources,             :class_name => "Tr8n::ComponentSource",           :dependent => :destroy
   has_many    :components,                    :class_name => "Tr8n::Component",                 :through => :component_sources
   
@@ -86,35 +86,35 @@ class Tr8n::TranslationSource < ActiveRecord::Base
   end
 
   def cache_key
-    self.class.cache_key(application || Tr8n::Config.current_application, source)
+    self.class.cache_key(application || Tr8n::RequestContext.container_application, source)
   end
 
   def clear_cache
     Tr8n::Cache.delete(cache_key)
   end
   
-  def self.find_or_create(source_name, application = Tr8n::Config.current_application)
+  def self.find_or_create(source_name, application = Tr8n::RequestContext.container_application)
     return source_name if source_name.is_a?(Tr8n::TranslationSource)
 
     Tr8n::Cache.fetch(cache_key(application, source_name)) do 
       ts = where("application_id = ? and source = ?", application.id, source_name).first 
       ts ||= begin
-        src = create(:application => application, :source => source_name)
+        src = create(:application_id => application.id, :source => source_name)
         src.total_metric.update_metrics!
         src
       end
     end  
   end
 
-  def total_metric(language = Tr8n::Config.current_language)
-    Tr8n::TranslationSourceMetric.find_or_create(self, language)
+  def total_metric(language = Tr8n::RequestContext.current_language)
+    Tr8n::Metrics::TranslationSource.find_or_create(self, language)
   end
 
-  def cache_key_for_language(language = Tr8n::Config.current_language)
+  def cache_key_for_language(language = Tr8n::RequestContext.current_language)
     "translations_for_[#{self.source}]_#{language.locale}"
   end
 
-  def cache(language = Tr8n::Config.current_language)
+  def cache(language = Tr8n::RequestContext.current_language)
     @cache ||= {}
     @cache[language.locale] ||= begin
       Tr8n::Cache.fetch(cache_key_for_language(language)) do 
@@ -138,11 +138,11 @@ class Tr8n::TranslationSource < ActiveRecord::Base
     (cache[key] || {})["translation_key"]
   end
 
-  def valid_translations_for_key_and_language(key, language = Tr8n::Config.current_language)
+  def valid_translations_for_key_and_language(key, language = Tr8n::RequestContext.current_language)
     (cache[key] || {})["translations"]
   end
 
-  def clear_cache_for_language(language = Tr8n::Config.current_language)
+  def clear_cache_for_language(language = Tr8n::RequestContext.current_language)
     Tr8n::Cache.delete(cache_key_for_language(language))
   end
 
@@ -160,7 +160,7 @@ class Tr8n::TranslationSource < ActiveRecord::Base
     "#{name} (#{source})"
   end
 
-  def translator_authorized?(translator = Tr8n::Config.current_translator)
+  def translator_authorized?(translator = Tr8n::RequestContext.current_translator)
     components.each do |comp|
       return false unless comp.translator_authorized?(translator)
     end

@@ -21,32 +21,41 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::ApplicationLanguage Schema Information
+#-- Tr8n::EmailLog Schema Information
 #
-# Table name: tr8n_application_languages
+# Table name: tr8n_email_logs
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     not null
-#  feature_id        integer     not null
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
+#  id                   INTEGER         not null, primary key
+#  email_template_id    integer         
+#  language_id          integer         
+#  from_id              integer         
+#  to_id                integer         
+#  email                varchar(255)    
+#  tokens               text            
+#  sent_at              datetime        
+#  viewed_at            datetime        
+#  created_at           datetime        not null
+#  updated_at           datetime        not null
 #
 # Indexes
 #
-#  tr8n_app_lang_app_id    (application_id)
+#  index_tr8n_email_logs_on_email                (email) 
+#  index_tr8n_email_logs_on_to_id                (to_id) 
+#  index_tr8n_email_logs_on_from_id              (from_id) 
+#  index_tr8n_email_logs_on_email_template_id    (email_template_id) 
 #
 #++
 
 class Tr8n::EmailLog < ActiveRecord::Base
   self.table_name = :tr8n_email_logs
 
-  attr_accessible :application, :language, :translator, :email, :sent_at, :viewed_at
+  attr_accessible :application, :language, :translator, :email, :sent_at, :viewed_at, :from, :to
 
   belongs_to :email_template, :class_name => 'Tr8n::EmailTemplate'
   belongs_to :language, :class_name => 'Tr8n::Language'
 
-  belongs_to :from, :class_name => Tr8n::Config.user_class_name, :foreign_key => :from_user_id
-  belongs_to :to, :class_name => Tr8n::Config.user_class_name, :foreign_key => :to_user_id
+  belongs_to :from, :class_name => Tr8n::Config.user_class_name, :foreign_key => :from_id
+  belongs_to :to, :class_name => Tr8n::Config.user_class_name, :foreign_key => :to_id
 
   serialize :tokens
 

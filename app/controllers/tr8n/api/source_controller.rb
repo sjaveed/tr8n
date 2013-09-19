@@ -128,7 +128,7 @@ class Tr8n::Api::SourceController < Tr8n::Api::BaseController
 
     languages = []
     locales.each do |locale| 
-      l = Tr8n::Language.for(locale)
+      l = Tr8n::Language.by_locale(locale)
       next unless l
       languages << l
     end

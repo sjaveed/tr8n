@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -23,12 +23,12 @@
 
 class Fixnum
 
-  def translate(desc = "", tokens = {}, options = {}, language = Tr8n::Config.current_language)
+  def translate(desc = "", tokens = {}, options = {}, language = Tr8n::RequestContext.current_language)
     to_s.translate(desc, tokens, options, language)
   end
   alias tr translate
   
-  def trl(desc = "", tokens = {}, options = {}, language = Tr8n::Config.current_language)
+  def trl(desc = "", tokens = {}, options = {}, language = Tr8n::RequestContext.current_language)
     to_s.trl(desc, tokens, options, language)
   end
 

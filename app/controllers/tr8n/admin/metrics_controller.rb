@@ -32,11 +32,11 @@ class Tr8n::Admin::MetricsController < Tr8n::Admin::BaseController
   end
 
   def languages
-    @metrics = Tr8n::LanguageMetric.filter(:params => params, :filter => Tr8n::LanguageMetricFilter)
+    @metrics = Tr8n::LanguageMetric.filter(:params => params, :filter => Tr8n::Filters::LanguageMetric)
   end
 
   def translators
-    @metrics = Tr8n::TranslatorMetric.filter(:params => params, :filter => Tr8n::TranslatorMetricFilter)
+    @metrics = Tr8n::Metrics::Translator.filter(:params => params, :filter => Tr8n::Filters::TranslatorMetric)
   end
 
   def top_translators

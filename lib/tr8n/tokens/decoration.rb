@@ -116,11 +116,11 @@ module Tr8n
       end
         
       def handle_default_decorations(token_name, token_value, token_values)
-        unless Tr8n::Config.default_decoration_tokens[token_name]
-          raise Tr8n::TokenException.new("Invalid decoration token value")
+        unless Tr8n::RequestContext.decoration_tokens[token_name]
+          raise Tr8n::Exception.new("Invalid decoration token value")
         end
     
-        default_decoration = Tr8n::Config.default_decoration_tokens[token_name].clone
+        default_decoration = Tr8n::RequestContext.decoration_tokens[token_name].clone
         decoration_token_values = token_values[token_name.to_sym] || []
         
         if decoration_token_values.is_a?(Array)
@@ -158,12 +158,12 @@ module Tr8n
           elsif method.is_a?(String)
             substitution_value = method.to_s.gsub("{$0}", value)
           else
-            raise Tr8n::TokenException.new("Invalid decoration token value")
+            raise Tr8n::Exception.new("Invalid decoration token value")
           end
-        elsif Tr8n::Config.default_decoration_tokens[name]
+        elsif Tr8n::RequestContext.decoration_tokens[name]
           substitution_value = handle_default_decorations(name, value, values)
         else
-          raise Tr8n::TokenException.new("Missing decoration token value")
+          raise Tr8n::Exception.new("Missing decoration token value")
         end
           
         label.gsub(full_name, substitution_value) 

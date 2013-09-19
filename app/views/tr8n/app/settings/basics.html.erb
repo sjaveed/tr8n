@@ -23,42 +23,86 @@
 
         <div class="form-group">
           <label for="application[description]"><%=tra("Description:")%></label>
-          <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:50px;") %>
+          <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:70px;") %>
         </div>
 
-        <div class="form-group" style="padding-top:15px;">
+
+        <div class="row">
+          <div class="span3" style="width:320px;">
+            <div class="form-group">
+              <label for="locale"><%=tra("Source Language:")%></label>
+              <select name="default_locale">
+                <% Tr8n::Language.enabled_languages.each do |lang| %>
+                  <option <%="selected" if selected_application.default_language == lang %> value="<%=lang.locale%>"><%=lang.english_name%></option>
+                <% end %>
+              </select>
+              <div style="padding-top:0px;color:#666;font-size:11px;">
+                <%= tra("The language used in the source code of the application.")%>
+              </div>
+            </div>
+
+          </div>
+          <div class="span4">
+            <div class="form-group">
+              <label for="application[threshold]"><%=tra("Translation Threshold:")%></label>
+              <div id="threshold_slider" style="width:200px;"></div>
+              <%=f.hidden_field(:threshold) %>
+              <div style="padding-top:10px;color:#666;">
+                <%= tra("Minimum translation rank:")%> <span id="threshold_value" style="font-weight:bold; color: black"><%=selected_application.threshold%></span>
+                <div style="font-size:11px;"><%= tra("Only translations with the rank or above will be displayed.")%></div>
+              </div>
+            </div>
+          </div>
+          <div class="span4">
+            <div class="form-group">
+              <label for="application[translator_level]"><%=tra("Translator Level:")%></label>
+              <div id="translator_level_slider" style="width:200px;"></div>
+              <%=f.hidden_field(:translator_level) %>
+              <div style="padding-top:10px;color:#666;">
+                <%= tra("Minimum translator level:")%> <span id="translator_level_value" style="font-weight:bold; color: black"><%=selected_application.translator_level%></span>
+                <div style="font-size:11px;"><%= tra("Only translators of the level or above can translate this application.")%></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group" style="padding-top:25px;padding-bottom:15px; text-align:right">
           <button type="submit" class="btn btn-primary">
-            <%=tra("Update")%>
+            <%=tra("Update Application")%>
           </button>
         </div>
 
       </div>
     <% end %>
-
-    <%= form_tag(:action => :set_default_language) do |f| %>
-      <div class="section grey">
-        <div class="form-group">
-          <label for="locale"><%=tra("Default Language:")%></label>
-          <select name="default_locale">
-            <% Tr8n::Language.enabled_languages.each do |lang| %>
-              <option <%="selected" if selected_application.default_language == lang %> value="<%=lang.locale%>"><%=lang.english_name%></option>
-            <% end %>
-          </select>
-        </div>
-
-        <div class="form-group" style="padding-top:15px;">
-          <button type="submit" class="btn btn-primary">
-            <%=tra("Update")%>
-          </button>
-        </div>
-
-      </div>
-    <% end %>
-
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
 
 <% end %>
 
+<script>
+  $(function() {
+    $( "#threshold_slider" ).slider({
+      range: "min",
+      value: <%=selected_application.threshold%>,
+      min: 1,
+      max: 50,
+      slide: function( event, ui ) {
+        $( "#threshold_value" ).html( ui.value );
+        $( "#application_threshold" ).val( ui.value );
+      }
+    });
+    $( "#translator_level_slider" ).slider({
+      range: "min",
+      value: <%=selected_application.translator_level%>,
+      min: 1,
+      max: 100,
+      slide: function( event, ui ) {
+        $( "#translator_level_value" ).html( ui.value );
+        $( "#application_translator_level" ).val( ui.value );
+      }
+    });
+  });
+</script>
 
 

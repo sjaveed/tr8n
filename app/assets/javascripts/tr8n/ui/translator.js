@@ -225,15 +225,15 @@ Tr8n.UI.Translator = {
     this.container.style.display  = "block";
 
     var url = '';
-    self.translation_key_id = translatable_node.getAttribute('translation_key_id');   // switch to data
+    self.translation_key_id = translatable_node.getAttribute('data-translation_key_id');   // switch to data
 
     var params = {};
 
     if (is_language_case) {
       params = {
         type: 'language_case',
-        id:  translatable_node.getAttribute('rule_id'),
-        label: translatable_node.getAttribute('case_key')
+        id:  translatable_node.getAttribute('data-rule_id'),
+        label: translatable_node.getAttribute('data-case_key')
       }
     } else {
       params = {
@@ -245,26 +245,6 @@ Tr8n.UI.Translator = {
     this.content_frame.style.width = '100%';
     this.content_frame.style.height = '10px';
     this.content_frame.src = Tr8n.Utils.toUrl('/tr8n/tools/translator/splash_screen', params);
-
-
-//    window.setTimeout(function() {
-//      var url = '';
-//      var params = {};
-////      if (is_language_case) {
-////        self.language_case_id = translatable_node.getAttribute('case_id');
-////        self.language_case_rule_id = translatable_node.getAttribute('rule_id');
-////        self.language_case_key = translatable_node.getAttribute('case_key');
-////        url = '/tr8n/language_cases/manager';
-////        params['case_id'] = self.language_case_id;
-////        params['rule_id'] = self.language_case_rule_id;
-////        params['case_key'] = self.language_case_key;
-////      } else {
-//        self.translation_key_id = translatable_node.getAttribute('translation_key_id');
-//        url = '/tr8n/tools/translator/index';
-//        params['translation_key_id'] = self.translation_key_id;
-////      }
-//      self.content_frame.src = Tr8n.Utils.toUrl(url, params);
-//    }, 1000);
   },
 
   resize: function(height) {

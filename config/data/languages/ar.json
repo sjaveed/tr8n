@@ -6,21 +6,156 @@
   "google_key": "ar",
   "context_rules": {
     "number": {
-      "keys": ["zero", "one", "two", "few", "many", "other"],
-      "token_expression":  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
-      "variables": ["@n"],
+      "keys": [
+        "zero",
+        "one",
+        "two",
+        "few",
+        "many",
+        "other"
+      ],
+      "token_expression": "/.*(count|num|minutes|seconds|hours|sum|total)(\\d)*$/",
+      "variables": [
+        "@n"
+      ],
       "token_mapping": "unsupported",
       "default_rule": "other",
       "rules": {
-        "zero":   {"rule": "(= 0 @n)", "description": "{token} is 0", "examples": "0"},
-        "one":    {"rule": "(= 1 @n)", "description": "{token} is 1", "examples": "1"},
-        "two":    {"rule": "(= 2 @n)", "description": "{token} is 2", "examples": "2"},
-        "few":    {"rule": "(in '3..10' (mod 100 @n))", "description": "{token} mod 100 in 3..10", "examples": "3-10, 103-110, 203-210..."},
-        "many":   {"rule": "(in '11..99' (mod 100 @n))", "description": "{token} mod 100 in 11..99", "examples": "11-99, 111-199, 211-299..."},
-        "other":  {"examples": "100-102, 200-202, 300-302...; 0.2, 1.07, 2.94, 3.81, 11.68, 100.55..."}
+        "zero": {
+          "rule": "(= 0 @n)",
+          "description": "{token} is 0",
+          "examples": "0"
+        },
+        "one": {
+          "rule": "(= @n 1)",
+          "description": "{token} is 1",
+          "examples": "1"
+        },
+        "two": {
+          "rule": "(= 2 @n)",
+          "description": "{token} is 2",
+          "examples": "2"
+        },
+        "few": {
+          "rule": "(in '3..10' (mod @n 100))",
+          "description": "{token} mod 100 in 3..10",
+          "examples": "3-10, 103-110, 203-210..."
+        },
+        "many": {
+          "rule": "(in '11..99' (mod @n 100))",
+          "description": "{token} mod 100 in 11..99",
+          "examples": "11-99, 111-199, 211-299..."
+        },
+        "other": {
+          "examples": "100-102, 200-202, 300-302...; 0.2, 1.07, 2.94, 3.81, 11.68, 100.55..."
+        }
+      }
+    },
+    "date": {
+      "keys": [
+        "past",
+        "present",
+        "future"
+      ],
+      "token_expression": "/.*(date|time)(\\d)*$/",
+      "variables": [
+        "@date"
+      ],
+      "token_mapping": [
+        "unsupported",
+        "unsupported",
+        {
+          "past": "{$0}",
+          "present": "{$1}",
+          "future": "{$2}"
+        }
+      ],
+      "default_rule": "present",
+      "rules": {
+        "past": {
+          "rule": "(> @date (today))",
+          "description": "{token} is in the future"
+        },
+        "present": {
+          "rule": "(= @date (today))",
+          "description": "{token} is in the present"
+        },
+        "future": {
+          "rule": "(< @date (today))",
+          "description": "{token} is in the past"
+        }
+      }
+    },
+    "genders": {
+      "keys": [
+        "male",
+        "female",
+        "unknown",
+        "other"
+      ],
+      "token_expression": "/.*(users|profiles|actors|targets)(\\d)*$/",
+      "variables": [
+        "@genders"
+      ],
+      "token_mapping": [
+        "unsupported",
+        "unsupported",
+        "unsupported",
+        {
+          "male": "{$0}",
+          "female": "{$1}",
+          "unknown": "{$2}",
+          "other": "{$3}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "male": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'male'))",
+          "description": "{token} contains 1 male"
+        },
+        "female": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'female'))",
+          "description": "{token} contains 1 female"
+        },
+        "unknown": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'unknown'))",
+          "description": "{token} contains 1 person with unknown gender"
+        },
+        "other": {
+          "description": "{token} contains at least 2 people"
+        }
+      }
+    },
+    "list": {
+      "keys": [
+        "one",
+        "other"
+      ],
+      "token_expression": "/.*(items|list)(\\d)*$/",
+      "variables": [
+        "@count"
+      ],
+      "token_mapping": [
+        "unsupported",
+        {
+          "one": "{$0}",
+          "other": "{$1}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "one": {
+          "rule": "(= 1 @count)",
+          "description": "{token} contains 1 element"
+        },
+        "other": {
+          "description": "{token} contains at least 2 elements"
+        }
       }
     }
   },
   "language_cases": {
-  }
+  },
+  "myheritage_key": "AR"
 }

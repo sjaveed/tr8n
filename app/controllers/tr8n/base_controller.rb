@@ -53,7 +53,7 @@ module Tr8n
     def validate_remote_application
       return if params[:origin].blank?
       domain = Tr8n::TranslationDomain.find_or_create(params[:origin])
-      Tr8n::Config.set_remote_application(domain.application)
+      Tr8n::RequestContext.set_remote_application(domain.application)
     end
 
     def render_lightbox
@@ -119,7 +119,7 @@ module Tr8n
         return redirect_to(Tr8n::Config.default_url)
       end
 
-      return if Tr8n::Config.current_user_is_translator?
+      return if Tr8n::RequestContext.current_user_is_translator?
 
       redirect_to("/tr8n/translator/registration")
     end

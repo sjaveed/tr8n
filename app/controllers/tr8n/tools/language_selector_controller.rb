@@ -34,9 +34,7 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::BaseController
     @inline_translations_allowed = false
     @inline_translations_enabled = false
 
-    @application = Tr8n::Config.remote_application || Tr8n::Config.current_application
-  
-    if tr8n_current_user_is_translator? and not tr8n_current_translator.blocked? and @application.translators.include?(tr8n_current_translator)
+    if tr8n_current_user_is_translator? and not tr8n_current_translator.blocked? and tr8n_current_application.translators.include?(tr8n_current_translator)
       @inline_translations_allowed = true
       @inline_translations_enabled = tr8n_current_translator.enable_inline_translations?
     end
@@ -46,7 +44,7 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::BaseController
     @source_url = request.env['HTTP_REFERER']
     @source_url.gsub!("locale", "previous_locale") if @source_url
 
-    @all_languages = @application.languages
+    @all_languages = tr8n_current_application.languages
 
     @user_languages = []
     unless tr8n_current_user_is_guest?
@@ -85,15 +83,14 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::BaseController
   end
 
   def tr8n_current_translator_can_translate_remote_application?
-    return true unless Tr8n::Config.remote_application
-    Tr8n::Config.remote_application.translators.include?(tr8n_current_translator)
+    tr8n_current_application.translators.include?(tr8n_current_translator)
   end
   helper_method :tr8n_current_translator_can_translate_remote_application?
 
 private 
 
   def can_generate_signed_request?
-    Tr8n::Config.remote_application # and tr8n_current_translator and Tr8n::Config.remote_application.translators.include?(tr8n_current_translator)
+    Tr8n::RequestContext.remote_application # and tr8n_current_translator and Tr8n::Config.remote_application.translators.include?(tr8n_current_translator)
   end
 
 end

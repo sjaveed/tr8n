@@ -62,7 +62,7 @@ class Tr8n::ConfigurationKey < Tr8n::TranslationKey
     end
   end
 
-  def translate(language = Tr8n::Config.current_language, token_values = {}, options = {})
+  def translate(language = Tr8n::RequestContext.current_language, token_values = {}, options = {})
     return find_all_valid_translations(valid_translations_for(language)) if options[:api]
     
     translation_language, translation = find_first_valid_translation_for_language(language, token_values)

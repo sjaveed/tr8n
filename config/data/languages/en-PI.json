@@ -1,6 +1,8 @@
 {
   "locale": "en-PI",
   "english_name": "English (Pirate)",
-  "google_key": "en",
-  "fallback": "en"
+  "google_key": "xx-pirate",
+  "fallback": "en",
+  "facebook_key": "en-PI",
+  "native_name": "English (Pirate)"
 }

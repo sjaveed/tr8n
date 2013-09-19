@@ -60,7 +60,8 @@
         </tr>
         </thead>
         <tbody>
-        <% selected_application.decorator.css.each do |key, style| %>
+        <% Tr8n::Decorator.keys.each do |key| %>
+          <% style = selected_application.decorator.css[key] %>
           <tr>
             <td>
               <strong><%= key %></strong>

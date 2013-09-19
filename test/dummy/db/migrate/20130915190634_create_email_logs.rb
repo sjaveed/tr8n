@@ -3,8 +3,8 @@ class CreateEmailLogs < ActiveRecord::Migration
     create_table :tr8n_email_logs do |t|
       t.integer   :email_template_id
       t.integer   :language_id
-      t.integer   :from_user_id
-      t.integer   :to_user_id
+      t.integer   :from_id
+      t.integer   :to_id
       t.string    :email
       t.text      :tokens
       t.timestamp :sent_at
@@ -13,8 +13,8 @@ class CreateEmailLogs < ActiveRecord::Migration
     end
 
     add_index :tr8n_email_logs, [:email_template_id]
-    add_index :tr8n_email_logs, [:from_user_id]
-    add_index :tr8n_email_logs, [:to_user_id]
+    add_index :tr8n_email_logs, [:from_id]
+    add_index :tr8n_email_logs, [:to_id]
     add_index :tr8n_email_logs, [:email]
   end
 

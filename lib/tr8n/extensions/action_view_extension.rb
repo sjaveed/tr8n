@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -25,85 +25,22 @@ module Tr8n
   module ActionViewExtension
     extend ActiveSupport::Concern
 
-    # Creates a hash of translations for a page source(s) or a component(s)
-    def tr8n_translations_cache_tag(opts = {})
-      html = []
-
-      opts[:translations_element_id] ||= :tr8n_translations
-      client_sdk_var_name = opts[:client_var_name] || :tr8nProxy
-
-      default_source_url = "#{controller.controller_name}/#{controller.action_name}.js"
-      source = Tr8n::TranslationSource.find_or_create(opts[:source] || default_source_url)
-
-      if Tr8n::Config.enable_browser_cache?  
-        # translations are loaded through a script
-        js_source = "/tr8n/api/settings/translate.js?cache=true&callback=Tr8n.SDK.Proxy.registerTranslationKeys&source=#{CGI.escape(source.source)}&t=#{source.updated_at.to_i}"
-        html << "<script type='text/javascript' src='#{js_source}'></script>"
-      else  
-        # translations are embedded right into the page
-        html << "<script>"
-
-        keys = Tr8n::TranslationKey.where(["(id in (select distinct(translation_key_id) from tr8n_translation_key_sources where translation_source_id = ?))", source.id])
-        translations = []
-        keys.each_with_index do |tkey, index|
-          trn = tkey.translate(Tr8n::Config.current_language, {}, {:api => true})
-          translations << trn 
-        end
-
-        html << "Tr8n.SDK.Proxy.registerTranslationKeys(#{translations.to_json});"
-        html << "</script>"
-      end
-        
-      html.join('').html_safe
-    end
-
-    # Creates an instance of tr8nProxy object
-    def tr8n_client_sdk_tag(opts = {})
-      # opts[:default_source]           ||= tr8n_default_client_source
-      opts[:scheduler_interval]       ||= Tr8n::Config.default_client_interval
-
-      opts[:enable_inline_translations] = (Tr8n::Config.current_user_is_translator? and Tr8n::Config.current_translator.enable_inline_translations? and (not Tr8n::Config.current_language.default?))
-      opts[:default_decorations]        = Tr8n::Config.default_decoration_tokens
-      opts[:default_tokens]             = Tr8n::Config.default_data_tokens
-
-      opts[:rules]                      = { 
-        :number => Tr8n::Config.rules_engine[:numeric_rule],      
-        :gender => Tr8n::Config.rules_engine[:gender_rule],
-        :list   => Tr8n::Config.rules_engine[:gender_list_rule],  
-        :date   => Tr8n::Config.rules_engine[:date_rule]
-      }
-
-      # build a list of actual rules of the settings
-
-      client_var_name = opts[:client_var_name] || :tr8nProxy
-      opts.merge!(:enable_tml => Tr8n::Config.enable_tml?)
-
-      "<script>Tr8n.SDK.Proxy.init(#{opts.to_json});</script>".html_safe
-    end
-
-    def tr8n_options_for_select(options, selected = nil, description = nil, lang = Tr8n::Config.current_language)
+    def tr8n_options_for_select(options, selected = nil, description = nil)
       options_for_select(options.tro(description), selected)
     end
 
     def tr8n_phrases_link_tag(search = "", phrase_type = :without, phrase_status = :any)
       return unless Tr8n::Config.enabled?
-      return if Tr8n::Config.current_language.default?
-      return unless Tr8n::Config.open_registration_mode? or Tr8n::Config.current_user_is_translator?
-      return unless Tr8n::Config.current_translator.enable_inline_translations?
+      return if Tr8n::RequestContext.current_language.default?
+      return unless Tr8n::RequestContext.current_user_is_translator?
+      return unless Tr8n::RequestContext.current_translator.enable_inline_translations?
 
       link_to(image_tag("tr8n/translate_icn.gif", :style => "vertical-align:middle; border: 0px;", :title => search), 
-             :controller => "/tr8n/phrases", :action => :index, 
+             :controller => "/tr8n/app/phrases", :action => :index,
              :search => search, :phrase_type => phrase_type, :phrase_status => phrase_status).html_safe
     end
 
-    def tr8n_splash_screen_tag
-      html = "<div id='tr8n_splash_screen' style='display:none'>"
-      html << (render :partial => Tr8n::Config.splash_screen)
-      html << "</div>"
-      html.html_safe
-    end
-
-    def tr8n_language_flag_tag(lang = Tr8n::Config.current_language, opts = {})
+    def tr8n_language_flag_tag(lang = Tr8n::RequestContext.current_language, opts = {})
       return "" unless Tr8n::Config.enable_language_flags?
       return "" unless lang
       html = image_tag("tr8n/flags/#{lang.flag}.png", :style => "vertical-align:middle;", :title => lang.native_name)
@@ -111,7 +48,7 @@ module Tr8n
       html.html_safe
     end
 
-    def tr8n_language_name_tag(lang = Tr8n::Config.current_language, opts = {})
+    def tr8n_language_name_tag(lang = Tr8n::RequestContext.current_language, opts = {})
       return "" unless lang
       show_flag = opts[:flag].nil? ? true : opts[:flag]
       name_type = opts[:name].nil? ? :full : opts[:name] # :full, :native, :english, :locale
@@ -140,14 +77,6 @@ module Tr8n
       html.html_safe
     end
 
-    def tr8n_language_selector_tag(opts = {})
-      opts[:lightbox] ||= false
-      opts[:style] ||= "color:#1166bb;"
-      opts[:show_arrow] ||= true
-      opts[:arrow_style] ||= "font-size:8px;"
-      render(:partial => '/tr8n/common/language_selector', :locals => {:opts => opts})    
-    end
-
     def tr8n_language_strip_tag(opts = {})
       opts[:flag] = opts[:flag].nil? ? false : opts[:flag]
       opts[:name] = opts[:name].nil? ? :native : opts[:name] 
@@ -157,48 +86,12 @@ module Tr8n
       render(:partial => '/tr8n/common/language_strip', :locals => {:opts => opts})    
     end
 
-    def tr8n_language_table_tag(opts = {})
-      opts[:cols] = opts[:cols].nil? ? 4 : opts[:cols]
-      opts[:col_size] = opts[:col_size].nil? ? "300px" : opts[:col_size]
-      render(:partial => '/tr8n/common/language_table', :locals => {:opts => opts.merge(:name => :english)})    
-    end
-
-    def tr8n_translator_login_tag(opts = {})
-      opts[:class] ||= 'tr8n_right_horiz_list'
-      render(:partial => '/tr8n/common/translator_login', :locals => {:opts => opts})    
-    end
-
     def tr8n_flashes_tag(opts = {})
       render(:partial => '/tr8n/common/flashes', :locals => {:opts => opts})    
     end
 
     def tr8n_scripts_tag(opts = {})
       render(:partial => '/tr8n/common/scripts', :locals => {:opts => opts})    
-    end
-
-    def tr8n_client_sdk_scripts_tag(opts = {})
-      opts[:default_source] ||= "application"
-      opts[:scheduler_interval] ||= 5000
-
-      opts[:enable_inline_translations] = (Tr8n::Config.current_user_is_translator? and Tr8n::Config.current_translator.enable_inline_translations? and (not Tr8n::Config.current_language.default?))
-      opts[:default_decorations]        = Tr8n::Config.default_decoration_tokens
-      opts[:default_tokens]             = Tr8n::Config.default_data_tokens
-      opts[:rules]                      = { 
-        :number => Tr8n::Config.rules_engine[:numeric_rule],      :gender => Tr8n::Config.rules_engine[:gender_rule],
-        :list   => Tr8n::Config.rules_engine[:gender_list_rule],  :date   => Tr8n::Config.rules_engine[:date_rule]
-      }
-
-      html = [javascript_include_tag("/tr8n/javascripts/tr8n_client_sdk.js")]
-      html << "<script>"
-      html << "function initializeTr8nProxy() {"
-      html << "    tr8nProxy = new Tr8n.Proxy(#{opts.to_json});"
-  #    html << "   Tr8n.Utils.addEvent(window, 'load', function() {"
-  #    html << "       tr8nProxy = new Tr8n.Proxy(#{opts.to_json});"
-  #    html << "    });"
-      html << "}"
-      html << "initializeTr8nProxy();"
-      html << "</script>"
-      html.join("\n").html_safe
     end
 
     def tr8n_translator_rank_tag(translator, rank = nil)
@@ -252,57 +145,13 @@ module Tr8n
       html.html_safe
     end  
 
-    def tr8n_sitemap(sections, splitters, options = {})
-      html = ""
-      html << "<table style='width:100%'>"
-      html << "<tr>"
-      splitters.each do |splitter| 
-        html << "<td style='#{tr8n_style_attribute_tag('text-align', 'left')};vertical-align:top; width:" << (100 / splitters.size).to_s << "%;'>"
-        html << generate_sitemap(sections[splitter.first..splitter.last], options)      
-        html << "</td>"
-      end 
-      html << "</tr>"
-      html << "</table>"
-      html.html_safe
-    end
-
-    def tr8n_breadcrumb_tag(source = nil, opts = {})
-      source ||= "#{controller.class.name.underscore.gsub("_controller", "")}/#{controller.action_name}" 
-      section = Tr8n::SiteMap.section_for_source(source)
-      return "" unless section
-      opts[:separator] ||= " >> "
-      opts[:min_elements] ||= 1
-      opts[:skip_root] ||= opts[:skip_root].nil? ? false : opts[:skip_root]
-
-      links = section.parents.collect{|node| link_to(node.title(params), node.link(params))}
-      return "" if links.size <= opts[:min_elements]
-
-      links.delete(links.first) if opts[:skip_root]
-      links.unshift(link_to(opts[:root].first, opts[:root].last)) if opts[:root]
-
-      html = "<div id='tr8n_breadcrumb' class='tr8n_breadcrumb'>"
-      html << links.join(opts[:separator])
-      html << '</div>'    
-      html.html_safe
-    end
-
-    def tr8n_user_tag(translator, options = {})
-      return "Deleted Translator" unless translator
+    def tr8n_user_tag(user, options = {})
+      return "Deleted User" unless user
 
       if options[:linked]
-        link_to(translator.name, translator.link).html_safe
+        link_to(user.name, user.link).html_safe
       else
-        translator.name
-      end
-    end
-
-    def tr8n_translator_tag(translator, options = {})
-      return "Deleted Translator" unless translator
-
-      if options[:linked]
-        link_to(translator.name, :controller => "/tr8n/translator/dashboard", :action => :index, :id => translator.id).html_safe
-      else
-        translator.name
+        user.name
       end
     end
 
@@ -319,20 +168,42 @@ module Tr8n
 
       if translator and options[:linked]
         link_to(img_tag, translator.link).html_safe
-      else  
+      else
         img_tag.html_safe
       end
-    end  
+    end
+
+    def tr8n_translator_tag(translator, options = {})
+      return "Deleted Translator" unless translator
+
+      if options[:linked]
+        link_to(translator.name, :controller => "/tr8n/translator/dashboard", :action => :index, :id => translator.id).html_safe
+      else
+        translator.name
+      end
+    end
+
+    def tr8n_translator_mugshot_tag(translator, options = {})
+      if translator and !translator.mugshot.blank?
+        img_url = translator.mugshot
+      else
+        img_url = Tr8n::Config.silhouette_image
+      end
+
+      img_tag = "<img src='#{img_url}' style='width:48px'>"
+
+      if translator and options[:linked]
+        link_to(img_tag.html_safe, translator.url, :target => "_new").html_safe
+      else
+        img_tag.html_safe
+      end
+    end
 
     def tr8n_select_month(date, options = {}, html_options = {})
       month_names = options[:use_short_month] ? Tr8n::Config.default_abbr_month_names : Tr8n::Config.default_month_names
       select_month(date, options.merge(
         :use_month_names => month_names.collect{|month_name| Tr8n::Language.translate(month_name, options[:description] || "Month name")} 
       ), html_options)
-    end
-
-    def tr8n_button_tag(label, function, opts = {})
-      link_to_function("<span>#{label}</span>".html_safe, function, :class => "tr8n_grey_button tr8n_pcb")    
     end
 
     def tr8n_paginator_tag(collection, options = {})
@@ -348,26 +219,26 @@ module Tr8n
       Thread.current[:tr8n_block_options] ||= []   
       Thread.current[:tr8n_block_options].push(opts)
 
-      component = Tr8n::Config.current_component_from_block_options
+      component = Tr8n::RequestContext.current_component_from_block_options
       if component
-        source = Tr8n::Config.current_source_from_block_options
+        source = Tr8n::RequestContext.current_source_from_block_options
         unless source.nil?
           Tr8n::ComponentSource.find_or_create(component, source)
         end
       end
 
-      if Tr8n::Config.current_user_is_authorized_to_view_component?(component)
-        selected_language = Tr8n::Config.current_language
+      if Tr8n::RequestContext.current_user_is_authorized_to_view_component?(component)
+        selected_language = Tr8n::RequestContext.current_language
         
-        unless Tr8n::Config.current_user_is_authorized_to_view_language?(component, selected_language)
-          Tr8n::Config.set_language(Tr8n::Config.default_language)
+        unless Tr8n::RequestContext.current_user_is_authorized_to_view_language?(component, selected_language)
+          Tr8n::RequestContext.set_current_language(Tr8n::Config.default_language)
         end
 
         if block_given?
           ret = capture(&block) 
         end
 
-        Tr8n::Config.set_language(selected_language)
+        Tr8n::RequestContext.set_current_language(selected_language)
       else
         ret = ""
       end
@@ -377,7 +248,7 @@ module Tr8n
     end
 
     def tr8n_content_for_locales_tag(opts = {}, &block)
-      locale = Tr8n::Config.current_language.locale
+      locale = Tr8n::RequestContext.current_language.locale
 
       if opts[:only] 
          return unless opts[:only].include?(locale)
@@ -414,58 +285,17 @@ module Tr8n
     ## Language Direction Support
     ######################################################################
 
-    def tr8n_style_attribute_tag(attr_name = 'float', default = 'right', lang = Tr8n::Config.current_language)
+    def tr8n_style_attribute_tag(attr_name = 'float', default = 'right', lang = Tr8n::RequestContext.current_language)
       "#{attr_name}:#{lang.align(default)}".html_safe
     end
 
-    def tr8n_style_directional_attribute_tag(attr_name = 'padding', default = 'right', value = '5px', lang = Tr8n::Config.current_language)
+    def tr8n_style_directional_attribute_tag(attr_name = 'padding', default = 'right', value = '5px', lang = Tr8n::RequestContext.current_language)
       "#{attr_name}-#{lang.align(default)}:#{value}".html_safe
     end
 
-    def tr8n_dir_attribute_tag(lang = Tr8n::Config.current_language)
+    def tr8n_dir_attribute_tag(lang = Tr8n::RequestContext.current_language)
       "dir='#{lang.dir}'".html_safe
     end
-
-    def tr8n_translator_mugshot_tag(translator, options = {})
-      if translator and !translator.mugshot.blank?
-        img_url = translator.mugshot
-      else
-        img_url = Tr8n::Config.silhouette_image
-      end
-      
-      img_tag = "<img src='#{img_url}' style='width:48px'>"
-      
-      if translator and options[:linked]
-        link_to(img_tag.html_safe, translator.url, :target => "_new").html_safe
-      else  
-        img_tag.html_safe
-      end
-    end 
-
-    def tr8n_language_completeness_chart_tag(language = Tr8n::Config.current_language)
-      values = [language.total_metric.not_translated_count, language.total_metric.locked_key_count, language.total_metric.translated_key_count - language.total_metric.locked_key_count]
-      names = [trl("Not Translated"), trl("Approved"), trl("Pending Approval")]
-      colors = ['FF0000', '00FF00', 'FFFF00']
-      chart_url = "https://chart.googleapis.com/chart?cht=p3&chs=350x80&chd=t:#{values.join(',')}&chl=#{names.join('|')}&chco=#{colors.join('|')}"
-      image_tag(chart_url)
-    end
-    
-    def tr8n_translator_rank_chart_tag(translator, language = nil)
-      metric = language ? translator.metric_for(language) : translator.total_metric
-      values = [metric.rejected_translations, metric.accepted_translations, metric.pending_vote_translations]
-      names = [trl("Rejected"), trl("Accepted"), trl("Pending Votes")]
-      colors = ['FF0000', '00FF00', 'FFFF00']
-      chart_url = "https://chart.googleapis.com/chart?cht=p3&chs=350x80&chd=t:#{values.join(',')}&chl=#{names.join('|')}&chco=#{colors.join('|')}"
-      image_tag(chart_url)
-    end  
-
-    def tr8n_translation_source_completeness_chart_tag(metric = nil)
-      values = [metric.not_translated_count, metric.locked_key_count, metric.translated_key_count - metric.locked_key_count]
-      names = [trl("Not Translated"), trl("Approved"), trl("Pending Approval")]
-      colors = ['FF0000', '00FF00', 'FFFF00']
-      chart_url = "https://chart.googleapis.com/chart?cht=p3&chs=350x80&chd=t:#{values.join(',')}&chl=#{names.join('|')}&chco=#{colors.join('|')}"
-      image_tag(chart_url)
-    end  
 
     def tr8n_when_string_tag(time, opts = {})
       elapsed_seconds = Time.now - time

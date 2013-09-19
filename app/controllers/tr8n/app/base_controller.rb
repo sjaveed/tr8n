@@ -45,10 +45,12 @@ private
       session[:tr8n_selected_app_id] = @selected_application.id
     elsif session[:tr8n_selected_app_id]
       @selected_application = Tr8n::Application.find_by_id(session[:tr8n_selected_app_id])
-    else
+    end
+
+    unless @selected_application
       # temp
       if tr8n_current_translator.applications.empty?
-        Tr8n::Config.default_application.add_translator(tr8n_current_translator)
+        Tr8n::RequestContext.container_application.add_translator(tr8n_current_translator)
       end
       @selected_application = tr8n_current_translator.applications.first
       session[:tr8n_selected_app_id] = @selected_application.id

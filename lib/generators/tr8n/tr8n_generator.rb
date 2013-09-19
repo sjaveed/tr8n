@@ -48,9 +48,5 @@ class Tr8nGenerator < Rails::Generators::Base
     config_source = File.expand_path("#{self.class.source_root}/config/tr8n", __FILE__)
     system "rsync -ruv #{config_source} #{Rails.root}/config"
   end
-  
-  def copy_layouts
-    layouts_source = File.expand_path("#{self.class.source_root}/layouts", __FILE__)
-    system "rsync -ruv #{layouts_source} #{Rails.root}/app/views"
-  end
+
 end

@@ -2,5 +2,7 @@
   "locale": "en-CA",
   "english_name": "English (Canadian)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "facebook_key": "en-CAN",
+  "native_name": "English (Canadian)"
 }

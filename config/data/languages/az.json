@@ -1,0 +1,169 @@
+{
+  "locale": "az",
+  "english_name": "Azerbaijani",
+  "native_name": "Азәрбајҹан дили",
+  "google_key": "az",
+  "context_rules": {
+    "date": {
+      "keys": [
+        "past",
+        "present",
+        "future"
+      ],
+      "token_expression": "/.*(date|time)(\\d)*$/",
+      "variables": [
+        "@date"
+      ],
+      "token_mapping": [
+        "unsupported",
+        "unsupported",
+        {
+          "past": "{$0}",
+          "present": "{$1}",
+          "future": "{$2}"
+        }
+      ],
+      "default_rule": "present",
+      "rules": {
+        "past": {
+          "rule": "(> @date (today))",
+          "description": "{token} is in the future"
+        },
+        "present": {
+          "rule": "(= @date (today))",
+          "description": "{token} is in the present"
+        },
+        "future": {
+          "rule": "(< @date (today))",
+          "description": "{token} is in the past"
+        }
+      }
+    },
+    "gender": {
+      "keys": [
+        "male",
+        "female",
+        "unknown"
+      ],
+      "variables": [
+        "@gender"
+      ],
+      "token_expression": "/.*(user|translator|profile|actor|target)(\\d)*$/",
+      "token_mapping": [
+        {
+          "other": "{$0}"
+        },
+        {
+          "male": "{$0}",
+          "female": "{$1}",
+          "other": "{$0}/{$1}"
+        },
+        {
+          "male": "{$0}",
+          "female": "{$1}",
+          "other": "{$2}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "male": {
+          "rule": "(= 'male' @gender)",
+          "description": "{token} is a male"
+        },
+        "female": {
+          "rule": "(= 'female' @gender)",
+          "description": "{token} is a female"
+        },
+        "other": {
+          "description": "{token}'s gender is unknown"
+        }
+      }
+    },
+    "number": {
+      "keys": [
+        "other"
+      ],
+      "rules": {
+        "other": {
+          "examples": "0-999; 1.2, 2.07..."
+        }
+      },
+      "token_expression": "/.*(count|num|minutes|seconds|hours|sum|total)(\\d)*$/",
+      "variables": [
+        "@n"
+      ],
+      "token_mapping": "unsupported",
+      "default_rule": "other"
+    },
+    "genders": {
+      "keys": [
+        "male",
+        "female",
+        "unknown",
+        "other"
+      ],
+      "token_expression": "/.*(users|profiles|actors|targets)(\\d)*$/",
+      "variables": [
+        "@genders"
+      ],
+      "token_mapping": [
+        "unsupported",
+        "unsupported",
+        "unsupported",
+        {
+          "male": "{$0}",
+          "female": "{$1}",
+          "unknown": "{$2}",
+          "other": "{$3}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "male": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'male'))",
+          "description": "{token} contains 1 male"
+        },
+        "female": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'female'))",
+          "description": "{token} contains 1 female"
+        },
+        "unknown": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'unknown'))",
+          "description": "{token} contains 1 person with unknown gender"
+        },
+        "other": {
+          "description": "{token} contains at least 2 people"
+        }
+      }
+    },
+    "list": {
+      "keys": [
+        "one",
+        "other"
+      ],
+      "token_expression": "/.*(items|list)(\\d)*$/",
+      "variables": [
+        "@count"
+      ],
+      "token_mapping": [
+        "unsupported",
+        {
+          "one": "{$0}",
+          "other": "{$1}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "one": {
+          "rule": "(= 1 @count)",
+          "description": "{token} contains 1 element"
+        },
+        "other": {
+          "description": "{token} contains at least 2 elements"
+        }
+      }
+    }
+  },
+  "language_cases": {
+  }
+}

@@ -29,7 +29,7 @@
                 <%=tra("[link: Click here] to view the terms of use.", nil, :link => lambda{|txt| link_to(txt, "/tr8n/dashboard/registration", :target => "_top")} ) %>
               </div>
             <% else %>
-              <%=tra("You must be a registered dashboard.") %>
+              <%=tra("You must be a registered translator.") %>
               <div style="font-size:12px;text-align:center;padding-top:15px;">
                 <%=tra("[link: Click here] to create a dashboard account.", nil, :link => lambda{|txt| link_to(txt, Tr8n::Config.login_url, :target => "_top")} ) %>
               </div>
@@ -46,7 +46,7 @@
     <% 
       if @generate_signed_request
     %>
-        Tr8n.Dispatcher.postMessage({'subject': 'cookie', 'action': 'set', 'name': '<%= Tr8n::Config.signed_request_name%>', 'value': '<%=Tr8n::Config.signed_request_body%>'}, '<%=params[:origin]%>');
+        Tr8n.Dispatcher.postMessage({'subject': 'cookie', 'action': 'set', 'name': '<%= Tr8n::RequestContext.signed_request_name%>', 'value': '<%=Tr8n::RequestContext.signed_request_body%>'}, '<%=params[:origin]%>');
     <%
       end 
     %>

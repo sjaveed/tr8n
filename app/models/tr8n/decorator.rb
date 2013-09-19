@@ -21,19 +21,19 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::ApplicationLanguage Schema Information
+#-- Tr8n::Decorator Schema Information
 #
-# Table name: tr8n_application_languages
+# Table name: tr8n_decorators
 #
 #  id                INTEGER     not null, primary key
-#  application_id    integer     not null
-#  feature_id        integer     not null
+#  application_id    integer     
+#  css               text        
 #  created_at        datetime    not null
 #  updated_at        datetime    not null
 #
 # Indexes
 #
-#  tr8n_app_lang_app_id    (application_id)
+#  tr8n_decors_app    (application_id) 
 #
 #++
 
@@ -55,7 +55,7 @@ class Tr8n::Decorator < ActiveRecord::Base
   end
 
   def self.keys
-    ["tr8n_not_translated", "tr8n_translated", "tr8n_fallback", "tr8n_locked", "tr8n_language_case"]
+    ["tr8n_not_translated", "tr8n_pending", "tr8n_translated", "tr8n_locked",  "tr8n_fallback", "tr8n_language_case"]
   end
 
   def self.css_options
@@ -65,44 +65,55 @@ class Tr8n::Decorator < ActiveRecord::Base
           "tr8n_translated"     => "border-bottom: 2px dotted green;",
           "tr8n_fallback"       => "border-bottom: 2px dotted #e90;",
           "tr8n_locked"         => "border-bottom: 2px dotted blue;",
+          "tr8n_pending"        => "border-bottom: 2px dotted #e90;",
           "tr8n_language_case"  => "padding:3px; border: 1px dotted blue;",
       },
       {
           "tr8n_not_translated" => "border-bottom: 2px solid red;",
           "tr8n_translated"     => "border-bottom: 2px solid green;",
           "tr8n_fallback"       => "border-bottom: 2px solid #e90;",
+          "tr8n_pending"        => "border-bottom: 2px solid #e90;",
           "tr8n_locked"         => "border-bottom: 2px solid blue;",
           "tr8n_language_case"  => "padding:3px; border: 1px dotted blue;",
       },
       {
-          "tr8n_not_translated" => "padding-bottom:3px; background: url(/assets/tr8n/lines/red1.png) repeat-x bottom;",
-          "tr8n_translated"     => "padding-bottom:3px; background: url(/assets/tr8n/lines/green1.png) repeat-x bottom;",
-          "tr8n_fallback"       => "padding-bottom:3px; background: url(/assets/tr8n/lines/yellow1.png) repeat-x bottom;",
-          "tr8n_locked"         => "padding-bottom:3px; background: url(/assets/tr8n/lines/blue1.png) repeat-x bottom;",
+          "tr8n_not_translated" => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/red1.png) repeat-x bottom;",
+          "tr8n_translated"     => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/green1.png) repeat-x bottom;",
+          "tr8n_fallback"       => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow1.png) repeat-x bottom;",
+          "tr8n_pending"        => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow1.png) repeat-x bottom;",
+          "tr8n_locked"         => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/blue1.png) repeat-x bottom;",
           "tr8n_language_case"  => "padding:3px; border: 1px dotted blue;",
       },
       {
-          "tr8n_not_translated" => "padding-bottom:3px; background: url(/assets/tr8n/lines/red3.png) repeat-x bottom;",
-          "tr8n_translated"     => "padding-bottom:3px; background: url(/assets/tr8n/lines/green3.png) repeat-x bottom;",
-          "tr8n_fallback"       => "padding-bottom:3px; background: url(/assets/tr8n/lines/yellow3.png) repeat-x bottom;",
-          "tr8n_locked"         => "padding-bottom:3px; background: url(/assets/tr8n/lines/blue3.png) repeat-x bottom;",
+          "tr8n_not_translated" => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/red3.png) repeat-x bottom;",
+          "tr8n_translated"     => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/green3.png) repeat-x bottom;",
+          "tr8n_fallback"       => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow3.png) repeat-x bottom;",
+          "tr8n_pending"        => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow3.png) repeat-x bottom;",
+          "tr8n_locked"         => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/blue3.png) repeat-x bottom;",
           "tr8n_language_case"  => "padding:3px; border: 1px dotted blue;",
       },
       {
-          "tr8n_not_translated" => "padding-bottom:3px; background: url(/assets/tr8n/lines/red2.png) repeat-x bottom;",
-          "tr8n_translated"     => "padding-bottom:3px; background: url(/assets/tr8n/lines/green2.png) repeat-x bottom;",
-          "tr8n_fallback"       => "padding-bottom:3px; background: url(/assets/tr8n/lines/yellow2.png) repeat-x bottom;",
-          "tr8n_locked"         => "padding-bottom:3px; background: url(/assets/tr8n/lines/blue2.png) repeat-x bottom;",
+          "tr8n_not_translated" => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/red2.png) repeat-x bottom;",
+          "tr8n_translated"     => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/green2.png) repeat-x bottom;",
+          "tr8n_fallback"       => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow2.png) repeat-x bottom;",
+          "tr8n_pending"        => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow2.png) repeat-x bottom;",
+          "tr8n_locked"         => "padding-bottom:3px; background: url(#{Tr8n::Config.base_url}/assets/tr8n/lines/blue2.png) repeat-x bottom;",
           "tr8n_language_case"  => "padding:3px; border: 1px dotted blue;",
       },
       {
-          "tr8n_not_translated" => "padding:3px; background: #FFD9E6 url(/assets/tr8n/lines/red3.png) repeat-x bottom;",
-          "tr8n_translated"     => "padding:3px; background: #E0FFD9 url(/assets/tr8n/lines/green3.png) repeat-x bottom;",
-          "tr8n_fallback"       => "padding:3px; background: #FFFCD9 url(/assets/tr8n/lines/yellow3.png) repeat-x bottom;",
-          "tr8n_locked"         => "padding:3px; background: #D9EEFF url(/assets/tr8n/lines/blue3.png) repeat-x bottom;",
+          "tr8n_not_translated" => "padding:3px; background: #FFD9E6 url(#{Tr8n::Config.base_url}/assets/tr8n/lines/red3.png) repeat-x bottom;",
+          "tr8n_translated"     => "padding:3px; background: #E0FFD9 url(#{Tr8n::Config.base_url}/assets/tr8n/lines/green3.png) repeat-x bottom;",
+          "tr8n_fallback"       => "padding:3px; background: #FFFCD9 url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow3.png) repeat-x bottom;",
+          "tr8n_pending"        => "padding:3px; background: #FFFCD9 url(#{Tr8n::Config.base_url}/assets/tr8n/lines/yellow3.png) repeat-x bottom;",
+          "tr8n_locked"         => "padding:3px; background: #D9EEFF url(#{Tr8n::Config.base_url}/assets/tr8n/lines/blue3.png) repeat-x bottom;",
           "tr8n_language_case"  => "padding:3px; background: #D9EEFF; border: 1px dotted blue;",
       },
     ]
+  end
+
+  def classes
+    cls = application.feature_enabled?(:decorations) ? css : self.class.default_css
+    cls.collect{|name, value| ".#{name} { #{value} }"}.join('; ').html_safe
   end
 
   def css_tag
@@ -118,4 +129,44 @@ class Tr8n::Decorator < ActiveRecord::Base
   def select(index)
     update_attributes(:css => self.class.css_options[index.to_i])
   end
+
+  def decorate_translation(language, translation_key, translated_label, options = {})
+    return translated_label if options[:skip_decorations]
+    return translated_label if translation_key.language == Tr8n::RequestContext.current_language
+    return translated_label if Tr8n::RequestContext.current_user_is_guest?
+
+    return translated_label unless Tr8n::RequestContext.current_user_is_translator?
+    return translated_label if Tr8n::RequestContext.current_translator.blocked?
+    return translated_label unless Tr8n::RequestContext.current_translator.enable_inline_translations?
+    return translated_label unless Tr8n::RequestContext.current_translator.level >= Tr8n::RequestContext.current_application.translator_level
+    return translated_label unless Tr8n::RequestContext.current_translator.level >= translation_key.level
+
+    locked = translation_key.locked?(language)
+    return translated_label if locked and not Tr8n::RequestContext.current_translator.manager?
+
+    classes = ['tr8n_translatable']
+
+    if locked
+      classes << 'tr8n_locked'
+    elsif language.default?
+      classes << 'tr8n_not_translated'
+    elsif options[:fallback]
+      classes << 'tr8n_fallback'
+    elsif options[:translated]
+      if translation_key.label == translated_label
+        classes << 'tr8n_pending'
+      else
+        classes << 'tr8n_translated'
+      end
+    else
+      classes << 'tr8n_not_translated'
+    end
+
+    html = ["<span class='#{classes.join(' ')}' data-translation_key_id='#{translation_key.id}'>"]
+    html << translated_label
+    html << "</span>"
+    html.join('')
+  end
+
+
 end

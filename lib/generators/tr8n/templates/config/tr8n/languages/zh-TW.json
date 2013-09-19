@@ -1,8 +1,0 @@
-{
-  "locale": "zh-TW",
-  "name": "Chinese (Traditional) - 中文(台灣)",
-  "english_name": "Chinese (Traditional)",
-  "native_name": "中文(台灣)",
-  "enabled": true,
-  "fallback": "zh"
-}

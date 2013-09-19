@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Tr8n::Api::BaseController < ApplicationController
+class Tr8n::Api::BaseController < ::ApplicationController
   
   before_filter :check_api_enabled
   before_filter :cors_preflight_check
@@ -45,6 +45,11 @@ class Tr8n::Api::BaseController < ApplicationController
   end
 
 private
+
+  def validate_remote_application
+    domain = Tr8n::TranslationDomain.find_or_create(params[:origin])
+    Tr8n::RequestContext.set_remote_application(domain.application)
+  end
 
   def check_api_enabled
     sanitize_api_response({"error" => "Api is disabled"}) unless Tr8n::Config.enable_api?
@@ -101,7 +106,7 @@ private
 
   def language
     return nil if params[:locale].blank?
-    @language ||= Tr8n::Language.for(params[:locale])
+    @language ||= Tr8n::Language.by_locale(params[:locale])
   end
 
   def ensure_get
@@ -124,7 +129,7 @@ private
 
   def ensure_application
     unless application
-      raise Tr8n::Exception.new("Valid aplication key must be provided.")
+      raise Tr8n::Exception.new("Valid application key must be provided.")
     end
   end
 

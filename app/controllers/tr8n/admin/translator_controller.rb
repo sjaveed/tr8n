@@ -24,7 +24,7 @@
 class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
 
   def index
-    @translators = Tr8n::Translator.filter(:params => params, :filter => Tr8n::TranslatorFilter)
+    @translators = Tr8n::Translator.filter(:params => params, :filter => Tr8n::Filters::Translator)
   end
 
   def view
@@ -34,7 +34,7 @@ class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
     klass = {
       :applications => Tr8n::ApplicationTranslator,
       :assignments => Tr8n::ComponentTranslator,
-      :metrics => Tr8n::TranslatorMetric,
+      :metrics => Tr8n::Metrics::Translator,
       :languages => Tr8n::LanguageUser,
       :translations => Tr8n::Translation,
       :votes => Tr8n::TranslationVote,
@@ -123,23 +123,23 @@ class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
   end
 
   def following
-    @following = Tr8n::TranslatorFollowing.filter(:params => params, :filter => Tr8n::TranslatorFollowingFilter)
+    @following = Tr8n::TranslatorFollowing.filter(:params => params, :filter => Tr8n::Filters::TranslatorFollowing)
   end
 
   def reports
-    @reports = Tr8n::TranslatorReport.filter(:params => params, :filter => Tr8n::TranslatorReportFilter)
+    @reports = Tr8n::TranslatorReport.filter(:params => params, :filter => Tr8n::Filters::TranslatorReport)
   end
    
   def log
-    @logs = Tr8n::TranslatorLog.filter(:params => params, :filter => Tr8n::TranslatorLogFilter)
+    @logs = Tr8n::TranslatorLog.filter(:params => params, :filter => Tr8n::Filters::TranslatorLog)
   end
 
   def metrics
-    @metrics = Tr8n::TranslatorMetric.filter(:params => params, :filter => Tr8n::TranslatorMetricFilter)
+    @metrics = Tr8n::Metrics::Translator.filter(:params => params, :filter => Tr8n::Filters::TranslatorMetric)
   end
 
   def ip_locations
-    @ip_locations = Tr8n::IpLocation.filter(:params => params, :filter => Tr8n::IpLocationFilter)
+    @ip_locations = Tr8n::IpLocation.filter(:params => params, :filter => Tr8n::Filters::IpLocation)
   end
      
   def generate_access_key

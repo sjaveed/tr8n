@@ -2,5 +2,6 @@
   "locale": "en-JM",
   "english_name": "English (Jamaica)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "native_name": "English (Jamaica)"
 }

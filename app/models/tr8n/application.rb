@@ -25,13 +25,16 @@
 #
 # Table name: tr8n_applications
 #
-#  id             INTEGER         not null, primary key
-#  key            varchar(255)    
-#  secret         varchar(255)    
-#  name           varchar(255)    
-#  description    varchar(255)    
-#  created_at     datetime        not null
-#  updated_at     datetime        not null
+#  id                     INTEGER         not null, primary key
+#  key                    varchar(255)    
+#  secret                 varchar(255)    
+#  name                   varchar(255)    
+#  description            varchar(255)    
+#  created_at             datetime        not null
+#  updated_at             datetime        not null
+#  version                varchar(255)    
+#  definition             text            
+#  default_language_id    integer         
 #
 # Indexes
 #
@@ -77,7 +80,7 @@ class Tr8n::Application < ActiveRecord::Base
     self.class.cache_key(key)
   end
 
-  def self.for(key)
+  def self.by_key(key)
     Tr8n::Cache.fetch(cache_key(key)) do 
       where("key = ?", key.to_s).first
     end  
@@ -166,7 +169,7 @@ class Tr8n::Application < ActiveRecord::Base
   end  
 
   def reset_secret!
-    self.secret = Tr8n::Config.guid
+    self.secret = Tr8n::Utils.guid
     save
   end
 
@@ -174,6 +177,7 @@ class Tr8n::Application < ActiveRecord::Base
     @decorator ||= Tr8n::Decorator.find_or_create(self)
   end
 
+  # TODO: move to default yml file
   def default_shortcuts
     {
         "Ctrl+Shift+S"  =>  {"description"=>"Displays Tr8n shortcuts", "script"=>"Tr8n.UI.Lightbox.show('/tr8n/help/lb_shortcuts', {width:400});"},
@@ -218,6 +222,26 @@ class Tr8n::Application < ActiveRecord::Base
     features[keyword.to_s]["enabled"]
   end
 
+  def threshold
+    definition["threshold"] || Tr8n::Config.translation_threshold
+  end
+
+  def threshold=(value)
+    definition["threshold"] = value
+  end
+
+  def translator_level
+    (definition["translator_level"] || Tr8n::Config.translator_level).to_i
+  end
+
+  def translator_level=(value)
+    definition["translator_level"] = value
+  end
+
+  def default?
+    key == "default"
+  end
+
   def to_api_hash(opts = {})
     hash = {
         :key => self.key,
@@ -229,10 +253,12 @@ class Tr8n::Application < ActiveRecord::Base
       hash[:definition] = {
           :styles  => decorator.css,
           :features => Tr8n::Feature.by_object(self),
+          :threshold => threshold,
+          :translator_level => translator_level,
       }
-      hash[:languages] = languages.collect{|l| l.to_api_hash(opts)}
-      hash[:sources] = sources.collect{|s| s.to_api_hash(opts)}
-      hash[:components] = components.collect{|c| c.to_api_hash(opts)}
+      hash[:languages] = languages.collect{|l| l.to_api_hash}
+      hash[:sources] = sources.collect{|s| s.to_api_hash}
+      hash[:components] = components.collect{|c| c.to_api_hash}
     end
 
     hash
@@ -241,8 +267,8 @@ class Tr8n::Application < ActiveRecord::Base
 protected
 
   def generate_keys
-    self.key = Tr8n::Config.guid if key.nil?
-    self.secret = Tr8n::Config.guid if secret.nil?
+    self.key = Tr8n::Utils.guid if key.nil?
+    self.secret = Tr8n::Utils.guid if secret.nil?
   end
 
 end

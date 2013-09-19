@@ -28,7 +28,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
 
   def index
     @translator = Tr8n::Translator.find_by_id(params[:id]) if params[:id]
-    @translator ||= Tr8n::Config.current_translator
+    @translator ||= Tr8n::RequestContext.current_translator
     @languages = tr8n_page_translator.translator_languages
   end
 
@@ -41,7 +41,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   end
 
   def settings
-    @translator = Tr8n::Config.current_translator
+    @translator = Tr8n::RequestContext.current_translator
     @fallback_language = (tr8n_current_translator.fallback_language || tr8n_default_language)
 
     if request.post?
@@ -54,7 +54,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   end
 
   def generate_access_key
-    Tr8n::Config.current_translator.generate_access_key!
+    Tr8n::RequestContext.current_translator.generate_access_key!
     trfn("New access key has be generated")
     redirect_to_source
   end
@@ -89,7 +89,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   def lb_report
     if request.post?
       @reported_object = params[:object_type].constantize.find(params[:object_id])
-      Tr8n::TranslatorReport.submit(Tr8n::Config.current_translator, @reported_object, params[:reason], params[:comment])
+      Tr8n::TranslatorReport.submit(Tr8n::RequestContext.current_translator, @reported_object, params[:reason], params[:comment])
       trfn("Thank you for submitting your report.")
       return dismiss_lightbox
     end
@@ -107,9 +107,9 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   end
 
   def assignments
-    @translator = Tr8n::Config.current_translator
+    @translator = Tr8n::RequestContext.current_translator
     @components = Tr8n::Component.find(:all,
-                                       :conditions => ["ct.translator_id = ?", Tr8n::Config.current_translator.id],
+                                       :conditions => ["ct.translator_id = ?", Tr8n::RequestContext.current_translator.id],
                                        :joins => [
                                            "join tr8n_component_translators as ct on tr8n_components.id = ct.component_id",
                                        ]
@@ -117,13 +117,13 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   end
 
   def notifications
-    @translator = Tr8n::Config.current_translator
-    @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::Config.current_translator.id).order("created_at desc").page(page).per(per_page)
+    @translator = Tr8n::RequestContext.current_translator
+    @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::RequestContext.current_translator.id).order("created_at desc").page(page).per(per_page)
   end
 
   def lb_notifications
     if tr8n_current_translator
-      @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::Config.current_translator.id).order("created_at desc").limit(10).page(page).per(per_page)
+      @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::RequestContext.current_translator.id).order("created_at desc").limit(10).page(page).per(per_page)
     end
     render_lightbox
   end
@@ -138,7 +138,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   end
 
   def following
-    @translator = Tr8n::Config.current_translator
+    @translator = Tr8n::RequestContext.current_translator
     @translators = Tr8n::TranslatorFollowing.where("translator_id = ? and object_type = ?", tr8n_current_translator.id, "Tr8n::Translator").collect{|f| f.object}
     @translation_keys = Tr8n::TranslatorFollowing.where("translator_id = ? and object_type = ?", tr8n_current_translator.id, "Tr8n::TranslationKey").collect{|f| f.object}
   end

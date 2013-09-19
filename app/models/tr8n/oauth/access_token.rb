@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -19,6 +19,27 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+#
+#-- Tr8n::Oauth::AccessToken Schema Information
+#
+# Table name: tr8n_oauth_tokens
+#
+#  id                INTEGER         not null, primary key
+#  type              varchar(255)    
+#  token             varchar(255)    not null
+#  application_id    integer         
+#  translator_id     integer         
+#  scope             varchar(255)    
+#  expires_at        datetime        
+#  created_at        datetime        not null
+#  updated_at        datetime        not null
+#
+# Indexes
+#
+#  tr8n_oauth_tokens_trn_id    (translator_id) 
+#  tr8n_oauth_tokens_app_id    (application_id) 
+#
 #++
 
 class Tr8n::Oauth::AccessToken < Tr8n::Oauth::OauthToken

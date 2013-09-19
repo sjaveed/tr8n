@@ -1,0 +1,9 @@
+{
+  "locale": "zh-CN",
+  "english_name": "Chinese (Simplified)",
+  "native_name": "中文(简体)",
+  "enabled": true,
+  "fallback": "zh",
+  "myheritage_key": "ZH",
+  "google_key": "zh-CN"
+}

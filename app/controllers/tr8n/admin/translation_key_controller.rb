@@ -24,7 +24,7 @@
 class Tr8n::Admin::TranslationKeyController < Tr8n::Admin::BaseController
 
   def index
-    @keys = Tr8n::TranslationKey.filter(:params => params, :filter => Tr8n::TranslationKeyFilter)
+    @keys = Tr8n::TranslationKey.filter(:params => params, :filter => Tr8n::Filters::TranslationKey)
   end
   
   def view
@@ -159,11 +159,11 @@ class Tr8n::Admin::TranslationKeyController < Tr8n::Admin::BaseController
   end
   
   def comments
-    @results = Tr8n::TranslationKeyComment.filter(:params => params, :filter => Tr8n::TranslationKeyCommentFilter)
+    @results = Tr8n::TranslationKeyComment.filter(:params => params, :filter => Tr8n::Filters::TranslationKeyComment)
   end
   
   def locks
-    @results = Tr8n::TranslationKeyLock.filter(:params => params, :filter => Tr8n::TranslationKeyLockFilter)
+    @results = Tr8n::TranslationKeyLock.filter(:params => params, :filter => Tr8n::Filters::TranslationKeyLock)
   end
   
   def update_translation_counts

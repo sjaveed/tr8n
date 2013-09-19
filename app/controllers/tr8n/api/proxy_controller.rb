@@ -23,6 +23,8 @@
 
 class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
 
+  before_filter :validate_remote_application, :only => [:init, :translate]
+
   def ping
     render_response(:status => "Ready for business")
   end
@@ -37,10 +39,10 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
     opts = {}
 
     opts[:scheduler_interval]         = Tr8n::Config.default_client_interval
-    opts[:enable_inline_translations] = (Tr8n::Config.current_user_is_translator? and Tr8n::Config.current_translator.enable_inline_translations? and (not Tr8n::Config.current_language.default?))
+    opts[:enable_inline_translations] = (Tr8n::RequestContext.current_user_is_translator? and Tr8n::RequestContext.current_translator.enable_inline_translations? and (not Tr8n::RequestContext.current_language.default?))
     opts[:default_decorations]        = Tr8n::Config.default_decoration_tokens
     opts[:default_tokens]             = Tr8n::Config.default_data_tokens
-    opts[:locale]                     = Tr8n::Config.current_language.locale
+    opts[:locale]                     = Tr8n::RequestContext.current_language.locale
 
     if params[:text]
       opts[:enable_text]              = (not params[:text].blank?)
@@ -53,26 +55,25 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
       :list   => Tr8n::Config.rules_engine[:gender_list_rule],  :date   => Tr8n::Config.rules_engine[:date_rule]
     }
 
-    domain = Tr8n::TranslationDomain.find_or_create(request.env['HTTP_REFERER'])
-    Tr8n::Config.set_application(domain.application)
-
     source = params[:source] || Tr8n::TranslationSource.normalize_source(request.env['HTTP_REFERER']) || 'undefined'
-    Tr8n::Config.set_source(Tr8n::TranslationSource.find_or_create(source, domain.application))
+    Tr8n::RequestContext.set_current_source(Tr8n::TranslationSource.find_or_create(source, tr8n_current_application))
 
-    language = Tr8n::Language.for(params[:language] || params[:locale]) || Tr8n::Config.current_language
-    Tr8n::Config.set_language(language)
+    language = Tr8n::Language.by_locale(params[:language] || params[:locale]) || Tr8n::RequestContext.current_language
+    Tr8n::RequestContext.set_current_language(language)
 
-    source_ids = Tr8n::TranslationSource.where(:source => source).all.collect{|src| src.id}
-    if source_ids.empty?
-      conditions = ["1=2"]
-    else
-      conditions = ["(id in (select distinct(translation_key_id) from tr8n_translation_key_sources where translation_source_id in (?)))"]
-      conditions << source_ids.uniq
-    end
+    if tr8n_current_application.feature_enabled?(:javascript_sdk)
+      #source_ids = Tr8n::TranslationSource.where(:source => source).all.collect{|src| src.id}
+      #if source_ids.empty?
+      #  conditions = ["1=2"]
+      #else
+      #  conditions = ["(id in (select distinct(translation_key_id) from tr8n_translation_key_sources where translation_source_id in (?)))"]
+      #  conditions << source_ids.uniq
+      #end
 
-    translations = []
-    Tr8n::TranslationKey.where(conditions).all.each do |tkey|
-      translations << tkey.translate(Tr8n::Config.current_language, {}, {:api => true})
+      translations = []
+      Tr8n::TranslationKey.where(conditions).all.each do |tkey|
+        translations << tkey.translate(Tr8n::RequestContext.current_language, {}, {:api => true})
+      end
     end
 
     render(:partial => "/tr8n/common/js/init", :formats => [:js], :locals => {:uri => URI.parse(request.url), :opts => opts, :translations => translations, :source => source.to_s}, :content_type => "text/javascript")
@@ -81,12 +82,10 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
   # Used primarely by JavaScript. 
   # Unlike server-side, Javascript needs to get transaltions back even after registration
   def translate
-    domain = Tr8n::TranslationDomain.find_or_create(request.env['HTTP_REFERER'])
-    language = Tr8n::Language.for(params[:language] || params[:locale]) || tr8n_current_language
-    Tr8n::Config.set_application(domain.application)
-    Tr8n::Config.set_language(language)
+    language = Tr8n::Language.by_locale(params[:language] || params[:locale]) || tr8n_current_language
+    Tr8n::RequestContext.set_current_language(language)
 
-    return render_response(translate_phrase(language, params, {:source => source, :api => :translate, :application => domain.application})) if params[:label]
+    return render_response(translate_phrase(language, params, {:source => source, :api => :translate, :application => tr8n_current_application.application})) if params[:label]
     
     # API signature
     # {:source => "", :language => "", :phrases => [{:label => ""}]}
@@ -128,7 +127,7 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
       translations = []
       phrases.each do |phrase|
         phrase = {:label => phrase} if phrase.is_a?(String)
-        language = phrase[:locale].blank? ? Tr8n::Config.default_language.locale : (Tr8n::Language.for(phrase[:locale]) || Tr8n::Language.find_by_google_key(phrase[:locale]))
+        language = phrase[:locale].blank? ? Tr8n::Config.default_language.locale : (Tr8n::Language.by_locale(phrase[:locale]) || Tr8n::Language.find_by_google_key(phrase[:locale]))
 
         translations << translate_phrase(language, phrase, {:source => source, :url => request.env['HTTP_REFERER'], :api => :translate, :locale => language.locale, :application => domain.application})
       end
@@ -137,7 +136,7 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
     end
     
     render_response(:phrases => [])
-  rescue Tr8n::KeyRegistrationException => ex
+  rescue Tr8n::Exception => ex
     render_response({"error" => ex.message})
   end
 

@@ -279,7 +279,7 @@ class Tr8n::Translation < ActiveRecord::Base
   #def self.create_from_sync_hash(tkey, dashboard, thash, opts = {})
   #  return if thash["label"].blank?  # don't add empty translations
   #
-  #  lang = Tr8n::Language.for(thash["locale"])
+  #  lang = Tr8n::Language.by_locale(thash["locale"])
   #  return unless lang  # don't add translations for an unsupported settings
   #
   #  # generate rules for the translation
@@ -332,7 +332,7 @@ class Tr8n::Translation < ActiveRecord::Base
      ["grouped by date", "date"]].collect{|option| [option.first.trl("Translation filter group by option"), option.last]}
   end
   
-  def self.for_params(params, language = Tr8n::Config.current_language)
+  def self.for_params(params, language = Tr8n::RequestContext.current_language)
     if language.nil?
       results = self.where("language_id is not null")
     else
@@ -345,7 +345,7 @@ class Tr8n::Translation < ActiveRecord::Base
     end
     
     # ensure that only allowed translations are visible
-    allowed_level = Tr8n::Config.current_user_is_translator? ? Tr8n::Config.current_translator.level : 0
+    allowed_level = Tr8n::RequestContext.current_user_is_translator? ? Tr8n::RequestContext.current_translator.level : 0
     results = results.joins(:translation_key).where("tr8n_translation_keys.level <= ?", allowed_level) 
     
     if params[:only_phrases]  
@@ -357,16 +357,16 @@ class Tr8n::Translation < ActiveRecord::Base
     end
 
     if params[:with_status] == "accepted"
-      results = results.where("tr8n_translations.rank >= ?", Tr8n::Config.translation_threshold)
+      results = results.where("tr8n_translations.rank >= ?", params[:application].threshold)
     elsif params[:with_status] == "pending"
-      results = results.where("tr8n_translations.rank >= 0 and tr8n_translations.rank < ?", Tr8n::Config.translation_threshold)
+      results = results.where("tr8n_translations.rank >= 0 and tr8n_translations.rank < ?", params[:application].threshold)
     elsif params[:with_status] == "rejected"
       results = results.where("tr8n_translations.rank < 0")
     end
 
     unless params[:submitted_by].blank?
       if params[:submitted_by] == "me"
-        results = results.where("tr8n_translations.translator_id = ?", Tr8n::Config.current_user_is_translator? ? Tr8n::Config.current_translator.id : 0)
+        results = results.where("tr8n_translations.translator_id = ?", Tr8n::RequestContext.current_user_is_translator? ? Tr8n::RequestContext.current_translator.id : 0)
       else
         results = results.where("tr8n_translations.translator_id = ?", params[:submitted_by].id)
       end

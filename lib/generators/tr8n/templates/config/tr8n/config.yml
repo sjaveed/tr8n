@@ -133,9 +133,9 @@ defaults:
     default_locale:           "en-US"                           # locale of the site default settings
     sitemap_path:             "/config/tr8n/site/sitemap.json"  # location of the sitemap definition file
     splash_screen:            "/tr8n/common/splash_screen"      # location of the Tr8n splash screen  
-    tr8n_layout:              "tr8n"                            # layout for the tr8n pages - change it to your layout
+    tr8n_layout:              "application"                     # layout for the tr8n pages - change it to your layout
     tr8n_helpers:             []                                # if you need to add extra helpers
-    admin_layout:             "tr8n_admin"                      # layout to be used for the admin user interface - change it to your layout
+    admin_layout:             "application"                     # layout to be used for the admin user interface - change it to your layout
     admin_helpers:            []                                # if you need to add extra helpers
     before_filters:           []                                # filters from application controller
     skip_before_filters:      []                                # filters from application controller
@@ -157,40 +157,16 @@ defaults:
   #############################################################################
   # Rules Engine Settings
   #############################################################################
-  rules_engine:  
-    language_rule_classes:    ["Tr8n::NumericRule", "Tr8n::GenderRule", "Tr8n::GenderListRule", "Tr8n::DateRule", "Tr8n::ValueRule"]
-    data_token_classes:       ["Tr8n::Tokens::DataToken", "Tr8n::Tokens::HiddenToken", "Tr8n::Tokens::MethodToken", "Tr8n::Tokens::TransformToken"]
-    decoration_token_classes: ["Tr8n::Tokens::DecorationToken"]
+  rules_engine:
+    data_token_classes:       ["Tr8n::Tokens::Data", "Tr8n::Tokens::Hidden", "Tr8n::Tokens::Method", "Tr8n::Tokens::Transform"]
+    decoration_token_classes: ["Tr8n::Tokens::Decoration"]
     allow_nil_token_values:   true
-    numeric_rule:             
-      token_suffixes:         ["count", "num", "age", "hours", "minutes", "years", "seconds"]
-      object_method:          "to_i"
-    gender_rule:  
-      token_suffixes:         ["user", "profile", "actor", "target", "partner"]
-      object_method:          "gender"
-      method_values:  
-        female:               "female"
-        male:                 "male"
-        neutral:              "neutral"
-        unknown:              "unknown"
-    list_rule:                # use list_rule if your site does not support user genders 
-      object_method:          "size"
-      token_suffixes:         ["list"]
-    gender_list_rule:         # similiar to list rule, but works together with gender rule 
-      object_method:          "size"
-      token_suffixes:         ["list"]
-    date_rule:                
-      token_suffixes:         ["date"]
-      object_method:          "to_date"
-    value_rule:               
-      token_suffixes:         "*"
-      object_method:          "to_s"
 
-    # minimal rank makes the translation acceptable for subsitution and counts towards the dashboard rank
+    # minimal rank makes the translation acceptable for substitution and counts towards the dashboard rank
     translation_threshold:    1
 
     viewing_user_token:       "viewing_user"
-    translation_rank_styles:  
+    translation_rank_styles:
       -1000..-5:              "color:red;font-weight:bold;"
       -4..-1:                 "color:red;"
       1..10:                  "color:green;"

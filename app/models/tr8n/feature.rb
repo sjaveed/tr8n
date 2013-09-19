@@ -21,19 +21,21 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::ApplicationLanguage Schema Information
+#-- Tr8n::Feature Schema Information
 #
-# Table name: tr8n_application_languages
+# Table name: tr8n_features
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     not null
-#  feature_id        integer     not null
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
+#  id             INTEGER         not null, primary key
+#  object_type    varchar(255)    
+#  object_id      integer         
+#  keyword        varchar(255)    
+#  enabled        boolean         
+#  created_at     datetime        not null
+#  updated_at     datetime        not null
 #
 # Indexes
 #
-#  tr8n_app_lang_app_id    (application_id)
+#  tr8n_feats    (object_type, object_id) 
 #
 #++
 
@@ -46,15 +48,17 @@ class Tr8n::Feature < ActiveRecord::Base
 
   def self.application_defaults
     {
-        "javascript_sdk"      => {"enabled" => false, "description" => "JavaScript SDK",                  },
-        "google_suggestions"  => {"enabled" => false, "description" => "Google Translation Suggestions",  },
-        "shortcuts"           => {"enabled" => true,  "description" => "Keyboard Shortcuts",              },
-        "decorations"         => {"enabled" => true,  "description" => "Custom Decorations",              },
-        "glossary"            => {"enabled" => true,  "description" => "Application Glossary",            },
-        "forum"               => {"enabled" => true,  "description" => "Translator Forum",                },
-        "awards"              => {"enabled" => true,  "description" => "Awards",                          },
-        "language_cases"      => {"enabled" => true,  "description" => "Language Cases",                  },
-        "context_rules"       => {"enabled" => true,  "description" => "Context Rules",                   },
+        "inline_translations" => {"enabled" => true,  "description" => "Inline translations",                        },
+        "google_suggestions"  => {"enabled" => false, "description" => "Google translation suggestions",             },
+        "decorations"         => {"enabled" => true,  "description" => "Custom inline decorations",                  },
+        "shortcuts"           => {"enabled" => true,  "description" => "Keyboard shortcuts",                         },
+        "context_rules"       => {"enabled" => true,  "description" => "Language context rules",                     },
+        "language_cases"      => {"enabled" => true,  "description" => "Language cases",                             },
+        "javascript_sdk"      => {"enabled" => false, "description" => "JavaScript SDK",                             },
+        "glossary"            => {"enabled" => true,  "description" => "Application glossary",                       },
+        "forum"               => {"enabled" => true,  "description" => "Translator forums",                          },
+        "awards"              => {"enabled" => true,  "description" => "Translator awards",                          },
+        "admin_translations"  => {"enabled" => true,  "description" => "Translation of administration tools",        },
     }
   end
 

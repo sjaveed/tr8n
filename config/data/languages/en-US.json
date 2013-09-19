@@ -2,5 +2,8 @@
   "locale": "en-US",
   "english_name": "English (US)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "myheritage_key": "EN",
+  "facebook_key": "en-US",
+  "native_name": "English (US)"
 }

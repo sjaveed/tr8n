@@ -11,6 +11,7 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require ./vendor/shortcut.js
+//= require ./vendor/keyboard_1_49.js
 //= require ./base.js
 //= require ./dispatcher.js
 //= require ./utils/base.js

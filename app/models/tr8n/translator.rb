@@ -70,7 +70,7 @@ class Tr8n::Translator < ActiveRecord::Base
   
   has_many  :translator_logs,               :class_name => "Tr8n::TranslatorLog",             :dependent => :destroy, :order => "created_at desc"
   has_many  :translator_following,          :class_name => "Tr8n::TranslatorFollowing",       :dependent => :destroy, :order => "created_at desc"
-  has_many  :translator_metrics,            :class_name => "Tr8n::TranslatorMetric",          :dependent => :destroy
+  has_many  :translator_metrics,            :class_name => "Tr8n::Metrics::Translator",          :dependent => :destroy
   has_many  :translations,                  :class_name => "Tr8n::Translation",               :dependent => :destroy
   has_many  :translation_votes,             :class_name => "Tr8n::TranslationVote",           :dependent => :destroy
   has_many  :translation_key_locks,         :class_name => "Tr8n::TranslationKeyLock",        :dependent => :destroy
@@ -96,7 +96,7 @@ class Tr8n::Translator < ActiveRecord::Base
     self.class.cache_key(user_id)
   end
 
-  def self.for(user)
+  def self.by_user(user)
     return nil unless user and user.id 
     return nil if Tr8n::Config.guest_user?(user)
     translator = Tr8n::Cache.fetch(cache_key(user.id)) do 
@@ -112,36 +112,36 @@ class Tr8n::Translator < ActiveRecord::Base
     trn
   end
 
-  def self.register(user = Tr8n::Config.current_user)
+  def self.register(user = Tr8n::RequestContext.current_user)
     return nil unless user and user.id 
     return nil if Tr8n::Config.guest_user?(user)
 
     translator = Tr8n::Translator.find_or_create(user)
     return nil unless translator
 
-    Tr8n::Config.default_application.add_translator(translator)
+    Tr8n::RequestContext.container_application.add_translator(translator)
 
     translator
   end
   
-  def self.top_translators_for_language(lang = Tr8n::Config.current_language, limit = 5)
-    Tr8n::TranslatorMetric.where(:language_id => lang.id).order("total_translations desc, total_votes desc").limit(limit)
+  def self.top_translators_for_language(lang = Tr8n::RequestContext.current_language, limit = 5)
+    Tr8n::Metrics::Translator.where(:language_id => lang.id).order("total_translations desc, total_votes desc").limit(limit)
   end  
 
   def total_metric
-    @total_metric ||= Tr8n::TranslatorMetric.find_or_create(self, nil)
+    @total_metric ||= Tr8n::Metrics::Translator.find_or_create(self, nil)
   end
 
   def metric_for(language)
-    Tr8n::TranslatorMetric.find_or_create(self, language)
+    Tr8n::Metrics::Translator.find_or_create(self, language)
   end
 
-  def update_metrics!(language = Tr8n::Config.current_language)
+  def update_metrics!(language = Tr8n::RequestContext.current_language)
     total_metric.update_metrics!
     metric_for(language).update_metrics!
   end
 
-  def update_rank!(language = Tr8n::Config.current_language)
+  def update_rank!(language = Tr8n::RequestContext.current_language)
     total_metric.update_rank!
     metric_for(language).update_rank!
   end
@@ -171,7 +171,7 @@ class Tr8n::Translator < ActiveRecord::Base
   end
 
   def generate_access_key!(actor = self.user, reason = "No reason given")
-    self.update_attributes(:access_key => Tr8n::Config.guid)
+    self.update_attributes(:access_key => Tr8n::Utils.guid)
     Tr8n::TranslatorLog.log_admin(self, :generated_access_key, actor, reason)
   end
 
@@ -192,12 +192,12 @@ class Tr8n::Translator < ActiveRecord::Base
   
   def enable_inline_translations!
     update_attributes(:inline_mode => true)
-    Tr8n::TranslatorLog.log(self, :enabled_inline_translations, Tr8n::Config.current_language.id)
+    Tr8n::TranslatorLog.log(self, :enabled_inline_translations, Tr8n::RequestContext.current_language.id)
   end
 
   def disable_inline_translations!(actor = user)
     update_attributes(:inline_mode => false)
-    Tr8n::TranslatorLog.log(self, :disabled_inline_translations, Tr8n::Config.current_language.id)
+    Tr8n::TranslatorLog.log(self, :disabled_inline_translations, Tr8n::RequestContext.current_language.id)
   end
 
   def toggle_inline_translations!
@@ -234,7 +234,7 @@ class Tr8n::Translator < ActiveRecord::Base
     Tr8n::TranslatorLog.log_manager(self, :updated_language_case, lcase.id)
   end
 
-  def used_abusive_language!(language = Tr8n::Config.current_language)
+  def used_abusive_language!(language = Tr8n::RequestContext.current_language)
     Tr8n::TranslatorLog.log_abuse(self, :used_abusive_language, language.id)
   end
 
@@ -463,7 +463,7 @@ class Tr8n::Translator < ActiveRecord::Base
   end
   
   def merge_into(master, opts = {})
-    Tr8n::TranslatorMetric.delete_all_metrics_for_translator(self)
+    Tr8n::Metrics::Translator.delete_all_metrics_for_translator(self)
     Tr8n::LanguageUser.delete_all_languages_for_translator(self)
 
     Tr8n::Config.models.each do |model|
@@ -471,7 +471,7 @@ class Tr8n::Translator < ActiveRecord::Base
       model.connection.execute("update #{model.table_name} set translator_id = #{master.id} where translator_id = #{self.id}")
     end
     
-    Tr8n::TranslatorMetric.update_all_metrics_for_translator(master)
+    Tr8n::Metrics::Translator.update_all_metrics_for_translator(master)
 
     self.destroy if opts[:delete]
   end

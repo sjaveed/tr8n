@@ -24,7 +24,7 @@
 class Tr8n::Admin::ApplicationsController < Tr8n::Admin::BaseController
 
   def index
-    @apps = Tr8n::Application.filter(:params => params, :filter => Tr8n::ApplicationFilter)
+    @apps = Tr8n::Application.filter(:params => params, :filter => Tr8n::Filters::Application)
   end
   
   def lb_update

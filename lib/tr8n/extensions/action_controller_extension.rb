@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -26,56 +26,49 @@ module Tr8n
     def self.included(base)
       base.send(:include, Tr8n::ActionCommonMethods)
       base.send(:include, InstanceMethods)
-      base.before_filter :tr8n_init
-      base.before_filter :tr8n_reset
+      base.before_filter  :tr8n_init_request_context
+      base.after_filter   :tr8n_reset_request_context
     end
 
     module InstanceMethods
-      ######################################################################
-      # Author: Iain Hecker
-      # reference: http://github.com/iain/http_accept_language
-      ######################################################################
+
       def tr8n_browser_accepted_locales
-        @accepted_languages ||= request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).collect do |l|
-          l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
-          l.split(';q=')
-        end.sort do |x,y|
-          raise Tr8n::Exception.new("Not correctly formatted") unless x.first =~ /^[a-z\-]+$/i
-          y.last.to_f <=> x.last.to_f
-        end.collect do |l|
-          l.first.downcase.gsub(/-[a-z]+$/i) { |x| x.upcase }
-        end
-      rescue 
-        []
+        @tr8n_browser_accepted_locales ||= Tr8n::Utils.browser_accepted_locales(request)
       end
 
       def tr8n_user_preferred_locale
-        tr8n_browser_accepted_locales.each do |locale|
-          lang = Tr8n::Language.for(locale)
-          return locale if lang and lang.enabled?
+        @tr8n_user_preferred_locale ||= begin
+          tr8n_browser_accepted_locales.each do |locale|
+            lang = Tr8n::Language.by_locale(locale)
+            return locale if lang and lang.enabled?
+          end
+          Tr8n::Config.default_locale
         end
-        Tr8n::Config.default_locale
       end
 
       def tr8n_request_remote_ip
-        @remote_ip ||= if request.env['HTTP_X_FORWARDED_FOR']
-          request.env['HTTP_X_FORWARDED_FOR'].split(',').first
-        else
-          request.remote_ip
+        @tr8n_request_remote_ip ||= begin
+          if request.env['HTTP_X_FORWARDED_FOR']
+            request.env['HTTP_X_FORWARDED_FOR'].split(',').first
+          else
+            request.remote_ip
+          end
         end
       end
       
       def tr8n_source
-        Tr8n::TranslationSource.normalize_source(request.url)
-      rescue
-        self.class.name
+        @tr8n_source ||= begin
+          "/#{@controller.controller_name}/#{@controller.action_name}"
+        rescue
+          self.class.name
+        end
       end
 
       def tr8n_component
         nil
       end  
 
-      def tr8n_init_current_locale
+      def tr8n_get_current_locale
         self.send(Tr8n::Config.current_locale_method)
       rescue
         # fallback to the default session based locale implementation
@@ -85,49 +78,44 @@ module Tr8n
         session[:locale]
       end
 
-      def tr8n_init_current_user
+      def tr8n_get_current_user
         self.send(Tr8n::Config.current_user_method)
       rescue
         nil
       end
 
-      def tr8n_application
-        domain = Tr8n::TranslationDomain.find_or_create(request.url)
-        domain.application
-      end
-
-      def tr8n_init
+      def tr8n_init_request_context
         return unless Tr8n::Config.enabled?
 
         # initialize request thread variables
-        Tr8n::Config.init(tr8n_application, tr8n_init_current_locale, tr8n_init_current_user, tr8n_source, tr8n_component)
-        
+        Tr8n::RequestContext.init(tr8n_get_current_locale, tr8n_get_current_user, tr8n_source, tr8n_component)
+
         # for logged out users, fallback onto tr8n_access_key
-        if Tr8n::Config.current_user_is_guest?  
+        if Tr8n::RequestContext.current_user_is_guest?
           tr8n_access_key = params[:tr8n_access_key] || session[:tr8n_access_key]
           unless tr8n_access_key.blank?
-            Tr8n::Config.set_current_translator(Tr8n::Translator.find_by_access_key(tr8n_access_key))
+            Tr8n::RequestContext.set_current_translator(Tr8n::Translator.find_by_access_key(tr8n_access_key))
           end
         end
 
         # track user's last ip address  
-        if Tr8n::Config.enable_country_tracking? and Tr8n::Config.current_user_is_translator?
-          Tr8n::Config.current_translator.update_last_ip(tr8n_request_remote_ip)
+        if Tr8n::Config.enable_country_tracking? and Tr8n::RequestContext.current_user_is_translator?
+          Tr8n::RequestContext.current_translator.update_last_ip(tr8n_request_remote_ip)
         end
 
         # register component and verify that the current user is authorized to view it
-        unless Tr8n::Config.current_user_is_authorized_to_view_component?
+        unless Tr8n::RequestContext.current_user_is_authorized_to_view_component?
           trfe("You are not authorized to view this component")
           return redirect_to(Tr8n::Config.default_url)
         end
 
-        unless Tr8n::Config.current_user_is_authorized_to_view_language?
-          Tr8n::Config.set_language(Tr8n::Config.default_language)
+        unless Tr8n::RequestContext.current_user_is_authorized_to_view_language?
+          Tr8n::RequestContext.set_current_language(Tr8n::Config.default_language)
         end
       end
 
-      def tr8n_reset
-        #Tr8n.config.reset_request
+      def tr8n_reset_request_context
+        Tr8n::RequestContext.reset
       end
 
     end

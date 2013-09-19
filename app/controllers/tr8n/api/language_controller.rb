@@ -31,7 +31,7 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
       return render_error("Locale must be provided")
     end
 
-    lang = Tr8n::Language.for(params[:locale])
+    lang = Tr8n::Language.by_locale(params[:locale])
     unless lang
       return render_error("Unknown settings locale")
     end
@@ -54,9 +54,9 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
   # deprecated - has been moved to proxy API  
   def translate
     domain = Tr8n::TranslationDomain.find_or_create(request.env['HTTP_REFERER'])
-    language = Tr8n::Language.for(params[:language] || params[:locale]) || tr8n_current_language
-    Tr8n::Config.set_application(domain.application)
-    Tr8n::Config.set_language(language)
+    language = Tr8n::Language.by_locale(params[:language] || params[:locale]) || tr8n_current_language
+    Tr8n::RequestContext.set_remote_application(domain.application)
+    Tr8n::RequestContext.set_current_language(language)
 
     return render_response(translate_phrase(language, params, {:source => source, :api => :translate, :application => domain.application})) if params[:label]
     
@@ -104,7 +104,7 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
       translations = []
       phrases.each do |phrase|
         phrase = {:label => phrase} if phrase.is_a?(String)
-        language = phrase[:locale].blank? ? Tr8n::Config.default_language.locale : (Tr8n::Language.for(phrase[:locale]) || Tr8n::Language.find_by_google_key(phrase[:locale]))
+        language = phrase[:locale].blank? ? Tr8n::Config.default_language.locale : (Tr8n::Language.by_locale(phrase[:locale]) || Tr8n::Language.find_by_google_key(phrase[:locale]))
 
         translations << translate_phrase(language, phrase, {:source => source, :url => request.env['HTTP_REFERER'], :api => :translate, :locale => language.locale, :application => domain.application})
       end
@@ -113,7 +113,7 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
     end
     
     render_response(:phrases => [])
-  rescue Tr8n::KeyRegistrationException => ex
+  rescue Tr8n::Exception => ex
     render_response({"error" => ex.message})
   end
 

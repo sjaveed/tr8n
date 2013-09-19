@@ -37,6 +37,7 @@
 #
 # Indexes
 #
+#  tr8n_lctxr_lci    (language_context_id, keyword) 
 #
 #++
 

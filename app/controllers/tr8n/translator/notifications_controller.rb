@@ -24,13 +24,13 @@
 class Tr8n::Translator::NotificationsController < Tr8n::Translator::BaseController
 
   def index
-    @translator = Tr8n::Config.current_translator
-    @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::Config.current_translator.id).order("created_at desc").page(page).per(per_page)
+    @translator = Tr8n::RequestContext.current_translator
+    @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::RequestContext.current_translator.id).order("created_at desc").page(page).per(per_page)
   end
 
   def lb_notifications
     if tr8n_current_translator
-      @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::Config.current_translator.id).order("created_at desc").limit(10).page(page).per(per_page)
+      @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::RequestContext.current_translator.id).order("created_at desc").limit(10).page(page).per(per_page)
     end
     render_lightbox
   end

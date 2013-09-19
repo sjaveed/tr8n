@@ -47,7 +47,8 @@ namespace :dev do
     if ENV["app"]
       files = Dir[File.expand_path("#{Rails.root}/app/models/*.rb")]
     else
-      files = Dir[File.expand_path("#{File.dirname(__FILE__)}/../../app/models/tr8n/*.rb")]
+      #files = Dir[File.expand_path("#{File.dirname(__FILE__)}/../../app/models/tr8n/*.rb")]
+      files = Dir[File.expand_path("../../../app/models/tr8n/**/*.rb", __FILE__)]
     end
 
     files.sort.each do |file|

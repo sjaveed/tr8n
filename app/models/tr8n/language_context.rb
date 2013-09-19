@@ -64,7 +64,7 @@ class Tr8n::LanguageContext < ActiveRecord::Base
     self.class.cache_key(language.locale, keyword)
   end
 
-  def self.by_keyword_and_language(keyword, language = Tr8n::Config.current_language)
+  def self.by_keyword_and_language(keyword, language = Tr8n::RequestContext.current_language)
     Tr8n::Cache.fetch(cache_key(language.locale, keyword)) do
       where(:language_id => language.id, :keyword => keyword).first
     end
@@ -78,7 +78,7 @@ class Tr8n::LanguageContext < ActiveRecord::Base
     self.class.cache_key_for_rules(language.locale)
   end
 
-  def self.by_token_and_language(token_name, language = Tr8n::Config.current_language)
+  def self.by_token_and_language(token_name, language = Tr8n::RequestContext.current_language)
     contexts = Tr8n::Cache.fetch(cache_key_for_contexts(language.locale)) do
       where(:language_id => language.id).all
     end

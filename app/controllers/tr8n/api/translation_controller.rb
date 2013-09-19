@@ -38,7 +38,7 @@ class Tr8n::Api::TranslationController < Tr8n::Api::BaseController
     end
 
     if params[:locale]
-      language = Tr8n::Language.for(params[:locale])
+      language = Tr8n::Language.by_locale(params[:locale])
     end
 
     unless language

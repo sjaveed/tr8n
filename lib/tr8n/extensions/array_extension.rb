@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,7 +24,7 @@
 class Array
 
   # translates an array of options for a select tag
-  def tro(description = "", options = {}, language = Tr8n::Config.current_language)
+  def tro(description = "", options = {}, language = Tr8n::RequestContext.current_language)
     return [] if empty?
 
     collect do |opt|
@@ -39,7 +39,7 @@ class Array
   end
 
   # translate array values 
-  def trl(description = "", options = {}, language = Tr8n::Config.current_language)
+  def trl(description = "", options = {}, language = Tr8n::RequestContext.current_language)
     return [] if empty?
 
     collect do |opt|
@@ -52,12 +52,12 @@ class Array
   end
 
   # creates a sentence with tr "and" joiner
-  def tr_sentence(options = {}, language = Tr8n::Config.current_language)
+  def tr_sentence(options = {}, language = Tr8n::RequestContext.current_language)
     return "" if empty?
     return first if size == 1
 
     result = "#{self[0..-2].join(", ")}"
-    result << " " << "and".translate("List elements joiner", {}, options, language) << " "
+    result << " " << "and".translate(nil, {}, options, language) << " "
     result << self.last
   end
 

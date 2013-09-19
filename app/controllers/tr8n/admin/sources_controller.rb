@@ -24,7 +24,7 @@
 class Tr8n::Admin::SourcesController < Tr8n::Admin::BaseController
 
   def index
-    @sources = Tr8n::TranslationSource.filter(:params => params, :filter => Tr8n::TranslationSourceFilter)
+    @sources = Tr8n::TranslationSource.filter(:params => params, :filter => Tr8n::Filters::TranslationSource)
   end
 
   def view
@@ -141,7 +141,7 @@ class Tr8n::Admin::SourcesController < Tr8n::Admin::BaseController
   end
   
   def key_sources
-    @key_sources = Tr8n::TranslationKeySource.filter(:params => params, :filter => Tr8n::TranslationKeySourceFilter)
+    @key_sources = Tr8n::TranslationKeySource.filter(:params => params, :filter => Tr8n::Filters::TranslationKeySource)
   end
 
   def lb_caller

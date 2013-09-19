@@ -24,11 +24,11 @@
 class Tr8n::Admin::ForumController < Tr8n::Admin::BaseController
 
   def index
-    @topics = Tr8n::LanguageForumTopic.filter(:params => params, :filter => Tr8n::LanguageForumTopicFilter)
+    @topics = Tr8n::LanguageForumTopic.filter(:params => params, :filter => Tr8n::Filters::LanguageForumTopic)
   end
 
   def messages
-    @messages = Tr8n::LanguageForumMessage.filter(:params => params, :filter => Tr8n::LanguageForumMessageFilter)
+    @messages = Tr8n::LanguageForumMessage.filter(:params => params, :filter => Tr8n::Filters::LanguageForumMessage)
   end
  
 end

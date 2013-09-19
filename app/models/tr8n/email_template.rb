@@ -21,19 +21,25 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::ApplicationLanguage Schema Information
+#-- Tr8n::EmailTemplate Schema Information
 #
-# Table name: tr8n_application_languages
+# Table name: tr8n_email_templates
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     not null
-#  feature_id        integer     not null
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
+#  id                INTEGER         not null, primary key
+#  application_id    integer         
+#  language_id       integer         
+#  keyword           varchar(255)    
+#  name              varchar(255)    
+#  description       varchar(255)    
+#  subject           varchar(255)    
+#  body              text            
+#  tokens            text            
+#  created_at        datetime        not null
+#  updated_at        datetime        not null
 #
 # Indexes
 #
-#  tr8n_app_lang_app_id    (application_id)
+#  index_tr8n_email_templates_on_application_id_and_keyword    (application_id, keyword) 
 #
 #++
 
@@ -54,8 +60,9 @@ class Tr8n::EmailTemplate < ActiveRecord::Base
     #  content = self.html_body.to_s
     #end
 
-    Tr8n::Config.render_email_with_options(options.merge(:language => Tr8n::Config.current_language,
-                                                         :tokens => tokens,
+    options[:language] ||= Tr8n::RequestContext.current_language
+
+    Tr8n::RequestContext.render_email_with_options(options.merge(:tokens => tokens,
                                                          :options => {:source => "/emails/#{keyword}"},
         :mode => mode)) do
       @result = ::Liquid::Template.parse(self.body).render(tokens)
@@ -71,8 +78,9 @@ class Tr8n::EmailTemplate < ActiveRecord::Base
     #  content = self.subject
     #end
 
-    Tr8n::Config.render_email_with_options(options.merge(:language => Tr8n::Config.current_language,
-                                                         :tokens => tokens,
+    options[:language] ||= Tr8n::RequestContext.current_language
+
+    Tr8n::RequestContext.render_email_with_options(options.merge(:tokens => tokens,
                                                          :options => {:source => "/emails/#{keyword}"})) do
       @result = ::Liquid::Template.parse(self.subject).render(tokens)
     end

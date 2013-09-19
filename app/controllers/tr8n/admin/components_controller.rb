@@ -24,7 +24,7 @@
 class Tr8n::Admin::ComponentsController < Tr8n::Admin::BaseController
 
   def index
-    @comps = Tr8n::Component.filter(:params => params, :filter => Tr8n::ComponentFilter)
+    @comps = Tr8n::Component.filter(:params => params, :filter => Tr8n::Filters::Component)
   end
 
   def change_component_language_state

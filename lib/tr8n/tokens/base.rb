@@ -37,7 +37,7 @@ module Tr8n
       end
 
       def self.expression
-        raise Tr8n::TokenException.new("This method must be implemented in the extending class")
+        raise Tr8n::Exception.new("This method must be implemented in the extending class")
       end
 
       def self.parse(label, opts = {})
@@ -84,13 +84,13 @@ module Tr8n
       def sanitize(object, value, options, language)
         value = "#{value.to_s}" unless value.is_a?(String)
 
-        unless Tr8n::Config.block_options[:skip_html_escaping]
+        unless Tr8n::RequestContext.block_options[:skip_html_escaping]
           if options[:sanitize_values] and not value.html_safe?
             value = ERB::Util.html_escape(value)
           end
         end
 
-        return value unless Tr8n::Config.current_application.feature_enabled?(:language_cases)
+        return value unless Tr8n::RequestContext.container_application.feature_enabled?(:language_cases)
 
         case_keys.each do |key|
           value = apply_case(key, value, object, options, language)
@@ -101,7 +101,7 @@ module Tr8n
 
       def context_for_language(language, opts = {})
         unless language
-          raise Tr8n::TokenException.new("Can't determine context without settings: #{full_name}")
+          raise Tr8n::Exception.new("Can't determine context without settings: #{full_name}")
         end
 
         if context_keys.any?
@@ -111,7 +111,7 @@ module Tr8n
         end
 
         unless opts[:silent]
-          raise Tr8n::TokenException.new("Unknown context for a token: #{full_name} in #{language.locale}") unless ctx
+          raise Tr8n::Exception.new("Unknown context for a token: #{full_name} in #{language.locale}") unless ctx
         end
 
         ctx
@@ -185,7 +185,7 @@ module Tr8n
           return sanitize(object, method.call(*params_with_object), options, language)
         end
 
-        raise Tr8n::TokenException.new("Invalid array second token value: #{full_name} in #{label}")
+        raise Tr8n::Exception.new("Invalid array second token value: #{full_name} in #{label}")
       end
 
       def self.token_object(token_values, token_name)
@@ -301,7 +301,7 @@ module Tr8n
         if object.is_a?(Array)
           # if you provided an array, it better have some values
           if object.empty?
-            return raise Tr8n::TokenException.new("Invalid array value for a token: #{full_name}")
+            return raise Tr8n::Exception.new("Invalid array value for a token: #{full_name}")
           end
 
           # if the first value of an array is an array handle it here
@@ -315,7 +315,7 @@ module Tr8n
           # if object is a hash, it must be of a form: {:object => {}, :value => "", :attribute => ""}
           # either value can be passed, or the attribute. attribute will be used first
           if object[:object].nil?
-            return raise Tr8n::TokenException.new("Hash token is missing an object key for a token: #{full_name}")
+            return raise Tr8n::Exception.new("Hash token is missing an object key for a token: #{full_name}")
           end
 
           value = object[:value]      || object["value"]
@@ -327,7 +327,7 @@ module Tr8n
           end
 
           if value.blank?
-            return raise Tr8n::TokenException.new("Hash object is missing a value or attribute key for a token: #{full_name}")
+            return raise Tr8n::Exception.new("Hash object is missing a value or attribute key for a token: #{full_name}")
           end
 
           object = value
@@ -350,14 +350,14 @@ module Tr8n
         object = values[key]
 
         # see if the token is a default html token
-        object = Tr8n::Config.default_data_tokens[key] if object.nil?
+        object = Tr8n::RequestContext.data_tokens[key] if object.nil?
 
         if object.nil? and not values.key?(key)
-          raise Tr8n::TokenException.new("Missing value for a token: #{full_name}")
+          raise Tr8n::Exception.new("Missing value for a token: #{full_name}")
         end
 
         if object.nil? and not Tr8n::Config.allow_nil_token_values?
-          raise Tr8n::TokenException.new("Token value is nil for a token: #{full_name}")
+          raise Tr8n::Exception.new("Token value is nil for a token: #{full_name}")
         end
 
         object = object.to_s if object.nil?

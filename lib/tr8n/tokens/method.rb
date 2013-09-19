@@ -47,7 +47,7 @@ module Tr8n
 
       def substitute(translation_key, language, label, values = {}, options = {})
         object = values[object_name.to_sym]
-        raise Tr8n::TokenException.new("Missing value for a token: #{full_name}") unless object
+        raise Tr8n::Tr8n::Exception.new("Missing value for a token: #{full_name}") unless object
         object_value = sanitize(object, object.send(object_method_name), options.merge(:sanitize_values => true), language)
         label.gsub(full_name, object_value)
       end

@@ -66,7 +66,7 @@ class Tr8n::LanguageCase < ActiveRecord::Base
     self.class.cache_key(language.locale, keyword)
   end
 
-  def self.by_keyword_and_language(keyword, language = Tr8n::Config.current_language)
+  def self.by_keyword_and_language(keyword, language = Tr8n::RequestContext.current_language)
     Tr8n::Cache.fetch(cache_key(language.locale, keyword)) do 
       where(:language_id => language.id, :keyword => keyword).first
     end
@@ -180,11 +180,11 @@ class Tr8n::LanguageCase < ActiveRecord::Base
   def decorate_language_case(case_map_key, case_value, case_rule, options = {})
     return case_value if options[:skip_decorations]
     return case_value if language.default?
-    return case_value if Tr8n::Config.current_user_is_guest?
-    return case_value unless Tr8n::Config.current_user_is_translator?
-    return case_value unless Tr8n::Config.current_translator.enable_inline_translations?
+    return case_value if Tr8n::RequestContext.current_user_is_guest?
+    return case_value unless Tr8n::RequestContext.current_user_is_translator?
+    return case_value unless Tr8n::RequestContext.current_translator.enable_inline_translations?
     
-    "<span class='tr8n_language_case' case_id='#{id}' rule_id='#{case_rule ? case_rule.id : ''}' case_key='#{case_map_key.gsub("'", "\'")}'>#{case_value}</span>"
+    "<span class='tr8n_language_case' data-case_id='#{id}' data-rule_id='#{case_rule ? case_rule.id : ''}' data-case_key='#{case_map_key.gsub("'", "\'")}'>#{case_value}</span>"
   end
 
   def self.application_options

@@ -13,10 +13,10 @@
 		    <td style="font-size:12px; font-weight:bold; padding:5px; border-bottom:1px solid #ccc; text-align:left;"><%=tra("Description")%></td>
 			</tr>
 		
-		  <% Tr8n::Config.current_application.shortcuts.keys.sort.each do |key| %>
+		  <% tr8n_current_application.shortcuts.keys.sort.each do |key| %>
 			   <tr>
 			   	 <td style="font-size:10px; padding:5px;border-bottom:1px dotted #ccc; text-align:left;"><%=key%></td>
-		       <td style="font-size:10px; padding:5px;border-bottom:1px dotted #ccc; text-align:left;"><%=tra(Tr8n::Config.current_application.shortcuts[key]["description"])%></td>
+		       <td style="font-size:10px; padding:5px;border-bottom:1px dotted #ccc; text-align:left;"><%=tra(tr8n_current_application.shortcuts[key]["description"])%></td>
 			   </tr>
 			<% end %>       
 		

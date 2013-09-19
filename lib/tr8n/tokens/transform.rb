@@ -128,18 +128,18 @@ module Tr8n
         end
 
         unless context.token_mapping
-          raise Tr8n::TokenException.new("The token context #{context.keyword} does not support transformation for unnamed params: #{full_name}")
+          raise Tr8n::Exception.new("The token context #{context.keyword} does not support transformation for unnamed params: #{full_name}")
         end
 
         token_mapping = context.token_mapping
 
         if token_mapping.is_a?(Array)
           if params.size > token_mapping.size
-            raise Tr8n::TokenException.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
+            raise Tr8n::Exception.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
           end
           token_mapping = token_mapping[params.size-1]
           if token_mapping.is_a?(String)
-            raise Tr8n::TokenException.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
+            raise Tr8n::Exception.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
           end
         end
 
@@ -151,16 +151,16 @@ module Tr8n
             index = parts.first.gsub('$', '').to_i
 
             if params.size < index
-              raise Tr8n::TokenException.new("The index inside #{context.token_mapping} is out of bound: #{full_name}")
+              raise Tr8n::Exception.new("The index inside #{context.token_mapping} is out of bound: #{full_name}")
             end
 
             # apply settings cases
             value = params[index]
-            if Tr8n::Config.enable_language_cases?
+            if Tr8n::RequestContext.container_application.feature_enabled?(:language_cases)
               parts[1..-1].each do |case_key|
                 lcase = Tr8n::LanguageCase.by_keyword_and_language(case_key, context.language)
                 unless lcase
-                  raise Tr8n::TokenException.new("Language case #{case_key} for context #{context.keyword} is not defined: #{full_name}")
+                  raise Tr8n::Exception.new("Language case #{case_key} for context #{context.keyword} is not defined: #{full_name}")
                 end
                 value = lcase.apply(value)
               end
@@ -176,11 +176,11 @@ module Tr8n
         object = values[key]
 
         unless object
-          raise Tr8n::TokenException.new("Missing value for a token: #{full_name}")
+          raise Tr8n::Exception.new("Missing value for a token: #{full_name}")
         end
 
         if piped_params.empty?
-          raise Tr8n::TokenException.new("Piped params may not be empty: #{full_name}")
+          raise Tr8n::Exception.new("Piped params may not be empty: #{full_name}")
         end
 
         context = context_for_language(language)

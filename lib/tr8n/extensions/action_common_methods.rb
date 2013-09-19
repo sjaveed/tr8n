@@ -23,39 +23,40 @@
 
 module Tr8n
   module ActionCommonMethods
+
     ############################################################
-    # There are two ways to call the tr method
+    # There are three ways to call the tr method
     #
     # tr(label, desc = "", tokens = {}, options = {})
     # or
     # tr(label, tokens = {}, options = {})
+    # or
+    # tr(:label => label, :description => "", :tokens => {}, :options => {})
     ############################################################
-    def tr(label, desc = "", tokens = {}, options = {})
-      return label if label.tr8n_translated?
+    def tr(label, description = "", tokens = {}, options = {})
+      params = Tr8n::Utils.normalize_tr_params(label, description, tokens, options)
 
-      if desc.is_a?(Hash)
-        options = tokens
-        tokens = desc
-        desc = ""
-      end
+      return params[:label] if params[:label].tr8n_translated?
 
-      options.merge!(:caller => caller)
+      params[:options][:caller] = caller
 
       if request
-        options.merge!(:url => request.url)
-        options.merge!(:host => request.env['HTTP_HOST'])
+        params[:options][:url]  = request.url
+        params[:options][:host] = request.env['HTTP_HOST']
       end
 
-      unless Tr8n::Config.enabled?
-        return Tr8n::TranslationKey.substitute_tokens(label, tokens, options)
+      if Tr8n::Config.disabled?
+        return Tr8n::TranslationKey.substitute_tokens(params[:label], params[:tokens], params[:options])
       end
 
-      Tr8n::Config.current_language.translate(label, desc, tokens, options)
+      Tr8n::RequestContext.current_language.translate(params[:label], params[:description], params[:tokens], params[:options])
     end
 
     # for translating labels
-    def trl(label, desc = "", tokens = {}, options = {})
-      tr(label, desc, tokens, options.merge(:skip_decorations => true))
+    def trl(label, description = "", tokens = {}, options = {})
+      params = Tr8n::Utils.normalize_tr_params(label, description, tokens, options)
+      params[:options][:skip_decorations] = true
+      tr(params)
     end
 
     # flash notice
@@ -74,47 +75,42 @@ module Tr8n
     end
 
     # for admin translations
-    def tra(label, desc = "", tokens = {}, options = {})
-      if desc.is_a?(Hash)
-        options = tokens
-        tokens = desc
-        desc = ""
-      end
+    def tra(label, description = "", tokens = {}, options = {})
+      params = Tr8n::Utils.normalize_tr_params(label, description, tokens, options)
 
       if Tr8n::Config.enable_admin_translations?
-        return tr(label, desc, tokens, options) if Tr8n::Config.enable_admin_inline_mode?
-        return trl(label, desc, tokens, options)
+        if Tr8n::RequestContext.container_application.feature_enabled?(:admin_translations)
+          return tr(params)
+        else
+          return trl(params)
+        end
       end
-      Tr8n::Config.default_language.translate(label, desc, tokens, options)
+
+      Tr8n::Config.default_language.translate(label, description, tokens, options)
     end
 
     # for admin translations
-    def trla(label, desc = "", tokens = {}, options = {})
-      tra(label, desc, tokens, options.merge(:skip_decorations => true))
-    end
-
-    def tr8n_request_remote_ip
-      @remote_ip ||= request.env['HTTP_X_FORWARDED_FOR'] ? request.env['HTTP_X_FORWARDED_FOR'].split(',').first : request.remote_ip
+    def trla(label, description = "", tokens = {}, options = {})
+      params = Tr8n::Utils.normalize_tr_params(label, description, tokens, options)
+      params[:options][:skip_decorations] = true
+      tra(params)
     end
 
     ######################################################################
     ## Common methods - wrappers
+    ## Controllers can override them, if necessary
     ######################################################################
 
-    def tr8n_application
-      Tr8n::Config.application
-    end
-
     def tr8n_current_application
-      Tr8n::Config.current_application
+      Tr8n::RequestContext.current_application
     end
 
     def tr8n_current_user
-      Tr8n::Config.current_user
+      Tr8n::RequestContext.current_user
     end
 
     def tr8n_current_language
-      Tr8n::Config.current_language
+      Tr8n::RequestContext.current_language
     end
 
     def tr8n_default_language
@@ -122,25 +118,23 @@ module Tr8n
     end
 
     def tr8n_current_translator
-      Tr8n::Config.current_translator
+      Tr8n::RequestContext.current_translator
     end
 
     def tr8n_current_user_is_translator?
-      Tr8n::Config.current_user_is_translator?
+      Tr8n::RequestContext.current_user_is_translator?
     end
 
     def tr8n_current_user_is_guest?
-      Tr8n::Config.current_user_is_guest?
+      Tr8n::RequestContext.current_user_is_guest?
     end
 
     def tr8n_current_user_is_admin?
-      Tr8n::Config.current_user_is_admin?
+      Tr8n::RequestContext.current_user_is_admin?
     end
 
     def tr8n_current_user_is_manager?
-      return true if tr8n_current_user_is_admin?
-      return false unless tr8n_current_user_is_translator?
-      tr8n_current_translator.manager?
+      Tr8n::RequestContext.current_user_is_manager?
     end
 
   end

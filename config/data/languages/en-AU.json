@@ -2,5 +2,6 @@
   "locale": "en-AU",
   "english_name": "English (Australian)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "native_name": "English (Australian)"
 }

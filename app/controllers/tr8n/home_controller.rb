@@ -22,7 +22,6 @@
 #++
 
 class Tr8n::HomeController < ApplicationController
-  unloadable
 
   layout Tr8n::Config.site_info[:tr8n_layout]
   

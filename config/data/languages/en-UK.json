@@ -2,5 +2,7 @@
   "locale": "en-UK",
   "english_name": "English (UK)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "facebook_key": "en-UK",
+  "native_name": "English (UK)"
 }

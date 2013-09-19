@@ -31,14 +31,18 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     if request.post?
       selected_application.name = params[:application][:name]
       selected_application.description = params[:application][:description]
+      selected_application.threshold = params[:application][:threshold]
+      selected_application.translator_level = params[:application][:translator_level]
+      selected_application.default_language = Tr8n::Language.by_locale(params["default_locale"])
       selected_application.save
+
+      Tr8n::RequestContext.reset_container_application if selected_application.default?
+
       trfn("Application has been updated")
     end
   end
 
   def set_default_language
-    selected_application.default_language = Tr8n::Language.by_locale(params["default_locale"])
-    selected_application.save
     redirect_back
   end
 

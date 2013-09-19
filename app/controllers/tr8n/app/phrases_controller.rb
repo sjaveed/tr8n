@@ -42,8 +42,8 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
       @translated = 0
       @locked = 0
     else
-      @translated = Tr8n::Config.current_language.total_metric.translation_completeness
-      @locked = Tr8n::Config.current_language.completeness
+      @translated = Tr8n::RequestContext.current_language.total_metric.translation_completeness
+      @locked = Tr8n::RequestContext.current_language.completeness
     end
   end
   

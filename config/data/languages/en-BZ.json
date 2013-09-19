@@ -2,5 +2,6 @@
   "locale": "en-BZ",
   "english_name": "English (Belize)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "native_name": "English (Belize)"
 }

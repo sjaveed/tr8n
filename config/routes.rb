@@ -53,6 +53,8 @@ Tr8n::Engine.routes.draw do
 
   match "api/settings/translate.js", :controller => "api/settings", :action => "translate"
 
+  match "requests(/:action)(/:id)", :controller => "requests", :action => "index"
+
   namespace :tr8n do
     root :to => "app/dashboard#index"
     namespace :app do

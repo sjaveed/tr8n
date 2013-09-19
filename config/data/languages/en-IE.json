@@ -2,5 +2,6 @@
   "locale": "en-IE",
   "english_name": "English (Ireland)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "native_name": "English (Ireland)"
 }

@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2012 Michael Berkovich, tr8n.net
+# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -35,7 +35,7 @@ class Date
     present
   end
   
-  def translate(format = :default, language = Tr8n::Config.current_language, options = {})
+  def translate(format = :default, language = Tr8n::RequestContext.current_language, options = {})
     label = (format.is_a?(String) ? format.clone : Tr8n::Config.default_date_formats[format].clone)
     symbols = label.scan(/(%\w)/).flatten.uniq
 
@@ -69,7 +69,7 @@ class Date
   end
   alias :tr :translate  
   
-  def trl(format = :default, language = Tr8n::Config.current_language, options = {})
+  def trl(format = :default, language = Tr8n::RequestContext.current_language, options = {})
     tr(format, language, options.merge!(:skip_decorations => true))
   end
 end

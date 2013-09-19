@@ -56,7 +56,7 @@
       </div>
 
       <div class="section">
-        <%=text_area_tag("email_template[tokens]", JSON.pretty_generate(JSON.parse(@et.tokens.to_json)), :id => :template_tokens, :style => "height:150px; width:100%") %>
+        <%=text_area_tag("email_template[tokens]", JSON.pretty_generate(JSON.parse((@et.tokens || {}).to_json)), :id => :template_tokens, :style => "height:150px; width:100%") %>
       </div>
 
       <div>

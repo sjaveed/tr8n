@@ -21,19 +21,22 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::ApplicationLanguage Schema Information
+#-- Tr8n::Country Schema Information
 #
-# Table name: tr8n_application_languages
+# Table name: tr8n_countries
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     not null
-#  feature_id        integer     not null
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
+#  id                INTEGER         not null, primary key
+#  code              varchar(255)    
+#  english_name      varchar(255)    
+#  native_name       varchar(255)    
+#  telephone_code    varchar(255)    
+#  currency          varchar(255)    
+#  created_at        datetime        not null
+#  updated_at        datetime        not null
 #
 # Indexes
 #
-#  tr8n_app_lang_app_id    (application_id)
+#  tr8n_countries_code    (code) 
 #
 #++
 

@@ -2,5 +2,6 @@
   "locale": "en-PH",
   "english_name": "English (Philippines)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "native_name": "English (Philippines)"
 }

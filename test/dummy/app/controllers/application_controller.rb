@@ -51,7 +51,7 @@ private
 
       if save_locale and current_user
         current_user.update_attributes(:locale => session[:locale])
-        Tr8n::LanguageUser.find_or_create(current_user, Tr8n::Language.for(session[:locale]))
+        Tr8n::LanguageUser.find_or_create(current_user, Tr8n::Language.by_locale(session[:locale]))
       end
 
       session[:locale]

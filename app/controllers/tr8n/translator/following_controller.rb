@@ -24,7 +24,7 @@
 class Tr8n::Translator::FollowingController < Tr8n::Translator::BaseController
 
   def index
-    @translator = Tr8n::Config.current_translator
+    @translator = Tr8n::RequestContext.current_translator
     @translators = Tr8n::TranslatorFollowing.where("translator_id = ? and object_type = ?", tr8n_current_translator.id, "Tr8n::Translator").collect{|f| f.object}
     @translation_keys = Tr8n::TranslatorFollowing.where("translator_id = ? and object_type = ?", tr8n_current_translator.id, "Tr8n::TranslationKey").collect{|f| f.object}
   end
@@ -59,7 +59,7 @@ class Tr8n::Translator::FollowingController < Tr8n::Translator::BaseController
   def lb_report
     if request.post?
       @reported_object = params[:object_type].constantize.find(params[:object_id])
-      Tr8n::TranslatorReport.submit(Tr8n::Config.current_translator, @reported_object, params[:reason], params[:comment])
+      Tr8n::TranslatorReport.submit(Tr8n::RequestContext.current_translator, @reported_object, params[:reason], params[:comment])
       trfn("Thank you for submitting your report.")
       return dismiss_lightbox
     end

@@ -1,0 +1,148 @@
+{
+  "locale": "mi",
+  "english_name": "Maori",
+  "google_key": "mi",
+  "context_rules": {
+    "date": {
+      "keys": [
+        "past",
+        "present",
+        "future"
+      ],
+      "token_expression": "/.*(date|time)(\\d)*$/",
+      "variables": [
+        "@date"
+      ],
+      "token_mapping": [
+        "unsupported",
+        "unsupported",
+        {
+          "past": "{$0}",
+          "present": "{$1}",
+          "future": "{$2}"
+        }
+      ],
+      "default_rule": "present",
+      "rules": {
+        "past": {
+          "rule": "(> @date (today))",
+          "description": "{token} is in the future"
+        },
+        "present": {
+          "rule": "(= @date (today))",
+          "description": "{token} is in the present"
+        },
+        "future": {
+          "rule": "(< @date (today))",
+          "description": "{token} is in the past"
+        }
+      }
+    },
+    "genders": {
+      "keys": [
+        "male",
+        "female",
+        "unknown",
+        "other"
+      ],
+      "token_expression": "/.*(users|profiles|actors|targets)(\\d)*$/",
+      "variables": [
+        "@genders"
+      ],
+      "token_mapping": [
+        "unsupported",
+        "unsupported",
+        "unsupported",
+        {
+          "male": "{$0}",
+          "female": "{$1}",
+          "unknown": "{$2}",
+          "other": "{$3}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "male": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'male'))",
+          "description": "{token} contains 1 male"
+        },
+        "female": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'female'))",
+          "description": "{token} contains 1 female"
+        },
+        "unknown": {
+          "rule": "(&& (= 1 (count @genders)) (all @genders 'unknown'))",
+          "description": "{token} contains 1 person with unknown gender"
+        },
+        "other": {
+          "description": "{token} contains at least 2 people"
+        }
+      }
+    },
+    "list": {
+      "keys": [
+        "one",
+        "other"
+      ],
+      "token_expression": "/.*(items|list)(\\d)*$/",
+      "variables": [
+        "@count"
+      ],
+      "token_mapping": [
+        "unsupported",
+        {
+          "one": "{$0}",
+          "other": "{$1}"
+        }
+      ],
+      "default_rule": "other",
+      "rules": {
+        "one": {
+          "rule": "(= 1 @count)",
+          "description": "{token} contains 1 element"
+        },
+        "other": {
+          "description": "{token} contains at least 2 elements"
+        }
+      }
+    }
+  },
+  "gender_list": {
+    "keys": [
+      "one",
+      "other"
+    ],
+    "rules": {
+      "one": {
+        "rule": "(= @size 1)"
+      },
+      "other": {
+        "rule": "(> @size 1)"
+      }
+    }
+  },
+  "gender": {
+    "keys": [
+      "male",
+      "female",
+      "unknown"
+    ]
+  },
+  "number": {
+    "keys": [
+      "one",
+      "many"
+    ],
+    "rules": {
+      "one": {
+        "rule": "(= @n 1)"
+      },
+      "many": {
+        "rule": "(> 1 @n)"
+      }
+    }
+  },
+  "language_cases": {
+  },
+  "native_name": "Maori"
+}

@@ -268,7 +268,7 @@ module Tr8n
         {:key => '\u4e2d\u6587\u6ce8\u97f3\u7b26\u53f7', :name => 'Chinese Bopomofo IME', :locale => ''},
         {:key => '\u4e2d\u6587\u4ed3\u9889\u8f93\u5165\u6cd5', :name => 'Chinese Cangjie IME', :locale => ''}
       ].each do |kb|
-        return kb[:key] if kb[:name].index(Tr8n::Config.current_language.english_name.split(" ").first)
+        return kb[:key] if kb[:name].index(Tr8n::RequestContext.current_language.english_name.split(" ").first)
       end
     
       return "US International"

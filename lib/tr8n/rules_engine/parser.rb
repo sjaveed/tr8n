@@ -52,11 +52,11 @@ module Tr8n
 
       def class_for(token)
         {
-            /^[\(]$/ => 'open_paren',
-            /^[\)]$/ => 'close_paren',
-            /^['|"]/ => 'string',
-            /^@/ => 'variable',
-            /^[\d|.]+$/ => 'number',
+          /^[\(]$/    => 'open_paren',
+          /^[\)]$/    => 'close_paren',
+          /^['|"]/    => 'string',
+          /^@/        => 'variable',
+          /^[\d|.]+$/ => 'number',
         }.each do |regexp, cls|
           return cls if regexp.match(token)
         end
@@ -72,7 +72,7 @@ module Tr8n
         else
           html << "<span class='#{class_for(expression)}'>#{expression}</span>"
         end
-        html << "</span>"
+        html << '</span>'
         html.join('').html_safe
       end
 

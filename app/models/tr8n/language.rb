@@ -65,7 +65,7 @@ class Tr8n::Language < ActiveRecord::Base
   has_many :language_users,         :class_name => 'Tr8n::LanguageUser',        :dependent => :destroy
   has_many :translations,           :class_name => 'Tr8n::Translation',         :dependent => :destroy
   has_many :translation_key_locks,  :class_name => 'Tr8n::TranslationKeyLock',  :dependent => :destroy
-  has_many :language_metrics,       :class_name => 'Tr8n::LanguageMetric'
+  has_many :language_metrics,       :class_name => 'Tr8n::Metrics::Language'
 
   has_many :country_languages,      :class_name => 'Tr8n::CountryLanguage',    :order => "position asc", :dependent => :destroy
   has_many :countries,              :class_name => 'Tr8n::Country',             :through => :country_languages, :order => "tr8n_country_languages.position asc"
@@ -117,13 +117,9 @@ class Tr8n::Language < ActiveRecord::Base
   ## FINDER METHODS
   ###############################################################
 
-  # deprecated
-  def self.for(locale)
-    by_locale(locale)
-  end
-
   def self.by_locale(locale)
     return nil if locale.nil?
+    return locale if locale.is_a?(Tr8n::Language)
     Tr8n::Cache.fetch(cache_key(locale)) do
       find_by_locale(locale)
     end
@@ -168,7 +164,7 @@ class Tr8n::Language < ActiveRecord::Base
   end
 
   def current?
-    self.locale == Tr8n::Config.current_language.locale
+    self.locale == Tr8n::RequestContext.current_language.locale
   end
   
   def default?
@@ -263,7 +259,7 @@ class Tr8n::Language < ActiveRecord::Base
   end
 
   def self.translate(label, desc = "", tokens = {}, options = {})
-    Tr8n::Config.current_language.translate(label, desc, tokens, options)
+    Tr8n::RequestContext.current_language.translate(label, desc, tokens, options)
   end
 
   def translate(label, desc = "", tokens = {}, options = {})
@@ -274,7 +270,7 @@ class Tr8n::Language < ActiveRecord::Base
     end
 
     translation_key = Tr8n::TranslationKey.find_or_create(label, desc, options)
-    translation_key.translate(self, tokens.merge(:viewing_user => Tr8n::Config.current_user), options).tr8n_translated.html_safe
+    translation_key.translate(self, tokens.merge(:viewing_user => Tr8n::RequestContext.current_user), options).tr8n_translated.html_safe
   end
   alias :tr :translate
 
@@ -283,21 +279,15 @@ class Tr8n::Language < ActiveRecord::Base
   end
 
   def update_daily_metrics_for(metric_date)
-    metric = Tr8n::DailyLanguageMetric.where("language_id = ? and metric_date = ?", self.id, metric_date).first
-    metric ||= Tr8n::DailyLanguageMetric.create(:language_id => self.id, :metric_date => metric_date)
-    metric.update_metrics!
-  end
-
-  def update_monthly_metrics_for(metric_date)
-    metric = Tr8n::MonthlyLanguageMetric.where("language_id = ? and metric_date = ?", self.id, metric_date).first
-    metric ||= Tr8n::MonthlyLanguageMetric.create(:language_id => self.id, :metric_date => metric_date)
+    metric = Tr8n::Metrics::LanguageDaily.where("language_id = ? and metric_date = ?", self.id, metric_date).first
+    metric ||= Tr8n::Metrics::LanguageDaily.create(:language_id => self.id, :metric_date => metric_date)
     metric.update_metrics!
   end
 
   def total_metric
     @total_metric ||= begin
-      metric = Tr8n::TotalLanguageMetric.where("language_id = ?", self.id).first
-      metric || Tr8n::TotalLanguageMetric.create(Tr8n::LanguageMetric.default_attributes.merge(:language_id => self.id))
+      metric = Tr8n::Metrics::LanguageTotal.where("language_id = ?", self.id).first
+      metric || Tr8n::Metrics::LanguageTotal.create(Tr8n::Metrics::Language.default_attributes.merge(:language_id => self.id))
     end
   end
 
@@ -360,50 +350,15 @@ class Tr8n::Language < ActiveRecord::Base
   def recently_updated_translations
     @recently_updated_translations ||= begin
       trans =  Tr8n::Translation.where("language_id = ?", self.id)
-      trans = trans.where("translation_key_id in (select id from tr8n_translation_keys where level <= ?)", Tr8n::Config.current_translator.level)
+      trans = trans.where("translation_key_id in (select id from tr8n_translation_keys where level <= ?)", Tr8n::RequestContext.current_translator.level)
       trans.order("updated_at desc").limit(5)
     end
   end
   
-  def recently_updated_votes(translator = Tr8n::Config.current_translator)
+  def recently_updated_votes(translator = Tr8n::RequestContext.current_translator)
     @recently_updated_votes ||= Tr8n::TranslationVote.where("translation_id in (select tr8n_translations.id from tr8n_translations where tr8n_translations.language_id = ? and tr8n_translations.translator_id = ?)", self.id, translator.id).order("updated_at desc").limit(5)
   end
   
-  def threshold
-    super || Tr8n::Config.translation_threshold
-  end
-
-  def to_api_hash(opts = {})
-    hash = {
-      :locale => self.locale,  
-      :name => self.full_name, 
-      :english_name => self.english_name, 
-      :native_name => self.native_name, 
-      :right_to_left => self.right_to_left,
-      :enabled => self.enabled,
-      :google_key => self.google_key,
-      :facebook_key => self.facebook_key,
-      :myheritage_key => self.myheritage_key,
-     }
-
-    if opts[:definition]
-      hash[:curse_words] = curse_words
-      hash[:fallback] = fallback_language.locale if fallback_language
-
-      hash[:language_contexts] = {}
-      language_contexts.each do |ctx|
-        hash[:language_contexts][ctx.keyword] = ctx.to_api_hash(:rules => true)
-      end
-
-      hash[:cases] = {}
-      language_cases.each do |lc|
-        hash[:cases][lc.keyword] = lc.to_api_hash(:rules => true)
-      end
-    end
-
-    hash
-  end
-
   def self.create_context_rules(language, json)
     return unless json
 
@@ -490,5 +445,35 @@ class Tr8n::Language < ActiveRecord::Base
     Tr8n::CountryLanguage.find_or_create(country, self)
   end
 
+  def to_api_hash(opts = {})
+    hash = {
+        :locale => self.locale,
+        :name => self.full_name,
+        :english_name => self.english_name,
+        :native_name => self.native_name,
+        :right_to_left => self.right_to_left,
+        :enabled => self.enabled,
+        :google_key => self.google_key,
+        :facebook_key => self.facebook_key,
+        :myheritage_key => self.myheritage_key,
+    }
+
+    if opts[:definition]
+      hash[:curse_words] = curse_words
+      hash[:fallback] = fallback_language.locale if fallback_language
+
+      hash[:language_contexts] = {}
+      language_contexts.each do |ctx|
+        hash[:language_contexts][ctx.keyword] = ctx.to_api_hash(:rules => true)
+      end
+
+      hash[:cases] = {}
+      language_cases.each do |lc|
+        hash[:cases][lc.keyword] = lc.to_api_hash(:rules => true)
+      end
+    end
+
+    hash
+  end
 end
 

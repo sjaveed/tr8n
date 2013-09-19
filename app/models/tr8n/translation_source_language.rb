@@ -45,12 +45,12 @@ class Tr8n::TranslationSourceLanguage < ActiveRecord::Base
   belongs_to  :translation_source,  :class_name => "Tr8n::TranslationSource"
   belongs_to  :language,  :class_name => "Tr8n::Language"
   
-  def self.find_or_create(translation_source, language = Tr8n::Config.current_language)
+  def self.find_or_create(translation_source, language = Tr8n::RequestContext.current_language)
     source_lang = where("translation_source_id = ? and language_id = ?", translation_source.id, language.id).first
     source_lang ||= create(:translation_source => translation_source, :language => language)
   end  
   
-  def self.touch(translation_source, language = Tr8n::Config.current_language)
+  def self.touch(translation_source, language = Tr8n::RequestContext.current_language)
     find_or_create(translation_source, language).touch
   end
   

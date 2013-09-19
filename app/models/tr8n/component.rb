@@ -33,6 +33,7 @@
 #  description       varchar(255)    
 #  created_at        datetime        not null
 #  updated_at        datetime        not null
+#  position          integer         
 #
 # Indexes
 #
@@ -71,7 +72,7 @@ class Tr8n::Component < ActiveRecord::Base
     self.class.cache_key(key)
   end
 
-  def self.find_or_create(key, application = Tr8n::Config.current_application)
+  def self.find_or_create(key, application = Tr8n::RequestContext.container_application)
     return component if key.is_a?(Tr8n::Component)
     key = key.to_s
 
@@ -89,7 +90,7 @@ class Tr8n::Component < ActiveRecord::Base
   end
 
   def add_source(source)
-    Tr8n::ComponentSource.find_or_create(self, source)
+    Tr8n::ComponentSource.find_or_create(self, Tr8n::TranslationSource.find_or_create(source))
   end
 
   def self.state_options
@@ -104,7 +105,7 @@ class Tr8n::Component < ActiveRecord::Base
     state == "restricted"
   end
 
-  def translator_authorized?(translator = Tr8n::Config.current_translator)
+  def translator_authorized?(translator = Tr8n::RequestContext.current_translator)
     return true unless restricted?
     translators.include?(translator)
   end

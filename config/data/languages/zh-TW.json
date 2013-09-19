@@ -1,0 +1,9 @@
+{
+  "locale": "zh-TW",
+  "english_name": "Chinese (Traditional)",
+  "native_name": "中文(台灣)",
+  "enabled": true,
+  "fallback": "zh",
+  "myheritage_key": "TW",
+  "google_key": "zh-TW"
+}

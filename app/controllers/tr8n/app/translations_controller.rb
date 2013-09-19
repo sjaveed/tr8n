@@ -28,13 +28,6 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
   
   # list of translations    
   def index
-    # In the embedded mode - there should be only one application
-    #begin
-    #  @selected_application = send(:current_application)
-    #rescue
-    #  @selected_application = Tr8n::Config.default_application
-    #end
-
     @translations = Tr8n::Translation.for_params(params.merge(:application => @selected_application, :only_phrases => true))
     @translations = @translations.order("created_at desc, rank desc").page(page).per(per_page)
     # restricted_keys = Tr8n::TranslationKey.all_restricted_ids

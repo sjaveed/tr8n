@@ -24,7 +24,7 @@
 class Tr8n::Admin::TranslationController < Tr8n::Admin::BaseController
 
   def index
-    @results = Tr8n::Translation.filter(:params => params, :filter => Tr8n::TranslationFilter)
+    @results = Tr8n::Translation.filter(:params => params, :filter => Tr8n::Filters::Translation)
   end
 
   def view
@@ -39,7 +39,7 @@ class Tr8n::Admin::TranslationController < Tr8n::Admin::BaseController
   end
 
   def votes
-    @results = Tr8n::TranslationVote.filter(:params => params, :filter => Tr8n::TranslationVoteFilter)
+    @results = Tr8n::TranslationVote.filter(:params => params, :filter => Tr8n::Filters::TranslationVote)
   end
 
 end

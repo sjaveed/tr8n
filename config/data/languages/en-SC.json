@@ -2,5 +2,7 @@
   "locale": "en-SC",
   "english_name": "English (Scottish)",
   "google_key": "en",
-  "fallback": "en"
+  "fallback": "en",
+  "facebook_key": "en-SC",
+  "native_name": "English (Scottish)"
 }

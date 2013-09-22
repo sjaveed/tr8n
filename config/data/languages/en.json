@@ -279,7 +279,7 @@
       "rules": [
         {
           "conditions": "(in 'sheep,fish,series,species,money,rice,information,equipment' @value)",
-          "operations": "(quote @value)",
+          "operations": "@value",
           "description": "Uncountable word"
         },
         {

@@ -301,23 +301,10 @@ female = User.new(:name => "Anna", :gender => "female")
 
       <h1>Context Rules</h1>
 
-      <h2>Dates</h2>
-      <pre><code class="language-ruby">[Date.today, Date.today - 1.day, Date.today+1.day].each do |date|
-tr("{user} {date| past: celebrated, present: celebrates, future: will celebrate} {user| his, her} birthday on {date}", :user => male, :date => date)
-end</code></pre>
-      <div class="example">
-        <div class="title">results in</div>
-        <div class="content">
-          <% [Date.today, Date.today - 1.day, Date.today+1.day].each do |date| %>
-            <%=tr("{user} {date| past: celebrated, present: celebrates, future: will celebrate} {user| his, her} birthday on {date}", :user => male, :date => date) %><br>
-          <% end %>
-        </div>
-      </div>
-
       <h2>Numbers</h2>
       <pre><code class="language-ruby">1.upto(10) do |i|
-  tr("You have {count||message}", :count => i)
-end</code></pre>
+        tr("You have {count||message}", :count => i)
+        end</code></pre>
       <div class="example">
         <div class="title">results in</div>
         <div class="content">
@@ -329,13 +316,26 @@ end</code></pre>
 
       <h2>Genders</h2>
       <pre><code class="language-ruby">[male, female].each do |user|
-tr("{user} uploaded {user|his,her} photo", :user => user)
-end</code></pre>
+        tr("{user} uploaded {user|his,her} photo", :user => user)
+        end</code></pre>
       <div class="example">
         <div class="title">results in</div>
         <div class="content">
           <% [male, female].each do |user| %>
             <%=tr("{user} uploaded {user|his,her} photo", :user => user) %><br>
+          <% end %>
+        </div>
+      </div>
+
+      <h2>Dates</h2>
+      <pre><code class="language-ruby">[Date.today, Date.today - 1.day, Date.today+1.day].each do |date|
+tr("{user} {date| past: celebrated, present: celebrates, future: will celebrate} {user| his, her} birthday on {date}", :user => male, :date => date)
+end</code></pre>
+      <div class="example">
+        <div class="title">results in</div>
+        <div class="content">
+          <% [Date.today, Date.today - 1.day, Date.today+1.day].each do |date| %>
+            <%=tr("{user} {date| past: celebrated, present: celebrates, future: will celebrate} {user| his, her} birthday on {date}", :user => male, :date => date) %><br>
           <% end %>
         </div>
       </div>

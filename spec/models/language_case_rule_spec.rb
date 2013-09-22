@@ -26,13 +26,6 @@ describe Tr8n::LanguageCaseRule do
 	      application:  "words")
     end
 
-    after :all do
-      [@user, @translator, @english, @russian, 
-      	@lcase_en, @lcase_ru].each do |obj|
-          #obj.destroy if obj
-       end       
-    end
-
     describe "evaluating simple rules without genders" do
       it "should result in correct substitution" do
         lcrule = Tr8n::LanguageCaseRule.create(

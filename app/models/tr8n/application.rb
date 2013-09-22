@@ -223,7 +223,7 @@ class Tr8n::Application < ActiveRecord::Base
   end
 
   def threshold
-    definition["threshold"] || Tr8n::Config.translation_threshold
+    (definition["threshold"] || Tr8n::Config.translation_threshold).to_i
   end
 
   def threshold=(value)

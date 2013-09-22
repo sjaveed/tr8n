@@ -75,7 +75,7 @@ module Tr8n
         short_name.to_sym
       end
 
-      # used by the dashboard submit dialog
+      # used by the translator submit dialog
       def name_for_case_keys(keys)
         keys = [keys] unless keys.is_a?(Array)
         "#{name}::#{keys.join('::')}"
@@ -90,7 +90,9 @@ module Tr8n
           end
         end
 
-        return value unless Tr8n::RequestContext.container_application.feature_enabled?(:language_cases)
+        unless Tr8n::RequestContext.container_application.feature_enabled?(:language_cases)
+          return value
+        end
 
         case_keys.each do |key|
           value = apply_case(key, value, object, options, language)
@@ -100,10 +102,6 @@ module Tr8n
       end
 
       def context_for_language(language, opts = {})
-        unless language
-          raise Tr8n::Exception.new("Can't determine context without settings: #{full_name}")
-        end
-
         if context_keys.any?
           ctx = language.context_by_keyword(context_keys.first)
         else

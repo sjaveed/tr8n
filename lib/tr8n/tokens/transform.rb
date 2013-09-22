@@ -59,14 +59,6 @@ module Tr8n
         @piped_params = name_without_parens.split(pipe_separator).last.split(",").collect{|param| param.strip}
       end
 
-      def name(opts = {})
-        val = short_name
-        val = "#{val}:#{context_keys.join(':')}" if opts[:context_keys] and context_keys.any?
-        val = "#{val}::#{case_keys.join('::')}" if opts[:case_keys] and case_keys.any?
-        val = "{#{val}}" if opts[:parens]
-        val
-      end
-
       def allowed_in_translation?
         pipe_separator == "||" 
       end
@@ -133,6 +125,12 @@ module Tr8n
 
         token_mapping = context.token_mapping
 
+        # "unsupported"
+        if token_mapping.is_a?(String)
+          raise Tr8n::Exception.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
+        end
+
+        # ["unsupported", "unsupported", {}]
         if token_mapping.is_a?(Array)
           if params.size > token_mapping.size
             raise Tr8n::Exception.new("The token mapping #{token_mapping} does not support #{params.size} params: #{full_name}")
@@ -143,6 +141,7 @@ module Tr8n
           end
         end
 
+        # {}
         token_mapping.each do |key, value|
           values[key] = value
           value.scan(/({\$\d(::\w+)*})/).each do |matches|

@@ -446,21 +446,16 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     
     # if the first translation does not depend on any of the context rules
     # use it... we don't care about the rest of the rules.
-    return [{:label => translations.first.label}] if translations.first.rules_hash.blank?
+    return [translations.first.to_api_hash] if translations.first.context.blank?
     
     # build a context hash for every kind of context rules combinations
     # only the first one in the list should be used
-    context_hash_matches = {}
+    context_matches = {}
     valid_translations = []
     translations.each do |translation|
-      context_key = translation.rules_hash || ""
-      next if context_hash_matches[context_key]
-      context_hash_matches[context_key] = true
-      if translation.rules.blank?
-        valid_translations << {:label => translation.label, :locale => translation.language.locale}
-      else
-        valid_translations << {:label => translation.label, :locale => translation.language.locale, :context => translation.rules_api_hash}
-      end
+      next if context_matches[translation.context]
+      context_matches[translation.context] = true
+      valid_translations << translation.to_api_hash
     end
 
     valid_translations
@@ -472,7 +467,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
 
     if Tr8n::Config.disabled? or (language == self.language)
-      return substitute_tokens(language, label, token_values, options.merge(:fallback => false)).html_safe
+      return substitute_tokens(self.language, label, token_values, options.merge(:fallback => false)).html_safe
     end
 
     translation_options = {}
@@ -658,7 +653,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       "id" => self.id,
       "key" => self.key, 
       "label" => self.label, 
-      "description" => self.description, 
+      "description" => self.description.blank? ? nil : self.description,
       "locale" => (locale || Tr8n::Config.default_locale), 
     }
     

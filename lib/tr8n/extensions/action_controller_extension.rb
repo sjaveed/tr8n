@@ -58,7 +58,7 @@ module Tr8n
       
       def tr8n_source
         @tr8n_source ||= begin
-          "/#{@controller.controller_name}/#{@controller.action_name}"
+          "/#{controller_name}/#{action_name}"
         rescue
           self.class.name
         end

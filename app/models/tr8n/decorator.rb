@@ -113,7 +113,7 @@ class Tr8n::Decorator < ActiveRecord::Base
 
   def classes
     cls = application.feature_enabled?(:decorations) ? css : self.class.default_css
-    cls.collect{|name, value| ".#{name} { #{value} }"}.join('; ').html_safe
+    cls.collect{|name, value| ".#{name} { #{value} }"}.join(' ').gsub("\n", ' ').gsub("\r", ' ').html_safe
   end
 
   def css_tag

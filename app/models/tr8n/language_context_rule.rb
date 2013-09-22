@@ -71,10 +71,10 @@ class Tr8n::LanguageContextRule < ActiveRecord::Base
 
     re = Tr8n::RulesEngine::Evaluator.new
     vars.each do |key, value|
-      re.eval(["let", key, value])
+      re.evaluate(["let", key, value])
     end
 
-    re.eval(conditions_expression)
+    re.evaluate(conditions_expression)
   rescue Exception => ex
     Tr8n::Logger.error("Failed to evaluate settings context rule #{conditions_expression}: #{ex.message}")
     false

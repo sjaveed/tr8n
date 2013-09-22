@@ -172,7 +172,6 @@ class Tr8n::LanguageContext < ActiveRecord::Base
       if method.is_a?(String)
         if token.is_a?(Hash)
           object = token[:object] || token["object"] || token
-          raise Tr8n::Exception.new("Token value is a hash, yet it does not provide an object: #{token.inspect}") unless object
           vars[key] = object[method] || object[method.to_sym]
         else
           vars[key] = token.send(method)

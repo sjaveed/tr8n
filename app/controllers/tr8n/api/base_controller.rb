@@ -196,7 +196,20 @@ private
       response = response.to_api_hash
     end
 
-    render(:text => response.to_json, :content_type => "text/json")
+    render(:text => sanitize_response(response).to_json, :content_type => "text/json")
+  end
+
+  def sanitize_response(data)
+    if data.is_a?(Hash)
+      data.each do |key, value|
+        data.delete(key) if value.nil?
+        sanitize_response(value)
+      end
+    elsif data.is_a?(Array)
+      data.each do |e|
+        sanitize_response(e)
+      end
+    end
   end
 
   def render_error(msg)

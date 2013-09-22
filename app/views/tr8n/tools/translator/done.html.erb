@@ -9,7 +9,7 @@
     window.setTimeout(function() {
       hideTranslator();
       <% if @translations %>        
-        Tr8n.Dispatcher.postMessage({'subject': 'proxy', 'action': 'update_translations', 'translations': <%= @translations.to_json.html_safe %>}, '<%=params[:origin]%>');
+//        Tr8n.Dispatcher.postMessage({'subject': 'proxy', 'action': 'update_translations', 'translations': <%= @translations.to_json.html_safe %>}, '<%=params[:origin]%>');
       <% else %>
         // reloadOrigin();
       <% end %>

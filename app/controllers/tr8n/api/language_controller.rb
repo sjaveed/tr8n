@@ -27,6 +27,9 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
   ssl_allowed :translate  if respond_to?(:ssl_allowed)
 
   def index
+    ensure_get
+    ensure_application
+
     if params[:locale].blank?
       return render_error("Locale must be provided")
     end
@@ -43,14 +46,6 @@ class Tr8n::Api::LanguageController < Tr8n::Api::BaseController
     render_response(Tr8n::Language.order('english_name asc').all)
   end
 
-  def enabled
-    render_response(Tr8n::Language.enabled_languages)
-  end
-
-  def featured
-    render_response(Tr8n::Language.featured_languages)
-  end
-  
   # deprecated - has been moved to proxy API  
   def translate
     domain = Tr8n::TranslationDomain.find_or_create(request.env['HTTP_REFERER'])

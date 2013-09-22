@@ -91,13 +91,13 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
     return false if conditions.nil?
 
     re = Tr8n::RulesEngine::Evaluator.new
-    re.eval(["let", "@value", value])
+    re.evaluate(["let", "@value", value])
 
     gender_variables(object).each do |key, value|
-      re.eval(["let", key, value])
+      re.evaluate(["let", key, value])
     end
 
-    re.eval(conditions_expression)
+    re.evaluate(conditions_expression)
   rescue Exception => ex
     Tr8n::Logger.error("Failed to evaluate language case #{conditions}: #{ex.message}")
     value
@@ -108,9 +108,9 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
     return value if operations.nil?
 
     re = Tr8n::RulesEngine::Evaluator.new
-    re.eval(["let", "@value", value.to_s])
+    re.evaluate(["let", "@value", value])
 
-    re.eval(operations_expression)
+    re.evaluate(operations_expression)
   rescue Exception => ex
     Tr8n::Logger.error("Failed to apply language case rule [case: #{language_case.id}] [rule: #{id}] [conds: #{conditions_expression}] [opers: #{operations_expression}]: #{ex.message}")
     value

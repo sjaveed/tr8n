@@ -462,9 +462,9 @@ class Tr8n::Language < ActiveRecord::Base
       hash[:curse_words] = curse_words
       hash[:fallback] = fallback_language.locale if fallback_language
 
-      hash[:language_contexts] = {}
+      hash[:contexts] = {}
       language_contexts.each do |ctx|
-        hash[:language_contexts][ctx.keyword] = ctx.to_api_hash(:rules => true)
+        hash[:contexts][ctx.keyword] = ctx.to_api_hash(:rules => true)
       end
 
       hash[:cases] = {}

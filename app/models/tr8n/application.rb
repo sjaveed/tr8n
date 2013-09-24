@@ -223,18 +223,22 @@ class Tr8n::Application < ActiveRecord::Base
   end
 
   def threshold
+    self.definition ||= {}
     (definition["threshold"] || Tr8n::Config.translation_threshold).to_i
   end
 
   def threshold=(value)
+    self.definition ||= {}
     definition["threshold"] = value
   end
 
   def translator_level
+    self.definition ||= {}
     (definition["translator_level"] || Tr8n::Config.translator_level).to_i
   end
 
   def translator_level=(value)
+    self.definition ||= {}
     definition["translator_level"] = value
   end
 

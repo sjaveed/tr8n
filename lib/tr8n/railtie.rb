@@ -24,6 +24,7 @@
 require 'rails'
 require 'pp'
 require 'liquid'
+require 'aasm'
 
 module Tr8n
   module Filters

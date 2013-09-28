@@ -58,6 +58,8 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   has_many :translation_domains,      :class_name => "Tr8n::TranslationDomain",     :through => :translation_sources
   has_many :translation_key_comments, :class_name => "Tr8n::TranslationKeyComment", :dependent => :destroy, :order => "created_at desc"
 
+
+
   def self.cache_key(key)
     "translation_key_[#{key}]"
   end

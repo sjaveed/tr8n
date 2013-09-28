@@ -26,25 +26,47 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
   before_filter :init_breadcrumb
 
   def index
-    @translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => selected_application, :component => @component, :source => @source))
-
-    ## get a list of all restricted keys
-    #restricted_keys = Tr8n::TranslationKey.all_restricted_ids
+    #@translation_keys = Tr8n::TranslationKey.for_params(params.merge(:application => selected_application, :component => @component, :source => @source))
     #
-    ## exclude all restricted keys
-    #if restricted_keys.any?
-    #  @translation_keys =  @translation_keys.where("id not in (?)", restricted_keys)
+    ### get a list of all restricted keys
+    ##restricted_keys = Tr8n::TranslationKey.all_restricted_ids
+    ##
+    ### exclude all restricted keys
+    ##if restricted_keys.any?
+    ##  @translation_keys =  @translation_keys.where("id not in (?)", restricted_keys)
+    ##end
+    #
+    #@translation_keys = @translation_keys.order("created_at desc").page(page).per(per_page)
+    #
+    #if @translation_keys.size == 0
+    #  @translated = 0
+    #  @locked = 0
+    #else
+    #  @translated = Tr8n::RequestContext.current_language.total_metric.translation_completeness
+    #  @locked = Tr8n::RequestContext.current_language.completeness
     #end
 
-    @translation_keys = @translation_keys.order("created_at desc").page(page).per(per_page)
+    @translation_keys = Tr8n::TranslationKey.order("id desc")
 
-    if @translation_keys.size == 0
-      @translated = 0
-      @locked = 0
+    if @source
+      # TODO: check if the source belongs to the application
+      @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select translation_key_id from tr8n_translation_key_sources where translation_source_id = ?)", @source.id)
     else
-      @translated = Tr8n::RequestContext.current_language.total_metric.translation_completeness
-      @locked = Tr8n::RequestContext.current_language.completeness
+      # Fallback onto application
+      @source_ids = selected_application.sources.collect{|s| s.id}
+      if @source_ids.size > 0
+        @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select tr8n_translation_key_sources.translation_key_id from tr8n_translation_key_sources where tr8n_translation_key_sources.translation_source_id in (?))", @source_ids)
+      else
+        @translation_keys = @translation_keys.where("1=2")
+      end
+
     end
+
+    unless params[:search].blank?
+      @translation_keys = @translation_keys.where("(tr8n_translation_keys.label like ? or tr8n_translation_keys.description like ?)", "%#{params[:search]}%", "%#{params[:search]}%")
+    end
+
+    @translation_keys = @translation_keys.page(page).per(per_page)
   end
   
   def view

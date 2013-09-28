@@ -104,28 +104,62 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
 
     #source_ids = app.sources.collect{|src| src.id}
     #keys = Tr8n::TranslationKey.joins(:translation_sources).where("tr8n_translation_sources.id in (?)", source_ids).uniq
-        ``
     @filename = "translations_#{Date.today.to_s(:db)}.json"
     self.response.headers["Content-Type"] ||= 'text/json'
     self.response.headers["Content-Disposition"] = "attachment; filename=#{@filename}"
     self.response.headers['Last-Modified'] = Time.now.ctime.to_s
 
-    self.response_body = Enumerator.new do |results|
-      i = 0
-      Tr8n::TranslationKey.find_each do |tkey|
-        pp tkey.key
-        break if i > 100
+    lang_ids = languages.collect{|l| l.id}
 
-        translations = {}
-        languages.each do |lang|
-          translations[lang.locale] = tkey.valid_translations_with_rules(lang, :threshold => 0)
+    locales = {}
+    Tr8n::Language.all.each do |l|
+      locales[l.id.to_s] = l.locale
+    end
+
+    self.response_body = Enumerator.new do |results|
+      t = 0
+      tk = 0
+
+      sql =  %"
+select tr8n_translations.translation_key_id as translation_key_id, tr8n_translation_keys.label as translation_key_label, tr8n_translation_keys.description as translation_key_description,
+       tr8n_translations.language_id as translation_language_id, tr8n_translations.label as translation_label, tr8n_translations.context as translation_context
+from tr8n_translations
+inner join tr8n_translation_keys on tr8n_translations.translation_key_id = tr8n_translation_keys.id
+order by tr8n_translations.translation_key_id asc
+limit 1000000
+offset 0;
+"
+      tkey = nil
+      Tr8n::Translation.connection.execute(sql).each do |rec|
+        #pp tkey
+
+        if tkey.nil? or tkey["id"] != rec["translation_key_id"]
+          unless tkey.nil?
+            results << "#{tkey.to_json}\n"
+            pp "#{tk} keys and #{t} translations have been sent" if tk % 1000 == 0
+          end
+
+          tk += 1
+
+          tkey = {
+              "id"            => rec["translation_key_id"],
+              "label"         => rec["translation_key_label"],
+              "translations"  => {}
+          }
+
+          unless rec["translation_key_description"].blank?
+            tkey["description"] = rec["translation_key_description"]
+          end
         end
 
-        data = tkey.to_api_hash(:translations => translations)
-        results << "#{sanitize_response(data).to_json}\n"
+        t += 1
+        locale = locales[rec["translation_language_id"].to_s]
+        next unless locale
+        tkey["translations"][locale] = [
+            {"label" => rec["translation_label"]}
+        ]
 
-        i += 1
-        GC.start if i % 500==0
+        #GC.start if i % 500==0
       end
     end
   end

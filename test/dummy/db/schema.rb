@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130915190634) do
+ActiveRecord::Schema.define(:version => 20130917233919) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -150,8 +150,8 @@ ActiveRecord::Schema.define(:version => 20130915190634) do
   create_table "tr8n_email_logs", :force => true do |t|
     t.integer  "email_template_id"
     t.integer  "language_id"
-    t.integer  "from_user_id"
-    t.integer  "to_user_id"
+    t.integer  "from_id"
+    t.integer  "to_id"
     t.string   "email"
     t.text     "tokens"
     t.datetime "sent_at"
@@ -162,8 +162,8 @@ ActiveRecord::Schema.define(:version => 20130915190634) do
 
   add_index "tr8n_email_logs", ["email"], :name => "index_tr8n_email_logs_on_email"
   add_index "tr8n_email_logs", ["email_template_id"], :name => "index_tr8n_email_logs_on_email_template_id"
-  add_index "tr8n_email_logs", ["from_user_id"], :name => "index_tr8n_email_logs_on_from_user_id"
-  add_index "tr8n_email_logs", ["to_user_id"], :name => "index_tr8n_email_logs_on_to_user_id"
+  add_index "tr8n_email_logs", ["from_id"], :name => "index_tr8n_email_logs_on_from_id"
+  add_index "tr8n_email_logs", ["to_id"], :name => "index_tr8n_email_logs_on_to_id"
 
   create_table "tr8n_email_templates", :force => true do |t|
     t.integer  "application_id"
@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(:version => 20130915190634) do
     t.datetime "updated_at",  :null => false
   end
 
-  add_index "tr8n_features", ["object_type", "object_id", "keyword"], :name => "tr8n_feats"
+  add_index "tr8n_features", ["object_type", "object_id"], :name => "tr8n_feats_obj"
 
   create_table "tr8n_glossary", :force => true do |t|
     t.string   "keyword"
@@ -270,6 +270,8 @@ ActiveRecord::Schema.define(:version => 20130915190634) do
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
   end
+
+  add_index "tr8n_language_context_rules", ["language_context_id", "keyword"], :name => "tr8n_lctxr_lci"
 
   create_table "tr8n_language_contexts", :force => true do |t|
     t.integer  "language_id"
@@ -404,6 +406,23 @@ ActiveRecord::Schema.define(:version => 20130915190634) do
 
   add_index "tr8n_oauth_tokens", ["application_id"], :name => "tr8n_oauth_tokens_app_id"
   add_index "tr8n_oauth_tokens", ["translator_id"], :name => "tr8n_oauth_tokens_trn_id"
+
+  create_table "tr8n_requests", :force => true do |t|
+    t.string   "type"
+    t.string   "state"
+    t.string   "key"
+    t.string   "email"
+    t.integer  "from_id"
+    t.integer  "to_id"
+    t.text     "data"
+    t.datetime "expires_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "tr8n_requests", ["from_id"], :name => "index_tr8n_requests_on_from_id"
+  add_index "tr8n_requests", ["to_id"], :name => "index_tr8n_requests_on_to_id"
+  add_index "tr8n_requests", ["type", "key", "state"], :name => "index_tr8n_requests_on_type_and_key_and_state"
 
   create_table "tr8n_sync_logs", :force => true do |t|
     t.datetime "started_at"

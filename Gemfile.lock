@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    tr8n (3.2.4)
+    tr8n (4.0.1)
+      aasm
       faraday
       liquid
       rails (~> 3.2.3)
@@ -10,6 +11,7 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    aasm (3.0.22)
     actionmailer (3.2.14)
       actionpack (= 3.2.14)
       mail (~> 2.5.4)
@@ -85,7 +87,7 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
       railties (>= 3.0.0)
-    liquid (2.4.1)
+    liquid (2.5.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -93,11 +95,14 @@ GEM
     mime-types (1.24)
     multi_json (1.7.9)
     multipart-post (1.2.0)
+    pg (0.15.1)
     polyglot (0.3.3)
     pry (0.9.12.2)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
+    puma (2.6.0)
+      rack (>= 1.1, < 2.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -188,7 +193,9 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   kaminari
+  pg
   pry
+  puma
   rr
   rspec
   rspec-rails

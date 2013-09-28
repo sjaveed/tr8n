@@ -152,6 +152,11 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
   end
 
+  def breadcrumb_label
+    return sanitized_label if sanitized_label.length < 50
+    sanitized_label[0..50] + '...'
+  end
+
   def tokenless_label
     @tokenless_label ||= begin
       lbl = label.clone
@@ -279,6 +284,10 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     translations.order("rank desc").all
   end
 
+  def valid_translations_for_language(language)
+    translations_for(language, Tr8n::RequestContext.current_application.threshold)
+  end
+
   # used by the inline popup dialog, we don't want to show blocked translations
   def inline_translations_for(language)
     translations_for(language, -50)
@@ -291,10 +300,6 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   def clear_translations_cache_for_language(language = Tr8n::RequestContext.current_language)
     Tr8n::Cache.delete(translations_cache_key(language)) 
   end  
-
-  def valid_translations_for_language(language = Tr8n::RequestContext.current_language)
-    translations_for(language, Tr8n::RequestContext.current_application.threshold)
-  end
 
   # used by all translation methods
   def cached_translations_for_language(language)
@@ -440,8 +445,10 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     nil
   end
 
-  def valid_translations_with_rules(language = Tr8n::RequestContext.current_language, opts = {})
-    translations = cached_translations_for_language(language)
+  def valid_translations_with_rules(language, opts = {})
+    opts[:threshold] ||= Tr8n::RequestContext.current_application.threshold
+
+    translations = translations_for(language, opts[:threshold])
     return [] if translations.empty?
     
     # if the first translation does not depend on any of the context rules
@@ -536,27 +543,10 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     processed_label
   end
   
-  # TODO: move all this stuff out of the model to decorators
   def default_decoration(language = Tr8n::RequestContext.current_language, options = {})
-    return sanitized_label if Tr8n::RequestContext.current_user_is_guest?
-    return sanitized_label unless Tr8n::RequestContext.current_user_is_translator?
-    return sanitized_label unless can_be_translated?
-    return sanitized_label if locked?(language)
-
-    classes = ['tr8n_translatable']
-
-    if cached_translations_for_language(language).any?
-      classes << 'tr8n_translated'
-    else
-      classes << 'tr8n_not_translated'
-    end
-
-    html = "<span class='#{classes.join(' ')}' translation_key_id='#{id}'>"
-    html << sanitized_label
-    html << "</span>"
-    html.html_safe    
+    Tr8n::RequestContext.current_application.decorator.decorate_translation_key(language, self, options)
   end
-  
+
   def level
     return 0 if super.nil?
     super

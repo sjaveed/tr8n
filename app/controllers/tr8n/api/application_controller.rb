@@ -44,7 +44,7 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
   def languages
     ensure_get
     ensure_application
-    render_response(application.languages)
+    render_response(application.languages.collect{|l| l.to_api_hash(:definition => (params[:definition] == "true"))})
   end
 
   def featured_locales
@@ -96,6 +96,38 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
     render_response(:translation_keys => payload)    
   rescue Tr8n::Exception => ex
     render_error(ex.message)    
+  end
+
+  def translations
+    app = Tr8n::RequestContext.current_application
+    languages = app.languages
+
+    #source_ids = app.sources.collect{|src| src.id}
+    #keys = Tr8n::TranslationKey.joins(:translation_sources).where("tr8n_translation_sources.id in (?)", source_ids).uniq
+        ``
+    @filename = "translations_#{Date.today.to_s(:db)}.json"
+    self.response.headers["Content-Type"] ||= 'text/json'
+    self.response.headers["Content-Disposition"] = "attachment; filename=#{@filename}"
+    self.response.headers['Last-Modified'] = Time.now.ctime.to_s
+
+    self.response_body = Enumerator.new do |results|
+      i = 0
+      Tr8n::TranslationKey.find_each do |tkey|
+        pp tkey.key
+        break if i > 100
+
+        translations = {}
+        languages.each do |lang|
+          translations[lang.locale] = tkey.valid_translations_with_rules(lang, :threshold => 0)
+        end
+
+        data = tkey.to_api_hash(:translations => translations)
+        results << "#{sanitize_response(data).to_json}\n"
+
+        i += 1
+        GC.start if i % 500==0
+      end
+    end
   end
 
 private

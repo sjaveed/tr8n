@@ -236,6 +236,7 @@ class Tr8n::Translation < ActiveRecord::Base
   end
 
   def update_cache
+    return if Tr8n::RequestContext.block_options[:skip_cache]
     language.translations_changed! if language
     translation_key.translations_changed!(language) if translation_key
   end

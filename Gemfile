@@ -34,3 +34,6 @@ end
 
 #gem 'rack-mini-profiler'
 
+gem 'pg'
+
+gem 'puma'

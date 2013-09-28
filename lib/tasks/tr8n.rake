@@ -109,6 +109,205 @@ namespace :tr8n do
     Tr8n::SyncLog.sync(opts)
   end
 
+  desc "import keys"
+  task :import_keys  => :environment do
+    path = ENV['source']
+    dry_run = (ENV['dry'] == "true")
+    start_at = (ENV['start_at'] || 0).to_i
+    clear = (ENV['clear'] == "true")
+    only_category = ENV['category']
+
+    by_locale = {}
+    by_category = {}
+
+    Thread.current[:tr8n_block_options] ||= []
+    Thread.current[:tr8n_block_options].push({:skip_cache => true})
+
+    puts "Building indexes..."
+
+    file_count = 0
+    Dir[File.join(path, "*.json")].each do |file_name|
+      locale, category = File.basename(file_name, '.json').split('_')
+      by_locale[locale] ||= []
+      by_locale[locale] << category
+
+      by_category[category] ||= []
+      by_category[category] << locale
+
+      print "."
+      file_count += 1
+    end
+
+    puts "\n"
+    puts "Validating English keys..."
+    by_category.keys.each do |cat|
+      unless by_locale["EN"].include?(cat)
+        puts "Category #{cat} is missing EN locale, but is has the following locales: #{by_category[cat]}"
+      end
+    end
+
+    puts "\n"
+    puts "Validating missing locales..."
+    by_category.each do |cat, locales|
+      unless by_locale.keys.sort == locales.sort
+        puts "Category #{cat} is missing locales: #{by_locale.keys - locales}"
+      end
+    end
+
+    puts "\n"
+    puts "Mapping Tr8n languages..."
+
+    puts "MyHeritage locales: #{by_locale.keys}"
+
+    puts "Geni locale mapping:"
+    Tr8n::Language.where("myheritage_key is not null").each do |l|
+      puts "Geni #{l.english_name}: #{l.locale} => MyHeritage: #{l.myheritage_key}"
+    end
+
+    puts "\n"
+    tr8n_languages = {}
+    by_locale.keys.each do |locale|
+      lang = Tr8n::Language.where("myheritage_key = ?", locale).first
+      tr8n_languages[locale] = lang
+      unless lang
+        puts "Language for locale #{locale} does not exist in Tr8n..."
+      end
+    end
+
+    if clear
+      puts "\n"
+      puts "Cleaning up database...."
+      [Tr8n::TranslationKey,Tr8n::Translation, Tr8n::TranslationSource, Tr8n::TranslationKeySource].each do |klass|
+        puts "Clearing records for #{klass.name}..."
+        klass.delete_all
+      end
+    end
+
+    puts "\n"
+    puts "Importing keys...."
+
+    key_count = 0
+    trans_count = 0
+
+    t0 = Time.now
+
+    application = Tr8n::RequestContext.container_application
+    by_locale["EN"].each_with_index do |cat, index|
+      next if start_at > index
+
+      unless only_category.blank?
+        next if cat != only_category
+      end
+
+      tt0 = Time.now
+
+      file_name = "#{path}/EN_#{cat}.json"
+      file = File.read(file_name)
+      data = JSON.parse(file)
+
+      next unless data.is_a?(Hash)
+
+      puts "\n"
+      puts "Importing #{cat} : #{data.keys.size} keys :  #{index+1} out of #{by_locale["EN"].size} : #{((index+1) * 100.0 /by_locale["EN"].size).to_i}% complete..."
+      puts "------------------------------------------------------------------------------------------"
+      puts "Importing #{cat} : EN..."
+
+      keys = {}
+
+      unless dry_run
+        source = Tr8n::TranslationSource.where("application_id = ? and source = ?", application.id, cat).first
+        source ||= Tr8n::TranslationSource.create(:application_id => application.id, :source => cat)
+      end
+
+      data.each do |key, label|
+
+        if label.blank?
+          #pp "Key label is blank, next ..."
+          #keys[key] = existing_key
+          next
+        end
+
+        #puts "Importing: #{key} #{label} ..."
+        tr8n_key = Tr8n::TranslationKey.generate_key(label, cat).to_s
+        #puts "[#{tr8n_key}]"
+
+        existing_key = Tr8n::TranslationKey.where("key = ?", tr8n_key).first unless dry_run
+        if existing_key
+          #pp "Found existing key: ", existing_key.label
+          keys[key] = existing_key
+          next
+        end
+
+        unless dry_run
+          keys[key] = Tr8n::TranslationKey.create( :key         => tr8n_key,
+                                                   :label       => label,
+                                                   :description => cat,
+                                                   :locale      => 'en-US')
+
+          Tr8n::TranslationKeySource.create(:translation_key => keys[key], :translation_source => source)
+        end
+
+        key_count += 1
+      end
+
+      by_category[cat].each do |locale|
+        next if locale == 'EN'
+
+        file_name = "#{path}/#{locale}_#{cat}.json"
+        unless File.exist?(file_name)
+          puts "#{file_name} does not exist, next..."
+          next
+        end
+
+        lang = tr8n_languages[locale]
+        unless lang
+          puts "#{locale} does not exist in Geni, next..."
+          next
+        end
+
+        puts "Importing #{cat} : #{locale}..."
+
+        file = File.read(file_name)
+        data = JSON.parse(file)
+
+        data.each do |key, label|
+          unless dry_run
+            tkey = keys[key]
+
+            unless tkey
+              #puts "#{keys[key].label} was never defined in English, next..."
+              next
+            end
+
+            if tkey.translations.where("language_id = ?", lang.id).count > 0
+              #puts "#{keys[key].label} has already been imported, next..."
+              next
+            end
+
+            if label.blank?
+              #puts "Translation for #{keys[key].label} is blank, next..."
+              next
+            end
+
+            Tr8n::Translation.create(:translation_key => tkey, :language => lang, :translator => Tr8n::Config.system_translator, :label => label)
+          end
+
+          trans_count += 1
+        end
+      end
+
+      tt1 = Time.now
+      puts "Importing #{cat} took: #{tt1-tt0}"
+      puts "\n"
+    end
+
+    t1 = Time.now
+
+    puts "\n"
+    puts "Imported #{key_count} keys with #{trans_count} translations from #{file_count} files in #{by_locale.keys.count} locales"
+    puts "Running time: #{t1-t0}"
+  end
+
   desc "fix languages"
   task :langs => :environment do
     backup = false
@@ -165,168 +364,5 @@ namespace :tr8n do
 
   end
 
-
-
-
-
-
-
-  def stuff
-    #if file.index("mod 10 @n")
-    #  count += 1
-    #  file = file.gsub("mod 10 @n", "mod @n 10")
-    #end
-
-    #data["context_rules"]["list"] = {
-    #  "keys"=> [
-    #    "one",
-    #    "other"
-    #  ],
-    #  "token_expression"=> "/.*(items|list)(\\d)*$/",
-    #  "variables"=> [
-    #    "@count"
-    #  ],
-    #  "token_mapping"=> [
-    #    "unsupported",
-    #    {
-    #      "one"=> "{$0}",
-    #      "other"=> "{$1}"
-    #    }
-    #  ],
-    #  "default_rule"=> "other",
-    #  "rules"=> {
-    #    "one"=> {
-    #      "rule"=> "(= 1 @count)",
-    #      "description"=> "{token} contains 1 element"
-    #    },
-    #    "other"=> {
-    #      "description"=> "{token} contains at least 2 elements"
-    #    }
-    #  }
-    #}
-
-    if data["context_rules"] and data["context_rules"]["number"]
-      if data["context_rules"]["number"]["keys"] == ["other"]
-        data["context_rules"]["number"]["token_mapping"] = "unsupported"
-        count += 1
-      end
-    end
-
-    data["context_rules"]["number"] = {
-        "keys"=> ["one", "other"],
-        "token_expression"=>  "/.*(count|num|minutes|seconds|hours)(\d)*$/",
-        "variables"=> ["@n"],
-        "token_mapping"=> ["unsupported", {"one"=> "{$0}", "other"=> "{$1}"}],
-        "default_rule"=> "other",
-        "rules"=> {
-            "one"=>    {"rule"=> "(= 1 @n)", "description"=> "{token} is 1", "examples"=> "1"},
-            "other"=>  {"description"=> "{token} is not 1", "examples"=> "0, 2-999; 1.2, 2.07..."}
-        }
-    }    
-    #if data["english_name"] and data["english_name"] == data["native_name"]
-    #  print " = yep "
-    #  data.delete("native_name")
-    #end
-
-    #if data["context_rules"] and data["context_rules"]["number"]
-    #  data["context_rules"]["number"]["token_expression"] = "/.*(count|num|minutes|seconds|hours)(\\d)*$/"
-    #  unless data["context_rules"]["number"]["variables"]
-    #    data["context_rules"]["number"]["variables"] = ["@n"]
-    #  end
-    #
-    #  unless data["context_rules"]["number"]["token_mapping"]
-    #    data["context_rules"]["number"]["token_mapping"]  = ["unsupported", {"one" => "{$0}", "other" => "{$1}"}]
-    #  end
-    #
-    #  unless data["context_rules"]["number"]["default_rule"]
-    #    data["context_rules"]["number"]["default_rule"] = "other"
-    #  end
-    #end
-
-    data["context_rules"]["date"] = {
-        "keys" => [
-            "past",
-            "present",
-            "future"
-        ],
-        "token_expression"=> "/.*(date|time)(\\d)*$/",
-        "variables"=> ["@date"],
-        "token_mapping"=> [
-            "unsupported",
-            "unsupported",
-            {
-                "past"=> "{$0}",
-                "present"=> "{$1}",
-                "future"=> "{$2}"
-            }
-        ],
-        "default_rule"=> "present",
-        "rules"=> {
-            "past"=> {
-                "rule"=> "(> @date (today))",
-                "description"=> "{token} is in the future"
-            },
-            "present"=> {
-                "rule"=> "(= @date (today))",
-                "description"=> "{token} is in the present"
-            },
-            "future"=> {
-                "rule"=> "(< @date (today))",
-                "description"=> "{token} is in the past"
-            }
-        }
-    }
-
-    if data["context_rules"]["gender_list"]
-      data["context_rules"].delete("gender_list")
-    end
-
-    data["context_rules"]["genders"] = {
-        "keys"  => ["male", "female", "unknown", "other"],
-        "token_expression"  =>  "/.*(users|profiles|actors|targets)(\\d)*$/",
-        "variables" => ["@genders"],
-        "token_mapping" => ["unsupported", "unsupported", "unsupported", {"male"=> "{$0}", "female"=>"{$1}", "unknown"=>"{$2}", "other"=>"{$3}"}],
-        "default_rule"  => "other",
-        "rules" => {
-            "male"=> {"rule"=> "(&& (= 1 (count @genders)) (all @genders 'male'))", "description"=> "{token} contains 1 male"},
-            "female"=> {"rule"=> "(&& (= 1 (count @genders)) (all @genders 'female'))", "description"=> "{token} contains 1 female"},
-            "unknown"=> {"rule"=> "(&& (= 1 (count @genders)) (all @genders 'unknown'))", "description"=> "{token} contains 1 person with unknown gender"},
-            "other"=> {"description"=> "{token} contains at least 2 people"}
-        }
-    }
-    if data["context_rules"] and data["context_rules"]["gender"]
-      unless data["context_rules"]["gender"]["keys"]
-        data["context_rules"]["gender"]["keys"] = ["male", "female", "other"]
-      end
-
-      unless data["context_rules"]["gender"]["variables"]
-        data["context_rules"]["gender"]["variables"] = ["@gender"]
-      end
-
-      unless data["context_rules"]["gender"]["token_expression"]
-        data["context_rules"]["gender"]["token_expression"] = "/.*(user|translator|profile|actor|target)(\\d)*$/"
-      end
-
-      unless data["context_rules"]["gender"]["token_mapping"]
-        data["context_rules"]["gender"]["token_mapping"] = [{"other" => "{$0}"},
-                                                            {"male" => "{$0}", "female" => "{$1}", "other" => "{$0}/{$1}"},
-                                                            {"male" => "{$0}", "female" => "{$1}", "other" => "{$2}"}]
-      end
-
-      unless data["context_rules"]["gender"]["default_rule"]
-        data["context_rules"]["gender"]["default_rule"] = "other"
-      end
-
-      unless data["context_rules"]["gender"]["rules"]
-        data["context_rules"]["gender"]["rules"] = {
-            "male"    =>    {"rule"=> "(= 'male' @gender)", "description"=> "{token} is a male"},
-            "female"  =>    {"rule"=> "(= 'female' @gender)", "description"=> "{token} is a female"},
-            "other"   =>    {"description"=> "{token}'s gender is unknown"}
-        }
-
-        count += 1
-      end
-    end
-  end
 
 end

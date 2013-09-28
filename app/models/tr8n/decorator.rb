@@ -168,5 +168,24 @@ class Tr8n::Decorator < ActiveRecord::Base
     html.join('')
   end
 
+  def decorate_translation_key(language, translation_key, options = {})
+    return sanitized_label if Tr8n::RequestContext.current_user_is_guest?
+    return sanitized_label unless Tr8n::RequestContext.current_user_is_translator?
+    return sanitized_label unless translation_key.can_be_translated?
+    return sanitized_label if translation_key.locked?(language)
+
+    classes = ['tr8n_translatable']
+
+    if translation_key.cached_translations_for_language(language).any?
+      classes << 'tr8n_translated'
+    else
+      classes << 'tr8n_not_translated'
+    end
+
+    html = "<span class='#{classes.join(' ')}' data-translation_key_id='#{translation_key.id}'>"
+    html << ERB::Util.html_escape(translation_key.sanitized_label)
+    html << "</span>"
+    html.html_safe
+  end
 
 end

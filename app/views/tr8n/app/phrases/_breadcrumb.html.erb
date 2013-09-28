@@ -8,7 +8,7 @@
       links << [@source.name || @source.source, {:action => :index, :component_id => params[:component_id], :source_id => params[:source_id]}]
     end
     if @translation_key
-      links << ["\"#{@translation_key.sanitized_label}\"", {:action => :view, :id => @translation_key.id, :component_id => params[:component_id], :source_id => params[:source_id]}]
+      links << ["\"#{@translation_key.breadcrumb_label}\"", {:action => :view, :id => @translation_key.id, :component_id => params[:component_id], :source_id => params[:source_id]}]
     end
 %>
 

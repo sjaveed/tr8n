@@ -26,6 +26,8 @@ Tr8n.UI.Translator = {
   translation_key_id: null,
   suggestion_tokens: null,
   container_width: 400,
+  container_origin: null,
+  click_coords: null,
   container_min_size: {height: 70, width: 400},
   container: null,
   stem_image: null, 
@@ -194,17 +196,13 @@ Tr8n.UI.Translator = {
 
     var stem = {v: "top", h: "left", width: 10, height: 12};
     var label_rect = Tr8n.Utils.elementRect(translatable_node);
-    var click_coords = this.mousePosition(event);
+    this.click_coords = this.mousePosition(event);
 
-//    alert(click_coords.x + " " + click_coords.y);
-
-    var new_container_origin = {left: click_coords.x - 60, top: (label_rect.top + label_rect.height + stem.height)};
-//    var label_center = click_coords.left;
+    this.container_origin = {left: this.click_coords.x - 60, top: (label_rect.top + label_rect.height + stem.height)};
     var stem_offset = 60;
 
-    // check if the lightbox will be on the left or on the right
-    if (click_coords.x > window.innerWidth / 2) {
-      new_container_origin.left = new_container_origin.left - this.container_width + 120;
+    if (this.click_coords.x > window.innerWidth / 2) {
+      this.container_origin.left = this.container_origin.left - this.container_width + 120;
       stem.h = "right";
     }
 
@@ -220,8 +218,8 @@ Tr8n.UI.Translator = {
 
     window.scrollTo(label_rect.left, label_rect.top - 100);
 
-    this.container.style.left     = new_container_origin.left + "px";
-    this.container.style.top      = new_container_origin.top + "px";
+    this.container.style.left     = this.container_origin.left + "px";
+    this.container.style.top      = this.container_origin.top + "px";
     this.container.style.display  = "block";
 
     var url = '';
@@ -247,9 +245,26 @@ Tr8n.UI.Translator = {
     this.content_frame.src = Tr8n.Utils.toUrl('/tr8n/tools/translator/splash_screen', params);
   },
 
-  resize: function(height) {
-    this.content_frame.style.height = height + 'px';
-    this.container.style.height = height + 'px';
+  resize: function(size) {
+    if (size.width != null) {
+      this.content_frame.style.width = size.width + 'px';
+      this.container.style.width = size.width + 'px';
+//      alert(this.container_width + " " + size.width);
+      if (this.click_coords.x > window.innerWidth / 2 && this.container_width != size.width) {
+        if (this.container_width < size.width)
+          this.container_origin.left  = this.container_origin.left - (size.width/2) + 100;
+        else
+          this.container_origin.left  = this.container_origin.left + (size.width/2);
+
+        this.container.style.left   = this.container_origin.left + "px";
+      }
+      this.container_width = size.width;
+      this.move_control.style.width = (this.container_width - 50) + "px";
+    }
+    if (size.height != null) {
+      this.content_frame.style.height = size.height + 'px';
+      this.container.style.height = size.height + 'px';
+    }
   }
 
 }

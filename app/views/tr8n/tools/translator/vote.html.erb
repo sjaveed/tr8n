@@ -34,3 +34,11 @@
     <% end %>
   </div>
 <% end %>
+
+<script>
+  (function() {
+    <% if @translation_key.label.length > 400 %>
+      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'width':  800}, '<%=params[:origin]%>');
+    <% end %>
+  })();
+</script>

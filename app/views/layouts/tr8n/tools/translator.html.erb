@@ -25,7 +25,7 @@
       if (document.getElementById('tr8n_translator_translation_label')) {
         height += 60;
       }
-      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'height':  + height}, '<%=params[:origin]%>');
+      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'height':  height}, '<%=params[:origin]%>');
     }
 
     function hideTranslator() {

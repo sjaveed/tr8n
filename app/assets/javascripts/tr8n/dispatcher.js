@@ -141,8 +141,18 @@ Tr8n.Dispatcher = {
     }
 
     if (subject == 'translator') {
-      if (action == 'resize') { Tr8n.UI.Translator.resize(msg['height']); return; }
-      if (action == 'hide') { Tr8n.UI.Translator.hide(); return; }
+      if (action == 'resize') {
+        var size = {};
+        if (msg['height']) size.height = msg['height'];
+        if (msg['width']) size.width = msg['width'];
+        Tr8n.UI.Translator.resize(size);
+        return;
+      }
+
+      if (action == 'hide') {
+        Tr8n.UI.Translator.hide();
+        return;
+      }
     }
 
     Tr8n.error("Unknown message: " + subject + '.' + action);

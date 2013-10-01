@@ -34,6 +34,7 @@ module Tr8n
     # tr(:label => label, :description => "", :tokens => {}, :options => {})
     ############################################################
     def tr(label, description = "", tokens = {}, options = {})
+      t0 = Time.now
       params = Tr8n::Utils.normalize_tr_params(label, description, tokens, options)
 
       return params[:label] if params[:label].tr8n_translated?
@@ -49,7 +50,16 @@ module Tr8n
         return Tr8n::TranslationKey.substitute_tokens(params[:label], params[:tokens], params[:options])
       end
 
-      Tr8n::RequestContext.current_language.translate(params[:label], params[:description], params[:tokens], params[:options])
+      translation = Tr8n::RequestContext.current_language.translate(params[:label], params[:description], params[:tokens], params[:options])
+
+      t1 = Time.now
+      # Tr8n::Logger.debug("#{label} : (#{t1-t0} mls)")
+
+      return translation
+    rescue Tr8n::Exception => ex
+      Tr8n::Logger.error("ERROR: #{label}")
+      Tr8n::Logger.error(ex.message + "\n=> " + ex.backtrace.join("\n=> "))
+      return label
     end
 
     # for translating labels

@@ -226,6 +226,31 @@ female = User.new(:name => "Anna", :gender => "female")
         </div>
       </div>
 
+      <pre><code class="language-ruby">tr("[link] click here to view this section of the document [/link]", :link => {:href => "/docs#DecorationTokens"})</code></pre>
+
+      <div class="example">
+        <div class="title">results in</div>
+        <div class="content">
+          <%=tr("[link] click here to view this section of the document [/link]", :link => {:href => "/docs#DecorationTokens"}) %>
+        </div>
+      </div>
+
+      <pre><code class="language-ruby">tr("[link] [bold: click here] to view [underline: this section] of the document [/link]",
+          :link => {:href => "/docs#DecorationTokens"},
+          :underline => lambda{|value| "&lt;span style='text-decoration: underline'&gt;#{value}&lt;/span&gt;"}
+)</code></pre>
+
+      <div class="example">
+        <div class="title">results in</div>
+        <div class="content">
+          <%=tr("[link] [bold: click here] to view [underline: this section] of the document [/link]",
+                :link => {:href => "/docs#DecorationTokens"},
+                :underline => lambda{|value| "<span style='text-decoration: underline'>#{value}</span>"}
+             )
+          %>
+        </div>
+      </div>
+
       <h2>Nested Tokens</h2>
       <pre><code class="language-ruby">tr("You have [link: {count||message}]", :count => 10, :link => lambda{|value| link_to(value, "")})</code></pre>
 

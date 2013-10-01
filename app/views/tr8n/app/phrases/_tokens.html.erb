@@ -5,14 +5,10 @@
   	 <%=tra("Translation Tokens")%>
 	</div>
 	
-  <% if translation_key.translation_tokens? %>
-      <% translation_key.translation_tokens.each do |token| %>
+  <% if translation_key.allowed_tokens.any? %>
+      <% translation_key.allowed_tokens.each do |token| %>
         <span dir="ltr">
-        <% if token.decoration? %>
-          <%= link_to_function(token.sanitized_name, "Tr8n.UI.Translation.insertDecorationToken('#{token.name}', 'tr8n_translation_label_#{translation_key.id}');", :title => trla("Click to insert this token above") ) %>
-        <% else %>
           <%= link_to_function(token.sanitized_name, "Tr8n.UI.Translation.insertToken('#{token.name}', 'tr8n_translation_label_#{translation_key.id}');", :title => trla("Click to insert this token above") ) %>
-        <% end %>
         </span>
       <% end %>
 			
@@ -20,6 +16,33 @@
 			   <%=tra("Click on a token to insert it into the translation at a point of the cursor")%>
 			</div>
   <% end %>
+
+  <% if translation_key.decoration_tokens.any? %>
+    <div class="small_section_title" style="color: #999; font-size: 10px;">
+      <strong><%=tra("Decoration Tokens")%></strong>
+    </div>
+    <div style="font-size:10px;">
+      <% translation_key.decoration_tokens.each do |token| %>
+        <%= link_to_function("[#{token}: ]", "Tr8n.UI.Translation.insertDecorationToken('#{token}');", :title => trla("Click to insert this token above") ) %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if tr8n_current_application.feature_enabled?(:context_rules) and translation_key.implied_tokens.any? %>
+    <div id="tr8n_translator_tokens_simple_view" style="font-size:10px;">
+      <div class="small_section_title" style="color: #999; font-size: 10px;">
+        <strong><%=tra("Implied Tokens")%></strong>
+      </div>
+
+      <% translation_key.implied_tokens.each do |token| %>
+        <%= token.sanitized_name %>
+      <% end %>
+      <div style="color:#888;font-size:9px;padding-top:5px;">
+        <%=tra("Implied tokens are used for generating context rules and should not be used in the actual translations.") %>
+      </div>
+    </div>
+  <% end %>
+
 
   <% if false # translation_key.data_tokens? and tr8n_current_language.cases.any? %>
     <div id="cases_trigger"  class="tr8n_txtl" style="font-size:12px; font-weight:normal; padding-bottom:10px;">
@@ -32,7 +55,7 @@
       </div>
       <div style="height:120px; overflow:auto; padding:2px; border:1px solid #ccc; background-color:white; margin-bottom:10px;">
         <table style="width:100%;">
-          <% @translation_key.data_tokens.each do |token| %>
+          <% translation_key.data_tokens.each do |token| %>
 					  <% next unless token.supports_cases? %>
             <% tr8n_current_language.cases.each do |lcase| %>
             <tr>

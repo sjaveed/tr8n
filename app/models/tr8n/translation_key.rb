@@ -137,12 +137,37 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     @tokenized_label ||= Tr8n::TokenizedLabel.new(label)
   end
 
-  delegate :tokens, :tokens?, :to => :tokenized_label
-  delegate :data_tokens, :data_tokens?, :to => :tokenized_label
-  delegate :decoration_tokens, :decoration_tokens?, :to => :tokenized_label
-  delegate :translation_tokens, :translation_tokens?, :to => :tokenized_label
-  delegate :suggestion_tokens, :to => :tokenized_label
-  delegate :implied_tokens, :implied_tokens?, :to => :tokenized_label
+  def data_tokens
+    @data_tokens ||= begin
+      Tr8n::Tokens::Base.register_tokens(label, :data)
+    end
+  end
+
+  def allowed_tokens
+    @allowed_tokens ||= begin
+      data_tokens.select{|token| token.allowed_in_translation?}
+    end
+  end
+
+  def allowed_token_names
+    @allowed_token_names ||= allowed_tokens.collect{|token| token.name}
+  end
+
+  def allowed_token?(token)
+    allowed_token_names.include?(token.name)
+  end
+
+  def implied_tokens
+    @implied_tokens ||= data_tokens.select{|token| token.implied? and not allowed_token?(token)}
+  end
+
+  def decoration_tokens
+    @decoration_tokens ||= begin
+      dt = Tr8n::Tokens::Decoration.new(label)
+      dt.parse
+      dt.tokens
+    end
+  end
 
   def sanitized_label
     @sanitized_label ||= begin
@@ -519,10 +544,6 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     Tr8n::TranslationKey.new(:label => label.to_s).substitute_tokens(language, label.to_s, tokens, options)
   end
 
-  def allowed_token?(token)
-    tokenized_label.allowed_token?(token)
-  end
-
   def substitute_tokens(language, translated_label, token_values, options = {})
     processed_label = translated_label.to_s.dup
 
@@ -532,17 +553,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       processed_label = token.substitute(self, language, processed_label, token_values, options)
     end
 
-    # substitute decoration tokens
-    tokens = Tr8n::Tokens::Base.register_tokens(processed_label, :decoration, :exclude_nested => true)
-    while tokens.any? do
-      tokens.each do |token|
-        next unless allowed_token?(token)
-        processed_label = token.substitute(self, language, processed_label, token_values, options)
-      end
-      tokens = Tr8n::Tokens::Base.register_tokens(processed_label, :decoration, :exclude_nested => true)
-    end
-    
-    processed_label
+    Tr8n::Tokens::Decoration.new(processed_label, token_values, :allowed_tokens => decoration_tokens).substitute
   end
   
   def default_decoration(language = Tr8n::RequestContext.current_language, options = {})

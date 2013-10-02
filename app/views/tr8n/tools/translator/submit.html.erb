@@ -1,14 +1,20 @@
 <%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :id => @translation_key.id, :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
   <%= hidden_field_tag(:origin, params[:origin]) %>
+  <%= hidden_field_tag(:app_key, params[:app_key]) %>
   <%= hidden_field_tag(:translation_id, @translation.id) %>
   <%= hidden_field_tag(:translation_has_dependencies, "false") %>
 
-  <% if @translation_key.label.length > 50 %>
+  <% if @translation_key.label.length > 200 %>
     <%= render :partial => "submit_h" %>
   <% else %>
     <%= render :partial => "submit_v" %>
   <% end %>
 
+  <div id="tr8n_translator_buttons_container" class="buttons_container">
+    <button type="submit" class="btn-submit" onClick="Tr8n.UI.Translation.submit(); resizeFrame(); return false;">
+      <%=tra("Translate")%>
+    </button>
+  </div>
 <% end %>
 
 <% if Tr8n::Config.enable_software_keyboard? %>
@@ -18,3 +24,9 @@
     })();
   </script>
 <% end %>
+
+<script>
+  (function() {
+    Tr8n.element("tr8n_translator_translation_label").focus();
+  })();
+</script>

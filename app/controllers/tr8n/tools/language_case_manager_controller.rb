@@ -22,10 +22,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Tr8n::Tools::LanguageCaseManagerController < Tr8n::BaseController
-
-  skip_before_filter :validate_guest_user
-  skip_before_filter :validate_current_translator
+class Tr8n::Tools::LanguageCaseManagerController < Tr8n::Tools::BaseController
 
   layout 'tr8n/tools/language_case_manager'
 

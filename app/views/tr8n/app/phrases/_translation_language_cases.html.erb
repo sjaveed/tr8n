@@ -1,0 +1,54 @@
+<% if tr8n_current_application.feature_enabled?(:language_cases) and translation_key.allowed_tokens.any? and tr8n_current_language.cases.any? %>
+  <div id="cases_trigger"  class="tr8n_text_align_left" style="font-size:12px; font-weight:normal; padding-bottom:10px;">
+    <%=link_to_function(tra("Click here if the token values depend on language cases"), "Tr8n.Utils.Effects.hide('cases_trigger'); Tr8n.Utils.Effects.blindDown('tr8n_translator_tokens_extended_view');") %>
+  </div>
+
+  <div id="tr8n_translator_tokens_extended_view" class="section blue" style="padding:5px; display:none; margin-bottom:10px;">
+    <div class="tr8n_text_align_left" style="font-size:14px; font-weight:normal; padding:5px;">
+      <%=trla("Data Tokens With Language Cases")%>
+    </div>
+
+    <div style="padding:2px; margin-bottom:10px; padding-top:15px;">
+      <table style="width:100%;">
+        <tr style="border-bottom: 1px dotted #ccc;">
+          <td style="width:300px; font-size:11px; padding-bottom:5px; color: #666;">
+            <%= tra("Language Case") %>
+          </td>
+          <td style="width:300px; font-size:11px; padding-bottom:5px; color: #666;">
+            <%= tra("Examples") %>
+          </td>
+          <% translation_key.allowed_tokens.each do |token| %>
+            <td style="font-size:12px; padding-bottom:5px; color:black; font-weight:bold">
+              <%= token.name %>
+            </td>
+          <% end %>
+        </tr>
+        <% tr8n_current_language.cases.each do |lcase| %>
+          <tr>
+            <td style="vertical-align:top; font-size:12px; border-bottom:1px dotted #ccc; padding-bottom:3px;">
+              <div><%=lcase.native_name%></div>
+              <div style="font-size:10px; color:grey;"><%=lcase.description%></div>
+            </td>
+            <td style="vertical-align:top; font-size:12px; border-bottom:1px dotted #ccc; padding-bottom:3px;">
+              <%= lcase.rules.collect{|r| r.examples}[0..5].join("<br>").gsub("\n", "<br>").html_safe %>
+            </td>
+            <% translation_key.allowed_tokens.each do |token| %>
+              <% name_for_case = token.name + '::' + lcase.keyword %>
+              <td style="padding-right:2px; vertical-align:top;font-size:10px; border-bottom:1px dotted #ccc;">
+                <%= link_to_function("{#{name_for_case}}", "Tr8n.UI.Translation.insertToken('#{name_for_case}', 'tr8n_translation_label_#{translation_key.id}');", :title => trla("Click to insert this token above") ) %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+
+    <div style="color:grey; font-size:12px; padding-top:10px;">
+      <%=trla("Choose the settings forms of the tokens and insert them into the sentence.")%>
+    </div>
+
+    <div style="padding-top:10px;font-size:12px; font-weight:normal;">
+      <%=link_to_function(trla("{laquo} the token values do not depend on language cases"), "Tr8n.Utils.Effects.show('cases_trigger'); Tr8n.Utils.Effects.blindUp('tr8n_translator_tokens_extended_view');") %>
+    </div>
+  </div>
+<% end %>

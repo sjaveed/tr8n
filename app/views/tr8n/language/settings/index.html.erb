@@ -10,26 +10,26 @@
 
     <%= form_for(tr8n_current_language, :as => :language, :url => {}, :html => {:id => 'basic_info_form', :method => :post}) do |f| %>
       <div id="basic_info_content" class="section grey">
-        <div class="tr8n_fltr" style="padding-right:5px;">
+        <div class="tr8n_float_right" style="padding-right:5px;">
             <%=tr8n_help_icon_tag("Language Settings") %>
         </div>
         <div>
           <table cellpadding="0px" cellspacing="0px">
             <tr>
-              <th class="tr8n_txtl" style="width:220px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("English Name:")%></th>
-              <td class="tr8n_txtl" style="padding:3px;">
+              <th class="tr8n_text_align_left" style="width:220px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("English Name:")%></th>
+              <td class="tr8n_text_align_left" style="padding:3px;">
                 <%=f.text_field(:english_name)%>
               </td>
             </tr>
             <tr>
-              <th class="tr8n_txtl" style="width:120px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Native Name:")%></th>
-              <td class="tr8n_txtl" style="padding:3px;">
+              <th class="tr8n_text_align_left" style="width:120px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Native Name:")%></th>
+              <td class="tr8n_text_align_left" style="padding:3px;">
                   <%=f.text_field(:native_name)%>
               </td>
             </tr>
             <tr>
-              <th class="tr8n_txtl" style="padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Direction:", "Language direction")%></th>
-              <td class="tr8n_txtl" style="padding:3px;">
+              <th class="tr8n_text_align_left" style="padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Direction:", "Language direction")%></th>
+              <td class="tr8n_text_align_left" style="padding:3px;">
                   <%=f.check_box(:right_to_left, :style=>"margin:0px; padding:0px; width:15px;") %>
                   <%=tra("This language is read from right to left")%>
               </td>
@@ -37,8 +37,8 @@
 
             <% if Tr8n::Config.enable_fallback_languages? and not tr8n_current_language.default? %>
               <tr>
-                <th class="tr8n_txtl" style="padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Fallback Language:", "Language to fall back onto if the language phrase is not translated")%></th>
-                <td class="tr8n_txtl" style="padding:3px;" dir="ltr">
+                <th class="tr8n_text_align_left" style="padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Fallback Language:", "Language to fall back onto if the language phrase is not translated")%></th>
+                <td class="tr8n_text_align_left" style="padding:3px;" dir="ltr">
                     <%=select_tag("language[fallback_language_id]", options_for_select(Tr8n::Language.options, @fallback_language.id.to_s))%>
                 </td>
               </tr>

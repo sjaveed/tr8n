@@ -130,7 +130,7 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
     end
 
     translation.label = sanitize_label(params[:translation][:label])
-    #translation.context = parse_rules
+    translation.context = parse_rules
 
     unless translation.can_be_edited_by?(tr8n_current_translator)
       tr8n_current_translator.tried_to_perform_unauthorized_action!("tried to update translation which is locked or belongs to another dashboard")
@@ -269,7 +269,7 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
       trfn("Your translation has been removed.")
     end
     
-    redirect_to(:controller => "/tr8n/phrases", :action => :view, :id => translation.translation_key.id, :section_key => @section_key)
+    redirect_back
   end
     
 private
@@ -284,15 +284,23 @@ private
   end
   helper_method :translation
 
+  # context[minutes][number][keyword]
+  # context[minutes][number][selected]
+  # {"minutes"=>{"number"=>{"keyword"=>"many", "selected"=>"on"}}, "viewing_user"=>{"gender"=>{"keyword"=>"male", "selected"=>"on"}}}
   def parse_rules
-    return nil unless params[:has_rules] == "true" and params[:rules] 
-    
-    rulz = []
-    params[:rules].keys.each do |token|
-      next unless params[:rules][token][:selected] == "true" 
-      rulz << {:token => token, :rule_id => params[:rules][token][:rule_id]}
+    return nil unless params[:may_have_context] == "true" and params[:context]
+
+    context = {}
+    params[:context].each do |token, ctx|
+      ctx.each do |key, data|
+        next unless data[:selected] == "on"
+        next if data[:keyword].blank?
+        context[token] = {key => data[:keyword]}
+      end
     end
-    rulz
+
+    return nil if context.blank?
+    context
   end
 
 end

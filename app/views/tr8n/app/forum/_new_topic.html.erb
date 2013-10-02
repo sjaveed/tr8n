@@ -1,4 +1,4 @@
-<div class="section_title tr8n_txtl">
+<div class="section_title tr8n_text_align_left">
   <% if tr8n_current_language.default? %>
     <%=tra("Start a New Discussion Topic For All Translators")%>
 	<% else %>
@@ -6,7 +6,7 @@
 	<% end %>
 </div>
 
-<div class="section grey tr8n_txtl">
+<div class="section grey tr8n_text_align_left">
   <%= form_tag({:action => :topic}, {:method => :post, :id => "forum_topic_form"}) do %>
     <%=hidden_field_tag(:language_id, params[:language_id])%>
     
@@ -29,7 +29,7 @@
       </tr>
       <tr>
         <td></td>
-        <td class="tr8n_txtl" style="color:grey; font-size:12px; padding-top:10px; padding-bottom:10px;">
+        <td class="tr8n_text_align_left" style="color:grey; font-size:12px; padding-top:10px; padding-bottom:10px;">
            <%=tra("If your computer is not configured with your settings keyboard, click on CTR+SHIFT+K to enable keyboards in foreign languages.")%>
         </td>
       </tr>

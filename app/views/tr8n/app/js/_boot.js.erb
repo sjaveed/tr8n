@@ -1,0 +1,72 @@
+function tr8n_add_css(doc, value, inline) {
+  var css = null;
+  if (inline) {
+    css = doc.createElement('style');
+    css.type = 'text/css';
+    if (css.styleSheet){
+      css.styleSheet.cssText = value;
+    } else {
+      css.appendChild(document.createTextNode(value));
+    }
+  } else {
+    css = doc.createElement('link');
+    css.setAttribute('type', 'text/css');
+    css.setAttribute('rel', 'stylesheet');
+    css.setAttribute('media', 'screen');
+
+    if (value.indexOf('//') != -1) {
+      css.setAttribute('href', value);
+    } else {
+      css.setAttribute('href', '<%=@host%>' + value);
+    }
+  }
+  doc.getElementsByTagName('head')[0].appendChild(css);
+  return css;
+}
+ 
+function tr8n_add_script(doc, id, src, onload) {
+  var script = doc.createElement('script');
+  script.setAttribute('id', id);
+  script.setAttribute('type', 'application/javascript');
+  if (src.indexOf('//') != -1) {
+    script.setAttribute('src', src);  
+  } else {
+    script.setAttribute('src', '<%=@host%>' + src);
+  }
+  script.setAttribute('charset', 'UTF-8');
+  if (onload) script.onload = onload;
+  doc.getElementsByTagName('head')[0].appendChild(script);
+  return script;
+}
+
+(function() {
+  <% if params[:immediate] == 'true' %>
+    tr8n_init();
+  <% else %>
+    if (window.addEventListener) window.addEventListener('load', tr8n_init, false); // Standard
+    else if (window.attachEvent) window.attachEvent('onload', tr8n_init); // Microsoft
+    window.setTimeout(function() {  // just in case, hit it one more time a second later
+      tr8n_init();
+    }, 1000);  
+  <% end %>
+
+  <% if Tr8n::Config.enable_software_keyboard? %>
+    VKI_default_layout = "<%=Tr8n::KeyboardMapping.current_1_49%>";
+  <% end %>  
+
+  function tr8n_init() {
+    if (window.tr8n_already_initialized) return;
+    window.tr8n_already_initialized = true;
+
+    tr8n_add_css(window.document, '/assets/tr8n/tools.css', false);
+    tr8n_add_css(window.document, "<%=tr8n_current_application.decorator.classes%>", true);
+
+    tr8n_add_script(window.document, 'tr8n-jssdk', '/assets/tr8n/tools.js', function() {
+      tr8n_add_script(window.document, 'tr8n-proxy', "/tr8n/api/proxy/init.js?<%=params.slice(:app_key, :origin, :debug, :tml, :text, :source, :page_locale).merge(:t => Time.now.to_i).to_query.html_safe%>", function() {
+        if (typeof(tr8n_on_ready) === 'function') {
+          tr8n_on_ready();
+        }
+      });
+    });
+  }
+})();

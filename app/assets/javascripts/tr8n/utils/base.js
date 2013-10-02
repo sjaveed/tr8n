@@ -123,7 +123,9 @@ Tr8n.Utils = {
 
   toUrl: function(url, params) {
     params = params || {};
-    params['origin'] = window.location;
+    var parts = (window.location + "").split("/");
+    params['app_key'] = Tr8n.app_key;
+    params['origin'] = parts[0] + "//" + parts[2];
     url = Tr8n.host + url + (url.indexOf('?') == -1 ? '?' : '&') + Tr8n.Utils.toQueryParams(params);
     return url
   },

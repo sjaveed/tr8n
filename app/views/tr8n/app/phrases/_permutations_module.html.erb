@@ -15,7 +15,44 @@
       </div>
 
       <div class="section blue" style="" >
-        <%=render :partial => "/tr8n/common/permutations" %>
+        <% if tr8n_current_language.contexts.size > 0 %>
+          <% @dependant_tokens = @translation_key.language_context_dependant_tokens %>
+          <% td_width = (95/(tr8n_current_language.contexts.size))  %>
+
+          <table style="width:100%;">
+            <tr>
+              <td style="padding-left:5px; width:100px; font-size:10px; text-align:left; color:#ccc; font-weight:bold;">
+                <%=tra("tokens")%>
+              </td>
+              <% tr8n_current_language.contexts.each do |context| %>
+                <td style="font-size:10px; text-align:center; color:#ccc; font-weight:bold; width:<%=td_width%>%">
+                  <%=tra(context.keyword, "Language context keyword") %>
+                </td>
+              <% end %>
+            </tr>
+
+            <% @dependant_tokens.each do |token| %>
+              <tr>
+                <td style="font-size:10px; font-weight:bold; padding:5px; vertical-align:middle; ">
+                  <%=token.short_name %>
+                </td>
+                <% tr8n_current_language.contexts.each do |context| %>
+                  <td style="text-align:center; font-size:10px; color: grey; border: 1px dotted #ccc; padding:5px; vertical-align:middle; background:white;">
+                    <% if token.context_for_language(tr8n_current_language, :silent => true) == context %>
+                      <%=check_box_tag("token_contexts[#{token.short_name}][#{context.keyword}]", "true", false, :style => "width:20px;")%>
+                    <% else %>
+                      n/a
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+
+          </table>
+        <% else %>
+          <%=tra("The settings does not have any rules defined and no rules permutations can be generated.") %>
+          <%=tra("Please contact the settings manager to define settings rules.")%>
+        <% end %>
       </div>
 
 	<% end %>

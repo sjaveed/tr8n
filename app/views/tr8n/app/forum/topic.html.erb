@@ -17,14 +17,14 @@
         <li class="active"><%=link_to(@topic.topic, :topic_id => @topic.id)%></li>
       </ul>
 
-      <div class="section_title tr8n_txtl">
-        <div class="tr8n_fltr" style="font-size:12px; color: #ccc;">
+      <div class="section_title tr8n_text_align_left">
+        <div class="tr8n_float_right" style="font-size:12px; color: #ccc;">
           <%=link_to("<i class='icon-edit'></i> #{tra("Reply")}".html_safe, :topic_id => @topic.id, :page => params[:page], :anchor => :reply_message) %>
           &nbsp; | &nbsp;
           <%=link_to("<i class='icon-plus-sign'></i> #{tra("Start a new discussion topic")}".html_safe, :mode => :create) %>
         </div>
 
-        <div class="tr8n_txtl" style="color:grey;font-size:12px;font-style:italic;padding-top:3px;padding-bottom:3px;">
+        <div class="tr8n_text_align_left" style="color:grey;font-size:12px;font-style:italic;padding-top:3px;padding-bottom:3px;">
            <%= tra("Started by {user} on {date}", "",
                 {:user => [@topic.translator.user, tr8n_user_tag(@topic.translator, :linked => true)], :date => @topic.created_at.trl}) %>
         </div>

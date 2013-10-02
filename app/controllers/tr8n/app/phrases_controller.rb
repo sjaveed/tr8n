@@ -71,8 +71,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
   
   def view
     unless translation_key
-      trfe("This phrase could not be found")
-      return redirect_back
+      return redirect_to(:action => :index)
     end
     
     @show_add_dialog = (params[:mode] == "add" or translation_key.translations_for(tr8n_current_language).empty?)
@@ -80,10 +79,39 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     # for new translation
     @translation = Tr8n::Translation.new(:translation_key => translation_key, :language => tr8n_current_language, :translator => tr8n_current_translator)
     @rules = {}
-    
-    @translations = Tr8n::Translation.for_params(params)
-    @translations = @translations.where("tr8n_translations.language_id = ? and tr8n_translations.translation_key_id = ?", tr8n_current_language.id,  translation_key.id)
+
+    @translations = Tr8n::Translation.where("tr8n_translations.translation_key_id = ? and tr8n_translations.language_id = ?", translation_key.id, Tr8n::RequestContext.current_language.id)
+
+    if params[:with_status] == "accepted"
+      @translations = @translations.where("tr8n_translations.rank >= ?", selected_application.threshold)
+    elsif params[:with_status] == "pending"
+      @translations = @translations.where("tr8n_translations.rank >= 0 and tr8n_translations.rank < ?", selected_application.threshold)
+    elsif params[:with_status] == "rejected"
+      @translations = @translations.where("tr8n_translations.rank < 0")
+    end
+
+    params[:submitted_by] = nil if params[:submitted_by] == "anyone"
+    unless params[:submitted_by].blank?
+      if params[:submitted_by] == "me"
+        @translations = @translations.where("tr8n_translations.translator_id = ?", Tr8n::RequestContext.current_user_is_translator? ? Tr8n::RequestContext.current_translator.id : 0)
+      else
+        @translations = @translations.where("tr8n_translations.translator_id = ?", params[:submitted_by].id)
+      end
+    end
+
+    if params[:submitted_on] == "today"
+      date = Date.today
+      @translations = @translations.where("tr8n_translations.created_at >= ? and tr8n_translations.created_at < ?", date, date + 1.day)
+    elsif params[:submitted_on] == "yesterday"
+      date = Date.today - 1.days
+      @translations = @translations.where("tr8n_translations.created_at >= ? and tr8n_translations.created_at < ?", date, date + 1.day)
+    elsif params[:submitted_on] == "last_week"
+      date = Date.today - 7.days
+      @translations = @translations.where("tr8n_translations.created_at >= ? and tr8n_translations.created_at < ?", date, Date.today)
+    end
+
     @translations = @translations.order("rank desc, created_at desc")
+
     @comments = Tr8n::TranslationKeyComment.where("language_id = ? and translation_key_id = ?", tr8n_current_language.id, translation_key.id).order("created_at desc").page(page).per(per_page)
     
     @grouping = {}
@@ -167,7 +195,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
 private
 
   def translation_key
-    @translation_key ||= Tr8n::TranslationKey.find(params[:id] || params[:translation_key_id])
+    @translation_key ||= Tr8n::TranslationKey.find_by_id(params[:id] || params[:translation_key_id])
   end
   helper_method :translation_key
 

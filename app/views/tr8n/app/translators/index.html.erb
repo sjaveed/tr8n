@@ -5,11 +5,11 @@
     <%= render :partial => "breadcrumb" %>
 
     <div class="section grey">
-      <div class="tr8n_fltr" style="padding-right:5px;">
+      <div class="tr8n_float_right" style="padding-right:5px;">
         <%=tr8n_help_icon_tag("Application Translators") %>
       </div>
 
-      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
         <%=tra("This section provides a list of all translators that have been assigned to the application.") %>
         <%=tra("Only these translators can be assigned to application components that have not been released yet.") %>
       </div>
@@ -18,17 +18,17 @@
     <div class="section blue">
       <%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
         <%=hidden_field_tag(:section_key, @section_key) %>
-        <div class="tr8n_fltr">
+        <div class="tr8n_float_right">
           <button type="submit" class="btn btn-primary" onClick="Tr8n.Effects.submit('translations_search_form'); return false;">
             <%=tra("Search")%>
           </button>
         </div>
 
-        <div class="tr8n_txtl">
+        <div class="tr8n_text_align_left">
           <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translators")})%>
         </div>
 
-        <div class="tr8n_txtl" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+        <div class="tr8n_text_align_left" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
           <%=select_tag(:language, options_for_select([["all languages", "all"]] + Tr8n::Language.options, params[:language]))%>
         </div>
       <% end %>

@@ -1,0 +1,17 @@
+<% if tr8n_current_application.feature_enabled?(:glossary) and @translation_key.glossary? %>
+  <div class="small_section_title">
+    <strong><%=tra("Glossary")%></strong>
+  </div>
+
+  <div id="tr8n_glossary_<%=@translation_key.id%>" class="small_section">
+    <table class="glossary">
+      <% @translation_key.glossary.each do |term| %>
+        <% border_style = "border-bottom: 1px dotted #ccc;" unless @translation_key.glossary.last == term %>
+        <tr style="<%=border_style%>">
+          <td class="keyword"><%=term.keyword %></td>
+          <td class="description"><%=term.description %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+<% end %>

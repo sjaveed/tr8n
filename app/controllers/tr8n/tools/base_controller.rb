@@ -1,4 +1,3 @@
-
 #--
 # Copyright (c) 2010-2012 Michael Berkovich, tr8nhub.com
 #
@@ -22,12 +21,26 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Tr8n::Tools::UtilsController < Tr8n::Tools::BaseController
+class Tr8n::Tools::BaseController < Tr8n::BaseController
 
-  layout 'tr8n/tools/lightbox'
+  skip_before_filter :validate_guest_user
+  skip_before_filter :validate_current_translator
 
-  def message    
-    render(:layout => false)
+  before_filter :validate_remote_application
+
+  private
+
+  def validate_remote_application
+    if params[:app_key]
+      app = Tr8n::Application.find_by_key(params[:app_key])
+      # TODO verify that the domain has been added under the application
+    elsif params[:origin]
+      # TODO: maybe should be removed alltogether
+      domain = Tr8n::TranslationDomain.find_or_create(params[:origin])
+      app = domain.application
+    end
+    Tr8n::RequestContext.set_remote_application(app) if app
   end
 
 end
+

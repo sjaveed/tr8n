@@ -15,11 +15,11 @@
     </div>
 
     <div class="section grey">
-      <div class="tr8n_fltr" style="padding-right:5px;">
+      <div class="tr8n_float_right" style="padding-right:5px;">
         <%=tr8n_help_icon_tag("Application Sources") %>
       </div>
 
-      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
         <%= tra("Application sources are groups of translation keys.") %>
         <%= tra("Most of the application sources are dynamically generated from the source code.") %>
         <%= tra("Usually keys are grouped into sources by a page.") %> <%= tra("But a single page can also contain multiple sources.") %>
@@ -30,14 +30,14 @@
 
     <div class="section blue">
       <%= form_tag({}, {:method => :get}) do %>
-        <div class="tr8n_fltr">
+        <div class="tr8n_float_right">
           <button type="submit" class="btn btn-primary">
             <%=tra("Search")%>
           </button>
           <%=link_to("+", {:action => :source_modal, :forward_to => "sources"}, {"class" => "btn", "data-toggle" => "dynamic_modal"})%>
         </div>
 
-        <div class="tr8n_txtl">
+        <div class="tr8n_text_align_left">
           <%=text_field_tag(:search, params[:search], {:style => "width:87%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search sources")})%>
         </div>
       <% end %>

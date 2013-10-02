@@ -1,70 +1,20 @@
 <% if Tr8n::Config.enabled? and not params[:disable_tr8n_js] %>
-  <%=stylesheet_link_tag("tr8n/tools.css") -%>
+
+  <script language="JavaScript" src="/tr8n/api/proxy/boot.js?app_key=<%=tr8n_current_application.key%>"></script>
 
   <style type="text/css">
-  .tr8n_fltr {
+  .tr8n_float_right {
     <%=tr8n_style_attribute_tag('float', 'right')%> !important;
   }
-  .tr8n_fltl {
+  .tr8n_float_left {
     <%=tr8n_style_attribute_tag('float', 'left')%> !important;
   }
-  .tr8n_txtr {
+  .tr8n_text_align_right {
     <%=tr8n_style_attribute_tag('text-align', 'right')%> !important;
   }
-  .tr8n_txtl {
+  .tr8n_text_align_left {
     <%=tr8n_style_attribute_tag('text-align', 'left')%> !important;
   }
   </style>
-
-  <%=tr8n_current_application.decorator.css_tag%>
-
-  <script type="text/javascript">
-  <!--
-    window.tr8n_enabled = true;
-    
-    VKI_default_keyboard_image = "/assets/tr8n/keyboard.png";
-    VKI_default_layout = "<%=Tr8n::KeyboardMapping.current_1_49%>";
-
-    function addTr8nCSS(doc, src) {
-      var css = doc.createElement('link');
-      css.setAttribute('type', 'text/css');
-      css.setAttribute('href', src);
-      css.setAttribute('rel', 'stylesheet');
-      css.setAttribute('media', 'screen');
-      doc.getElementsByTagName('head')[0].appendChild(css);
-      return css;
-    };
-     
-    function addTr8nScript(doc, id, src, onload) {
-      var script = doc.createElement('script');
-      script.setAttribute('id', id);
-      script.setAttribute('type', 'application/javascript');
-      script.setAttribute('src', src);
-      script.setAttribute('charset', 'UTF-8');
-      if (onload) script.onload = onload;
-      doc.getElementsByTagName('head')[0].appendChild(script);
-      return script;
-    };
-
-    (function(window) {
-        if (window.addEventListener) {
-            // Standard
-            window.addEventListener('load', initTr8n, false);
-        }
-        else if (window.attachEvent) {
-            // Microsoft
-            window.attachEvent('onload', initTr8n);
-        }
-        function initTr8n() {
-          if (window.tr8nJQ) return;
-          addTr8nScript(window.document, 'tr8n-jssdk', "<%= params[:tr8n_debug_js] ? '/assets/tr8n/tools.js': '/assets/tr8n/tools.js' %>", function() {
-            addTr8nScript(window.document, 'tr8n-proxy', '/tr8n/api/proxy/init.js', function() {
-              // alert("Done");  
-            });
-          });
-        }
-    })(window);
-  //-->
-  </script>
 
 <% end %>

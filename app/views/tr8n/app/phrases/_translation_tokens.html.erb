@@ -1,0 +1,56 @@
+<% if translation_key.data_tokens.any? or translation_key.decoration_tokens.any? %>
+
+<div id="translation_tokens" class="tr8n_text_align_left" style="padding-bottom:5px; font-size:12px;">
+  <% if translation_key.allowed_tokens.any? %>
+    <div class="section_title tr8n_text_align_left">
+      <%=tra("Data Tokens")%>
+    </div>
+
+    <% translation_key.allowed_tokens.each do |token| %>
+      <span dir="ltr">
+        <%= link_to_function(token.sanitized_name, "Tr8n.UI.Translation.insertToken('#{token.name}', 'tr8n_translation_label_#{translation_key.id}');", :title => trla("Click to insert this token above") ) %>
+      </span>
+    <% end %>
+
+    <div class="tr8n_text_align_left" style="color:grey; font-size:12px; padding-top:10px; padding-bottom:10px;">
+       <%=tra("Click on a token to insert it into the translation at the point of a cursor.")%>
+    </div>
+  <% end %>
+
+  <% if tr8n_current_application.feature_enabled?(:context_rules) and translation_key.implied_tokens.any? %>
+    <div class="section_title tr8n_text_align_left">
+      <%=tra("Implied Tokens")%>
+    </div>
+
+    <% translation_key.implied_tokens.each do |token| %>
+      <%= token.sanitized_name %>
+    <% end %>
+
+    <div class="tr8n_text_align_left" style="color:#888;font-size:9px;padding-top:5px;">
+      <%=tra("Implied tokens don't appear in a translation, but can be used for a translation context.") %>
+    </div>
+  <% end %>
+
+  <%= render :partial => "translation_context_rules" %>
+
+  <%= render :partial => "translation_language_cases" %>
+
+  <% if translation_key.decoration_tokens.any? %>
+    <div class="section_title tr8n_text_align_left">
+      <%=tra("Decoration Tokens")%>
+    </div>
+
+    <% translation_key.decoration_tokens.each do |token| %>
+      <%= link_to_function("[#{token}: ]", "Tr8n.UI.Translation.insertDecorationToken('#{token}', 'tr8n_translation_label_#{translation_key.id}');", :title => trla("Click to insert this token above") ) %>
+    <% end %>
+
+    <div class="tr8n_text_align_left" style="color:grey; font-size:12px; padding-top:10px; padding-bottom:10px;">
+      <%=tra("Click on a token to insert it into the translation at the point of a cursor.")%>
+    </div>
+  <% end %>
+
+</div>
+<% end %>
+
+<%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+<%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>

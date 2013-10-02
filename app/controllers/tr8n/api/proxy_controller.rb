@@ -30,7 +30,11 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
   end
 
   def boot
-    render(:partial => "/tr8n/common/js/boot", :formats => [:js], :locals => {:uri => URI.parse(request.url)}, :content_type => "text/javascript")
+    uri = URI.parse(request.url)
+    @host = "#{uri.scheme}://#{uri.host}"
+    @host += ":#{uri.port}" unless uri.port==80
+
+    render(:partial => "/tr8n/app/js/boot", :formats => [:js], :content_type => "text/javascript")
   end
 
   def init
@@ -38,10 +42,10 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
 
     opts = {}
 
-    opts[:scheduler_interval]         = Tr8n::Config.default_client_interval
-    opts[:enable_inline_translations] = (Tr8n::RequestContext.current_user_is_translator? and Tr8n::RequestContext.current_translator.enable_inline_translations? and (not Tr8n::RequestContext.current_language.default?))
-    opts[:default_decorations]        = Tr8n::Config.default_decoration_tokens
-    opts[:default_tokens]             = Tr8n::Config.default_data_tokens
+    #opts[:scheduler_interval]         = Tr8n::Config.default_client_interval
+    #opts[:enable_inline_translations] = (Tr8n::RequestContext.current_user_is_translator? and Tr8n::RequestContext.current_translator.enable_inline_translations? and (not Tr8n::RequestContext.current_language.default?))
+    #opts[:default_decorations]        = Tr8n::Config.default_decoration_tokens
+    #opts[:default_tokens]             = Tr8n::Config.default_data_tokens
     opts[:locale]                     = Tr8n::RequestContext.current_language.locale
 
     if params[:text]
@@ -50,10 +54,10 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
       opts[:enable_tml]               = (not params[:tml].blank?) and Tr8n::Config.enable_tml?
     end
 
-    opts[:rules]                      = { 
-      :number => Tr8n::Config.rules_engine[:numeric_rule],      :gender => Tr8n::Config.rules_engine[:gender_rule],
-      :list   => Tr8n::Config.rules_engine[:gender_list_rule],  :date   => Tr8n::Config.rules_engine[:date_rule]
-    }
+    #opts[:rules]                      = {
+    #  :number => Tr8n::Config.rules_engine[:numeric_rule],      :gender => Tr8n::Config.rules_engine[:gender_rule],
+    #  :list   => Tr8n::Config.rules_engine[:gender_list_rule],  :date   => Tr8n::Config.rules_engine[:date_rule]
+    #}
 
     source = params[:source] || Tr8n::TranslationSource.normalize_source(request.env['HTTP_REFERER']) || 'undefined'
     Tr8n::RequestContext.set_current_source(Tr8n::TranslationSource.find_or_create(source, tr8n_current_application))
@@ -76,11 +80,11 @@ class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
       end
     end
 
-    render(:partial => "/tr8n/common/js/init", :formats => [:js], :locals => {:uri => URI.parse(request.url), :opts => opts, :translations => translations, :source => source.to_s}, :content_type => "text/javascript")
+    render(:partial => "/tr8n/app/js/init", :formats => [:js], :locals => {:uri => URI.parse(request.url), :opts => opts, :translations => translations, :source => source.to_s}, :content_type => "text/javascript")
   end
   
-  # Used primarely by JavaScript. 
-  # Unlike server-side, Javascript needs to get transaltions back even after registration
+  # Used primarily by JavaScript.
+  # Unlike server-side, Javascript needs to get translations back even after registration
   def translate
     language = Tr8n::Language.by_locale(params[:language] || params[:locale]) || tr8n_current_language
     Tr8n::RequestContext.set_current_language(language)

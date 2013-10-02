@@ -28,7 +28,7 @@
     actions << link_to_function("#{image_tag('tr8n/exclamation.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Report")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/translator/reports/lb_report?translation_key_id=#{@translation_key.id}', {width:600, height:360});")
   %>
   
-  <div class="tr8n_txtl">
+  <div class="tr8n_text_align_left">
     <%= actions.join(' &nbsp;|&nbsp; ').html_safe %>  
   </div>
 </div>

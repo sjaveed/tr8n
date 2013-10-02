@@ -5,17 +5,17 @@
     <div class="section blue">
       <%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
          <%=hidden_field_tag(:section_key, @section_key) %>
-         <div class="tr8n_fltr">
+         <div class="tr8n_float_right">
           <button type="submit" class="btn btn-primary">
             <%=tra("Search")%>
           </button>
          </div>
 
-        <div class="tr8n_txtl">
+        <div class="tr8n_text_align_left">
          <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translations")})%>
         </div>
 
-        <div class="tr8n_txtl" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+        <div class="tr8n_text_align_left" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
           <%=select_tag(:with_status, options_for_select(Tr8n::Translation.filter_status_options, params[:with_status]))%>
           <%=select_tag(:submitted_by, options_for_select(Tr8n::Translation.filter_submitter_options, params[:submitted_by]))%>
           <%=select_tag(:submitted_on, options_for_select(Tr8n::Translation.filter_date_options, params[:submitted_on]))%>

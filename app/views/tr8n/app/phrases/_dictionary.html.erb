@@ -1,28 +1,56 @@
-<div style="background:#FDFFF0; border:1px #ccc dotted; margin-bottom:10px; padding:5px; ">
-  <% def_size = @definitions.values.sum{|v| v.size} %>
-  <%= trla("Found {def_count||definition} for {word_count||word}:", "", :def_count => def_size, :word_count => @definitions.keys.size) %>
-  <%= (sorted_words = @definitions.keys.sort).collect{|w| "<strong>#{w}</strong>".html_safe}.join(", ").html_safe %>
+<% sorted_words = @definitions.keys.sort %>
+<% word_sources = {} %>
+
+<div class="row">
+
+  <div class="span4 index">
+    <% sorted_words.each_with_index do |word, index| %>
+      <div class="word"><%=word %></div>
+      <div class="sources" style="padding-left:10px; font-size:10px;">
+        <% @definitions[word].each_with_index do |definition, def_index| %>
+          <% word_sources[word] ||= [] %>
+          <% next if word_sources[word].include?(definition[:source]) %>
+          <% word_sources[word] << definition[:source] %>
+          <div><%=link_to_function(definition[:source], "showSource('dictionary_#{index}_#{def_index}')")%></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="span7 definitions">
+    <% sorted_words.each_with_index do |word, index| %>
+      <% @definitions[word].each_with_index do |definition, def_index| %>
+        <div id="dictionary_<%="#{index}_#{def_index}"%>" style="<%='display:none' unless index == 0 and def_index == 0 %>">
+          <div class="title"><%=definition[:source]%></div>
+          <div><pre><%=definition[:definition]%></pre></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
 </div>
 
-<table style="width:100%">
- <% sorted_words.each do |word| %>
-    <% @definitions[word].each do |definition| %>
-	   <tr style="border-bottom:1px solid #ccc;">
-	     <th style="text-align:left;color: #ccc;font-size:14px; font-family:arial; width:200px;"><%=trla("Word")%></th>
-	     <th style="text-align:left;color: #ccc;font-size:14px; font-family:arial;"><%=trla("Definition")%></th>
-	     <th style="text-align:left;color: #ccc;font-size:14px; font-family:arial;"><%=trla("Source")%></th>
-	   </tr>
-	    <tr style="border-bottom:1px dotted #ccc;">
-			  <td style="vertical-align:top; font-size:12px; font-family:arial; font-weight:bold;"><%=word%></td>
-        <td>
-        	 <pre style="font-size:12px; font-family:arial"><%=definition[:definition]%></pre>
-        </td>
-        <td style="vertical-align:top; font-size:12px; font-family:arial;">
-            <%=definition[:source]%>
-        </td>
-	    </tr>
-		<% end %>
- <% end %>
-</table>
+
+<style>
+  .index {
+    font-size: 15px;
+  }
+  .definitions {
+    font-size: 11px;
+  }
+
+  .definitions .title {
+    font-size: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .definitions pre {
+    background-color:transparent;
+    border: 0px;
+    font-size: 12px;
+  }
+</style>
+
 
 

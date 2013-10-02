@@ -47,8 +47,15 @@ class Tr8n::Api::BaseController < ::ApplicationController
 private
 
   def validate_remote_application
-    domain = Tr8n::TranslationDomain.find_or_create(params[:origin])
-    Tr8n::RequestContext.set_remote_application(domain.application)
+    if params[:app_key]
+      app = Tr8n::Application.find_by_key(params[:app_key])
+      # TODO verify that the domain has been added under the application
+    else
+      # TODO: maybe should be removed alltogether
+      domain = Tr8n::TranslationDomain.find_or_create(params[:origin])
+      app = domain.application
+    end
+    Tr8n::RequestContext.set_remote_application(app)
   end
 
   def check_api_enabled

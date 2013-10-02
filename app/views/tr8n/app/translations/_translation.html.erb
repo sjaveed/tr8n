@@ -1,10 +1,10 @@
-<td class="tr8n_txtl" style="vertical-align:top; padding-top:5px; font-size:12px">
+<td class="tr8n_text_align_left" style="vertical-align:top; padding-top:5px; font-size:12px">
   <table>
     <tr>
-      <td class="tr8n_txtl" style="padding-right:5px;">
+      <td class="tr8n_text_align_left" style="padding-right:5px;">
         <%=tr8n_user_mugshot_tag(translation.translator, :linked => true)%>
       </td>
-      <td class="tr8n_txtl">
+      <td class="tr8n_text_align_left">
         <%=tr8n_translator_tag(translation.translator, :linked => true)%>
         <div style="font-size:11px;color:grey;<%=tr8n_style_attribute_tag('text-align', 'left')%>;">
             <%=tr8n_when_string_tag(translation.created_at).html_safe %>
@@ -15,9 +15,9 @@
   </table>
 </td>
 
-<td class="tr8n_txtr" style="vertical-align:top; padding-top:5px;">
+<td class="tr8n_text_align_right" style="vertical-align:top; padding-top:5px;">
   <%=tr8n_spinner_tag("tr8n_spinner_for_#{translation.id}", "", "")%>
-  <div class="tr8n_txtl" id="tr8n_votes_for_<%=translation.id%>" dir="ltr" style="padding:2px;white-space:nowrap;">
+  <div class="tr8n_text_align_left" id="tr8n_votes_for_<%=translation.id%>" dir="ltr" style="padding:2px;white-space:nowrap;">
     <%= translation.rank_label %> 
   </div>  
 </td>  
@@ -35,7 +35,7 @@
   <% end %>
 </td>
 
-<td class="tr8n_txtl" style="vertical-align:top; padding-top:5px;">
+<td class="tr8n_text_align_left" style="vertical-align:top; padding-top:5px;">
   <% if mode == :view and translation.can_be_edited_by?(tr8n_current_translator) %>
     <span onDblClick="updateTranslationRow('<%=translation.id%>', 'edit')" title="Translation for: <%=translation.key.label%>">
       <%= translation.label %>
@@ -62,9 +62,9 @@
 	 <% if mode == :view %>
 	    <% if translation.can_be_edited_by?(tr8n_current_translator) %>
 	        <%=link_to_function("<i class='icon-pencil'></i>".html_safe, "updateTranslationRow('#{translation.id}', 'edit')")%>
-	        <%=link_to_function("<i class='icon-remove'></i>".html_safe, "deleteTranslationRow('#{translation.id}', '#{@section_key}')")%>
+	        <%=link_to_function("<i class='icon-remove'></i>".html_safe, "deleteTranslationRow('#{translation.id}')")%>
 	    <% elsif translation.can_be_deleted_by?(tr8n_current_translator)  %>
-	        <%=link_to_function(image_tag("tr8n/cross.png"), "deleteTranslationRow('#{translation.id}', '#{@section_key}')")%>
+	        <%=link_to_function(image_tag("tr8n/cross.png"), "deleteTranslationRow('#{translation.id}')")%>
 	    <% end %>
 	<% elsif mode == :edit %>
 	    <%=link_to_function("<i class='icon-ok'></i>".html_safe, "submitTranslationRow('#{translation.id}')")%>

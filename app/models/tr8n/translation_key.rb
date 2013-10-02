@@ -187,7 +187,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   def tokenless_label
     @tokenless_label ||= begin
       lbl = label.clone
-      tokens.each_with_index do |token, index|
+      data_tokens.each_with_index do |token, index|
         lbl = token.prepare_label_for_suggestion(lbl, index, self.language)
       end
       lbl

@@ -1,5 +1,6 @@
 <%= form_tag({:controller => "/tr8n/app/translations", :action => :update, :id => @translation_key.id}) do |f| %>
   <%= hidden_field_tag(:origin, params[:origin]) %>
+  <%= hidden_field_tag(:app_key, params[:app_key]) %>
 
   <%= render(:partial => "header")%>
   <div id="tr8n_translator_translation_container">
@@ -35,6 +36,10 @@
     <button type="submit" class="btn-submit"><%=tra("Translate")%></button>
   </div>
 <% end %>
+
+<div style="padding-bottom:60px;">
+
+</div>
 
 
 

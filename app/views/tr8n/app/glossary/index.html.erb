@@ -3,25 +3,25 @@
   <div class="tr8n tr8n_container">
 
     <div class="section grey">
-      <div class="tr8n_fltr" style="padding-right:5px;">
+      <div class="tr8n_float_right" style="padding-right:5px;">
         <%=tr8n_help_icon_tag("Glossary") %>
       </div>
 
-      <div class="tr8n_txtl" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
         <%=tra("Each application can have its own glossary of common terms that will appear in the translator window.") %> <%= tra("Glossaries can also be shared between applications.") %>
         <%=tra("When a language is removed no language data is lost.") %> <%=tra("The language will not appear in the language selector") %>
       </div>
     </div>
 
-    <div class="section blue tr8n_txtl">
+    <div class="section blue tr8n_text_align_left">
       <%= form_tag({:action => :index}, {:method => :get, :id => "glossary_search_form"}) do %>
-         <div class="tr8n_fltr">
+         <div class="tr8n_float_right">
             <button type="submit" class="btn btn-primary btn-lg" onClick="Tr8n.Effects.submit('glossary_search_form'); return false;">
                 <span><%=tra("Search")%></span>
             </button>
          </div>
 
-        <div class="tr8n_txtl">
+        <div class="tr8n_text_align_left">
            <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px"})%><br>
         </div>
       <% end %>
@@ -32,17 +32,17 @@
 
       <table style="width:100%">
         <tr style="border-bottom:1px solid #ccc;">
-           <td class="tr8n_txtl" style="width:20%;padding:5px;background: #f9f8f7; font-size:16px; color:grey; font-weight:bold; ">
+           <td class="tr8n_text_align_left" style="width:20%;padding:5px;background: #f9f8f7; font-size:16px; color:grey; font-weight:bold; ">
               <%=tra("Term", "Glossary terminology")%>
            </td>
-           <td class="tr8n_txtl" style="width:80%;padding:5px; font-size:16px; color:grey; font-weight:bold; " colspan="2">
+           <td class="tr8n_text_align_left" style="width:80%;padding:5px; font-size:16px; color:grey; font-weight:bold; " colspan="2">
             <%=tra("Description", "Glossary terminology description") %>
            </td>
         </tr>
         <% @terms.each_with_index do |term, index| %>
           <tr  style="border-bottom:1px dotted #ccc;">
-            <td class="tr8n_txtl" style="vertical-align:top;padding:5px;background: #f9f8f7;"><strong><%=term.keyword%></strong></td>
-            <td class="tr8n_txtl" style="vertical-align:top;padding:5px;"><%=tr(term.description.gsub("\n", "{br}"))%></td>
+            <td class="tr8n_text_align_left" style="vertical-align:top;padding:5px;background: #f9f8f7;"><strong><%=term.keyword%></strong></td>
+            <td class="tr8n_text_align_left" style="vertical-align:top;padding:5px;"><%=tr(term.description.gsub("\n", "{br}"))%></td>
           </tr>
         <% end %>
       </table>

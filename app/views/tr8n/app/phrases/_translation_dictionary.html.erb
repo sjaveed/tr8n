@@ -1,0 +1,33 @@
+<% if Tr8n::Config.enable_dictionary_lookup? and @translation_key.dictionary? %>
+  <div id="tr8n_dictionary_container"  class="tr8n_text_align_left" style="padding-top:5px; padding-bottom:10px;">
+    <div class="section_title tr8n_text_align_left">
+      <%=tra("Dictionary Definitions for Original Phrase in English")%>
+    </div>
+
+    <div class="tr8n_text_align_left" id="tr8n_dictionary_opener" style="font-size:12px; font-weight:normal;">
+      <%=link_to_function(tra("Click here to download dictionary definitions for the phrase words"), "downloadDictionaryDefinitions(); ") %>
+    </div>
+
+    <div id="tr8n_dictionary_shower" style="display:none; font-size:12px; font-weight:normal;">
+      <%=link_to_function(trla("show dictionary definitions {raquo}"), "Tr8n.Utils.Effects.hide('tr8n_dictionary_shower'); Tr8n.Utils.Effects.show('tr8n_dictionary_hider'); Tr8n.Utils.Effects.appear('tr8n_dictionary'); Tr8n.Utils.Effects.scrollTo('buttons_container');") %>
+    </div>
+
+    <%=tr8n_spinner_tag("tr8n_dictionary_spinner", "Downloading words definitions...") %>
+
+    <div id="tr8n_dictionary" class="section blue" style="display:none;">
+    </div>
+
+    <div id="tr8n_dictionary_hider" style="display:none; font-size:12px; font-weight:normal;">
+      <%=link_to_function(trla("{laquo} hide dictionary definitions"), "Tr8n.Utils.Effects.hide('tr8n_dictionary_hider'); Tr8n.Utils.Effects.show('tr8n_dictionary_shower'); Tr8n.Utils.Effects.fade('tr8n_dictionary'); ") %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  var current_source = "dictionary_0_0";
+  function showSource(id) {
+    $("#" + current_source).hide();
+    $("#" + id).show();
+    current_source = id;
+  }
+</script>

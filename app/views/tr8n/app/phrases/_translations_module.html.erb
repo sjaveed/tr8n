@@ -1,23 +1,23 @@
 <div id="translations_module">
 	<div class="section_title">
 		<% unless @translation_key.locked? %>
-	    <div class="tr8n_fltr" style="font-size: 12px; font-weight:normal;">
+	    <div class="tr8n_float_right" style="font-size: 12px; font-weight:normal;">
 	      <%= link_to_function(tra("+ add translation"), "addTranslation()") %>
 	    </div> 
     <% end %>
 				
-    <div  class="tr8n_txtl">    
+    <div  class="tr8n_text_align_left">
       <%=tr8n_toggler_tag("translations_content")%>
   	  <%=tra("Translations") %>
   		<a name="translations">&nbsp;</a>
     </div>
 	</div>
 	
-  <div class="section tr8n_txtl" id="translations_content">
-    <div class="section blue tr8n_txtl">
+  <div class="section tr8n_text_align_left" id="translations_content">
+    <div class="section blue tr8n_text_align_left">
       <%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
          <%=hidden_field_tag(:id, translation_key.id) %>
-         <div class="tr8n_txtl" style="padding-top:5px;">
+         <div class="tr8n_text_align_left" style="padding-top:5px;">
             <%=select_tag(:with_status, options_for_select(Tr8n::Translation.filter_status_options, params[:with_status]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
             <%=select_tag(:submitted_by, options_for_select(Tr8n::Translation.filter_submitter_options, params[:submitted_by]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
             <%=select_tag(:submitted_on, options_for_select(Tr8n::Translation.filter_date_options, params[:submitted_on]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
@@ -49,7 +49,7 @@
     <% end %>
 
     <% unless translation_key.locked? %>
-      <div class="tr8n_txtl" style="font-size: 12px; color: grey; padding-top:15px; padding-bottom:15px;">
+      <div class="tr8n_text_align_left" style="font-size: 12px; color: grey; padding-top:15px; padding-bottom:15px;">
         <%= tra("You can only edit or delete translations submitted by you.") %>
 
         <%= tra("If you don't like any of these translations, [link: add your own translation].", :link => lambda{|str| link_to_function(str, "addTranslation()")}) %>

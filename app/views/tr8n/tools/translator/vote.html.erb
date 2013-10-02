@@ -24,6 +24,7 @@
   <div id="tr8n_translator_footer_container">
     <%= form_for(@translation, :as => :translation, :url => {:controller => "/tr8n/app/translations", :action => :submit}, :html => {:id => :tr8n_translator_form, :method => :post}) do |f| %>
       <%= hidden_field_tag(:origin, params[:origin]) %>
+      <%= hidden_field_tag(:app_key, params[:app_key]) %>
       <%= hidden_field_tag(:id, @translation_key.id) %>
       <%= hidden_field_tag(:lock, "true") %>
       <div id="tr8n_translator_buttons_container" class="buttons_container">
@@ -42,3 +43,7 @@
     <% end %>
   })();
 </script>
+
+<div style="padding-bottom:60px;">
+
+</div>

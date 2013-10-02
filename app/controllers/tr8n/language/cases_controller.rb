@@ -50,6 +50,9 @@ class Tr8n::Language::CasesController < Tr8n::Language::BaseController
       else
         trfe(@lcase.errors.full_messages.first)
       end
+
+      @lcase.language.update_cache
+
       return redirect_to(:action => :view, :id => @lcase.id) if @lcase.id
       return redirect_to(:action => :index)
     end
@@ -57,13 +60,14 @@ class Tr8n::Language::CasesController < Tr8n::Language::BaseController
   end
 
   def delete_case
-    context = Tr8n::LanguageCase.find_by_id(params[:id]) if params[:id]
-    unless context
+    lcase = Tr8n::LanguageCase.find_by_id(params[:id]) if params[:id]
+    unless lcase
       trfe("Invalid context id")
       return redirect_back
     end
 
-    context.destroy
+    lcase.destroy
+    lcase.language.update_cache
     redirect_to(:action => :index)
   end
 

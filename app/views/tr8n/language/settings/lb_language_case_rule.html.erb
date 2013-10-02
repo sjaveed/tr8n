@@ -22,10 +22,10 @@
 
 <div class="inner" <%=tr8n_dir_attribute_tag%> >
 	<div class="hd">
-		<div class="tr8n_fltr">
+		<div class="tr8n_float_right">
 			<%=link_to_function(image_tag("tr8n/close.gif"), "hideLightbox()") %>
 		</div>
-	  <div class="tr8n_txtl" style="font-size:14px; font-weight:bold;">
+	  <div class="tr8n_text_align_left" style="font-size:14px; font-weight:bold;">
 	     <%= @case.native_name.blank? ? tra('New Language Case') : @case.native_name %>
 	     <br>
 	     <span style="color:grey; font-size:10px;" dir="ltr">(::<%= @case.keyword %>) <%= @case.description %> </span>

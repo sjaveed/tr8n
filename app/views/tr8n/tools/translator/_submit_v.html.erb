@@ -23,5 +23,11 @@
 <script>
   (function() {
     Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'width':  400}, '<%=params[:origin]%>');
+
+    window.setTimeout(function() {
+      var label_rect = Tr8n.Utils.elementRect(Tr8n.Utils.element("original_text"));
+      Tr8n.Utils.element("tr8n_translator_translation_label").style.height = (label_rect.height) + 'px';
+    }, 500);
+
   })();
 </script>

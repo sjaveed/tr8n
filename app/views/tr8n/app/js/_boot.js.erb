@@ -62,7 +62,7 @@ function tr8n_add_script(doc, id, src, onload) {
     tr8n_add_css(window.document, "<%=tr8n_current_application.decorator.classes%>", true);
 
     tr8n_add_script(window.document, 'tr8n-jssdk', '/assets/tr8n/tools.js', function() {
-      tr8n_add_script(window.document, 'tr8n-proxy', "/tr8n/api/proxy/init.js?<%=params.slice(:app_key, :origin, :debug, :tml, :text, :source, :page_locale).merge(:t => Time.now.to_i).to_query.html_safe%>", function() {
+      tr8n_add_script(window.document, 'tr8n-proxy', "/tr8n/api/proxy/init.js?<%=params.slice(:app_key, :client_id, :origin, :debug, :tml, :text, :source, :page_locale).merge(:t => Time.now.to_i).to_query.html_safe%>", function() {
         if (typeof(tr8n_on_ready) === 'function') {
           tr8n_on_ready();
         }

@@ -113,7 +113,15 @@ class Tr8n::Decorator < ActiveRecord::Base
 
   def classes
     cls = application.feature_enabled?(:decorations) ? css : self.class.default_css
-    cls.collect{|name, value| ".#{name} { #{value} }"}.join(' ').gsub("\n", ' ').gsub("\r", ' ').html_safe
+    css = [];
+    cls.each do |name, value|
+      css << ".#{name} { #{value} }"
+      #css << ".#{name} p { #{value} }"
+      #css << ".#{name} h1 { #{value} }"
+      #css << ".#{name} h2 { #{value} }"
+      #css << ".#{name} h3 { #{value} }"
+    end
+    css.join(' ').gsub("\n", ' ').gsub("\r", ' ').html_safe
   end
 
   def css_tag
@@ -169,6 +177,7 @@ class Tr8n::Decorator < ActiveRecord::Base
   end
 
   def decorate_translation_key(language, translation_key, options = {})
+    sanitized_label = translation_key.sanitized_label
     return sanitized_label if Tr8n::RequestContext.current_user_is_guest?
     return sanitized_label unless Tr8n::RequestContext.current_user_is_translator?
     return sanitized_label unless translation_key.can_be_translated?
@@ -183,7 +192,7 @@ class Tr8n::Decorator < ActiveRecord::Base
     end
 
     html = "<span class='#{classes.join(' ')}' data-translation_key_id='#{translation_key.id}'>"
-    html << ERB::Util.html_escape(translation_key.sanitized_label)
+    html << ERB::Util.html_escape(sanitized_label)
     html << "</span>"
     html.html_safe
   end

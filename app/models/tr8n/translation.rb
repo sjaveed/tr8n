@@ -179,7 +179,7 @@ class Tr8n::Translation < ActiveRecord::Base
     trans = where("translation_key_id = ? and language_id = ? and translator_id = ? and context is null", translation_key.id, language.id, translator.id).order("rank desc").first
     return trans if trans
     label = translation_key.default_translation if translation_key.is_a?(Tr8n::RelationshipKey)
-    new(:translation_key => translation_key, :language => language, :translator => translator, :label => label || translation_key.sanitized_label)
+    new(:translation_key => translation_key, :language => language, :translator => translator, :label => label || translation_key.translatable_label)
   end
 
   def blank?
@@ -194,7 +194,11 @@ class Tr8n::Translation < ActiveRecord::Base
     trns = trns.where("id <> ?", self.id) if self.id
     trns.count == 0
   end
-  
+
+  def sanitized_label
+    @sanitized_label ||= label.gsub("\n", '<br>').html_safe
+  end
+
   def clean?
     language.clean_sentence?(label)
   end
@@ -243,7 +247,6 @@ class Tr8n::Translation < ActiveRecord::Base
   def to_api_hash(opts = {})
     hash = {"locale" => language.locale, "label" => label, "context" => context}
     return hash if opts[:comparible]
-
     hash.merge("rank" => rank)
   end
 

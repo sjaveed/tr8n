@@ -175,13 +175,18 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       data_tokens.each do |token|
         lbl = token.prepare_label_for_translator(lbl, self.language)
       end
-      lbl
+      lbl.gsub("\n", '<br>').html_safe
     end
   end
 
+  def translatable_label
+    sanitized_label.gsub(/<br>\s*/, "\n")
+  end
+
   def breadcrumb_label
-    return sanitized_label if sanitized_label.length < 50
-    sanitized_label[0..50] + '...'
+    lbl = sanitized_label.gsub("<br>", ' ')
+    return lbl if lbl.length < 80
+    lbl[0..80] + '...'
   end
 
   def tokenless_label
@@ -657,7 +662,8 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       "key" => self.key, 
       "label" => self.label, 
       "description" => self.description.blank? ? nil : self.description,
-      "locale" => (locale || Tr8n::Config.default_locale), 
+      "locale" => (locale || Tr8n::Config.default_locale),
+      "locked" => locked?
     }
     
     unless opts[:translations] == false

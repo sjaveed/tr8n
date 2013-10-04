@@ -14,9 +14,16 @@
   </div>
   
   <div  class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:10px;font-size:14px">
-    <%=image_tag("tr8n/left_quote.png", :style=>"text-align:bottom;padding-bottom:5px;") %>
-    <%=@translation_key.sanitized_label %>
-    <%=image_tag("tr8n/right_quote.png", :style=>"text-align:bottom;padding-top:5px;") %>
+    <% if @translation_key.sanitized_label.index("<br>") %>
+      <div style="text-align:left"><%=image_tag("tr8n/left_quote.png") %></div>
+      <div style="padding-top:10px;padding-left:15px; padding-right:15px;"><%=@translation_key.sanitized_label %></div>
+      <div style="text-align:right"><%=image_tag("tr8n/right_quote.png") %></div>
+    <% else %>
+      <%=image_tag("tr8n/left_quote.png", :style=>"text-align:bottom;padding-bottom:5px;") %>
+      <%=@translation_key.sanitized_label %>
+      <%=image_tag("tr8n/right_quote.png", :style=>"text-align:bottom;padding-top:5px;") %>
+    <% end %>
+
   </div>
 
   <% unless @translation_key.description.blank? %>

@@ -29,6 +29,8 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
   # for ssl access to the dashboard - using ssl_requirement plugin
   ssl_allowed :sync  if respond_to?(:ssl_allowed)
 
+  before_filter :validate_remote_application, :only => [:translations]
+
   def index
     ensure_get
     ensure_application
@@ -99,11 +101,9 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
   end
 
   def translations
-    app = Tr8n::RequestContext.current_application
-    languages = app.languages
+    languages = tr8n_current_application.languages
+    source_ids = tr8n_current_application.sources.collect{|src| src.id}
 
-    #source_ids = app.sources.collect{|src| src.id}
-    #keys = Tr8n::TranslationKey.joins(:translation_sources).where("tr8n_translation_sources.id in (?)", source_ids).uniq
     @filename = "translations_#{Date.today.to_s(:db)}.json"
     self.response.headers["Content-Type"] ||= 'text/json'
     self.response.headers["Content-Disposition"] = "attachment; filename=#{@filename}"
@@ -125,21 +125,21 @@ select tr8n_translations.translation_key_id as translation_key_id, tr8n_translat
        tr8n_translations.language_id as translation_language_id, tr8n_translations.label as translation_label, tr8n_translations.context as translation_context
 from tr8n_translations
 inner join tr8n_translation_keys on tr8n_translations.translation_key_id = tr8n_translation_keys.id
+where tr8n_translations.translation_key_id in (select tr8n_translation_key_sources.translation_key_id from tr8n_translation_key_sources where tr8n_translation_key_sources.translation_source_id in (#{source_ids.join(',')}))
 order by tr8n_translations.translation_key_id asc
 limit 1000000
 offset 0;
 "
+      #pp sql
       tkey = nil
       Tr8n::Translation.connection.execute(sql).each do |rec|
-        #pp tkey
+        #pp rec["translation_key_label"]
 
         if tkey.nil? or tkey["id"] != rec["translation_key_id"]
           unless tkey.nil?
             results << "#{tkey.to_json}\n"
             pp "#{tk} keys and #{t} translations have been sent" if tk % 1000 == 0
           end
-
-          tk += 1
 
           tkey = {
               "id"            => rec["translation_key_id"],
@@ -150,17 +150,20 @@ offset 0;
           unless rec["translation_key_description"].blank?
             tkey["description"] = rec["translation_key_description"]
           end
+
+          tk += 1
         end
 
-        t += 1
         locale = locales[rec["translation_language_id"].to_s]
         next unless locale
         tkey["translations"][locale] = [
             {"label" => rec["translation_label"]}
         ]
+        t += 1
 
         #GC.start if i % 500==0
       end
+      pp "#{tk} keys and #{t} translations have been sent"
     end
   end
 

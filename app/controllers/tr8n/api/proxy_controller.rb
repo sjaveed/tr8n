@@ -23,7 +23,7 @@
 
 class Tr8n::Api::ProxyController < Tr8n::Api::BaseController
 
-  before_filter :validate_remote_application, :only => [:init, :translate]
+  before_filter :validate_remote_application, :only => [:boot, :init, :translate]
 
   def ping
     render_response(:status => "Ready for business")

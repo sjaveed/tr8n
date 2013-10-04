@@ -186,9 +186,9 @@ module Tr8n
 
         token = expr[0]
         args = expr.drop(1)
-        args = args.map { |a| self.evaluate(a) }.join('')
+        value = args.map { |a| self.evaluate(a) }.join('')
 
-        apply(token, args)
+        apply(token, value)
       end
 
       def substitute

@@ -38,12 +38,12 @@
 <td class="tr8n_text_align_left" style="vertical-align:top; padding-top:5px;">
   <% if mode == :view and translation.can_be_edited_by?(tr8n_current_translator) %>
     <span onDblClick="updateTranslationRow('<%=translation.id%>', 'edit')" title="Translation for: <%=translation.key.label%>">
-      <%= translation.label %>
+      <%= translation.sanitized_label %>
     </span>
   <% elsif mode == :edit %>
     <%= text_area_tag("translation_row_value_#{translation.id}", translation.label, :style=>"width:100%;height:60px;", :class => "keyboardInput" ) %>
 	<% else %>
-    <%= translation.label %>
+    <%= translation.sanitized_label %>
   <% end %>
 
   <% if translation.context %>

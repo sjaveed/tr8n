@@ -6,7 +6,7 @@
 
   <%=tra("Original Phrase:")%>
   <span dir='ltr'>
-    <%=link_to(translation.key.label, :controller => "/tr8n/app/phrases", :action => :view, :locale => translation.language.locale, :translation_key_id => translation.key.id) %>
+    <%=link_to(translation.key.sanitized_label, :controller => "/tr8n/app/phrases", :action => :view, :locale => translation.language.locale, :translation_key_id => translation.key.id) %>
   </span>
 
   <% unless translation.key.description.blank? %>

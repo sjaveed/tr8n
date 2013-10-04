@@ -25,6 +25,7 @@ class Tr8n::Api::BaseController < ::ApplicationController
   
   before_filter :check_api_enabled
   before_filter :cors_preflight_check
+  skip_before_filter :verify_authenticity_token
 
   if Tr8n::Config.api_skip_before_filters.any?
     skip_before_filter *Tr8n::Config.api_skip_before_filters
@@ -47,8 +48,9 @@ class Tr8n::Api::BaseController < ::ApplicationController
 private
 
   def validate_remote_application
-    if params[:app_key]
-      app = Tr8n::Application.find_by_key(params[:app_key])
+    app_key = params[:app_key] || params[:client_id]
+    if app_key
+      app = Tr8n::Application.find_by_key(app_key)
       # TODO verify that the domain has been added under the application
     else
       # TODO: maybe should be removed alltogether
@@ -97,6 +99,7 @@ private
   def application
     return nil if params[:client_id].blank?
     @application ||= Tr8n::Application.find_by_key(params[:client_id])
+    #Tr8n::RequestContext.remote_application
   end
 
   def translator
@@ -195,9 +198,9 @@ private
       end 
       response = {:results => results}
 
-      response['page']          = page if page > 1 || limit == results.size
-      response['previous_page'] = prev_page if page > 1
-      response['next_page']     = next_page if limit == results.size
+      #response['page']          = page if page > 1 || limit == results.size
+      #response['previous_page'] = prev_page if page > 1
+      #response['next_page']     = next_page if limit == results.size
 
     elsif response.class.method_defined?(:to_api_hash)
       response = response.to_api_hash

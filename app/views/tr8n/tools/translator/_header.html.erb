@@ -8,10 +8,16 @@
     <%=tra("Original Phrase in {language}", :language => "<span dir='ltr'>#{@translation_key.language.name}</span>".html_safe)%>
   </div>
 
-  <div class="quote" <%=tr8n_dir_attribute_tag%>>
-    <%=image_tag("tr8n/left_quote.png") %>
-    <%=@translation_key.sanitized_label %>
-    <%=image_tag("tr8n/right_quote.png") %>
+  <div id="original_text" class="quote" <%=tr8n_dir_attribute_tag%>>
+    <% if @translation_key.sanitized_label.index("<br>") %>
+      <div style="text-align:left"><%=image_tag("tr8n/left_quote.png") %></div>
+      <div style="padding-top:10px;padding-left:15px; padding-right:15px;"><%=@translation_key.sanitized_label %></div>
+      <div style="text-align:right"><%=image_tag("tr8n/right_quote.png") %></div>
+    <% else %>
+      <%=image_tag("tr8n/left_quote.png") %>
+      <%=@translation_key.sanitized_label %>
+      <%=image_tag("tr8n/right_quote.png") %>
+    <% end %>
   </div>
 
   <% unless @translation_key.description.blank? %>

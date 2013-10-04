@@ -94,7 +94,11 @@ class Tr8n::Api::SourceController < Tr8n::Api::BaseController
       raise Tr8n::Exception.new("Source keys must be provided.")
     end
 
-    source_keys = JSON.parse(params[:source_keys])  
+    source_keys = JSON.parse(params[:source_keys])
+    pp source_keys
+
+    pp application
+
     source_keys.each do |data|
       source = Tr8n::TranslationSource.find_or_create(data["source"], application)
       data["keys"].each do |key|

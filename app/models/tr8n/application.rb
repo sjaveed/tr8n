@@ -254,15 +254,12 @@ class Tr8n::Application < ActiveRecord::Base
     }
 
     if opts[:definition]
-      hash[:definition] = {
-          :styles  => decorator.css,
-          :features => Tr8n::Feature.by_object(self),
-          :threshold => threshold,
-          :translator_level => translator_level,
-      }
-      hash[:languages] = languages.collect{|l| l.to_api_hash}
-      hash[:sources] = sources.collect{|s| s.to_api_hash}
-      hash[:components] = components.collect{|c| c.to_api_hash}
+      hash.merge!({
+        :threshold => threshold,
+        :translator_level => translator_level,
+        :features => Tr8n::Feature.by_object(self, :slim => true),
+        :languages => languages.collect{|l| l.to_api_hash}  # only basics
+      })
     end
 
     hash

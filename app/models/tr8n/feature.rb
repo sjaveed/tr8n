@@ -82,7 +82,7 @@ class Tr8n::Feature < ActiveRecord::Base
     {}
   end
 
-  def self.by_object(object)
+  def self.by_object(object, opts = {})
     hash = defaults_for(object).clone
 
     feats = where("object_type = ? and object_id = ?", object.class.name, object.id).all
@@ -90,7 +90,13 @@ class Tr8n::Feature < ActiveRecord::Base
       hash[feat.keyword]["enabled"] = feat.enabled?
     end
 
-    hash
+    return hash unless opts[:slim]
+
+    h = {}
+    hash.each do |key, defs|
+      h[key] = defs["enabled"]
+    end
+    h
   end
 
   def self.enabled?(object, keyword)

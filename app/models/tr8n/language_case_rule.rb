@@ -123,10 +123,12 @@ class Tr8n::LanguageCaseRule < ActiveRecord::Base
 
   def to_api_hash(opts = {})
     {
-        "position"    => position,
-        "definition"  => definition,
-        "description" => description,
-        "examples"    => examples,
+        "description"             => description,
+        "examples"                => examples,
+        "conditions"              => conditions,
+        "conditions_expression"   => conditions_expression,
+        "operations"              => operations,
+        "operations_expression"   => operations_expression,
     }
   end
 

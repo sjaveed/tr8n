@@ -198,6 +198,7 @@ class Tr8n::LanguageCase < ActiveRecord::Base
 
   def to_api_hash(opts = {})
     {
+      "id"          => id,
       "keyword"     => keyword,
       "latin_name"  => latin_name,
       "native_name" => native_name,

@@ -87,10 +87,11 @@ class Tr8n::LanguageContextRule < ActiveRecord::Base
 
   def to_api_hash(opts = {})
     {
-        "keyword" => keyword,
-        "definition" => definition,
-        "description" => description,
-        "examples" => examples,
+        "keyword"                 => keyword,
+        "description"             => description,
+        "examples"                => examples,
+        "conditions"              => conditions,
+        "conditions_expression"   => conditions_expression,
     }
   end
 

@@ -230,10 +230,14 @@ class Tr8n::LanguageContext < ActiveRecord::Base
 
   def to_api_hash(opts = {})
     hash = {
-      "keyword" => keyword,
-      "description" => description,
-      "definition" => definition,
-      "rules" => {}
+      "keyword"           => keyword,
+      "description"       => description,
+      "keys"              => definition["keys"],
+      "default_key"       => definition["default_rule"],
+      "token_expression"  => definition["token_expression"],
+      "variables"         => definition["variables"],
+      "token_mapping"     => definition["token_mapping"],
+      "rules"             => {}
     }
     rules.each do |rule|
        hash["rules"][rule.keyword] = rule.to_api_hash

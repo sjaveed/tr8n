@@ -447,15 +447,11 @@ class Tr8n::Language < ActiveRecord::Base
 
   def to_api_hash(opts = {})
     hash = {
-        :locale => self.locale,
-        :name => self.full_name,
-        :english_name => self.english_name,
-        :native_name => self.native_name,
-        :right_to_left => self.right_to_left,
-        :enabled => self.enabled,
-        :google_key => self.google_key,
-        :facebook_key => self.facebook_key,
-        :myheritage_key => self.myheritage_key,
+        :locale         => locale,
+        :name           => name,
+        :english_name   => english_name,
+        :native_name    => native_name,
+        :right_to_left  => right_to_left
     }
 
     if opts[:definition]

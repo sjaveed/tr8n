@@ -5,6 +5,7 @@
       <%= form_tag(:controller=>:login, :action=>:index) do %>
         <%=hidden_field_tag(:mode, params[:mode]) %>
         <%=hidden_field_tag(:origin, params[:origin]) %>
+        <%=hidden_field_tag(:app_key, params[:app_key]) %>
 
         <% if lightbox? %>
           <%=render :partial => "/layouts/flashes" %>

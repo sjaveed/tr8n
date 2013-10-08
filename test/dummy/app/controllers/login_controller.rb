@@ -27,7 +27,7 @@ class LoginController < ApplicationController
     if request.post?
       user = login(params[:email], params[:password])
       if lightbox?
-        return redirect_to(:action=>:cookies, :origin => params[:origin]) if user
+        return redirect_to(:action=>:cookies, :app_key => params[:app_key], :origin => params[:origin]) if user
       end
 
       return redirect_to("/home") if user
@@ -40,14 +40,15 @@ class LoginController < ApplicationController
   def out
     logout!
     if lightbox?
-      return redirect_to(:action=>:cookies, :origin => params[:origin])
+      return redirect_to(:action=>:cookies, :app_key => params[:app_key], :origin => params[:origin])
     end
     trfn("You have been logged out")
   end
       
   def cookies
-    application = Tr8n::TranslationDomain.find_or_create(params[:origin]).application
-    Tr8n::Config.set_remote_application(application)
+    application = Tr8n::Application.find_by_key(params[:app_key])
+    application ||= Tr8n::TranslationDomain.find_or_create(params[:origin]).application
+    Tr8n::RequestContext.set_remote_application(application)
     render(:layout=>"lightbox")
   end
 

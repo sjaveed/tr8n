@@ -20,35 +20,40 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
+#
+#-- Tr8n::EmailTemplate Schema Information
+#
+# Table name: tr8n_email_templates
+#
+#  id                INTEGER         not null, primary key
+#  application_id    integer
+#  language_id       integer
+#  keyword           varchar(255)
+#  name              varchar(255)
+#  description       varchar(255)
+#  subject           varchar(255)
+#  body              text
+#  tokens            text
+#  created_at        datetime        not null
+#  updated_at        datetime        not null
+#
+# Indexes
+#
+#  index_tr8n_email_templates_on_application_id_and_keyword    (application_id, keyword)
+#
+#++
 
-module Tr8n
-  module Liquid
-    class TrTag < ::Liquid::Block
-      def initialize(tag_name, markup, tokens)
-        super
-        #Tr8n::Logger.logger(:liquid).debug(tag_name)
-        #Tr8n::Logger.logger(:liquid).debug(markup)
-        #Tr8n::Logger.logger(:liquid).debug(tokens)
-      end
+class Tr8n::EmailPartial < Tr8n::EmailTemplate
 
-      def render(context)
-        label = super
-        tokens = context.environments.first
-
-        opts = Tr8n::RequestContext.email_render_options
-
-        lang = opts[:language] || Tr8n::RequestContext.current_language
-
-        #Tr8n::Logger.debug(label)
-        #Tr8n::Logger.debug(tokens.inspect)
-        #Tr8n::Logger.debug(opts[:tokens].inspect)
-        #tokens ||= opts[:tokens]
-        #Tr8n::Logger.logger(:liquid).debug(lang.locale)
-
-        lang.translate(label, nil, tokens, opts[:options])
-      end
-    end
+  def title
+    "Partial: #{keyword}"
   end
-end
 
-::Liquid::Template.register_tag('tr', ::Tr8n::Liquid::TrTag)
+  def render_body(mode = :html, tokens = self.tokens, options = {})
+    if Tr8n::RequestContext.email_render_options.blank?
+      return super
+    end
+    ::Liquid::Template.parse(content(mode)).render(tokens).html_safe
+  end
+
+end

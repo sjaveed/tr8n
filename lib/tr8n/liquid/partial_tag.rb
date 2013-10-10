@@ -23,32 +23,23 @@
 
 module Tr8n
   module Liquid
-    class TrTag < ::Liquid::Block
+    class PartialTag < ::Liquid::Tag
       def initialize(tag_name, markup, tokens)
         super
-        #Tr8n::Logger.logger(:liquid).debug(tag_name)
-        #Tr8n::Logger.logger(:liquid).debug(markup)
-        #Tr8n::Logger.logger(:liquid).debug(tokens)
+        @key = markup.strip
+        Tr8n::Logger.debug("Partial: #{@key}")
       end
 
       def render(context)
-        label = super
-        tokens = context.environments.first
+        partial = Tr8n::RequestContext.current_application.email_partials.where(:keyword => @key).first
+        return "[Error: Partial #{@key} does not exist in this application]" unless partial
 
         opts = Tr8n::RequestContext.email_render_options
-
-        lang = opts[:language] || Tr8n::RequestContext.current_language
-
-        #Tr8n::Logger.debug(label)
-        #Tr8n::Logger.debug(tokens.inspect)
-        #Tr8n::Logger.debug(opts[:tokens].inspect)
-        #tokens ||= opts[:tokens]
-        #Tr8n::Logger.logger(:liquid).debug(lang.locale)
-
-        lang.translate(label, nil, tokens, opts[:options])
+        Tr8n::Logger.debug("Partial options: #{opts.inspect}")
+        partial.render_body(opts[:mode], opts[:tokens], opts[:options])
       end
     end
   end
 end
 
-::Liquid::Template.register_tag('tr', ::Tr8n::Liquid::TrTag)
+::Liquid::Template.register_tag('partial', ::Tr8n::Liquid::PartialTag)

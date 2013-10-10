@@ -1,0 +1,19 @@
+<div style="float:right; font-size:12px;">
+  <%= [
+        link_to(tra("templates"), :action => :index),
+        link_to(tra("partials"), :action => :partials),
+        link_to(tra("layouts"), :action => :layouts),
+      ].join(" | ").html_safe
+  %>
+</div>
+
+<script>
+  function previewEmail(id, mode) {
+    var w = 800;
+    var h = 600;
+    var left = (screen.width/2)-(w/2);
+    var top = (screen.height/2)-(h/2);
+    var url = "/tr8n/app/emails/preview?id=" + id + "&mode=" + mode;
+    return window.open(url, "Tr8n Email Preview", 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+  }
+</script>

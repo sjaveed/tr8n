@@ -1,0 +1,251 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%
+            if @et.is_a?(Tr8n::EmailPartial)
+               header = tra("Edit Email Partial")
+            elsif @et.is_a?(Tr8n::EmailLayout)
+               header = tra("Edit Email Layout")
+            else
+               header = tra("Edit Email Template")
+            end
+      %>
+      <%=header%>
+    </div>
+
+    <%=render :partial=>"breadcrumb" %>
+
+    <%= form_for(@et, :as => :email_template, :url => {:id => @et.id}, :html => {:method => :post, :id=>:email_template_form}) do |f| %>
+      <%= f.hidden_field(:id) %>
+
+      <div class="section blue">
+        <div class="tr8n_float_right" style="padding-right:5px;">
+          <%=tr8n_help_icon_tag("Email Templates") %>
+        </div>
+        <table>
+          <tr style="<%="display:none" if @et.is_a?(Tr8n::EmailLayout) %>">
+            <th style="text-align:left;vertical-align: top;">Keyword:</th>
+            <td><%=f.text_field(:keyword, :style=>"width:950px;", :id => :email_template_keyword)%></td>
+          </tr>
+          <tr style="<%="display:none" if @et.is_a?(Tr8n::EmailPartial) %>">
+            <th style="text-align:left;vertical-align: top">Name:</th>
+            <td><%=f.text_field(:name, :style=>"width:950px;", :id => :email_template_name)%></td>
+          </tr>
+          <tr>
+            <th style="text-align:left;padding-right:15px;vertical-align: top">Description:</th>
+            <td><%=f.text_area(:description, :style=>"width:950px; height: 50px;", :id => :email_template_description)%></td>
+          </tr>
+          <% if @et.is_a?(Tr8n::Email) %>
+            <tr>
+              <th style="text-align:left;padding-right:15px;vertical-align: top">Email Layout:</th>
+              <td>
+                <select id="email_template_layout" data-placeholder="Email template layout" style="width:965px;" class="chzn-select">
+                  <option value=""></option>
+                  <option value="-1" <%="selected" if @et.parent_id.nil? %>>-- no layout --</option>
+                  <% selected_application.email_layouts.each do |el| %>
+                    <option <%="selected" if el.id == @et.parent_id %> value="<%=el.id%>"><%=el.name%></option>
+                  <% end %>
+                </select>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+
+      <div class="navbar" style="margin-bottom:5px;">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav">
+              <% if @et.is_a?(Tr8n::Email) %>
+                <li id="email_nav_subject"><a href="javascript:void(0);">Email Subject</a></li>
+              <% end %>
+              <li id="email_nav_html" class="active"><a href="javascript:void(0);">HTML Body</a></li>
+              <li id="email_nav_text"><a href="javascript:void(0);">Text Body</a></li>
+              <li id="email_nav_tokens"><a href="javascript:void(0);">Sample Tokens</a></li>
+            </ul>
+
+            <ul class="nav pull-right">
+              <li>
+                <div style="display:none;text-align:right;font-weight:normal;padding-top:10px;" id="template_status"><%=image_tag("tr8n/spinner.gif", :style => "vertical-align:middle;")%> Saving...</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="email_section_subject" style="display:none">
+        <div class="ace_editor" id="email_template_subject"><%=@et.subject%></div>
+      </div>
+
+      <div class="section" id="email_section_html" style="">
+        <div class="ace_editor" id="email_template_html_body"><%=@et.html_body%></div>
+      </div>
+
+      <div class="section" id="email_section_text" style="display:none">
+        <div class="ace_editor" id="email_template_text_body"><%=@et.text_body%></div>
+      </div>
+
+      <div class="section" id="email_section_tokens" style="display:none">
+        <div class="ace_editor" id="email_template_tokens"><%=JSON.pretty_generate(JSON.parse((@et.tokens || {}).to_json))%></div>
+      </div>
+
+      <div>
+        <div style="float:right">
+          <button type="button" class="btn" onClick="previewEmail('<%=@et.id%>', 'html')">
+            <%=tra("Preview HTML", "Preview email template") %>
+          </button>
+          <button type="button" class="btn" onClick="previewEmail('<%=@et.id%>', 'text')">
+            <%=tra("Preview Text", "Preview email template") %>
+          </button>
+          <button type="button" class="btn btn-primary" onClick="saveTemplate()">
+            <%=tra("Save") %>
+          </button>
+        </div>
+
+        <%= link_to(tra("Delete"), {:action => :delete_template, :id => @et.id}, :class => "btn btn-danger", :confirm => trla("Are you sure you want to delete this email template?")) %>
+      </div>
+    <% end %>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+  <%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+  <%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>
+
+<% end %>
+
+<%=javascript_include_tag('tr8n/vendor/ace/ace.js') %>
+<%=javascript_include_tag('tr8n/vendor/ace/theme-chrome.js') %>
+<%=javascript_include_tag('tr8n/vendor/ace/mode-html.js') %>
+<%=javascript_include_tag('tr8n/vendor/ace/mode-json.js') %>
+<%=javascript_include_tag('tr8n/vendor/jquery/jquery-ace.js') %>
+
+<style type="text/css" media="screen">
+  .ace_editor {
+    position: relative;
+    top: 0;
+    left: 0;
+    width:1150px;
+    height:500px;
+  }
+</style>
+
+<script>
+  var last_modified = null;
+
+  $("#email_template_layout").chosen({});
+
+  var subject_editor = ace.edit("email_template_subject");
+  subject_editor.setTheme("ace/theme/chrome");
+  subject_editor.getSession().setMode("ace/mode/text");
+  subject_editor.getSession().on('change', function(e) {
+    last_modified = new Date();
+  });
+
+  var html_editor = ace.edit("email_template_html_body");
+  html_editor.setTheme("ace/theme/chrome");
+  html_editor.getSession().setMode("ace/mode/html");
+  html_editor.getSession().on('change', function(e) {
+    last_modified = new Date();
+  });
+
+  var text_editor = ace.edit("email_template_text_body");
+  text_editor.setTheme("ace/theme/chrome");
+  text_editor.getSession().setMode("ace/mode/text");
+  text_editor.getSession().on('change', function(e) {
+    last_modified = new Date();
+  });
+
+  var json_editor = ace.edit("email_template_tokens");
+  json_editor.setTheme("ace/theme/chrome");
+  json_editor.getSession().setMode("ace/mode/json");
+  json_editor.getSession().on('change', function(e) {
+    last_modified = new Date();
+  });
+
+  if ("#email_nav_subject") {
+    $("#email_nav_subject").on("click", function() {
+      $("#email_nav_subject").addClass("active");
+      $("#email_nav_html").removeClass("active");
+      $("#email_nav_text").removeClass("active");
+      $("#email_nav_tokens").removeClass("active");
+      $("#email_section_subject").show();
+      $("#email_section_html").hide();
+      $("#email_section_text").hide();
+      $("#email_section_tokens").hide();
+//        subject_editor.focus();
+    });
+  }
+
+  $("#email_nav_html").on("click", function() {
+    if ("#email_nav_subject") $("#email_nav_subject").removeClass("active");
+    $("#email_nav_html").addClass("active");
+    $("#email_nav_text").removeClass("active");
+    $("#email_nav_tokens").removeClass("active");
+    $("#email_section_subject").hide();
+    $("#email_section_html").show();
+    $("#email_section_text").hide();
+    $("#email_section_tokens").hide();
+  });
+
+  $("#email_nav_text").on("click", function() {
+    if ("#email_nav_subject") $("#email_nav_subject").removeClass("active");
+    $("#email_nav_html").removeClass("active");
+    $("#email_nav_text").addClass("active");
+    $("#email_nav_tokens").removeClass("active");
+    $("#email_section_subject").hide();
+    $("#email_section_html").hide();
+    $("#email_section_text").show();
+    $("#email_section_tokens").hide();
+  });
+
+  $("#email_nav_tokens").on("click", function() {
+    if ("#email_nav_subject") $("#email_nav_subject").removeClass("active");
+    $("#email_nav_html").removeClass("active");
+    $("#email_nav_text").removeClass("active");
+    $("#email_nav_tokens").addClass("active");
+    $("#email_section_subject").hide();
+    $("#email_section_html").hide();
+    $("#email_section_text").hide();
+    $("#email_section_tokens").show();
+  });
+
+  function checkIdleTime() {
+    var now = new Date();
+    if (last_modified != null) {
+      var diff = (now - last_modified) / 1000;
+      if (diff > 2) {
+        saveTemplate();
+        last_modified = null;
+      }
+    }
+    window.setTimeout(checkIdleTime, 1000);
+  }
+  window.setTimeout(checkIdleTime, 1000);
+
+  function saveTemplate() {
+    $("#template_status").show();
+    console.log("Saving...");
+
+    $.post("/tr8n/app/emails/save_template", {
+      "id":             $("#email_template_id").val(),
+      "keyword":        $("#email_template_keyword").val(),
+      "name":           $("#email_template_name").val(),
+      "description":    $("#email_template_description").val(),
+      "parent_id":      $("#email_template_layout").val(),
+      "subject":        subject_editor.getValue(),
+      "text_body":      text_editor.getValue(),
+      "html_body":      html_editor.getValue(),
+      "tokens":         json_editor.getValue()
+    }).done(function(params) {
+        $("#template_status").hide();
+    }).fail(function() {
+        $("#template_status").hide();
+    });
+  }
+</script>
+

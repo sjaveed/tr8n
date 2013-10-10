@@ -26,65 +26,44 @@
 # Table name: tr8n_email_templates
 #
 #  id                INTEGER         not null, primary key
-#  application_id    integer         
-#  language_id       integer         
-#  keyword           varchar(255)    
-#  name              varchar(255)    
-#  description       varchar(255)    
-#  subject           varchar(255)    
-#  body              text            
-#  tokens            text            
+#  application_id    integer
+#  language_id       integer
+#  keyword           varchar(255)
+#  name              varchar(255)
+#  description       varchar(255)
+#  subject           varchar(255)
+#  body              text
+#  tokens            text
 #  created_at        datetime        not null
 #  updated_at        datetime        not null
 #
 # Indexes
 #
-#  index_tr8n_email_templates_on_application_id_and_keyword    (application_id, keyword) 
+#  index_tr8n_email_templates_on_application_id_and_keyword    (application_id, keyword)
 #
 #++
 
-class Tr8n::EmailTemplate < ActiveRecord::Base
-  self.table_name = :tr8n_email_templates
-
-  attr_accessible :application, :language, :keyword, :subject, :html_body, :text_body, :tokens, :name, :description
-
-  belongs_to :application, :class_name => 'Tr8n::Application'
-  belongs_to :language, :class_name => 'Tr8n::Language'
-
-  serialize :tokens
+class Tr8n::EmailLayout < Tr8n::EmailTemplate
 
   def title
-    "Template: #{keyword}"
-  end
-
-  def content(mode)
-    return self.text_body.to_s if mode.to_sym == :text
-    self.html_body.to_s
+    "Layout: #{keyword}"
   end
 
   def render_body(mode = :html, tokens = self.tokens, options = {})
+    content = content(mode)
+
     options[:language] ||= Tr8n::RequestContext.current_language
     Tr8n::RequestContext.render_email_with_options(:mode => mode, :tokens => tokens, :source => "/emails/#{keyword}", :options => options) do
-      @result = ::Liquid::Template.parse(content(mode)).render(tokens)
+      @result = ::Liquid::Template.parse(content).render(tokens)
     end
+
+    if options[:yield]
+      @result = @result.gsub("{! yield !}", options[:yield])
+    else
+      @result = @result.gsub("{! yield !}", "[EMAIL CONTENT WILL GO HERE]")
+    end
+
     @result.html_safe
   end
-
-  def render_subject(tokens = self.tokens, options = {})
-    #s = Postoffice::EmailSubject.find_by_key(options[:subject]) if options[:subject]
-    #if s and s.label
-    #  content = s.label
-    #else
-    #  content = self.subject
-    #end
-
-    options[:language] ||= Tr8n::RequestContext.current_language
-
-    Tr8n::RequestContext.render_email_with_options(options.merge(:tokens => tokens, :options => {:source => "/emails/#{keyword}"})) do
-      @result = ::Liquid::Template.parse(self.subject).render(tokens)
-    end
-    @result.html_safe
-  end
-
 
 end

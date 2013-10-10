@@ -110,18 +110,46 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
 
   def email_template
     if request.post?
-      Tr8n::Logger.debug(params.inspect)
-
-      if Tr8n::EmailTemplate.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
+      if Tr8n::Email.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
         return render(:json => {"error" => tra("Template keyword must be unique")}.to_json)
       end
 
       default_language = Tr8n::Language.by_locale(params[:default_locale])
-      Tr8n::EmailTemplate.create(:application => selected_application, :keyword => params[:keyword], :language => default_language,
+      Tr8n::Email.create(:application => selected_application, :keyword => params[:keyword], :language => default_language,
                                        :name => params[:name], :description => params[:description],
-                                       :subject => params[:subject], :body => params[:body])
+                                       :subject => params[:subject], :html_body => params[:html_body], :text_body => params[:text_body])
 
-      return render(:json => {"status" => "Ok", "msg" => tra("Email template has been registered")}.to_json)
+      return render(:json => {"status" => "Ok", "msg" => tra("Email template has been created")}.to_json)
+    end
+
+    render :layout => false
+  end
+
+  def email_partial
+    if request.post?
+      if Tr8n::EmailPartial.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
+        return render(:json => {"error" => tra("Partial keyword must be unique")}.to_json)
+      end
+
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      Tr8n::EmailPartial.create(:application => selected_application, :keyword => params[:keyword], :language => default_language,
+                                 :name => params[:name], :description => params[:description],
+                                 :subject => params[:subject], :html_body => params[:html_body], :text_body => params[:text_body])
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Email partial has been created")}.to_json)
+    end
+
+    render :layout => false
+  end
+
+  def email_layout
+    if request.post?
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      Tr8n::EmailLayout.create(:application => selected_application, :language => default_language,
+                                :name => params[:name], :description => params[:description],
+                                :subject => params[:subject], :html_body => params[:html_body], :text_body => params[:text_body])
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Email layout has been created")}.to_json)
     end
 
     render :layout => false

@@ -1,0 +1,25 @@
+<%
+    links = []
+    if @et.is_a?(Tr8n::EmailPartial)
+      links << [tra("All Partials"), {:action => :partials}]
+    elsif @et.is_a?(Tr8n::EmailLayout)
+      links << [tra("All Layouts"), {:action => :layouts}]
+    else
+      links << [tra("All Email Templates"), {:action => :index}]
+    end
+
+    if @et
+      links << [@et.keyword.blank? ? @et.name : @et.keyword, {:id => @et.id}]
+    end
+%>
+
+<ul class="breadcrumb">
+  <% links.each_with_index do |link, index| %>
+    <li class="<%='active' if index == links.size-1 %>">
+      <%=link_to(link.first, link.last)%>
+      <% if index < links.size-1 %>
+        <span class="divider">/</span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

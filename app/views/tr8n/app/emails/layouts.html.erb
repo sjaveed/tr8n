@@ -1,0 +1,62 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Email Layouts") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Email Layouts") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("Here you can configure custom emails sent to translators") %>
+      </div>
+
+      <div class="text-right">
+        <%=link_to("Add Email Layout", {:controller => "/tr8n/app/wizards", :action => :email_layout}, {"class" => "btn btn-primary", "data-toggle" => "dynamic_wizard"})%>
+      </div>
+    </div>
+
+    <div class="section">
+
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th style="width:100px;"><%=tra("Name") %></th>
+          <th style="width:150px"><%=tra("Description") %></th>
+          <th style="width:100px;"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @layouts.each do |et| %>
+          <tr>
+            <td>
+              <%= et.name%>
+            </td>
+            <td>
+              <%= et.description%>
+            </td>
+            <td style="text-align:right">
+              <%=link_to_function(tra("Preview Text"), "previewEmail('#{et.id}', 'text')", :class => "btn") %>
+              <%=link_to_function(tra("Preview Html"), "previewEmail('#{et.id}', 'html')", :class => "btn") %>
+              <%=link_to(tra("Edit"), {:action => :template, :id => et.id}, :class => "btn") %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+  <%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+  <%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>
+
+<% end %>

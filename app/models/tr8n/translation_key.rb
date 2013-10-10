@@ -552,6 +552,8 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   def substitute_tokens(language, translated_label, token_values, options = {})
     processed_label = translated_label.to_s.dup
 
+    token_values = HashWithIndifferentAccess.new(token_values)
+
     # substitute data tokens
     Tr8n::Tokens::Base.register_tokens(processed_label, :data).each do |token|
       next unless allowed_token?(token)

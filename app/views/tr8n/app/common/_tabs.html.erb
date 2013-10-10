@@ -56,6 +56,7 @@
        features << ["icon-certificate", "Awards", "awards", false]                if selected_application.feature_enabled?(:awards)
        features << ["icon-comment", "Forum", "forum", false]                      if selected_application.feature_enabled?(:forum)
        features << ["icon-book", "Glossary", "glossary", false]                   if selected_application.feature_enabled?(:glossary)
+       features << ["icon-envelope", "Emails", "emails", false]
        features << ["icon-cog", "Settings", "settings", true]
 
        features.each do |tab| %>

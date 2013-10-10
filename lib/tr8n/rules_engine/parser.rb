@@ -37,6 +37,7 @@ module Tr8n
       def parse
         return @expression unless tokens
         token = tokens.shift
+        return nil if token.nil?
         return parse_list if (token) == '('
         return token[1..-2].to_s if token =~ /^['"].*/
         return token.to_i if token =~ /\d+/
@@ -45,7 +46,7 @@ module Tr8n
      
       def parse_list
         list = []
-        list << parse until tokens.first == ')'
+        list << parse until tokens.empty? or tokens.first == ')'
         tokens.shift
         list
       end

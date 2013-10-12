@@ -20,40 +20,30 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
-#
-#-- Tr8n::EmailTemplate Schema Information
-#
-# Table name: tr8n_email_templates
-#
-#  id                INTEGER         not null, primary key
-#  application_id    integer
-#  language_id       integer
-#  keyword           varchar(255)
-#  name              varchar(255)
-#  description       varchar(255)
-#  subject           varchar(255)
-#  body              text
-#  tokens            text
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
-#
-# Indexes
-#
-#  index_tr8n_email_templates_on_application_id_and_keyword    (application_id, keyword)
-#
-#++
 
-class Tr8n::EmailPartial < Tr8n::EmailTemplate
+module Tr8n
+  module Liquid
+    class AssetTag < ::Liquid::Tag
+      def initialize(tag_name, markup, tokens)
+        super
+        @options = markup.scan(/[\w.]*\s|[\w]*=".*?"|[\w]*='.*?'/).collect{|o| o.strip}
+        @key = @options.size > 0 ? @options.shift : markup.strip
+      end
 
-  def title
-    "Partial: #{keyword}"
-  end
+      def render(context)
+        asset = Tr8n::RequestContext.current_application.email_assets.where(:keyword => @key).first
+        return "[Error: Asset '#{@key}' does not exist in this application]" unless asset
 
-  def render_body(mode = :html, tokens = self.tokens, options = {})
-    if Tr8n::RequestContext.email_render_options.blank?
-      return super
+        opts = Tr8n::RequestContext.email_render_options
+
+        if opts[:mode].to_s == 'text' or @options.include?('url')
+          return asset.url(:original, :full => true)
+        end
+
+        "<img src='#{asset.url(:original, :full => true)}' #{@options.join(" ")}>"
+      end
     end
-    ::Liquid::Template.parse(content(mode)).render(tokens).html_safe
   end
-
 end
+
+::Liquid::Template.register_tag('asset', ::Tr8n::Liquid::AssetTag)

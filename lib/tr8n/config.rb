@@ -242,6 +242,10 @@ module Tr8n
       site_info[:login_url]
     end
 
+    def self.media_url
+      site_info[:media_url] || base_url
+    end
+
     def self.current_locale_method
       site_info[:current_locale_method]
     end

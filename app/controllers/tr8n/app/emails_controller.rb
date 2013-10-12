@@ -24,7 +24,7 @@
 class Tr8n::App::EmailsController < Tr8n::App::BaseController
 
   def index
-    @emails = selected_application.emails
+    @emails = selected_application.email_templates
   end
 
   def partials
@@ -35,8 +35,12 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
     @layouts = selected_application.email_layouts
   end
 
+  def assets
+    @assets = selected_application.email_assets.order("created_at desc")
+  end
+
   def template
-    @et = Tr8n::EmailTemplate.find_by_id(params[:id])
+    @et = Tr8n::Emails::Base.find_by_id(params[:id])
     if request.post?
       if params[:email_template][:tokens].blank?
         params[:email_template][:tokens] = "{}"
@@ -49,7 +53,7 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
   def save_template
     #Tr8n::Logger.debug(params.inspect)
 
-    et = Tr8n::EmailTemplate.find_by_id(params[:id])
+    et = Tr8n::Emails::Base.find_by_id(params[:id])
     et.keyword = params[:keyword]
     et.name = params[:name] if params[:name]
     et.description = params[:description] if params[:description]
@@ -67,7 +71,12 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
   end
 
   def preview
-    @et = Tr8n::EmailTemplate.find_by_id(params[:id])
+    if params[:keyword]
+      @et = selected_application.email_templates.where(:keyword => params[:keyword]).first
+    else
+      @et = Tr8n::Emails::Base.find_by_id(params[:id])
+    end
+
     @title = "Preview #{@et.title} (#{params[:mode]} mode)"
     @subject = @et.render_subject
     @body = @et.render_body(params[:mode])
@@ -80,11 +89,70 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
   end
 
   def delete_template
-    et = Tr8n::EmailTemplate.find_by_id(params[:id]) if params[:id]
+    et = Tr8n::Emails::Base.find_by_id(params[:id]) if params[:id]
     et.destroy if et
-    return redirect_to :action => :layouts if et.is_a?(Tr8n::EmailLayout)
-    return redirect_to :action => :partials if et.is_a?(Tr8n::EmailPartial)
+    return redirect_to :action => :layouts if et.is_a?(Tr8n::Emails::Layout)
+    return redirect_to :action => :partials if et.is_a?(Tr8n::Emails::Partial)
     redirect_to :action => :index
   end
 
+  def send_modal
+    if params[:keyword]
+      @et = selected_application.email_templates.where(:keyword => params[:keyword]).first
+    else
+      @et = Tr8n::Emails::Template.find_by_id(params[:id])
+    end
+
+    if request.post?
+      tokens = JSON.parse(params[:email][:tokens])
+      emails = params[:email][:to].split(",")
+      language = Tr8n::Language.by_locale(params[:email][:language])
+
+      emails.each do |email|
+        Tr8n::Mailer.deliver(selected_application, @et.keyword, email, tokens, :language => language)
+      end
+
+      trfn("Email has been sent")
+      return redirect_to(:action => :template, :id => @et.id)
+    end
+
+    render :layout => false
+  end
+
+  def upload_asset
+    files = []
+
+    params[:files].each do |file|
+      asset = Tr8n::Emails::Asset.create_from_file(selected_application, file.original_filename, File.read(file.tempfile))
+      files << {
+          "name"=> file.original_filename,
+          #"size"=> 902604,
+          #"url"=> "http:\/\/example.org\/files\/picture1.jpg",
+          #"thumbnailUrl"=> "http:\/\/example.org\/files\/thumbnail\/picture1.jpg",
+          #"deleteUrl"=> "http:\/\/example.org\/files\/picture1.jpg",
+          #"deleteType"=> "DELETE"
+      }
+    end
+
+    render :json => {"files" => files}
+  end
+
+  def delete_asset
+    asset = Tr8n::Emails::Asset.find_by_id(params[:id])
+    asset.destroy if asset
+    redirect_back
+  end
+
+  def asset_modal
+    @asset = Tr8n::Emails::Asset.find_by_id(params[:id])
+
+    if request.post?
+      @asset.keyword = params[:asset][:keyword]
+      @asset.save
+      trfn("Asset has been updated")
+      return redirect_to(:action => :assets)
+    end
+
+    render :layout => false
+  end
 end

@@ -1,8 +1,8 @@
 <%
     links = []
-    if @et.is_a?(Tr8n::EmailPartial)
+    if @et.is_a?(Tr8n::Emails::Partial)
       links << [tra("All Partials"), {:action => :partials}]
-    elsif @et.is_a?(Tr8n::EmailLayout)
+    elsif @et.is_a?(Tr8n::Emails::Layout)
       links << [tra("All Layouts"), {:action => :layouts}]
     else
       links << [tra("All Email Templates"), {:action => :index}]

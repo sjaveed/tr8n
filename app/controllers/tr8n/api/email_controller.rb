@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2013 Michael Berkovich, tr8nhub.com
+# Copyright (c) 2010-2013 Michael Berkovich, tr8nhub.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,34 +21,42 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tr8n
-  module Liquid
-    class TrTag < ::Liquid::Block
-      def initialize(tag_name, markup, tokens)
-        super
-        #Tr8n::Logger.logger(:liquid).debug(tag_name)
-        #Tr8n::Logger.logger(:liquid).debug(markup)
-        #Tr8n::Logger.logger(:liquid).debug(tokens)
-      end
+class Tr8n::Api::EmailController < Tr8n::Api::BaseController
 
-      def render(context)
-        label = super
-        tokens = context.environments.first
+  def templates
+    ensure_get
+    ensure_application
 
-        opts = Tr8n::RequestContext.email_render_options
-
-        lang = opts[:language] || Tr8n::RequestContext.current_language
-
-        #Tr8n::Logger.debug(label)
-        #Tr8n::Logger.debug(tokens.inspect)
-        #Tr8n::Logger.debug(opts[:tokens].inspect)
-        #tokens ||= opts[:tokens]
-        #Tr8n::Logger.logger(:liquid).debug(lang.locale)
-
-        lang.translate(label, nil, tokens, opts)
-      end
-    end
+    render_response(application.emails)
   end
-end
 
-::Liquid::Template.register_tag('tr', ::Tr8n::Liquid::TrTag)
+  def message
+    ensure_post
+    ensure_application
+
+    tokens = params[:tokens]
+    tokens = JSON.parse(tokens)
+
+    keyword = params[:key]
+
+    email = application.emails.where(:keyword => keyword).first
+
+    unless email
+      return render_error("Email not found")
+    end
+
+    data = {
+      :subject => email.render_subject(tokens, {:skip_decorations => true, :language => language}),
+      :html_body => email.render_body(:html, tokens, {:skip_decorations => true, :language => language}),
+      :text_body => email.render_body(:text, tokens, {:skip_decorations => true, :language => language})
+    }
+
+    render_response(data)
+  end
+
+  def deliver
+    ensure_post
+    ensure_application
+  end
+
+end

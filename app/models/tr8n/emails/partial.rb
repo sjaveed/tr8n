@@ -43,22 +43,17 @@
 #
 #++
 
-class Tr8n::Email < Tr8n::EmailTemplate
+class Tr8n::Emails::Partial < Tr8n::Emails::Base
 
   def title
-    "Email: #{keyword}"
+    "Partial: #{keyword}"
   end
 
   def render_body(mode = :html, tokens = self.tokens, options = {})
-    options[:language] ||= Tr8n::RequestContext.current_language
-    Tr8n::RequestContext.render_email_with_options(:mode => mode, :tokens => tokens, :source => "/emails/#{keyword}", :options => options) do
-      @result = ::Liquid::Template.parse(content(mode)).render(tokens)
+    if Tr8n::RequestContext.email_render_options.blank?
+      return super
     end
-
-    layout = Tr8n::EmailLayout.find_by_id(parent_id) unless parent_id.nil?
-    return @result.html_safe unless layout
-
-    layout.render_body(mode, tokens, options.merge(:yield => @result))
+    ::Liquid::Template.parse(content(mode)).render(tokens).html_safe
   end
 
 end

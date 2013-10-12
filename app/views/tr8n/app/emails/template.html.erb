@@ -6,9 +6,9 @@
     <div class="section_title">
       <%=render(:partial => "sections") %>
       <%
-            if @et.is_a?(Tr8n::EmailPartial)
+            if @et.is_a?(Tr8n::Emails::Partial)
                header = tra("Edit Email Partial")
-            elsif @et.is_a?(Tr8n::EmailLayout)
+            elsif @et.is_a?(Tr8n::Emails::Layout)
                header = tra("Edit Email Layout")
             else
                header = tra("Edit Email Template")
@@ -27,11 +27,11 @@
           <%=tr8n_help_icon_tag("Email Templates") %>
         </div>
         <table>
-          <tr style="<%="display:none" if @et.is_a?(Tr8n::EmailLayout) %>">
+          <tr style="<%="display:none" if @et.is_a?(Tr8n::Emails::Layout) %>">
             <th style="text-align:left;vertical-align: top;">Keyword:</th>
             <td><%=f.text_field(:keyword, :style=>"width:950px;", :id => :email_template_keyword)%></td>
           </tr>
-          <tr style="<%="display:none" if @et.is_a?(Tr8n::EmailPartial) %>">
+          <tr style="<%="display:none" if @et.is_a?(Tr8n::Emails::Partial) %>">
             <th style="text-align:left;vertical-align: top">Name:</th>
             <td><%=f.text_field(:name, :style=>"width:950px;", :id => :email_template_name)%></td>
           </tr>
@@ -39,7 +39,7 @@
             <th style="text-align:left;padding-right:15px;vertical-align: top">Description:</th>
             <td><%=f.text_area(:description, :style=>"width:950px; height: 50px;", :id => :email_template_description)%></td>
           </tr>
-          <% if @et.is_a?(Tr8n::Email) %>
+          <% if @et.is_a?(Tr8n::Emails::Template) %>
             <tr>
               <th style="text-align:left;padding-right:15px;vertical-align: top">Email Layout:</th>
               <td>
@@ -60,12 +60,12 @@
         <div class="navbar-inner">
           <div class="container">
             <ul class="nav">
-              <% if @et.is_a?(Tr8n::Email) %>
+              <% if @et.is_a?(Tr8n::Emails::Template) %>
                 <li id="email_nav_subject"><a href="javascript:void(0);">Email Subject</a></li>
               <% end %>
               <li id="email_nav_html" class="active"><a href="javascript:void(0);">HTML Body</a></li>
               <li id="email_nav_text"><a href="javascript:void(0);">Text Body</a></li>
-              <li id="email_nav_tokens"><a href="javascript:void(0);">Sample Tokens</a></li>
+              <li id="email_nav_tokens"><a href="javascript:void(0);">Preview Tokens</a></li>
             </ul>
 
             <ul class="nav pull-right">
@@ -95,18 +95,31 @@
 
       <div>
         <div style="float:right">
-          <button type="button" class="btn" onClick="previewEmail('<%=@et.id%>', 'html')">
-            <%=tra("Preview HTML", "Preview email template") %>
-          </button>
-          <button type="button" class="btn" onClick="previewEmail('<%=@et.id%>', 'text')">
-            <%=tra("Preview Text", "Preview email template") %>
-          </button>
+          <div style="background:#f7f7f7;padding:5px;display:inline-block;border:1px solid #eee; border-radius:5px;margin-right:20px;">
+            <span style="color:#666;">Auto-save:</span>
+            <div class="make-switch switch_autosave" data-on="primary" data-off="info" style="">
+              <input type="checkbox" checked>
+            </div>
+          </div>
+
           <button type="button" class="btn btn-primary" onClick="saveTemplate()">
             <%=tra("Save") %>
           </button>
         </div>
+        <%= link_to(tra("Delete"), {:action => :delete_template, :id => @et.id}, :style=> "margin-right:30px;", :class => "btn btn-danger", :confirm => trla("Are you sure you want to delete this email template?")) %>
 
-        <%= link_to(tra("Delete"), {:action => :delete_template, :id => @et.id}, :class => "btn btn-danger", :confirm => trla("Are you sure you want to delete this email template?")) %>
+        <button type="button" class="btn btn-warning" onClick="previewEmail('<%=@et.id%>', 'html')">
+          <%=tra("Preview HTML", "Preview email template") %>
+        </button>
+        <button type="button" class="btn btn-warning" onClick="previewEmail('<%=@et.id%>', 'text')">
+          <%=tra("Preview Text", "Preview email template") %>
+        </button>
+
+        <% if @et.is_a?(Tr8n::Emails::Template) %>
+          <%=link_to(tra("Send", "Send an email"), {:action => :send_modal, :id => @et.id}, {"class" => "btn btn-success", "data-toggle" => "dynamic_modal"})%>
+        <% end %>
+
+
       </div>
     <% end %>
 
@@ -136,6 +149,7 @@
 
 <script>
   var last_modified = null;
+  var autosave = true;
 
   $("#email_template_layout").chosen({});
 
@@ -177,7 +191,7 @@
       $("#email_section_html").hide();
       $("#email_section_text").hide();
       $("#email_section_tokens").hide();
-//        subject_editor.focus();
+       subject_editor.focus();
     });
   }
 
@@ -190,6 +204,7 @@
     $("#email_section_html").show();
     $("#email_section_text").hide();
     $("#email_section_tokens").hide();
+    html_editor.focus();
   });
 
   $("#email_nav_text").on("click", function() {
@@ -201,6 +216,7 @@
     $("#email_section_html").hide();
     $("#email_section_text").show();
     $("#email_section_tokens").hide();
+    text_editor.focus();
   });
 
   $("#email_nav_tokens").on("click", function() {
@@ -212,13 +228,14 @@
     $("#email_section_html").hide();
     $("#email_section_text").hide();
     $("#email_section_tokens").show();
+    json_editor.focus();
   });
 
   function checkIdleTime() {
     var now = new Date();
     if (last_modified != null) {
       var diff = (now - last_modified) / 1000;
-      if (diff > 2) {
+      if (diff > 2 && autosave) {
         saveTemplate();
         last_modified = null;
       }
@@ -226,6 +243,10 @@
     window.setTimeout(checkIdleTime, 1000);
   }
   window.setTimeout(checkIdleTime, 1000);
+
+  $('.switch_autosave').on('switch-change', function (e, data) {
+    autosave = data.value;
+  });
 
   function saveTemplate() {
     $("#template_status").show();

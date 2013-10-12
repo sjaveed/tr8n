@@ -27,7 +27,6 @@ module Tr8n
       def initialize(tag_name, markup, tokens)
         super
         @key = markup.strip
-        Tr8n::Logger.debug("Partial: #{@key}")
       end
 
       def render(context)
@@ -35,8 +34,7 @@ module Tr8n
         return "[Error: Partial #{@key} does not exist in this application]" unless partial
 
         opts = Tr8n::RequestContext.email_render_options
-        Tr8n::Logger.debug("Partial options: #{opts.inspect}")
-        partial.render_body(opts[:mode], opts[:tokens], opts[:options])
+        partial.render_body(opts[:mode], opts[:tokens], opts)
       end
     end
   end

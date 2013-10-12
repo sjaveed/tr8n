@@ -1,0 +1,13 @@
+{
+  "text_body":"<p>{% tr %} Please use the following link to complete your registration with MyHeritage Translation Services: {% endtr %}</p>\r\n<p style=\"padding-top:20px;\">\r\n{{ link }}\r\n</p>",
+  "html_body":"<p>{% tr %} Please use the following link to complete your registration with MyHeritage Translation Services: {% endtr %}</p>\r\n<p style=\"padding-top:20px;\">\r\n{{ link }}\r\n</p>",
+  "description":"User signs up to the service",
+  "keyword":"signup",
+  "name":"Signup email",
+  "subject":"Complete your registration with {{ application }}",
+  "tokens":{
+    "application":"MyHeritage Translation Services",
+    "link":"http://localhost:3000/tr8n/requests/signup/123456"
+  }
+}
+

@@ -46,12 +46,12 @@
 #
 #++
 
-class Tr8n::EmailLog < ActiveRecord::Base
+class Tr8n::Emails::Log < ActiveRecord::Base
   self.table_name = :tr8n_email_logs
 
-  attr_accessible :application, :language, :translator, :email, :sent_at, :viewed_at, :from, :to
+  attr_accessible :application, :language, :translator, :email, :sent_at, :viewed_at, :from, :to, :email_template, :tokens
 
-  belongs_to :email, :class_name => 'Tr8n::Email', :foreign_key => :email_template_id
+  belongs_to :email_template, :class_name => 'Tr8n::Emails::Template', :foreign_key => :email_template_id
   belongs_to :language, :class_name => 'Tr8n::Language'
 
   belongs_to :from, :class_name => Tr8n::Config.user_class_name, :foreign_key => :from_id

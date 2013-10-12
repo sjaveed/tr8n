@@ -8,14 +8,14 @@
       <% if self? %>
         <%=tra("Your Dashboard") %>
       <% else %>
-        <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px; padding-top:5px;">
+        <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px;">
           <%
             links = []
             links << link_to("view profile", @translator.link)
             if Tr8n::TranslatorFollowing.following_for(tr8n_current_translator, @translator)
-              links << link_to("unfollow", :controller => "/tr8n/dashboard", :action => :unfollow, :translator_id => @translator.id)
+              links << link_to("unfollow", :controller => "/tr8n/translator/dashboard", :action => :unfollow, :translator_id => @translator.id)
             else
-              links << link_to("follow", :controller => "/tr8n/dashboard", :action => :follow, :translator_id => @translator.id)
+              links << link_to("follow", :controller => "/tr8n/translator/dashboard", :action => :follow, :translator_id => @translator.id)
             end
           %>
           <%=links.join(" | ").html_safe %>
@@ -30,7 +30,7 @@
             <td style="width:50%; padding-top:3px; vertical-align: top">
               <table>
                 <tr>
-                  <td style="width:150px"><%=tra("{user|Joined on}:", nil, :user => @translator) %></td>
+                  <td style="width:150px"><%=tra("{user|Joined on}:", :user => @translator) %></td>
                   <td><%=tr8n_page_translator.created_at.trl%></td>
                 </tr>
                 <tr>

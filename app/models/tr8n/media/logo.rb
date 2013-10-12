@@ -20,16 +20,28 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
+#
+#-- Tr8n::Emails::Asset Schema Information
+#
+# Table name: tr8n_media
+#
+#  id            INTEGER         not null, primary key
+#  type          varchar(255)
+#  position      integer
+#  owner_id      integer
+#  owner_type    varchar(255)
+#  keyword       varchar(255)
+#  path          varchar(255)
+#  thumbnails    text
+#  created_at    datetime        not null
+#  updated_at    datetime        not null
+#
+# Indexes
+#
+#  tr8n_m_oid_ot_k    (owner_id, owner_type, keyword)
+#
+#++
 
-class Tr8n::Translator::TranslationsController < Tr8n::Translator::BaseController
-
-  # list of translations
-  def index
-    @translations = Tr8n::Translation.where("tr8n_translations.translator_id = ?", tr8n_page_translator.id)
-    @translations = @translations.order("created_at desc, rank desc").page(page).per(per_page)
-
-    @language_options = tr8n_page_translator.languages.collect{|l| [l.name, l.id]}
-    @language_options.unshift(["all languages", ""])
-  end
+class Tr8n::Media::Logo < Tr8n::Media::Base
 
 end

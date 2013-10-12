@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Requests::Translator Schema Information
+#-- Tr8n::Requests::Signup Schema Information
 #
 # Table name: tr8n_requests
 #

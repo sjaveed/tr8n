@@ -24,19 +24,19 @@
 class Tr8n::App::EmailsController < Tr8n::App::BaseController
 
   def index
-    @emails = selected_application.email_templates
+    @emails = selected_application.email_templates.page(page).per(per_page)
   end
 
   def partials
-    @partials = selected_application.email_partials
+    @partials = selected_application.email_partials.page(page).per(per_page)
   end
 
   def layouts
-    @layouts = selected_application.email_layouts
+    @layouts = selected_application.email_layouts.page(page).per(per_page)
   end
 
   def assets
-    @assets = selected_application.email_assets.order("created_at desc")
+    @assets = selected_application.email_assets.order("created_at desc").page(page).per(per_page)
   end
 
   def template

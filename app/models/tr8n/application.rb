@@ -66,7 +66,6 @@ class Tr8n::Application < ActiveRecord::Base
   has_many :email_templates, :class_name => 'Tr8n::Emails::Template', :dependent => :destroy
   has_many :email_partials, :class_name => 'Tr8n::Emails::Partial', :dependent => :destroy
   has_many :email_layouts, :class_name => 'Tr8n::Emails::Layout', :dependent => :destroy
-  has_many :email_assets, :class_name => 'Tr8n::Emails::Asset', :dependent => :destroy
 
   before_create :generate_keys
 
@@ -74,6 +73,14 @@ class Tr8n::Application < ActiveRecord::Base
 
   after_destroy :clear_cache
   after_save :clear_cache
+
+  def email_assets
+     @email_assets ||= Tr8n::Emails::Asset.where(:owner_type => self.class.name, :owner_id => self.id)
+  end
+
+  def logo
+    @logo ||= Tr8n::Media::Logo.where(:owner_type => self.class.name, :owner_id => self.id).first
+  end
 
   def self.cache_key(key)
     "application_[#{key.to_s}]"

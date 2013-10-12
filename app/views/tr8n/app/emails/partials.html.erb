@@ -14,7 +14,11 @@
       </div>
 
       <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
-        <%= tra("Here you can configure partials that can be included in multiple emails") %>
+        <%= tra("This section allows you to manage email partials.") %>
+        <%= tra("Partials are reusable blocks that can be used inside email templates or email layouts.") %>
+        <%= tra("Partials can even be used inside other partials.") %>
+        <%= tra("It is up to the email designer not to create cycles within partial includes.") %>
+        <%= tra("To include a partial inside of a template, use the following tag: [bold: {tag}].", :tag => "{% partial KEYWORD %}") %>
       </div>
 
       <div class="text-right">
@@ -23,6 +27,7 @@
     </div>
 
     <div class="section">
+      <%= tr8n_paginator_tag(@partials, :subject => 'partial') if @partials.any? %>
 
       <table class="table table-hover">
         <thead>

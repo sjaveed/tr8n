@@ -14,7 +14,12 @@
       </div>
 
       <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
-        <%= tra("Here you can configure custom emails sent to translators") %>
+        <%= tra("This section allows you to manage email templates.") %>
+        <%= tra("Templates use [link: Liquid Markup Language].", :link => {:href => "http://liquidmarkup.org/"}) %>
+        <%= tra("A template can be nested inside of a layout.") %>
+        <%= tra("It also may contain partials.") %>
+        <%= tra("To mark any text translatable within a template, partial or layout, use the following syntax: [bold: {syntax}].", :syntax => "{% tr %} TML {% endtr %}") %>
+        <%= tra("If you embed liquid inside of TML, the liquid template will be processed first, and the result will be made translatable by Tr8n.") %>
       </div>
 
       <div class="text-right">
@@ -23,6 +28,7 @@
     </div>
 
     <div class="section">
+      <%= tr8n_paginator_tag(@emails, :subject => 'template') if @emails.any? %>
 
       <table class="table table-hover">
         <thead>

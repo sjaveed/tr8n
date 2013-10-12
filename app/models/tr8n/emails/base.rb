@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::EmailTemplate Schema Information
+#-- Tr8n::Emails::Base Schema Information
 #
 # Table name: tr8n_email_templates
 #
@@ -32,14 +32,17 @@
 #  name              varchar(255)    
 #  description       varchar(255)    
 #  subject           varchar(255)    
-#  body              text            
+#  html_body         text            
 #  tokens            text            
 #  created_at        datetime        not null
 #  updated_at        datetime        not null
+#  text_body         text            
+#  type              varchar(255)    
+#  parent_id         integer         
 #
 # Indexes
 #
-#  index_tr8n_email_templates_on_application_id_and_keyword    (application_id, keyword) 
+#  tr8n_et_t_a    (type, application_id, keyword) 
 #
 #++
 

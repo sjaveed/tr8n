@@ -137,4 +137,28 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     render :nothing => true
   end
 
+  def delete_logo
+    if selected_application.logo
+      selected_application.logo.destroy
+    end
+
+    redirect_back
+  end
+
+  def upload_logo
+    if selected_application.logo
+      selected_application.logo.destroy
+    end
+
+    file = params[:files].first
+
+    Tr8n::Media::Logo.create_from_file(selected_application, file.original_filename, File.read(file.tempfile))
+
+    files = [{
+        "name"=> file.original_filename
+    }]
+
+    render :json => {"files" => files}
+  end
+
 end

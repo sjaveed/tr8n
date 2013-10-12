@@ -45,11 +45,11 @@
   <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
     <% [
            ["icon-home", "Dashboard", "dashboard", true],
-           ["icon-check", "Assignments", "assignments", false],
+           ["icon-check", "Assignments", "assignments", true],
            ["icon-globe", "Translations", "translations", true],
-           ["icon-flag", "Notifications", "notifications", false],
-           ["icon-bookmark", "Bookmarks", "following", false],
-           ["icon-cog", "Preferences", "settings", false],
+           ["icon-flag", "Notifications", "notifications", true],
+           ["icon-bookmark", "Bookmarks", "following", true],
+           ["icon-cog", "Preferences", "settings", true],
        ].each do |tab| %>
       <% next if tab.last and not self? %>
       <li class="<%='active' if controller.controller_name == tab[2] %>">

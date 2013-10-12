@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::EmailLog Schema Information
+#-- Tr8n::Emails::Log Schema Information
 #
 # Table name: tr8n_email_logs
 #

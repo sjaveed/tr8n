@@ -65,7 +65,7 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
       trfn("You are now following this translation key") if object
     elsif params[:translator_id]
       object = Tr8n::Translator.find_by_id(params[:translator_id])
-      trfn("You are now following {dashboard}", nil, :translator => object ) if object
+      trfn("You are now following {translator}", :translator => object ) if object
     end
 
     if object

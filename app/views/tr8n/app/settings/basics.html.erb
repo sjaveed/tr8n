@@ -15,19 +15,41 @@
     </div>
 
     <%= form_for(selected_application, :as => :application, :url => {}, :html => {:method => :post}) do |f| %>
-      <div class="section grey">
-        <div class="form-group">
-          <label for="application[name]"><%=tra("Application Name:")%></label>
-          <%=f.text_field(:name, :placeholder => "Enter name", :class => "form-control input-block-level") %>
+      <div class="section grey" style="padding-left:25px;">
+        <div style="display:inline-block; width: 250px; vertical-align: top;">
+          <div class="form-group">
+            <label for="application[logo]"><%=tra("Application Logo:")%></label>
+            <div style="padding-left:15px;">
+              <% if selected_application.logo %>
+                <%=image_tag(selected_application.logo.url, :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
+              <% else %>
+                <%=image_tag("tr8n/gears.png", :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
+              <% end %>
+            </div>
+            <div style="padding:15px;">
+             <span class="btn btn-primary fileinput-button">
+                <span><%=tra("Upload...") %></span>
+                <input id="fileupload" type="file" name="files[]" multiple>
+              </span>
+              <% if selected_application.logo %>
+                <%=link_to("Delete", {:action => :delete_logo}, :class=>"btn btn-danger", :confirm => trla("Are you sure you want to remove the logo?")) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div style="display:inline-block; width: 850px;">
+          <div class="form-group">
+            <label for="application[name]"><%=tra("Application Name:")%></label>
+            <%=f.text_field(:name, :placeholder => "Enter name", :class => "form-control input-block-level") %>
+          </div>
+
+          <div class="form-group">
+            <label for="application[description]"><%=tra("Description:")%></label>
+            <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:90px;") %>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="application[description]"><%=tra("Description:")%></label>
-          <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:70px;") %>
-        </div>
-
-
-        <div class="row">
+        <div class="row" style="padding-top:30px;">
           <div class="span3" style="width:320px;">
             <div class="form-group">
               <label for="locale"><%=tra("Source Language:")%></label>
@@ -67,7 +89,7 @@
         </div>
 
 
-        <div class="form-group" style="padding-top:25px;padding-bottom:15px; text-align:right">
+        <div class="form-group" style="padding-top:25px;padding-bottom:15px; padding-right:40px; text-align:right">
           <button type="submit" class="btn btn-primary">
             <%=tra("Update Application")%>
           </button>
@@ -105,4 +127,22 @@
   });
 </script>
 
+<%= stylesheet_link_tag('tr8n/jquery/fileupload/jquery.fileupload.css') %>
+<%=javascript_include_tag('tr8n/vendor/jquery/fileupload/jquery.iframe-transport.js') %>
+<%=javascript_include_tag('tr8n/vendor/jquery/fileupload/jquery.fileupload.js') %>
+
+<script>
+  $(function () {
+    $('#fileupload').fileupload({
+      dataType: 'json',
+      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+      maxFileSize: 5000000, // 5 MB
+      url: "upload_logo",
+      done: function (e, data) {
+        window.location.reload();
+      }
+
+    });
+  });
+</script>
 

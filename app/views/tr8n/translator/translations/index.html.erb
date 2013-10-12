@@ -16,6 +16,7 @@
         </div>
 
         <div class="tr8n_text_align_left" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+          <%=select_tag(:language, options_for_select(@language_options, params[:language]))%>
           <%=select_tag(:with_status, options_for_select(Tr8n::Translation.filter_status_options, params[:with_status]))%>
           <%=select_tag(:submitted_on, options_for_select(Tr8n::Translation.filter_date_options, params[:submitted_on]))%>
         </div>

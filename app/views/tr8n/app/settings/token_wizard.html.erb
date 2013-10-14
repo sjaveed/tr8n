@@ -1,0 +1,115 @@
+<%= tr8n_with_options_tag(:source => 'app/wizards/global-token') do %>
+  <div class="wizard" id="new-email-template-wizard">
+    <h1><%=tra("Create New Global Token") %></h1>
+
+    <div class="wizard-card" data-cardname="card1">
+      <h3><%=tra("Details") %></h3>
+
+      <div class="wizard-input-section">
+        <p>
+          <%= tra("What kind of token is it?") %>
+        </p>
+
+        <div class="control-group">
+          <%= radio_button_tag("new_token_type", "data", true, :style=>"vertical-align: top;") %> <span style="font-size:18px;"> <%= tra("Data") %> </span>   &nbsp;&nbsp;&nbsp;
+          <%= radio_button_tag("new_token_type", "decoration", false, :style=>"vertical-align: top;") %> <span style="font-size:18px;"> <%= tra("Decoration") %> </span>
+        </div>
+      </div>
+
+      <div class="wizard-input-section" style="margin-top:30px;">
+        <p>
+          <%=tra("Token name:") %>
+        </p>
+
+        <div class="control-group">
+          <%=text_field_tag(:new_token_name, "", :placeholder => trla("Enter token name"), :style=>"width:350px;", "data-validate" => "validateTemplateKeyword" ) %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="wizard-card" data-cardname="card2">
+      <h3><%=tra("Token Value") %></h3>
+
+      <div class="wizard-input-section">
+        <div class="control-group">
+          <%=text_area_tag(:new_token_value, "", :placeholder => trla("Enter token value"), :style=>"width:400px; height:250px;") %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="wizard-error">
+      <div class="alert alert-error create-token-error-message">
+      </div>
+    </div>
+
+    <div class="wizard-failure">
+      <div class="alert alert-error create-token-failure-message">
+      </div>
+    </div>
+
+    <div class="wizard-success">
+      <div class="alert alert-success create-token-success-message">
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function validateTemplateKeyword(el) {
+      var val = el.val();
+      ret = {
+        status: true
+      };
+      if (val == "") {
+        ret.status = false;
+        ret.msg = "<%=tra("Keyword must be provided") %>";
+      }
+      return ret;
+    }
+
+    (function() {
+      var wizard = $("#new-email-template-wizard").wizard({});
+
+      $("#new_email_template_language").chosen({});
+
+      wizard.on("reset", function(wizard) {
+        location.reload();
+      });
+
+      wizard.on("submit", function(wizard) {
+        var jqxhr = $.post("/tr8n/app/settings/token_wizard", {
+          "token_type":   $("#new_token_type").val(),
+          "token_name":   $("#new_token_name").val(),
+          "token_value":  $("#new_token_value").val()
+        }).done(function(params) {
+              if (params["error"]) {
+                $(".create-token-error-message").html(params['error']);
+                wizard.trigger("failure");
+                wizard.hideButtons();
+                wizard.showSubmitCard("failure");
+                return;
+              }
+
+              $(".create-token-success-message").html(params['msg']);
+              wizard.trigger("success");
+              wizard.hideButtons();
+              wizard.showSubmitCard("success");
+
+              window.setTimeout(function() {
+                location.reload();
+              }, 500);
+            }).fail(function() {
+              $(".create-email-template-failure-message").html("<%=tra('Failed to submit the wizard. Please try again later.') %>");
+              wizard.trigger("failure");
+              wizard.hideButtons();
+              wizard.showSubmitCard("failure");
+            });
+
+      });
+
+      wizard.show();
+    })();
+  </script>
+<% end %>

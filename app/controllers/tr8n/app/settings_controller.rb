@@ -164,4 +164,12 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
   def tokens
 
   end
+
+  def token_wizard
+    if request.post?
+      return render(:json => {"status" => "Ok", "msg" => tra("Email layout has been created")}.to_json)
+    end
+
+    render :layout => false
+  end
 end

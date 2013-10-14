@@ -12,7 +12,7 @@ class CreateEmailTemplates < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :tr8n_email_templates, [:type, :application_id, :keyword], :name => :tr8n_et_t_a_k
+    add_index :tr8n_email_templates, [:application_id, :keyword], :name => :tr8n_et_t_a_k
   end
 
   def down

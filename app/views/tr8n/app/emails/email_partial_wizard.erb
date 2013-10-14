@@ -1,13 +1,13 @@
-<%= tr8n_with_options_tag(:source => 'app/wizards/email-layout') do %>
+<%= tr8n_with_options_tag(:source => 'app/wizards/email-partial') do %>
   <div class="wizard" id="new-email-template-wizard">
-    <h1><%=tra("Create New Email Layout") %></h1>
+    <h1><%=tra("Create New Email Partial") %></h1>
 
     <div class="wizard-card" data-cardname="card1">
       <h3><%=tra("Details") %></h3>
 
       <div class="wizard-input-section">
         <p>
-          <%= tra("What is the language of this email layout?") %>
+          <%= tra("What is the language of this email partial?") %>
         </p>
 
         <div class="control-group">
@@ -22,23 +22,25 @@
 
       <div class="wizard-input-section">
         <p>
-          <%=tra("Enter layout name:") %>
+          <%=tra("Enter partial keyword:") %>
         </p>
 
         <div class="control-group">
-          <%=text_field_tag(:new_email_template_name, "", :placeholder => trla("Enter email template name"), :style=>"width:350px;" ) %>
+          <%=text_field_tag(:new_email_template_keyword, "", :placeholder => trla("For referencing it from email template"), :style=>"width:350px;", "data-validate" => "validateTemplateKeyword" ) %>
         </div>
       </div>
+
+    </div>
+
+    <div class="wizard-card" data-cardname="card2">
+      <h3><%=tra("Description") %></h3>
 
       <div class="wizard-input-section">
-        <p>
-          <%=tra("Layout description:") %>
-        </p>
-
         <div class="control-group">
-          <%=text_area_tag(:new_email_template_description, "", :placeholder => trla("Enter email template description"), :style=>"width:350px;height:50px;") %>
+          <%=text_area_tag(:new_email_template_description, "", :placeholder => trla("Enter email partial description for reference"), :style=>"width:400px;height:250px;") %>
         </div>
       </div>
+
     </div>
 
     <div class="wizard-card" data-cardname="card4">
@@ -101,9 +103,9 @@
       });
 
       wizard.on("submit", function(wizard) {
-        var jqxhr = $.post("/tr8n/app/wizards/email_layout", {
+        var jqxhr = $.post("/tr8n/app/emails/email_partial_wizard", {
+          "keyword":        $("#new_email_template_keyword").val(),
           "default_locale": $("#new_email_template_language").val(),
-          "name":           $("#new_email_template_name").val(),
           "description":    $("#new_email_template_description").val(),
           "html_body":      $("#new_email_template_html_body").val(),
           "text_body":      $("#new_email_template_text_body").val()
@@ -129,9 +131,7 @@
               wizard.hideButtons();
               wizard.showSubmitCard("failure");
             });
-
       });
-
       wizard.show();
     })();
   </script>

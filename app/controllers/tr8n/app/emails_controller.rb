@@ -171,4 +171,51 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
     render :text => data
   end
 
+  def email_template_wizard
+    if request.post?
+      if Tr8n::Emails::Template.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
+        return render(:json => {"error" => tra("Template keyword must be unique")}.to_json)
+      end
+
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      Tr8n::Emails::Template.create(:application => selected_application, :keyword => params[:keyword], :language => default_language,
+                                    :name => params[:name], :description => params[:description],
+                                    :subject => params[:subject], :html_body => params[:html_body], :text_body => params[:text_body])
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Email template has been created")}.to_json)
+    end
+
+    render :layout => false
+  end
+
+  def email_partial_wizard
+    if request.post?
+      if Tr8n::Emails::Partial.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
+        return render(:json => {"error" => tra("Partial keyword must be unique")}.to_json)
+      end
+
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      Tr8n::Emails::Partial.create(:application => selected_application, :keyword => params[:keyword], :language => default_language,
+                                   :name => params[:name], :description => params[:description],
+                                   :subject => params[:subject], :html_body => params[:html_body], :text_body => params[:text_body])
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Email partial has been created")}.to_json)
+    end
+
+    render :layout => false
+  end
+
+  def email_layout_wizard
+    if request.post?
+      default_language = Tr8n::Language.by_locale(params[:default_locale])
+      Tr8n::Emails::Layout.create(:application => selected_application, :language => default_language,
+                                  :name => params[:name], :description => params[:description],
+                                  :subject => params[:subject], :html_body => params[:html_body], :text_body => params[:text_body])
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Email layout has been created")}.to_json)
+    end
+
+    render :layout => false
+  end
+
 end

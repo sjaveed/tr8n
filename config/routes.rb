@@ -51,6 +51,8 @@ Tr8n::Engine.routes.draw do
     match "#{ctrl}(/:action)", :controller => "#{ctrl}"
   end
 
+  match "app/emails/images/:id.gif", :controller => "app/emails", :action => "track"
+
   match "api/settings/translate.js", :controller => "api/settings", :action => "translate"
 
   match "requests(/:action)(/:id)", :controller => "requests", :action => "index"

@@ -1,0 +1,86 @@
+<style>
+  label {
+    font-weight:bold;
+    padding-top:15px;
+  }
+</style>
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Global Tokens") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Tokens") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("Global tokens are always passed to all emails and translation keys as default tokens.") %>
+        <%= tra("Any token can be overloaded inside of the Client SDK or individual translation key.") %>
+      </div>
+
+      <div class="text-right" style="font-size: 12px; color: grey; padding:5px; padding-top:20px;">
+        <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/app/settings/shortcut_modal">
+          <%= tra("Add New Global Token") %>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="navbar" style="margin-bottom:5px;">
+      <div class="navbar-inner">
+        <div class="container">
+          <ul class="nav">
+            <li id="nav_data_tokens" class="active"><a href="javascript:void(0);">Data Tokens</a></li>
+            <li id="nav_decoration_tokens"><a href="javascript:void(0);">Decoration Tokens</a></li>
+          </ul>
+
+          <ul class="nav pull-right">
+            <li>
+              <div style="display:none;text-align:right;font-weight:normal;padding-top:10px;" id="template_status"><%=image_tag("tr8n/spinner.gif", :style => "vertical-align:middle;")%> Saving...</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="section">
+
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+  <%=javascript_include_tag('tr8n/vendor/prism.js') %>
+  <%= stylesheet_link_tag('tr8n/vendor/prism.css') %>
+
+  <script>
+    $("#nav_data_tokens").on("click", function() {
+      $("#nav_data_tokens").addClass("active");
+      $("#nav_decoration_tokens").removeClass("active");
+    });
+
+    $("#nav_decoration_tokens").on("click", function() {
+      $("#nav_decoration_tokens").addClass("active");
+      $("#nav_data_tokens").removeClass("active");
+    });
+  </script>
+<% end %>

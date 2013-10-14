@@ -14,19 +14,19 @@
 //      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'height':  + height}, '<%=params[:origin]%>');
     }
 
-    function hideTranslator() {
-      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'hide'}, '<%=params[:origin]%>');
-    }
+//    function hideTranslator() {
+//      Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'hide'}, '<%=params[:origin]%>');
+//    }
+//
+//    function reloadOrigin() {
+//      Tr8n.Dispatcher.postMessage({'subject': 'window', 'action': 'reload'}, '<%=params[:origin]%>');
+//    }
 
-    function reloadOrigin() {
-      Tr8n.Dispatcher.postMessage({'subject': 'window', 'action': 'reload'}, '<%=params[:origin]%>');
-    }
-
-    Tr8n.Utils.addEvent(document, "keyup", function(event) {
-      if (event.keyCode == 27) {
-        hideTranslator();
-      }
-    });
+//    Tr8n.Utils.addEvent(document, "keyup", function(event) {
+//      if (event.keyCode == 27) {
+//        hideTranslator();
+//      }
+//    });
   </script>
   <style>
     body {

@@ -23,6 +23,10 @@
 
 class Tr8n::App::EmailsController < Tr8n::App::BaseController
 
+  skip_before_filter :validate_current_translator, :only => :track
+  skip_before_filter :validate_selected_application, :only => :track
+  skip_before_filter :validate_guest_user, :only => :track
+
   def index
     @emails = selected_application.email_templates.page(page).per(per_page)
   end
@@ -155,4 +159,16 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
 
     render :layout => false
   end
+
+  def track
+    log = Tr8n::Emails::Log.find_by_id(params[:id]) if params[:id]
+    log.update_attributes(:viewed_at => Time.now) if log
+    image_path = File.expand_path("#{__FILE__}/../../../../assets/images/tr8n/pixel.gif")
+    data = File.open(image_path, "rb").read
+    response.headers['Cache-Control'] = "public, max-age=#{12.hours.to_i}"
+    response.headers['Content-Type'] = 'image/gif'
+    response.headers['Content-Disposition'] = 'inline'
+    render :text => data
+  end
+
 end

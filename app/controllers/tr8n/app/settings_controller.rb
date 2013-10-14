@@ -161,4 +161,7 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     render :json => {"files" => files}
   end
 
+  def tokens
+
+  end
 end

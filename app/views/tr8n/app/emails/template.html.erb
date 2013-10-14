@@ -250,7 +250,7 @@
 
   function saveTemplate() {
     $("#template_status").show();
-    console.log("Saving...");
+//    console.log("Saving...");
 
     $.post("/tr8n/app/emails/save_template", {
       "id":             $("#email_template_id").val(),
@@ -268,5 +268,21 @@
         $("#template_status").hide();
     });
   }
+
+  // simply disables save event for chrome
+  $(window).keypress(function (event) {
+    if (!(event.which == 115 && (navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)) && !(event.which == 19)) return true;
+    event.preventDefault();
+    return false;
+  });
+
+  // used to process the cmd+s and ctrl+s events
+  $(document).keydown(function (event) {
+    if (event.which == 83 && (navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)) {
+      event.preventDefault();
+      saveTemplate();
+      return false;
+    }
+  });
 </script>
 

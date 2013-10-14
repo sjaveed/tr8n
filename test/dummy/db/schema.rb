@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130917233919) do
+ActiveRecord::Schema.define(:version => 20131012194409) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -150,8 +150,8 @@ ActiveRecord::Schema.define(:version => 20130917233919) do
   create_table "tr8n_email_logs", :force => true do |t|
     t.integer  "email_template_id"
     t.integer  "language_id"
-    t.integer  "from_id"
-    t.integer  "to_id"
+    t.integer  "from_user_id"
+    t.integer  "to_user_id"
     t.string   "email"
     t.text     "tokens"
     t.datetime "sent_at"
@@ -162,8 +162,8 @@ ActiveRecord::Schema.define(:version => 20130917233919) do
 
   add_index "tr8n_email_logs", ["email"], :name => "index_tr8n_email_logs_on_email"
   add_index "tr8n_email_logs", ["email_template_id"], :name => "index_tr8n_email_logs_on_email_template_id"
-  add_index "tr8n_email_logs", ["from_id"], :name => "index_tr8n_email_logs_on_from_id"
-  add_index "tr8n_email_logs", ["to_id"], :name => "index_tr8n_email_logs_on_to_id"
+  add_index "tr8n_email_logs", ["from_user_id"], :name => "index_tr8n_email_logs_on_from_user_id"
+  add_index "tr8n_email_logs", ["to_user_id"], :name => "index_tr8n_email_logs_on_to_user_id"
 
   create_table "tr8n_email_templates", :force => true do |t|
     t.integer  "application_id"
@@ -172,13 +172,16 @@ ActiveRecord::Schema.define(:version => 20130917233919) do
     t.string   "name"
     t.string   "description"
     t.string   "subject"
-    t.text     "body"
+    t.text     "html_body"
     t.text     "tokens"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.text     "text_body"
+    t.string   "type"
+    t.integer  "parent_id"
   end
 
-  add_index "tr8n_email_templates", ["application_id", "keyword"], :name => "index_tr8n_email_templates_on_application_id_and_keyword"
+  add_index "tr8n_email_templates", ["type", "application_id", "keyword"], :name => "tr8n_et_t_a"
 
   create_table "tr8n_features", :force => true do |t|
     t.string   "object_type"
@@ -189,7 +192,7 @@ ActiveRecord::Schema.define(:version => 20130917233919) do
     t.datetime "updated_at",  :null => false
   end
 
-  add_index "tr8n_features", ["object_type", "object_id"], :name => "tr8n_feats_obj"
+  add_index "tr8n_features", ["object_type", "object_id", "keyword"], :name => "tr8n_feats"
 
   create_table "tr8n_glossary", :force => true do |t|
     t.string   "keyword"
@@ -270,8 +273,6 @@ ActiveRecord::Schema.define(:version => 20130917233919) do
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
   end
-
-  add_index "tr8n_language_context_rules", ["language_context_id", "keyword"], :name => "tr8n_lctxr_lci"
 
   create_table "tr8n_language_contexts", :force => true do |t|
     t.integer  "language_id"
@@ -376,6 +377,20 @@ ActiveRecord::Schema.define(:version => 20130917233919) do
   end
 
   add_index "tr8n_languages", ["locale"], :name => "tr8n_ll"
+
+  create_table "tr8n_media", :force => true do |t|
+    t.string   "type"
+    t.integer  "position"
+    t.integer  "owner_id"
+    t.string   "owner_type"
+    t.string   "keyword"
+    t.string   "path"
+    t.text     "thumbnails"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "tr8n_media", ["owner_id", "owner_type", "keyword"], :name => "tr8n_m_oid_ot_k"
 
   create_table "tr8n_notifications", :force => true do |t|
     t.string   "type"

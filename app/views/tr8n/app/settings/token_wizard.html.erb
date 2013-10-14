@@ -10,7 +10,7 @@
           <%= tra("What kind of token is it?") %>
         </p>
 
-        <div class="control-group">
+        <div class="control-group" id="selectTypeDiv">
           <%= radio_button_tag("new_token_type", "data", true, :style=>"vertical-align: top;") %> <span style="font-size:18px;"> <%= tra("Data") %> </span>   &nbsp;&nbsp;&nbsp;
           <%= radio_button_tag("new_token_type", "decoration", false, :style=>"vertical-align: top;") %> <span style="font-size:18px;"> <%= tra("Decoration") %> </span>
         </div>
@@ -79,8 +79,13 @@
       });
 
       wizard.on("submit", function(wizard) {
+        var token_type = "data";
+        var selected = $("#selectTypeDiv input[type='radio']:checked");
+        if (selected.length > 0)
+          token_type = selected.val();
+
         var jqxhr = $.post("/tr8n/app/settings/token_wizard", {
-          "token_type":   $("#new_token_type").val(),
+          "token_type":   token_type,
           "token_name":   $("#new_token_name").val(),
           "token_value":  $("#new_token_value").val()
         }).done(function(params) {
@@ -98,7 +103,7 @@
               wizard.showSubmitCard("success");
 
               window.setTimeout(function() {
-                location.reload();
+                location = "/tr8n/app/settings/tokens?type=" + token_type;
               }, 500);
             }).fail(function() {
               $(".create-email-template-failure-message").html("<%=tra('Failed to submit the wizard. Please try again later.') %>");

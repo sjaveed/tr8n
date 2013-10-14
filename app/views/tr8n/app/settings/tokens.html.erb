@@ -34,8 +34,8 @@
       <div class="navbar-inner">
         <div class="container">
           <ul class="nav">
-            <li id="nav_data_tokens" class="active"><a href="javascript:void(0);">Data Tokens</a></li>
-            <li id="nav_decoration_tokens"><a href="javascript:void(0);">Decoration Tokens</a></li>
+            <li id="nav_data_tokens" <%= "class=active" if @type == "data" %>> <%= link_to(tra("Data Tokens"), :type => "data") %> </li>
+            <li id="nav_decoration_tokens" <%= "class=active" if @type == "decoration" %>><%= link_to(tra("Decoration Tokens"), :type => "decoration") %> </li>
           </ul>
 
           <ul class="nav pull-right">
@@ -47,21 +47,35 @@
       </div>
     </div>
 
-
-    <div class="section">
-
+    <div class="section" id="data_tokens">
       <table class="table table-hover">
         <thead>
         <tr>
-          <th>Key</th>
-          <th>Value</th>
+          <th><%=tra("Token Name") %></th>
+          <th><%=tra("Substitution Value") %></th>
           <th></th>
         </tr>
         </thead>
         <tbody>
+        <% if selected_application.tokens(@type).blank? %>
+          <tr><td colspan="3"><%=tra("No #{@type} tokens have been defined")%></td></tr>
+        <% end %>
+
+        <% selected_application.tokens(@type).each do |key, value| %>
+        <tr>
+          <td>
+            <%= key %>
+          </td>
+          <td>
+            <%= value %>
+          </td>
+          <td>
+
+          </td>
+        </tr>
+        <% end %>
         </tbody>
       </table>
-
     </div>
 
   </div>
@@ -70,15 +84,4 @@
   <%=javascript_include_tag('tr8n/vendor/prism.js') %>
   <%= stylesheet_link_tag('tr8n/vendor/prism.css') %>
 
-  <script>
-    $("#nav_data_tokens").on("click", function() {
-      $("#nav_data_tokens").addClass("active");
-      $("#nav_decoration_tokens").removeClass("active");
-    });
-
-    $("#nav_decoration_tokens").on("click", function() {
-      $("#nav_decoration_tokens").addClass("active");
-      $("#nav_data_tokens").removeClass("active");
-    });
-  </script>
 <% end %>

@@ -220,6 +220,15 @@ class Tr8n::Application < ActiveRecord::Base
     definition["shortcuts"]
   end
 
+  def tokens(type = nil)
+    self.definition ||= {}
+    self.definition["tokens"] ||= {}
+    return self.definition["tokens"] if type.nil?
+
+    self.definition["tokens"][type] ||= {}
+    self.definition["tokens"][type]
+  end
+
   def features
     @features ||= Tr8n::Feature.by_object(self)
   end
@@ -265,10 +274,11 @@ class Tr8n::Application < ActiveRecord::Base
 
     if opts[:definition]
       hash.merge!({
+        :languages => languages.collect{|l| l.to_api_hash},  # only basics
         :threshold => threshold,
         :translator_level => translator_level,
         :features => Tr8n::Feature.by_object(self, :slim => true),
-        :languages => languages.collect{|l| l.to_api_hash}  # only basics
+        :tokens => tokens,
       })
     end
 

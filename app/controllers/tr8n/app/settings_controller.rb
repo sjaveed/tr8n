@@ -162,12 +162,14 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
   end
 
   def tokens
-
+    @type = params[:type] || "data"
   end
 
   def token_wizard
     if request.post?
-      return render(:json => {"status" => "Ok", "msg" => tra("Email layout has been created")}.to_json)
+      selected_application.tokens(params["token_type"])[params["token_name"]] = params["token_value"]
+      selected_application.save
+      return render(:json => {"status" => "Ok", "msg" => tra("Token has been registered")}.to_json)
     end
 
     render :layout => false

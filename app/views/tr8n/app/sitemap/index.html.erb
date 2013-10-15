@@ -26,7 +26,8 @@
     </div>
 
     <% if selected_application.components.empty? %>
-      <%=tra("There are currently no components setup for this application") %>
+      <%=tra("No components have been setup for this application.") %>
+      <%=tra("[link: Click here] to create a new component.", :link => lambda{|t| link_to(t, {:controller => "/tr8n/app/wizards", :action => :component}, {"data-toggle" => "dynamic_wizard"})}) %>
     <% end %>
 
     <ul id="components" data-update-url="/tr8n/app/sitemap/update_components_order">

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131012194409) do
+ActiveRecord::Schema.define(:version => 20131015194107) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -197,10 +197,13 @@ ActiveRecord::Schema.define(:version => 20131012194409) do
   create_table "tr8n_glossary", :force => true do |t|
     t.string   "keyword"
     t.text     "description"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "application_id"
+    t.integer  "language_id"
   end
 
+  add_index "tr8n_glossary", ["application_id"], :name => "tr8n_g_a"
   add_index "tr8n_glossary", ["keyword"], :name => "index_tr8n_glossary_on_keyword"
 
   create_table "tr8n_ip_locations", :force => true do |t|

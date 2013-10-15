@@ -1,8 +1,8 @@
 <div style="float:right; font-size:12px;">
   <%= [
-          link_to(tra("basic information"), :action => :index),
-          link_to(tra("countries"), :action => :countries),
-          link_to(tra("features"), :action => :features),
+          link_to_unless(controller.action_name == 'index', tra("basics"), :action => :index),
+          link_to_unless(controller.action_name == 'countries', tra("countries"), :action => :countries),
+          link_to_unless(controller.action_name == 'features', tra("features"), :action => :features),
       ].join(" | ").html_safe
   %>
 </div>

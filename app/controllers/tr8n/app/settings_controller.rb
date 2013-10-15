@@ -24,10 +24,6 @@
 class Tr8n::App::SettingsController < Tr8n::App::BaseController
 
   def index
-
-  end
-
-  def basics
     if request.post?
       selected_application.name = params[:application][:name]
       selected_application.description = params[:application][:description]
@@ -40,6 +36,10 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
 
       trfn("Application has been updated")
     end
+  end
+
+  def security
+
   end
 
   def set_default_language
@@ -165,6 +165,27 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     @type = params[:type] || "data"
   end
 
+  def token_modal
+    @type = params[:type]
+    @key = params[:key]
+    @value = selected_application.tokens(@type)[@key]
+    if request.post?
+      selected_application.tokens(@type).delete(@key)
+      selected_application.tokens(@type)[params[:new_key]] = params[:new_value]
+      selected_application.save
+      trfn("Token has been updated")
+      return redirect_back
+    end
+    render :layout => false
+  end
+
+  def delete_token
+    selected_application.tokens(params[:type]).delete(params[:key]) if selected_application.tokens(params[:type])
+    selected_application.save
+    trfn("Token has been deleted")
+    redirect_back
+  end
+
   def token_wizard
     if request.post?
       selected_application.tokens(params["token_type"])[params["token_name"]] = params["token_value"]
@@ -172,6 +193,32 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
       return render(:json => {"status" => "Ok", "msg" => tra("Token has been registered")}.to_json)
     end
 
+    render :layout => false
+  end
+
+  def delete_domain
+    @domain = Tr8n::TranslationDomain.find_by_id(params[:id]) if params[:id]
+    @domain.destroy if @domain
+    trfn("Domain has been removed")
+    redirect_back
+  end
+
+  def domain_modal
+    @domain = Tr8n::TranslationDomain.find_by_id(params[:id]) if params[:id]
+    @domain ||= Tr8n::TranslationDomain.new
+    if request.post?
+      d = Tr8n::TranslationDomain.find_by_name(params[:domain][:name])
+      if d and d != @domain
+        trfe("Domain with this name has already been configured")
+        return redirect_back
+      end
+
+      @domain.name = params[:domain][:name]
+      @domain.description = params[:domain][:description]
+      @domain.application = selected_application
+      @domain.save
+      return redirect_back
+    end
     render :layout => false
   end
 end

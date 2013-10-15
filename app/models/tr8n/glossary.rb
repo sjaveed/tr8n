@@ -41,5 +41,9 @@ class Tr8n::Glossary < ActiveRecord::Base
   self.table_name = :tr8n_glossary
   
   attr_accessible :keyword, :description
+
+  belongs_to :application, :class_name => 'Tr8n::Application'
+  belongs_to :language, :class_name => 'Tr8n::Language'
+
   
 end

@@ -26,9 +26,29 @@ class Tr8n::App::GlossaryController < Tr8n::App::BaseController
   before_filter :validate_current_translator
   
   def index
-    @terms = Tr8n::Glossary.order("keyword asc")
-    @terms = @terms.where("(keyword like ? or description like ?)", "%#{params[:search]}%", "%#{params[:search]}%") unless params[:search].blank?
+    @terms = Tr8n::Glossary.where("application_id is null or application_id = ?", selected_application.id).order("keyword asc")
+    unless params[:search].blank?
+      @terms = @terms.where("(keyword like ? or description like ?)", "%#{params[:search]}%", "%#{params[:search]}%")
+    end
     @terms = @terms.page(page).per(per_page)
   end
-    
+
+  def term_modal
+    @term = Tr8n::Glossary.find_by_id(params[:id]) if params[:id]
+    @term ||= Tr8n::Glossary.new
+    if request.post?
+      @term.keyword = params[:term][:keyword]
+      @term.description = params[:term][:description]
+      @term.application = selected_application
+      @term.save
+      return redirect_back
+    end
+    render :layout => false
+  end
+
+  def delete_term
+    @term = Tr8n::Glossary.find_by_id(params[:id]) if params[:id]
+    @term.destroy if @term
+    redirect_back
+  end
 end

@@ -1,0 +1,28 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <%= form_tag({:type => @type, :key=>@key}, {:method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <%=tra("Update #{@type=="data" ? "Data" : "Decoration"} Token")%>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="shortcut[keys]"><%=tra("Name")%></label>
+          <%=text_field_tag(:new_key, @key, :placeholder => "Enter token name", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="shortcut[description]"><%=tra("Description")%></label>
+          <%=text_area_tag(:new_value, @value, :placeholder => "Enter token value", :class => "form-control input-block-level", :style => "height:100px;") %>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+        <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
+      </div>
+    </div><!-- /.modal-content -->
+  <% end %>
+</div><!-- /.modal-dialog -->

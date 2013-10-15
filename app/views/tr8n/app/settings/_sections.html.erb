@@ -1,12 +1,12 @@
 <div style="float:right; font-size:12px;">
   <%= [
-        link_to(tra("key & secret"), :action => :index),
-        link_to(tra("basic information"), :action => :basics),
-        link_to(tra("languages"), :action => :languages),
-        link_to(tra("features"), :action => :features),
-        link_to(tra("decorations"), :action => :decorations),
-        link_to(tra("tokens"), :action => :tokens),
-        link_to(tra("shortcuts"), :action => :shortcuts),
+        link_to_unless(controller.action_name == 'index', tra("basics"), :action => :index),
+        link_to_unless(controller.action_name == 'languages', tra("languages"), :action => :languages),
+        link_to_unless(controller.action_name == 'features', tra("features"), :action => :features),
+        link_to_unless(controller.action_name == 'decorations', tra("inline decorators"), :action => :decorations),
+        link_to_unless(controller.action_name == 'tokens', tra("global tokens"), :action => :tokens),
+        link_to_unless(controller.action_name == 'shortcuts', tra("shortcuts"), :action => :shortcuts),
+        link_to_unless(controller.action_name == 'security', tra("security"), :action => :security),
       ].join(" | ").html_safe
   %>
 </div>

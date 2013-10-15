@@ -1,7 +1,7 @@
 <div style="float:right; font-size:12px;">
   <%= [
-        link_to(tra("application components"), :action => :index),
-        link_to(tra("sources"), :action => :sources),
+        link_to_unless(controller.action_name == 'index', tra("components"), :action => :index),
+        link_to_unless(controller.action_name == 'sources', tra("sources"), :action => :sources),
       ].join(" | ").html_safe
   %>
 </div>

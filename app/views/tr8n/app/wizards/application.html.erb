@@ -32,11 +32,11 @@
 
       <div class="wizard-input-section">
         <p>
-          Enter a list of domains for your application.
+          For extra security, you can restrict Tr8n API access to only domains listed below.
         </p>
 
         <div class="control-group">
-          <%=text_area_tag(:new_application_domains, "", :placeholder => "www.sample.com", :style=>"width:300px;height:80px;", "data-validate" => "validateDomains") %>
+          <%=text_area_tag(:new_application_domains, "", :placeholder => "www.sample.com", :style=>"width:400px;height:80px;") %>
           <p class="muted">
             Enter one domain per line
           </p>

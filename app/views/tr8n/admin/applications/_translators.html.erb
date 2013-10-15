@@ -1,10 +1,5 @@
 <%= will_filter_scripts_tag %>
 
-<%= tr8n_actions_tag([
-    link_to_function("Add Translators", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_add_objects?type=dashboard&id=#{@app.id}', {height:450})"),
-  ])
-%>
-
 <%= form_tag({}, :id => :tr8n_form) do %>
   <%= hidden_field_tag(:type, "application_translator") %>
   <%= will_filter_table_tag(@results, :columns => [
@@ -76,12 +71,6 @@
           html.join("").html_safe     
         end
       }, 'text-align:right;width:100px;'],
-      [:actions, lambda{|at|
-        tr8n_actions_tag([
-          link_to_function("Remove", "deleteObjects('#{at.id}')")
-        ])
-      }, 'text-align:right;white-space:nowrap;']
-
   ]) %>
 <% end %>
 

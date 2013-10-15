@@ -7,6 +7,16 @@
       <%= tra("Prohibited Words") %>
     </div>
 
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Language Prohibited Words") %>
+      </div>
+
+      <%= tra("Enter a list of comma-delimited words that will not be allowed in translations of this language.") %>
+      <%= tra("If this language has a fallback language in which some of the words are prohibited while in this language are allowed, you can enable those words by adding a '-' in front of the word.") %>
+    </div>
+
+
     <%= form_for(tr8n_current_language, :as => :language, :url => {}, :html => {:id => 'prohibited_words_form', :method => :post}) do |f| %>
       <div id="prohibited_words_content" class="section grey">
         <%=f.text_area(:curse_words, :style => "width:99%; height:200px; background:white;")%>

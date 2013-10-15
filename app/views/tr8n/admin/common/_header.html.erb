@@ -32,13 +32,13 @@
 <script>
   function deleteObjects(id) {
     if (id) {
-      if (!confirm(trl('Are you sure you want to delete this ' + Tr8n.value("type") + '?')))
+      if (!confirm('<%=trla('Are you sure you want to delete this item?') %>'))
          return;
        location = '/tr8n/admin/applications/delete?type=' + Tr8n.value("type") + '&ids=' + id;
        return;
     }
     
-    if (!confirm(trl('Are you sure you want to delete all selected objects?')))
+    if (!confirm('<%=trla('Are you sure you want to delete all selected items?')%>'))
        return;
 
     Tr8n.element('tr8n_form').action = "/tr8n/admin/applications/delete";
@@ -47,18 +47,17 @@
 
   function removeObjects(id) {
     if (id) {
-      if (!confirm(trl('Are you sure you want to remove this ' + Tr8n.value("type") + ' from ' + Tr8n.value("container") + '?')))
+      if (!confirm('<%=trla('Are you sure you want to remove this item?')%>'))
          return;
        location = '/tr8n/admin/applications/remove?container=' + Tr8n.value("container") + '&type=' + Tr8n.value("type") + '&ids=' + id;
        return;
     }
-    
-    if (!confirm(trl('Are you sure you want to remove all selected objects from ' + Tr8n.value("container") + '?')))
-       return;
+
+    if (!confirm('<%=trla('Are you sure you want to remove all items?')%>'))
+     return;
 
     Tr8n.element('tr8n_form').action = "/tr8n/admin/applications/remove";
     Tr8n.element('tr8n_form').submit();
   }
 
-</script> 
-  
+</script>

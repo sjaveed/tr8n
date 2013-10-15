@@ -28,12 +28,6 @@
     [:components, lambda{|app|
       link_to(app.components.count, "/tr8n/admin/applications/view/#{app.id}?mode=components")
     }, 'text-align:right'],
-    [:actions, lambda{|app|
-      tr8n_actions_tag([
-        link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_update?id=#{app.id}', {width:650})"),
-        link_to_function("Delete", "deleteObjects('#{app.id}')")
-      ])
-    }, 'padding:5px;text-align:right;white-space:nowrap;']
   ]) %>
 <% end %>
 

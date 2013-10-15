@@ -1,10 +1,5 @@
 <%= will_filter_scripts_tag %>
 
-<%= tr8n_actions_tag([
-    link_to_function("Add Domain", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_update_domain?id=#{@app.id}', {width:650})")
-  ])
-%>
-
 <%= form_tag("", :id => "tr8n_form") do %>
   <%= hidden_field_tag(:type, "domain") %>
   <%= will_filter_table_tag(@results, :columns => [

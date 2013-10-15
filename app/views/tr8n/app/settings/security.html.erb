@@ -1,0 +1,88 @@
+<style>
+  label {
+    font-weight:bold;
+    padding-top:15px;
+  }
+</style>
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Security Settings") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Application Settings") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("Key and secret must be used for any Tr8n SDK integration.") %>
+        <%= tra("If a secret is ever compromised, you can re-generate it here") %>
+      </div>
+    </div>
+
+    <div class="section blue">
+      <div class="form-group">
+        <label for="context[name]"><%=tra("Application Key:")%></label>
+        <%=selected_application.key%>
+      </div>
+
+      <div class="form-group">
+        <label for="context[name]"><%=tra("Application Secret:")%></label>
+        <%=selected_application.secret%>
+        <span style="font-size:12px;">
+          <%= link_to(tra('reset'), {:action => :generate_secret}, :confirm => trla("Are you sure you want to re-generate the secret?")) %>
+        </span>
+      </div>
+
+    </div>
+
+    <div class="section_title">
+      <div style="float:right; font-weight:normal; font-size:12px;"><%=link_to(tra("+ add domain"), {:action => :domain_modal}, {"data-toggle" => "dynamic_modal"})%></div>
+      <%=tra("Restricted Domains") %>
+    </div>
+
+    <div class="section">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th><%= tra("Name") %></th>
+          <th><%= tra("Description") %></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if selected_application.translation_domains.blank? %>
+          <tr><td colspan="3"><%=tra("No domains have been configured")%></td></tr>
+        <% end %>
+
+        <% selected_application.translation_domains.each do |domain| %>
+          <tr>
+            <td>
+              <%= domain.name %>
+            </td>
+            <td>
+              <%= domain.description %>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-wrench'></i>".html_safe, {:action => :domain_modal, :id => domain.id}, {"data-toggle" => "dynamic_modal"})%>
+              <%=link_to("<i class='icon-remove-circle'></i>".html_safe, {:action => :delete_domain, :id => domain.id}, :confirm => trla("Are you sure you want to delete this domain?"))%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>
+
+
+

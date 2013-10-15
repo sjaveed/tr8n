@@ -56,9 +56,9 @@
         </th>
         <td>
             <%= tr8n_actions_tag([
-                link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/applications/lb_update?id=#{@app.id}', {width:650})")
-              ])
-            %>
+               link_to("View", :controller => "/tr8n/app/settings", :action => :index, :app_id=>@app.id),
+               link_to_function("Delete", "deleteObjects('#{@app.id}')")
+             ]) %>
         </td>
     </tr>    
 </table>

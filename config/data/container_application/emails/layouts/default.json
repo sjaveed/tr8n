@@ -3,10 +3,10 @@
   "locale": "en-US",
   "name": "Default",
   "description": "This layout is used by all emails of the applications by default",
-  "html_body": "<div style=\"border:1px solid #eee; border-top-left-radius:10px; border-bottom-right-radius:10px;\">\n<div style=\"background: #eee; padding: 10px;  border-top-left-radius:10px;\">\n    <div style=\"float:right; color: #888; padding-top:5px;\">{% tracker %} {{ site }}</div>\n    <div>{% asset tr8n_logo style=\"width:50px\" %} </div>\n</div>\n<div style=\"padding: 10px;\">\n    {! yield !}\n</div>    \n\n<div style=\"padding: 10px; color: #ccc; font-size:10px;\">\n    Copyright © 2013 {{ site }}\n</div>\n</div>\n\n",
+  "html_body": "<div style=\"border:1px solid #eee; border-top-left-radius:10px; border-bottom-right-radius:10px;\">\n<div style=\"background: #eee; padding: 10px;  border-top-left-radius:10px;\">\n    <div style=\"float:right; color: #888; padding-top:5px;\">{% tracker %} {{ application }}</div>\n    <div>{% asset tr8n_logo style=\"width:50px\" %} </div>\n</div>\n<div style=\"padding: 10px;\">\n    {! yield !}\n</div>    \n\n<div style=\"padding: 10px; color: #ccc; font-size:10px;\">\n    Copyright © 2013 {{ application }}\n</div>\n</div>\n\n",
   "text_body": "{! yield !}",
   "tokens": {
     "name": "Michael",
-    "site": "My Site"
+    "application": "My Site"
   }
 }

@@ -53,7 +53,7 @@ class Tr8n::RequestsController < Tr8n::BaseController
 private
 
   def validate_request
-    @request = Tr8n::Request.find_by_key(params[:id])
+    @request = Tr8n::Requests::Base.find_by_key(params[:id])
 
     unless @request
       trfe("Invalid request url")

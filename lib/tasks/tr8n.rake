@@ -70,7 +70,56 @@ namespace :tr8n do
       lang.save
     end
   end
-  
+
+  desc "Exports default email configuration"
+  task :export_emails => :environment do
+    base_path = File.expand_path("#{__FILE__}/../../../config/data/container_application/emails")
+    proc = Proc.new { |k, v| v.kind_of?(Hash) ? (v.delete_if(&proc); nil) : (v.nil? or (v.is_a?(String) and v.blank?) or (v === false)) }
+
+    Tr8n::RequestContext.container_application.email_templates.each do |et|
+       pp "Exporting template #{et.keyword}..."
+       file_path = base_path + "/templates/" + et.keyword + ".json"
+       File.open(file_path, 'w') do |file|
+         json = et.to_api_hash(:definition => true)
+         json.delete_if(&proc)
+         file.write(JSON.pretty_generate(json))
+       end
+    end
+
+    Tr8n::RequestContext.container_application.email_partials.each do |et|
+      pp "Exporting partial #{et.keyword}..."
+      file_path = base_path + "/partials/" + et.keyword + ".json"
+      File.open(file_path, 'w') do |file|
+        json = et.to_api_hash(:definition => true)
+        json.delete_if(&proc)
+        file.write(JSON.pretty_generate(json))
+      end
+    end
+
+    Tr8n::RequestContext.container_application.email_layouts.each do |et|
+      pp "Exporting layout #{et.keyword}..."
+      file_path = base_path + "/layouts/" + et.keyword + ".json"
+      File.open(file_path, 'w') do |file|
+        json = et.to_api_hash(:definition => true)
+        json.delete_if(&proc)
+        file.write(JSON.pretty_generate(json))
+      end
+    end
+
+    Tr8n::RequestContext.container_application.email_assets.each do |et|
+      pp "Copying asset #{et.keyword}..."
+      file_path = base_path + "/assets/" + et.export_file_name
+      FileUtils.cp(et.full_path, file_path)
+    end
+
+    pp "Done."
+  end
+
+  desc "Import default email configuration"
+  task :import_emails => :environment do
+     Tr8n::Initializer.init_emails
+  end
+
   # will delete all keys that have not been verified in the last 2 weeks
   task :delete_unverified_keys => :environment do
     date = env('before') || (Date.today - 2.weeks)

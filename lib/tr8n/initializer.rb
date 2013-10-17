@@ -62,8 +62,9 @@ module Tr8n
 
       init_countries
       init_languages
-      init_glossary
       init_container_application
+      init_glossary
+      init_emails
 
       puts "Done."
     end
@@ -157,6 +158,46 @@ module Tr8n
       glossary.each do |keyword, description|
         Tr8n::Glossary.create(:keyword => keyword, :description => description)
       end
+    end
+
+    def self.init_emails
+      puts "Initializing default emails..."
+
+      Tr8n::Emails::Template.delete_all
+      Tr8n::Emails::Partial.delete_all
+      Tr8n::Emails::Layout.delete_all
+      Tr8n::Emails::Asset.delete_all
+
+      folder = File.expand_path(File.join(data_path, "container_application", "emails"))
+      Dir[File.join(folder, "templates", "*.json")].each do |file|
+        json = load_json(file)
+        language = Tr8n::Language.by_locale(json.delete(:locale)) if json[:locale]
+        pp "Importing template #{json[:keyword]}..."
+        Tr8n::Emails::Template.create(json.merge(:application => Tr8n::RequestContext.container_application, :language => language))
+      end
+
+      Dir[File.join(folder, "partials", "*.json")].each do |file|
+        json = load_json(file)
+        language = Tr8n::Language.by_locale(json.delete(:locale)) if json[:locale]
+        pp "Importing partial #{json[:keyword]}..."
+        Tr8n::Emails::Partial.create(json.merge(:application => Tr8n::RequestContext.container_application, :language => language))
+      end
+
+      Dir[File.join(folder, "layouts", "*.json")].each do |file|
+        json = load_json(file)
+        language = Tr8n::Language.by_locale(json.delete(:locale)) if json[:locale]
+        pp "Importing layout #{json[:keyword]}..."
+        Tr8n::Emails::Layout.create(json.merge(:application => Tr8n::RequestContext.container_application, :language => language))
+      end
+
+      Dir[File.join(folder, "assets", "*.*")].each do |file|
+        pp "Importing asset #{file}..."
+        name = file.split(File::SEPARATOR).last
+        ext = name.split('.').last
+        next unless ['jpg', 'png', 'gif'].include?(ext)
+        Tr8n::Emails::Asset.create_from_file(Tr8n::RequestContext.container_application, name.gsub(".#{ext}", ""), File.read(file))
+      end
+
     end
 
     # json support

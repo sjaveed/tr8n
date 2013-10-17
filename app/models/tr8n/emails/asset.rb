@@ -44,4 +44,10 @@
 
 class Tr8n::Emails::Asset < Tr8n::Media::Base
 
+  def export_file_name
+    name = path.split("/").last
+    ext = name.split(".").last
+    "#{keyword}.#{ext}"
+  end
+
 end

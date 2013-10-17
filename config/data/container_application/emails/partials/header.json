@@ -1,0 +1,11 @@
+{
+  "keyword": "header",
+  "locale": "en-US",
+  "name": "Header information",
+  "description": "Header information",
+  "html_body": "<div style=\"float:right\">{% tr %}Tr8n Header{% endtr %}</div>\n\n<div>{% tr %}Tr8n Logo{% endtr %}</div>\n\n<p>\n    {% tr %} Hello {name} {% endtr %}\n</p>\n\n",
+  "text_body": "{% tr %}Text Header {% endtr %}\n",
+  "tokens": {
+    "name": "Michael"
+  }
+}

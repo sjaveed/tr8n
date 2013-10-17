@@ -124,11 +124,22 @@ class Tr8n::Emails::Base < ActiveRecord::Base
   end
 
   def to_api_hash(opts = {})
-    {
+    hash = {
       :keyword => keyword,
+      :locale => language.locale,
       :name => name,
-      :description => description
+      :description => description,
     }
+
+    if opts[:definition]
+      hash.merge!({
+        :subject => subject,
+        :html_body => html_body,
+        :text_body => text_body,
+        :tokens => tokens,
+        :layout => layout
+      })
+    end
   end
 
 end

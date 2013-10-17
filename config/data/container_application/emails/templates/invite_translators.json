@@ -1,0 +1,13 @@
+{
+  "keyword": "invite_translators",
+  "locale": "en-US",
+  "name": "Translators Join Email",
+  "description": "This email is sent when app administrator invites translators to join the application.",
+  "subject": "{{ actor }} is requesting your help in translating {{ application }}.",
+  "html_body": "<p>{% tr %} Please use the following link to complete your registration with MyHeritage Translation Services: {% endtr %}</p>\n",
+  "text_body": "{% partial header %}\n\n{% tr %} Hello World {% endtr %}\n\nHere",
+  "tokens": {
+    "actor": "Berk"
+  },
+  "layout": "default"
+}

@@ -1,0 +1,7 @@
+<div style="float:right; font-size:12px;">
+  <%= [
+        link_to_unless(controller.action_name == 'index', tra("translators"), :action => :index),
+        link_to_unless(controller.action_name == 'invitations', tra("invitations"), :action => :invitations),
+      ].join(" | ").html_safe
+  %>
+</div>

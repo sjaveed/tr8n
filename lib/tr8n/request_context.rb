@@ -139,11 +139,11 @@ module Tr8n
     end
 
     def self.decoration_tokens
-      Tr8n::Config.default_decoration_tokens[format]
+      Tr8n::Config.default_decoration_tokens[format].merge(current_application.tokens("decoration"))
     end
 
     def self.data_tokens
-      Tr8n::Config.default_data_tokens[format]
+      Tr8n::Config.default_data_tokens[format].merge(current_application.tokens("data"))
     end
 
     def self.current_user_is_admin?

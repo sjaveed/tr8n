@@ -285,6 +285,15 @@ class Tr8n::Application < ActiveRecord::Base
     hash
   end
 
+  def translator?(email)
+    # TODO: move the find method to the Config
+    u = User.find_by_email(email)
+    return false unless u
+    t = Tr8n::Translator.by_user(u)
+    return false unless t
+    not Tr8n::ApplicationTranslator.by_application_and_translator(self, t).nil?
+  end
+
 protected
 
   def generate_keys

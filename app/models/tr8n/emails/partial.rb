@@ -39,6 +39,9 @@
 #  text_body         text            
 #  type              varchar(255)    
 #  parent_id         integer         
+#  layout            varchar(255)    
+#  version           integer         
+#  state             varchar(255)    
 #
 # Indexes
 #
@@ -52,10 +55,17 @@ class Tr8n::Emails::Partial < Tr8n::Emails::Base
     "Partial: #{keyword}"
   end
 
+  def source_key
+    "/emails/partials/#{keyword}"
+  end
+
   def render_body(mode = :html, tokens = self.tokens, options = {})
     if Tr8n::RequestContext.email_render_options.blank?
       return super
     end
+
+    tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
+
     ::Liquid::Template.parse(content(mode)).render(tokens).html_safe
   end
 

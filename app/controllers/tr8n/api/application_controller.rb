@@ -121,7 +121,7 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
       tk = 0
 
       sql =  %"
-select tr8n_translations.translation_key_id as translation_key_id, tr8n_translation_keys.label as translation_key_label, tr8n_translation_keys.description as translation_key_description,
+select tr8n_translations.translation_key_id as translation_key_id, tr8n_translation_keys.key as translation_key_hash, tr8n_translation_keys.label as translation_key_label, tr8n_translation_keys.description as translation_key_description,
        tr8n_translations.language_id as translation_language_id, tr8n_translations.label as translation_label, tr8n_translations.context as translation_context
 from tr8n_translations
 inner join tr8n_translation_keys on tr8n_translations.translation_key_id = tr8n_translation_keys.id
@@ -142,6 +142,7 @@ offset 0;
           end
 
           tkey = {
+              "key"           => rec["translation_key_hash"],
               "id"            => rec["translation_key_id"],
               "label"         => rec["translation_key_label"],
               "translations"  => {}

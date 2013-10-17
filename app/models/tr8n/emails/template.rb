@@ -39,6 +39,9 @@
 #  text_body         text            
 #  type              varchar(255)    
 #  parent_id         integer         
+#  layout            varchar(255)    
+#  version           integer         
+#  state             varchar(255)    
 #
 # Indexes
 #
@@ -52,20 +55,22 @@ class Tr8n::Emails::Template < Tr8n::Emails::Base
     "Email: #{keyword}"
   end
 
-  def layout
-    @layout ||= (Tr8n::Emails::Layout.find_by_id(parent_id) unless parent_id.nil?)
+  def email_layout
+    @email_layout ||= (Tr8n::Emails::Layout.find_by_keyword(layout) unless layout.nil?)
   end
 
   def render_body(mode = :html, tokens = self.tokens, options = {})
     options[:language] ||= Tr8n::RequestContext.current_language
 
-    Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source)) do
+    tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
+
+    Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source_key)) do
       @result = ::Liquid::Template.parse(content(mode)).render(tokens)
     end
 
-    return @result.html_safe unless layout
+    return @result.html_safe unless email_layout
 
-    layout.render_body(mode, tokens, options.merge(:yield => @result))
+    email_layout.render_body(mode, tokens, options.merge(:yield => @result))
   end
 
 end

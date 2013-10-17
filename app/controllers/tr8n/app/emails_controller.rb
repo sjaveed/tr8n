@@ -66,8 +66,8 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
     et.html_body = params[:html_body] if params[:html_body]
     et.text_body = params[:text_body] if params[:text_body]
 
-    if params[:parent_id]
-      et.parent_id = params[:parent_id] == "-1" ? nil : params[:parent_id]
+    if params[:layout]
+      et.layout = params[:layout] == "-1" ? nil : params[:layout]
     end
 
     et.save

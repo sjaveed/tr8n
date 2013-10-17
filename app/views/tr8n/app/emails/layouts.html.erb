@@ -23,37 +23,7 @@
       </div>
     </div>
 
-    <div class="section">
-      <%= tr8n_paginator_tag(@layouts, :subject => 'layout') if @layouts.any? %>
-
-      <table class="table table-hover">
-        <thead>
-        <tr>
-          <th style="width:100px;"><%=tra("Name") %></th>
-          <th style="width:150px"><%=tra("Description") %></th>
-          <th style="width:100px;"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <% @layouts.each do |et| %>
-          <tr>
-            <td>
-              <%= et.name%>
-            </td>
-            <td>
-              <%= et.description%>
-            </td>
-            <td style="text-align:right">
-              <%=link_to_function(tra("Preview Text"), "previewEmail('#{et.id}', 'text')", :class => "btn") %>
-              <%=link_to_function(tra("Preview Html"), "previewEmail('#{et.id}', 'html')", :class => "btn") %>
-              <%=link_to(tra("Edit"), {:action => :template, :id => et.id}, :class => "btn") %>
-            </td>
-          </tr>
-        <% end %>
-        </tbody>
-      </table>
-
-    </div>
+    <%= render :partial=>"list", :locals => {:templates => @layouts, :type => "layout"} %>
 
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>

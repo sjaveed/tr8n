@@ -39,6 +39,9 @@
 #  text_body         text            
 #  type              varchar(255)    
 #  parent_id         integer         
+#  layout            varchar(255)    
+#  version           integer         
+#  state             varchar(255)    
 #
 # Indexes
 #
@@ -50,18 +53,47 @@ class Tr8n::Emails::Base < ActiveRecord::Base
   self.table_name = :tr8n_email_templates
 
   attr_accessible :application, :language, :keyword, :subject, :html_body, :text_body, :tokens, :name, :description
+  attr_accessible :layout, :version, :state
 
   belongs_to :application, :class_name => 'Tr8n::Application'
   belongs_to :language, :class_name => 'Tr8n::Language'
 
   serialize :tokens
 
+  include AASM
+
+  aasm :column => :state do
+    state :draft, :initial => true
+    state :live
+    state :deprecated
+
+    event :approve do
+      transitions :from => :draft,          :to => :live
+    end
+
+    event :deprecate do
+      transitions :from => :live,           :to => :deprecated
+    end
+  end
+
+  def create_new_version
+    self.class.create(self.attributes.merge(:parent_id => self.id, :state => :draft, :version => (self.version || 0) + 1))
+  end
+
   def title
     "Template: #{keyword}"
   end
 
-  def source
+  def source_key
     "/emails/#{keyword}"
+  end
+
+  def source
+    @source ||= Tr8n::TranslationSource.find_or_create(source_key, application)
+  end
+
+  def source_metric(language = Tr8n::RequestContext.current_language)
+    source.total_metric(language)
   end
 
   def content(mode)
@@ -72,7 +104,9 @@ class Tr8n::Emails::Base < ActiveRecord::Base
   def render_body(mode = :html, tokens = self.tokens, options = {})
     options[:language] ||= Tr8n::RequestContext.current_language
 
-    Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source)) do
+    tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
+
+    Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source_key)) do
       @result = ::Liquid::Template.parse(content(mode)).render(tokens)
     end
     @result.html_safe
@@ -81,7 +115,9 @@ class Tr8n::Emails::Base < ActiveRecord::Base
   def render_subject(tokens = self.tokens, options = {})
     options[:language] ||= Tr8n::RequestContext.current_language
 
-    Tr8n::RequestContext.render_email_with_options(options.merge(:tokens => tokens, :source => source)) do
+    tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
+
+    Tr8n::RequestContext.render_email_with_options(options.merge(:tokens => tokens, :source => source_key)) do
       @result = ::Liquid::Template.parse(self.subject).render(tokens)
     end
     @result.html_safe

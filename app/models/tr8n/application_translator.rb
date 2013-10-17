@@ -52,8 +52,12 @@ class Tr8n::ApplicationTranslator < ActiveRecord::Base
 
   after_create :distribute_notification
 
+  def self.by_application_and_translator(application, translator)
+    where("application_id = ? and translator_id = ?", application.id, translator.id).first
+  end
+
   def self.find_or_create(application, translator)
-    where("application_id = ? and translator_id = ?", application.id, translator.id).first || create(:application => application, :translator => translator)
+    by_application_and_translator(application, translator) || create(:application => application, :translator => translator)
   end
 
   def self.touch(application, translator)

@@ -25,27 +25,29 @@
 #
 # Table name: tr8n_requests
 #
-#  id            INTEGER         not null, primary key
-#  type          varchar(255)    
-#  state         varchar(255)    
-#  key           varchar(255)    
-#  email         varchar(255)    
-#  from_id       integer         
-#  to_id         integer         
-#  data          text            
-#  expires_at    datetime        
-#  created_at    datetime        not null
-#  updated_at    datetime        not null
+#  id                INTEGER         not null, primary key
+#  type              varchar(255)    
+#  state             varchar(255)    
+#  key               varchar(255)    
+#  email             varchar(255)    
+#  from_id           integer         
+#  to_id             integer         
+#  data              text            
+#  expires_at        datetime        
+#  created_at        datetime        not null
+#  updated_at        datetime        not null
+#  application_id    integer         
 #
 # Indexes
 #
+#  tr8n_req_t_a_e                                   (type, application_id, email) 
 #  index_tr8n_requests_on_to_id                     (to_id) 
 #  index_tr8n_requests_on_from_id                   (from_id) 
 #  index_tr8n_requests_on_type_and_key_and_state    (type, key, state) 
 #
 #++
 
-class Tr8n::Requests::Signup < Tr8n::Request
+class Tr8n::Requests::Signup < Tr8n::Requests::Base
 
   def deliver
     Tr8n::Mailer.deliver(Tr8n::RequestContext.container_application, "signup", email, {

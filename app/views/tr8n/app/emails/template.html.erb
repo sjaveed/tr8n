@@ -27,11 +27,11 @@
           <%=tr8n_help_icon_tag("Email Templates") %>
         </div>
         <table>
-          <tr style="<%="display:none" if @et.is_a?(Tr8n::Emails::Layout) %>">
+          <tr>
             <th style="text-align:left;vertical-align: top;">Keyword:</th>
             <td><%=f.text_field(:keyword, :style=>"width:950px;", :id => :email_template_keyword)%></td>
           </tr>
-          <tr style="<%="display:none" if @et.is_a?(Tr8n::Emails::Partial) %>">
+          <tr>
             <th style="text-align:left;vertical-align: top">Name:</th>
             <td><%=f.text_field(:name, :style=>"width:950px;", :id => :email_template_name)%></td>
           </tr>
@@ -45,9 +45,9 @@
               <td>
                 <select id="email_template_layout" data-placeholder="Email template layout" style="width:965px;" class="chzn-select">
                   <option value=""></option>
-                  <option value="-1" <%="selected" if @et.parent_id.nil? %>>-- no layout --</option>
+                  <option value="-1" <%="selected" if @et.layout.nil? %>>-- no layout --</option>
                   <% selected_application.email_layouts.each do |el| %>
-                    <option <%="selected" if el.id == @et.parent_id %> value="<%=el.id%>"><%=el.name%></option>
+                    <option <%="selected" if el.keyword == @et.layout %> value="<%=el.keyword%>"><%=el.name%></option>
                   <% end %>
                 </select>
               </td>
@@ -61,16 +61,16 @@
           <div class="container">
             <ul class="nav">
               <% if @et.is_a?(Tr8n::Emails::Template) %>
-                <li id="email_nav_subject"><a href="javascript:void(0);">Email Subject</a></li>
+                <li id="email_nav_subject"><a href="javascript:void(0);"><%=tra("Email Subject") %></a></li>
               <% end %>
-              <li id="email_nav_html" class="active"><a href="javascript:void(0);">HTML Body</a></li>
-              <li id="email_nav_text"><a href="javascript:void(0);">Text Body</a></li>
-              <li id="email_nav_tokens"><a href="javascript:void(0);">Preview Tokens</a></li>
+              <li id="email_nav_html" class="active"><a href="javascript:void(0);"><%=tra("HTML Body") %></a></li>
+              <li id="email_nav_text"><a href="javascript:void(0);"><%=tra("Text Body") %></a></li>
+              <li id="email_nav_tokens"><a href="javascript:void(0);"><%=tra("Preview Tokens") %></a></li>
             </ul>
 
             <ul class="nav pull-right">
               <li>
-                <div style="display:none;text-align:right;font-weight:normal;padding-top:10px;" id="template_status"><%=image_tag("tr8n/spinner.gif", :style => "vertical-align:middle;")%> Saving...</div>
+                <div style="display:none;text-align:right;font-weight:normal;padding-top:10px;" id="template_status"><%=image_tag("tr8n/spinner.gif", :style => "vertical-align:middle;")%><%=tra("Saving...") %></div>
               </li>
             </ul>
           </div>
@@ -96,7 +96,7 @@
       <div>
         <div style="float:right">
           <div style="background:#f7f7f7;padding:5px;display:inline-block;border:1px solid #eee; border-radius:5px;margin-right:20px;">
-            <span style="color:#666;">Auto-save:</span>
+            <span style="color:#666;"><%=tra("Auto-save:") %></span>
             <div class="make-switch switch_autosave" data-on="primary" data-off="info" style="">
               <input type="checkbox" checked>
             </div>
@@ -257,7 +257,7 @@
       "keyword":        $("#email_template_keyword").val(),
       "name":           $("#email_template_name").val(),
       "description":    $("#email_template_description").val(),
-      "parent_id":      $("#email_template_layout").val(),
+      "layout":         $("#email_template_layout").val(),
       "subject":        subject_editor.getValue(),
       "text_body":      text_editor.getValue(),
       "html_body":      html_editor.getValue(),

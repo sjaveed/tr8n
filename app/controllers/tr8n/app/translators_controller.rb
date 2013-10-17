@@ -24,7 +24,28 @@
 class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
 
   def index
-
+    @translators = selected_application.translators.page(page).per(per_page)
   end
 
+  def invite_wizard
+
+    if request.post?
+      emails = params[:emails].split(",")
+      languages = params[:languages]
+      message = params[:message]
+
+      emails.each do |email|
+        next if selected_application.translator?(email)
+        req = Tr8n::Requests::TranslatorApplication.where(:application_id => selected_application.id, :email => email)
+        req ||= Tr8n::Requests::TranslatorApplication.create(:application_id => selected_application.id, :email => email)
+        req.data = {:languages => languages, :message => message}
+        req.save
+        req.deliver
+      end
+
+      return render(:json => {"status" => "Ok", "msg" => tra("Translators have been invited")}.to_json)
+    end
+
+    render :layout => false
+  end
 end

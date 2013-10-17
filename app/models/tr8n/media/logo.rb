@@ -21,24 +21,24 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Emails::Asset Schema Information
+#-- Tr8n::Media::Logo Schema Information
 #
 # Table name: tr8n_media
 #
 #  id            INTEGER         not null, primary key
-#  type          varchar(255)
-#  position      integer
-#  owner_id      integer
-#  owner_type    varchar(255)
-#  keyword       varchar(255)
-#  path          varchar(255)
-#  thumbnails    text
+#  type          varchar(255)    
+#  position      integer         
+#  owner_id      integer         
+#  owner_type    varchar(255)    
+#  keyword       varchar(255)    
+#  path          varchar(255)    
+#  thumbnails    text            
 #  created_at    datetime        not null
 #  updated_at    datetime        not null
 #
 # Indexes
 #
-#  tr8n_m_oid_ot_k    (owner_id, owner_type, keyword)
+#  tr8n_m_oid_ot_k    (owner_id, owner_type, keyword) 
 #
 #++
 

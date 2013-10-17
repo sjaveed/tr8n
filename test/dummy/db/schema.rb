@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131015194107) do
+ActiveRecord::Schema.define(:version => 20131016010319) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -434,12 +434,14 @@ ActiveRecord::Schema.define(:version => 20131015194107) do
     t.integer  "to_id"
     t.text     "data"
     t.datetime "expires_at"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "application_id"
   end
 
   add_index "tr8n_requests", ["from_id"], :name => "index_tr8n_requests_on_from_id"
   add_index "tr8n_requests", ["to_id"], :name => "index_tr8n_requests_on_to_id"
+  add_index "tr8n_requests", ["type", "application_id", "email"], :name => "tr8n_req_t_a_e"
   add_index "tr8n_requests", ["type", "key", "state"], :name => "index_tr8n_requests_on_type_and_key_and_state"
 
   create_table "tr8n_sync_logs", :force => true do |t|

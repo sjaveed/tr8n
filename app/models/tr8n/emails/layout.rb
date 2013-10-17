@@ -39,6 +39,9 @@
 #  text_body         text            
 #  type              varchar(255)    
 #  parent_id         integer         
+#  layout            varchar(255)    
+#  version           integer         
+#  state             varchar(255)    
 #
 # Indexes
 #
@@ -52,7 +55,7 @@ class Tr8n::Emails::Layout < Tr8n::Emails::Base
     "Layout: #{keyword}"
   end
 
-  def source
+  def source_key
     "/emails/layouts/#{keyword}"
   end
 
@@ -61,7 +64,9 @@ class Tr8n::Emails::Layout < Tr8n::Emails::Base
 
     options[:language] ||= Tr8n::RequestContext.current_language
 
-    Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source)) do
+    tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
+
+    Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source_key)) do
       @result = ::Liquid::Template.parse(content).render(tokens)
     end
 

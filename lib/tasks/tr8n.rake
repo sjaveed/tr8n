@@ -59,7 +59,7 @@ namespace :tr8n do
   task :cases => :environment do
     Tr8n::Language.all.each do |lang|
       lang.reset_language_cases!
-    end 
+    end
   end
 
   desc "Creates featured languages"
@@ -123,13 +123,13 @@ namespace :tr8n do
   # will delete all keys that have not been verified in the last 2 weeks
   task :delete_unverified_keys => :environment do
     date = env('before') || (Date.today - 2.weeks)
-    
+
     puts "Running key destruction process..."
     t0 = Time.now
-    
+
     puts "All keys not verified after #{date} will be destroyed!"
     unverified_keys = Tr8n::TranslationKey.find(:all, :conditions => ["verified_at is null or verified_at < ?", date])
-    
+
     puts "There are #{unverified_keys.size} keys to be destroyed."
     puts "Destroying unverified keys..." if unverified_keys.size > 0
 
@@ -139,222 +139,23 @@ namespace :tr8n do
       destroy_count += 1
       puts "Destroyed #{destroy_count} keys..." if destroy_count % 100 == 0
     end
-    
+
     t1 = Time.now
-  
+
     puts "Destroyed #{destroy_count} keys"
     puts "Destruction process took #{t1-t0} mls"
   end
-  
+
   desc 'Update IP to Location table (file=<file|config/tr8n/data/ip_locations.csv>)'
   task :import_ip_locations => :environment do
     Tr8n::IpLocation.import_from_file('config/tr8n/data/ip_locations.csv', :verbose => true)
   end
-  
+
   desc "Synchronize translations with tr8n.net"
   task :sync => :environment do
     opts = {}
     opts[:force] = true if ENV["force"] == "true"
     Tr8n::SyncLog.sync(opts)
-  end
-
-  desc "import keys"
-  task :import_keys  => :environment do
-    path = ENV['source']
-    dry_run = (ENV['dry'] == "true")
-    start_at = (ENV['start_at'] || 0).to_i
-    clear = (ENV['clear'] == "true")
-    only_category = ENV['category']
-
-    by_locale = {}
-    by_category = {}
-
-    Thread.current[:tr8n_block_options] ||= []
-    Thread.current[:tr8n_block_options].push({:skip_cache => true})
-
-    puts "Building indexes..."
-
-    file_count = 0
-    Dir[File.join(path, "*.json")].each do |file_name|
-      locale, category = File.basename(file_name, '.json').split('_')
-      by_locale[locale] ||= []
-      by_locale[locale] << category
-
-      by_category[category] ||= []
-      by_category[category] << locale
-
-      print "."
-      file_count += 1
-    end
-
-    puts "\n"
-    puts "Validating English keys..."
-    by_category.keys.each do |cat|
-      unless by_locale["EN"].include?(cat)
-        puts "Category #{cat} is missing EN locale, but is has the following locales: #{by_category[cat]}"
-      end
-    end
-
-    puts "\n"
-    puts "Validating missing locales..."
-    by_category.each do |cat, locales|
-      unless by_locale.keys.sort == locales.sort
-        puts "Category #{cat} is missing locales: #{by_locale.keys - locales}"
-      end
-    end
-
-    puts "\n"
-    puts "Mapping Tr8n languages..."
-
-    puts "MyHeritage locales: #{by_locale.keys}"
-
-    puts "Geni locale mapping:"
-    Tr8n::Language.where("myheritage_key is not null").each do |l|
-      puts "Geni #{l.english_name}: #{l.locale} => MyHeritage: #{l.myheritage_key}"
-    end
-
-    puts "\n"
-    tr8n_languages = {}
-    by_locale.keys.each do |locale|
-      lang = Tr8n::Language.where("myheritage_key = ?", locale).first
-      tr8n_languages[locale] = lang
-      unless lang
-        puts "Language for locale #{locale} does not exist in Tr8n..."
-      end
-    end
-
-    if clear
-      puts "\n"
-      puts "Cleaning up database...."
-      [Tr8n::TranslationKey,Tr8n::Translation, Tr8n::TranslationSource, Tr8n::TranslationKeySource].each do |klass|
-        puts "Clearing records for #{klass.name}..."
-        klass.delete_all
-      end
-    end
-
-    puts "\n"
-    puts "Importing keys...."
-
-    key_count = 0
-    trans_count = 0
-
-    t0 = Time.now
-
-    application = Tr8n::RequestContext.container_application
-    by_locale["EN"].each_with_index do |cat, index|
-      next if start_at > index
-
-      unless only_category.blank?
-        next if cat != only_category
-      end
-
-      tt0 = Time.now
-
-      file_name = "#{path}/EN_#{cat}.json"
-      file = File.read(file_name)
-      data = JSON.parse(file)
-
-      next unless data.is_a?(Hash)
-
-      puts "\n"
-      puts "Importing #{cat} : #{data.keys.size} keys :  #{index+1} out of #{by_locale["EN"].size} : #{((index+1) * 100.0 /by_locale["EN"].size).to_i}% complete..."
-      puts "------------------------------------------------------------------------------------------"
-      puts "Importing #{cat} : EN..."
-
-      keys = {}
-
-      unless dry_run
-        source = Tr8n::TranslationSource.where("application_id = ? and source = ?", application.id, cat).first
-        source ||= Tr8n::TranslationSource.create(:application_id => application.id, :source => cat)
-      end
-
-      data.each do |key, label|
-
-        if label.blank?
-          #pp "Key label is blank, next ..."
-          #keys[key] = existing_key
-          next
-        end
-
-        #puts "Importing: #{key} #{label} ..."
-        tr8n_key = Tr8n::TranslationKey.generate_key(label, cat).to_s
-        #puts "[#{tr8n_key}]"
-
-        existing_key = Tr8n::TranslationKey.where("key = ?", tr8n_key).first unless dry_run
-        if existing_key
-          #pp "Found existing key: ", existing_key.label
-          keys[key] = existing_key
-          next
-        end
-
-        unless dry_run
-          keys[key] = Tr8n::TranslationKey.create( :key         => tr8n_key,
-                                                   :label       => label,
-                                                   :description => cat,
-                                                   :locale      => 'en-US')
-
-          Tr8n::TranslationKeySource.create(:translation_key => keys[key], :translation_source => source)
-        end
-
-        key_count += 1
-      end
-
-      by_category[cat].each do |locale|
-        next if locale == 'EN'
-
-        file_name = "#{path}/#{locale}_#{cat}.json"
-        unless File.exist?(file_name)
-          puts "#{file_name} does not exist, next..."
-          next
-        end
-
-        lang = tr8n_languages[locale]
-        unless lang
-          puts "#{locale} does not exist in Geni, next..."
-          next
-        end
-
-        puts "Importing #{cat} : #{locale}..."
-
-        file = File.read(file_name)
-        data = JSON.parse(file)
-
-        data.each do |key, label|
-          unless dry_run
-            tkey = keys[key]
-
-            unless tkey
-              #puts "#{keys[key].label} was never defined in English, next..."
-              next
-            end
-
-            if tkey.translations.where("language_id = ?", lang.id).count > 0
-              #puts "#{keys[key].label} has already been imported, next..."
-              next
-            end
-
-            if label.blank?
-              #puts "Translation for #{keys[key].label} is blank, next..."
-              next
-            end
-
-            Tr8n::Translation.create(:translation_key => tkey, :language => lang, :translator => Tr8n::Config.system_translator, :label => label)
-          end
-
-          trans_count += 1
-        end
-      end
-
-      tt1 = Time.now
-      puts "Importing #{cat} took: #{tt1-tt0}"
-      puts "\n"
-    end
-
-    t1 = Time.now
-
-    puts "\n"
-    puts "Imported #{key_count} keys with #{trans_count} translations from #{file_count} files in #{by_locale.keys.count} locales"
-    puts "Running time: #{t1-t0}"
   end
 
   desc "fix languages"

@@ -155,8 +155,6 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   end
 
   def allowed_token?(token)
-    debug("Allowed tokens: #{allowed_token_names}")
-    debug("Token name: #{token.name}")
     allowed_token_names.include?(token.name)
   end
 

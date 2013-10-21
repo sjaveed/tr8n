@@ -275,8 +275,13 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       lock.unlock!
     end
   end
-  
+
+  def in_current_language?
+    return true if self.language == Tr8n::RequestContext.current_language
+  end
+
   def locked?(language = Tr8n::RequestContext.current_language)
+    return true if in_current_language?
     lock_for(language).locked?
   end
 

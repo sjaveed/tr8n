@@ -59,17 +59,19 @@
 
             <td style="padding:5px; vertical-align:top">
               <div id="tr8n_translator_votes_for_<%=tk.key%>" class="tr8n_text_align_left">
-              <% translations = tk.translations_for(tr8n_current_language) %>
-              <% if translations.empty? %>
-                <%= tra("There are no translations for this phrase.") %>
-
-                <% unless tk.locked? %>
-                  <%= tra("Be the first one to [link: translate it].", nil, :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])}  ) %>
+                <% if tk.in_current_language? %>
+                  <%= tra("This phrase needs no translations for {language}.", :language => tr8n_current_language.native_name) %>
+                <% else %>
+                  <% translations = tk.translations_for(tr8n_current_language) %>
+                  <% if translations.empty? %>
+                    <%= tra("There are no translations for this phrase.") %>
+                    <% unless tk.locked? %>
+                      <%= tra("Be the first one to [link: translate it].", :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])}  ) %>
+                    <% end %>
+                  <% else %>
+                    <%= render :partial => "/tr8n/common/translation_votes", :locals => {:translation_key => tk, :translations => translations[0..4], :source_id => params[:source_id], :component_id => params[:component_id]} %>
+                  <% end %>
                 <% end %>
-
-              <% else %>
-                <%= render :partial => "/tr8n/common/translation_votes", :locals => {:translation_key => tk, :translations => translations[0..4], :source_id => params[:source_id], :component_id => params[:component_id]} %>
-              <% end %>
               </div>
             </td>
 

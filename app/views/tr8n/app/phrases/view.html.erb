@@ -7,9 +7,18 @@
     <%= render :partial => "header" %>
     <%= render :partial => "toolbar" %>
 
-    <%= render :partial => "translations_module" %>
-    <%= render :partial => "translation_module" %>
-    <%= render :partial => "permutations_module" %>
+    <% if translation_key.in_current_language? %>
+      <div style="padding-top:10px; padding-bottom: 10px;">
+        <%= tra("This phrase needs no translations for {language}.", :language => tr8n_current_language.native_name) %>
+        <%= link_to_function(tra("Choose another language."), "Tr8n.UI.LanguageSelector.show()") %>
+      </div>
+    <% else %>
+      <%= render :partial => "translations_module" %>
+      <%= render :partial => "translation_module" %>
+      <%= render :partial => "permutations_module" %>
+    <% end %>
+
+
     <%= render :partial => "comments_module" %>
 
     <% if @show_add_dialog and not @translation_key.locked? %>
@@ -22,32 +31,33 @@
 
   </div>
 
-  <script>
-    function addTranslation() {
-      Tr8n.Utils.Effects.hide('translation_key_toolbar');
-      Tr8n.Utils.Effects.hide('translations_module');
-      Tr8n.Utils.Effects.hide('comments_module');
-      Tr8n.Utils.Effects.hide('permutations_module');
-      Tr8n.Utils.Effects.show('translation_module');
-    }
+  <% unless translation_key.in_current_language? %>
+    <script>
+      function addTranslation() {
+        Tr8n.Utils.Effects.hide('translation_key_toolbar');
+        Tr8n.Utils.Effects.hide('translations_module');
+        Tr8n.Utils.Effects.hide('comments_module');
+        Tr8n.Utils.Effects.hide('permutations_module');
+        Tr8n.Utils.Effects.show('translation_module');
+      }
 
-    function addContextRules() {
-      Tr8n.Utils.Effects.hide('translation_key_toolbar');
-      Tr8n.Utils.Effects.hide('translations_module');
-      Tr8n.Utils.Effects.hide('comments_module');
-      Tr8n.Utils.Effects.hide('translation_module');
-      Tr8n.Utils.Effects.show('permutations_module');
-    }
+      function addContextRules() {
+        Tr8n.Utils.Effects.hide('translation_key_toolbar');
+        Tr8n.Utils.Effects.hide('translations_module');
+        Tr8n.Utils.Effects.hide('comments_module');
+        Tr8n.Utils.Effects.hide('translation_module');
+        Tr8n.Utils.Effects.show('permutations_module');
+      }
 
-    function viewTranslations() {
-      Tr8n.Utils.Effects.show('translation_key_toolbar');
-      Tr8n.Utils.Effects.hide('translation_module');
-      Tr8n.Utils.Effects.hide('permutations_module');
-      Tr8n.Utils.Effects.show('translations_module');
-      Tr8n.Utils.Effects.show('comments_module');
-    }
-  </script>
-
+      function viewTranslations() {
+        Tr8n.Utils.Effects.show('translation_key_toolbar');
+        Tr8n.Utils.Effects.hide('translation_module');
+        Tr8n.Utils.Effects.hide('permutations_module');
+        Tr8n.Utils.Effects.show('translations_module');
+        Tr8n.Utils.Effects.show('comments_module');
+      }
+    </script>
+  <% end %>
 	<%= render :partial => "/tr8n/app/common/footer" %>
 
 <% end %>

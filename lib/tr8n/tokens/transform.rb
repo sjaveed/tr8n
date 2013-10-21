@@ -59,18 +59,18 @@ module Tr8n
         @piped_params = name_without_parens.split(pipe_separator).last.split(",").collect{|param| param.strip}
       end
 
-      def allowed_in_translation?
+      def displayed_in_translation?
         pipe_separator == "||" 
       end
-      
+
       def implied?
-        not allowed_in_translation?
+        not displayed_in_translation?
       end
 
       # return with the default transform substitution
       def prepare_label_for_translator(label, language)
         substitution_value = ""
-        substitution_value << sanitized_name if allowed_in_translation?
+        substitution_value << sanitized_name if displayed_in_translation?
         substitution_value << " " unless substitution_value.blank?
 
         context = context_for_language(language)
@@ -197,7 +197,7 @@ module Tr8n
         return label unless value
 
         substitution_value = [] 
-        if allowed_in_translation?
+        if displayed_in_translation?
           substitution_value << token_value(object, options, language) 
           substitution_value << " " 
         end

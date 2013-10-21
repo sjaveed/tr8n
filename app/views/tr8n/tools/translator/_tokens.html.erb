@@ -1,10 +1,10 @@
-<% if @translation_key.allowed_tokens.any? %>
+<% if @translation_key.explicit_tokens.any? %>
   <div id="tr8n_translator_tokens_simple_view" style="font-size:10px;">
     <div class="small_section_title" style="color: #999; font-size: 10px;">
       <strong><%=tra("Data Tokens")%></strong>
     </div>
 
-    <% @translation_key.allowed_tokens.each do |token| %>
+    <% @translation_key.explicit_tokens.each do |token| %>
       <%= link_to_function(token.sanitized_name, "Tr8n.UI.Translation.insertToken('#{token.name}');", :title => trla("Click to insert this token above") ) %>
     <% end %>
 

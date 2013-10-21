@@ -73,6 +73,24 @@ class Tr8n::Translation < ActiveRecord::Base
   # TODO: move this to config file
   VIOLATION_INDICATOR = -10
 
+  # based on the number of fallback rules in the context.
+  # a fallback rule is indicated by the keyword "other"
+  # the more "others" are used the lower the precedence will be
+  #
+  # 0 indicates the highest precedence
+  def precedence
+    return 0 if context.nil?
+    @precedence ||= begin
+      other_count = 0
+      context.each do |token, rules|
+        rules.each do |rule_type, rule_key|
+          other_count += 1 if rule_key == "other"
+        end
+      end
+      other_count
+    end
+  end
+
   #{
   #    "count" => {"number":"one"},
   #    "user" => {"gender":"male", "value":"vowels"}

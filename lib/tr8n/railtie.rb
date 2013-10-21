@@ -51,6 +51,7 @@ end
     "./rules_engine",
     "./tokens/base.rb",
     "./tokens",
+    "./modules",
     "./liquid",
 ].each do |f|
   if f.index('.rb')

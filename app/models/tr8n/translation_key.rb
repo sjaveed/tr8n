@@ -49,6 +49,9 @@ require 'digest/md5'
 
 class Tr8n::TranslationKey < ActiveRecord::Base
   self.table_name = :tr8n_translation_keys
+
+  include Tr8n::Modules::Logger
+
   attr_accessible :key, :label, :description, :verified_at, :translation_count, :admin, :locale, :level, :synced_at
   
   has_many :translations,             :class_name => "Tr8n::Translation",           :dependent => :destroy
@@ -57,8 +60,6 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   has_many :translation_sources,      :class_name => "Tr8n::TranslationSource",     :through => :translation_key_sources
   has_many :translation_domains,      :class_name => "Tr8n::TranslationDomain",     :through => :translation_sources
   has_many :translation_key_comments, :class_name => "Tr8n::TranslationKeyComment", :dependent => :destroy, :order => "created_at desc"
-
-
 
   def self.cache_key(key)
     "translation_key_[#{key}]"
@@ -154,11 +155,17 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   end
 
   def allowed_token?(token)
+    debug("Allowed tokens: #{allowed_token_names}")
+    debug("Token name: #{token.name}")
     allowed_token_names.include?(token.name)
   end
 
   def implied_tokens
-    @implied_tokens ||= data_tokens.select{|token| token.implied? and not allowed_token?(token)}
+    @implied_tokens ||= data_tokens.select{|token| token.implied?}
+  end
+
+  def explicit_tokens
+    @explicit_tokens ||= (allowed_tokens - implied_tokens)
   end
 
   def decoration_tokens
@@ -322,7 +329,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
 
   # used by the inline popup dialog, we don't want to show blocked translations
   def inline_translations_for(language)
-    translations_for(language, -50)
+    translations_for(language, -50).sort_by{|t| t.precedence}
   end
 
   def translations_cache_key(language)
@@ -456,7 +463,8 @@ class Tr8n::TranslationKey < ActiveRecord::Base
   ###########################################################################
 
   def find_first_valid_translation(language, translator, token_values, opts = {})
-    cached_translations_for_language(language).each do |translation|
+    translations = cached_translations_for_language(language).sort_by{|t| t.precedence}
+    translations.each do |translation|
       return translation if translation.matches_rules?(token_values)
     end
 
@@ -516,8 +524,9 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       translation_options[:fallback_onto_language] = true
     end
 
+    #translation = nil
     #Tr8n::Logger.measure("Translation for: #{label} took") do
-    translation = find_first_valid_translation(language, Tr8n::RequestContext.current_translator, token_values, translation_options)
+      translation = find_first_valid_translation(language, Tr8n::RequestContext.current_translator, token_values, translation_options)
     #end
 
     decorator = options[:decorator] || Tr8n::RequestContext.container_application.decorator
@@ -525,18 +534,15 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     if translation
       # if you want to present the label in it's sanitized form - for the phrase list
       if options[:default_language]
-        translation = decorator.decorate_translation(language, self, sanitized_label, options.merge(:translated => true)).html_safe
-      else
-        translated_label = substitute_tokens(translation.language, translation.label, token_values, options)
-        translation = decorator.decorate_translation(translation.language, self, translated_label, options.merge(:translated => true, :fallback => (translation.language != language))).html_safe
+        return decorator.decorate_translation(language, self, sanitized_label, options.merge(:translated => true)).html_safe
       end
-    else
-      # no translation found
-      translated_label = substitute_tokens(self.language, label, token_values, options)
-      translation = decorator.decorate_translation(self.language, self, translated_label, options.merge(:translated => false)).html_safe
+
+      translated_label = substitute_tokens(translation.language, translation.label, token_values, options)
+      return decorator.decorate_translation(translation.language, self, translated_label, options.merge(:translated => true, :fallback => (translation.language != language))).html_safe
     end
 
-    translation
+    untranslated_label = substitute_tokens(self.language, label, token_values, options)
+    decorator.decorate_translation(self.language, self, untranslated_label, options.merge(:translated => false)).html_safe
   end
 
   ###############################################################

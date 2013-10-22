@@ -47,26 +47,36 @@
 #
 #++
 
-class Tr8n::Requests::TranslatorApplication < Tr8n::Requests::Base
+class Tr8n::Requests::InviteTranslator < Tr8n::Requests::Base
 
-  def deliver
-    Tr8n::Mailer.deliver(application, "invite_translator", email, {
-        "application" => application.name,
-        "languages" => languages,
-        "message" => message,
-        "link" => lander_url
-    })
-    mark_as_delivered
+  data_attributes :locales, :message
+
+  def email_tokens
+    hash = {
+        "user"                  => from.name,
+        "application_name"      => application.name,
+        "application_logo_url"  => application.logo_url,
+        "languages"             => language_names,
+        "link"                  => lander_url
+    }
+    hash["message"] = message unless message.blank?
+    hash
+  end
+
+  def accept(user)
+    update_attributes(:to => user)
+    application.add_translator(Tr8n::Translator.find_or_create(user))
+    mark_as_accepted!
   end
 
   def languages
-    data ||= {}
-    @languages ||= data[:languages].collect{|locale| Tr8n::Language.by_locale(locale).english_name}
+    return [] unless locales
+    @languages ||= locales.collect{|locale| Tr8n::Language.by_locale(locale)}
   end
 
-  def message
-    data ||= {}
-    data[:message]
+  def language_names
+    @language_names ||= languages.collect{|l| l.english_name}
   end
+
 
 end

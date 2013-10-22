@@ -50,7 +50,7 @@
 class Tr8n::Requests::Base < ActiveRecord::Base
   self.table_name = :tr8n_requests
 
-  attr_accessible :email, :data, :from, :to, :expires_at, :application
+  attr_accessible :email, :data, :from, :to, :expires_at, :application, :application_id
 
   belongs_to :application, :class_name => "Tr8n::Application"
 
@@ -96,16 +96,32 @@ class Tr8n::Requests::Base < ActiveRecord::Base
     end
   end
 
+  def self.data_attributes(*attrs)
+    @data_attributes ||= []
+    @data_attributes += attrs.collect{|a| a.to_sym} unless attrs.nil?
+    @data_attributes
+  end
+
   def self.find_or_create(email)
     find_by_email(email) || create(:email => email)
   end
 
-  def lander_url
-    "#{Tr8n::Config.base_url}/tr8n/requests/#{self.class.name.underscore.split("/").last}/#{key}"
+  def email_keyword
+    self.class.name.underscore.split("/").last
   end
 
-  def deliver
-    raise "deliver method must be implemented by a subclass"
+  def email_tokens
+    {}
+  end
+
+  def deliver(opts = {})
+    Tr8n::Mailer.deliver(Tr8n::RequestContext.container_application, email_keyword, email, email_tokens)
+    mark_as_delivered
+  end
+
+  def save_and_deliver(opts = {})
+    save
+    deliver(opts)
   end
 
   def expired?
@@ -115,6 +131,50 @@ class Tr8n::Requests::Base < ActiveRecord::Base
 
   def expire_in(interval)
     self.update_attributes(:expires_at => Time.now + interval)
+  end
+
+  def lander_url
+    "#{Tr8n::Config.base_url}/tr8n/requests/index?id=#{key}"
+  end
+
+  def destination_url
+    self.data ||= {}
+    self.data[:destination_url] || default_destination_url
+  end
+
+  def default_destination_url
+    "#{Tr8n::Config.base_url}/tr8n/requests/#{self.class.name.underscore.split("/").last}?id=#{key}"
+  end
+
+  def destination_url=(url)
+    self.data ||= {}
+    self.data[:destination_url] = url
+  end
+
+  def accept(user)
+    self.to = user
+    mark_as_accepted!
+  end
+
+  def method_missing(meth, *args, &block)
+    self.data ||= {}
+
+    method_name = meth.to_s
+    method_suffix = method_name[-1, 1]
+    method_key = method_name.to_sym
+    if ['=', '?'].include?(method_suffix)
+      method_key = method_name[0..-2].to_sym
+    end
+
+    if self.class.data_attributes && self.class.data_attributes.index(method_key)
+      if method_name[-1, 1] == '='
+        self.data[method_key] = args.first
+        return self.data[method_key]
+      end
+      return self.data[method_key]
+    end
+
+    super
   end
 
   protected

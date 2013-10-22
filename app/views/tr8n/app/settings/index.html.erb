@@ -20,11 +20,7 @@
           <div class="form-group">
             <label for="application[logo]"><%=tra("Application Logo:")%></label>
             <div style="padding-left:15px;">
-              <% if selected_application.logo %>
-                <%=image_tag(selected_application.logo.url, :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
-              <% else %>
-                <%=image_tag("tr8n/gears.png", :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
-              <% end %>
+              <%=image_tag(selected_application.logo_url, :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
             </div>
             <div style="padding:15px;">
              <span class="btn btn-primary fileinput-button">

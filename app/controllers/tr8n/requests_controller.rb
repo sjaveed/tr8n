@@ -29,25 +29,22 @@ class Tr8n::RequestsController < Tr8n::BaseController
 
   before_filter :validate_request
 
+  # general mechanism for request redirection
   def index
-    redirect_to(:action => @request.class.name.underscore.split("/").last, :id => params[:id])
+    @request.mark_as_viewed! if @request.delivered?
+    redirect_to(@request.destination_url)
   end
 
-  def signup
-    if Tr8n::RequestContext.current_user
-      redirect_to(:controller => "/tr8n/translator/registration")
-    else
-      session[:tr8n_request_key] = @request.key
-      redirect_to("/signup/lander?id=#{@request.key}")
+  def invite_translator
+    if request.post?
+      if tr8n_current_user
+        trfn("You have accepted request to translate application")
+        @request.accept(tr8n_current_user)
+        return redirect_to(:controller => "/tr8n/app/phrases", :action => :index, :app_id => @request.application.id)
+      end
+
+      return redirect_to("#{Tr8n::Config.signup_url}?id=#{@request.key}")
     end
-  end
-
-  def translate_application
-    #if Tr8n::RequestContext.current_user
-    #  redirect_to(:controller => "/tr8n/translator/registration")
-    #else
-    #  redirect_to("/login")
-    #end
   end
 
 private
@@ -64,6 +61,8 @@ private
       trfe("This request has expired")
       return redirect_to(Tr8n::Config.default_url)
     end
+
+    login!(@request.to) if @request.to
   end
 
 end

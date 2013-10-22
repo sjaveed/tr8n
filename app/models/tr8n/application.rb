@@ -82,6 +82,10 @@ class Tr8n::Application < ActiveRecord::Base
     @logo ||= Tr8n::Media::Logo.where(:owner_type => self.class.name, :owner_id => self.id).first
   end
 
+  def logo_url
+    logo ? logo.url(:original, :full => true) : "#{Tr8n::Config.base_url}/assets/tr8n/tr8n_logo.png"
+  end
+
   def self.cache_key(key)
     "application_[#{key.to_s}]"
   end

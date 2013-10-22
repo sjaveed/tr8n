@@ -242,6 +242,10 @@ module Tr8n
       site_info[:login_url]
     end
 
+    def self.signup_url
+      site_info[:signup_url]
+    end
+
     def self.media_url
       site_info[:media_url] || base_url
     end

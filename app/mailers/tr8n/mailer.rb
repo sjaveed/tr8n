@@ -2,7 +2,7 @@ module Tr8n
   class Mailer < ActionMailer::Base
 
     def deliver(application, keyword, to_email, tokens = {}, options = {})
-      email_template = application.email_templates.where(:keyword => keyword).first
+      email_template = application.email_templates.where(:keyword => keyword.to_s).first
       raise "Email template does not exist" unless email_template
 
       from_email = options[:from_email] || Tr8n::Config.noreply_email

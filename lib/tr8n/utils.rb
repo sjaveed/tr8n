@@ -48,6 +48,17 @@ module Tr8n
       (0..16).to_a.map{|a| rand(16).to_s(16)}.join
     end
 
+    def self.split_by_sentence(text)
+      sentence_regex = /[^.!?\s][^.!?]*(?:[.!?](?![\'"]?\s|$)[^.!?]*)*[.!?]?[\'"]?(?=\s|$)/
+
+      sentences = []
+      text.scan(sentence_regex).each do |s|
+        sentences << s.first
+      end
+
+      sentences
+    end
+
     def self.load_json(file_path)
       json = JSON.parse(File.read(file_path))
       return HashWithIndifferentAccess.new(json) if json.is_a?(Hash)

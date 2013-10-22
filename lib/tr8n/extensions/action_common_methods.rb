@@ -34,7 +34,6 @@ module Tr8n
     # tr(:label => label, :description => "", :tokens => {}, :options => {})
     ############################################################
     def tr(label, description = "", tokens = {}, options = {})
-      t0 = Time.now
       params = Tr8n::Utils.normalize_tr_params(label, description, tokens, options)
 
       return params[:label] if params[:label].tr8n_translated?
@@ -50,16 +49,21 @@ module Tr8n
         return Tr8n::TranslationKey.substitute_tokens(params[:label], params[:tokens], params[:options])
       end
 
-      translation = Tr8n::RequestContext.current_language.translate(params[:label], params[:description], params[:tokens], params[:options])
+      # Translate individual sentences
+      if params[:options][:split]
+        text = params[:label]
+        sentences = Tr8n::Utils.split_by_sentence(text)
+        sentences.each do |sentence|
+          text = text.gsub(sentence, Tr8n::RequestContext.current_language.translate(sentence, params[:description], params[:tokens], params[:options]))
+        end
+        return text
+      end
 
-      t1 = Time.now
-      # Tr8n::Logger.debug("#{label} : (#{t1-t0} mls)")
-
-      return translation
+      Tr8n::RequestContext.current_language.translate(params[:label], params[:description], params[:tokens], params[:options])
     rescue Tr8n::Exception => ex
       Tr8n::Logger.error("ERROR: #{label}")
       Tr8n::Logger.error(ex.message + "\n=> " + ex.backtrace.join("\n=> "))
-      return label
+      label
     end
 
     # for translating labels
@@ -71,17 +75,17 @@ module Tr8n
 
     # flash notice
     def trfn(label, desc = "", tokens = {}, options = {})
-      flash[:trfn] = tr(label, desc, tokens, options)
+      flash[:trfn] = tr(Tr8n::Utils.normalize_tr_params(label, desc, tokens, options))
     end
 
     # flash error
     def trfe(label, desc = "", tokens = {}, options = {})
-      flash[:trfe] = tr(label, desc, tokens, options)
+      flash[:trfe] = tr(Tr8n::Utils.normalize_tr_params(label, desc, tokens, options))
     end
 
     # flash warning
     def trfw(label, desc = "", tokens = {}, options = {})
-      flash[:trfw] = tr(label, desc, tokens, options)
+      flash[:trfw] = tr(Tr8n::Utils.normalize_tr_params(label, desc, tokens, options))
     end
 
     # for admin translations

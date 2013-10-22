@@ -10,11 +10,7 @@
     <div style="font-size:14px; font-weight: bold; padding-bottom:25px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
 
       <div style="display:inline-block; width:80px; text-align: center; float:left; margin-right:10px;">
-      <% if selected_application.logo %>
-        <%=image_tag(selected_application.logo.url, :style=>"max-width:80px;max-height:80px; padding:5px;") %>
-      <% else %>
-        <%=image_tag("tr8n/gears.png", :style=>"max-width:80px;max-height:80px; padding:5px;") %>
-      <% end %>
+        <%=image_tag(selected_application.logo_url, :style=>"max-width:80px;max-height:80px; padding:5px;") %>
       </div>
 
       <ul class="nav nav-pills" style="margin-bottom:-20px;padding-bottom:0px;margin-left:-10px;">
@@ -31,12 +27,8 @@
             <% translator_applications.each do |app| %>
               <li>
                 <%=link_to({:app_id => app.id}, :style => "#{translator_applications.last != app ? "padding-bottom:10px;border-bottom:1px dashed #ccc" : ""}") do %>
-                  <div style="display:inline-block; width:70px; text-align: center;">
-                    <% if app.logo %>
-                      <%=image_tag(app.logo.url, :style=>"max-width:50px;max-height:50px;") %>
-                    <% else %>
-                      <%=image_tag("tr8n/gears.png", :style=>"max-width:50px;max-height:50px;") %>
-                    <% end %>
+                  <div style="display:inline-block; width:70px; text-align: center; padding-top:10px;">
+                    <%=image_tag(app.logo_url, :style=>"max-width:50px;max-height:50px;") %>
                   </div>
                   <div style="display:inline-block; vertical-align: top; padding-left:10px;">
                     <div style="font-size:16px; font-weight:bold; padding-top:5px;padding-bottom:5px;">

@@ -1,0 +1,19 @@
+<div style="padding-top:40px;padding-bottom:40px;">
+  <div class="row">
+    <div class="span8 offset2 well">
+      <legend><%= tr("Invitation to become a translator") %></legend>
+      <%= form_tag({:id => @request.key}, {:method => :post}) do %>
+
+        <%= @request.from %> is requesting your help to translate <%= @request.application.name %> application.
+
+        <div class="text-center" style="padding-top:60px;">
+          <button type="submit" class="btn btn-primary">
+            <%=tra("Accept") %>
+          </button>
+          <%=tra("or") %> <%=link_to(tra("decline"), "/") %>
+        </div>
+
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -62,15 +62,6 @@ namespace :tr8n do
     end
   end
 
-  desc "Creates featured languages"
-  task :featured_languages => :environment do
-    Tr8n::Config.config[:featured_languages].each_with_index do |locale, index|
-      lang = Tr8n::Language.by_locale(locale)
-      lang.featured_index = 10000 - (index * 100)
-      lang.save
-    end
-  end
-
   desc "Exports default email configuration"
   task :export_emails => :environment do
     base_path = File.expand_path("#{__FILE__}/../../../config/data/container_application/emails")

@@ -26,10 +26,16 @@ class Tr8n::Translator::RegistrationController < Tr8n::Translator::BaseControlle
   skip_before_filter :validate_current_translator
 
   def index
+    @minimal_layout = true
+
     if params[:agree] == "yes"
       Tr8n::Translator.register
       trfn("Thank you for joining!")
       return redirect_to("/tr8n/app/phrases")
+    elsif params[:agree] == "no"
+      trfe("You have declined the agreement.")
+      logout!
+      return redirect_to(Tr8n::Config.default_url)
     end
   end
 

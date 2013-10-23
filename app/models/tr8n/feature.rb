@@ -48,17 +48,18 @@ class Tr8n::Feature < ActiveRecord::Base
 
   def self.application_defaults
     {
-        "inline_translations" => {"enabled" => true,  "description" => "Inline translations",                        },
-        "google_suggestions"  => {"enabled" => false, "description" => "Google translation suggestions",             },
-        "decorations"         => {"enabled" => true,  "description" => "Custom inline decorations",                  },
-        "shortcuts"           => {"enabled" => true,  "description" => "Keyboard shortcuts",                         },
-        "context_rules"       => {"enabled" => true,  "description" => "Language context rules",                     },
-        "language_cases"      => {"enabled" => true,  "description" => "Language cases",                             },
-        "javascript_sdk"      => {"enabled" => false, "description" => "JavaScript SDK",                             },
-        "glossary"            => {"enabled" => true,  "description" => "Application glossary",                       },
-        "forum"               => {"enabled" => true,  "description" => "Translator forums",                          },
-        "awards"              => {"enabled" => true,  "description" => "Translator awards",                          },
-        "admin_translations"  => {"enabled" => true,  "description" => "Translation of administration tools",        },
+        "inline_translations" => {"enabled" => true,  "container_only"=>false, "description" => "Allows translators to submit translations right on the site using a popup window.", },
+        "google_suggestions"  => {"enabled" => false, "container_only"=>false, "description" => "Requests Google for translation suggestions",},
+        "decorations"         => {"enabled" => true,  "container_only"=>false, "description" => "Allows developers to customize the styles of the inline decorations", },
+        "shortcuts"           => {"enabled" => true,  "container_only"=>false, "description" => "Enables keyboard shortcuts for language switching and much more", },
+        "context_rules"       => {"enabled" => true,  "container_only"=>false, "description" => "Enables language context rules for submitting translations based on the token values", },
+        "language_cases"      => {"enabled" => true,  "container_only"=>false, "description" => "Enables language cases for modifying token values based on their place in a sentence", },
+        "javascript_sdk"      => {"enabled" => false, "container_only"=>false, "description" => "Enables JavaScript SDK for translating text from within JavaScript",},
+        "glossary"            => {"enabled" => true,  "container_only"=>false, "description" => "Application glossary",                       },
+        "forum"               => {"enabled" => true,  "container_only"=>false, "description" => "Translator forums",                          },
+        "awards"              => {"enabled" => true,  "container_only"=>false, "description" => "Translator awards",                          },
+        "admin_translations"  => {"enabled" => true,  "container_only"=>true,  "description" => "Enables inline translations of the administration tools", },
+        "open_registration"   => {"enabled" => true,  "container_only"=>true,  "description" => "Allow anyone to register as translator. If disabled, translators will be able to join by invitation only.",     },
     }
   end
 

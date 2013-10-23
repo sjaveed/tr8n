@@ -27,6 +27,10 @@ class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
     @translators = selected_application.translators.page(page).per(per_page)
   end
 
+  def invitations
+    @invitations = Tr8n::Requests::InviteTranslator.where(:application_id => selected_application.id).order("created_at desc").page(page).per(per_page)
+  end
+
   def invite_wizard
     if request.post?
       emails = params[:emails].split(",")

@@ -84,7 +84,7 @@ module Tr8n
     def self.init_container_application
       puts "Initializing container application..."
 
-      app = Tr8n::Application.find_by_key("default") || Tr8n::Application.create(:key => "default", :name => Tr8n::Config.site_title, :default_language => Tr8n::Language.by_locale("en-US"))
+      app = Tr8n::Application.find_by_key("default") || Tr8n::Application.create(:key => "default", :name => "Tr8n Translation Service", :default_language => Tr8n::Language.by_locale("en-US"))
 
       # setup for base url
       [Tr8n::Config.base_url, "http://localhost", "http://127.0.0.1"].each do |url|

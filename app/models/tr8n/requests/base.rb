@@ -73,6 +73,7 @@ class Tr8n::Requests::Base < ActiveRecord::Base
 
     event :mark_as_delivered do
       transitions :from => :new,            :to => :delivered
+      transitions :from => :rejected,       :to => :delivered
     end
 
     event :mark_as_viewed do
@@ -82,17 +83,19 @@ class Tr8n::Requests::Base < ActiveRecord::Base
     event :mark_as_accepted do
       transitions :from => :new,            :to => :accepted
       transitions :from => :delivered,      :to => :accepted
-      transitions :sent => :viewed,         :to => :accepted
+      transitions :from => :viewed,         :to => :accepted
     end
 
     event :mark_as_rejected do
       transitions :from => :delivered,      :to => :rejected
+      transitions :from => :viewed,         :to => :rejected
+      transitions :from => :new,            :to => :rejected
     end
 
     event :mark_as_canceled do
       transitions :from => :new,            :to => :canceled
       transitions :from => :delivered,      :to => :canceled
-      transitions :sent => :viewed,         :to => :canceled
+      transitions :from => :viewed,         :to => :canceled
     end
   end
 
@@ -116,7 +119,7 @@ class Tr8n::Requests::Base < ActiveRecord::Base
 
   def deliver(opts = {})
     Tr8n::Mailer.deliver(Tr8n::RequestContext.container_application, email_keyword, email, email_tokens)
-    mark_as_delivered
+    mark_as_delivered!
   end
 
   def save_and_deliver(opts = {})

@@ -180,7 +180,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       data_tokens.each do |token|
         lbl = token.prepare_label_for_translator(lbl, self.language)
       end
-      lbl.gsub("\n", '<br>').html_safe
+      CGI::escapeHTML(lbl).gsub("\n", '<br>').html_safe
     end
   end
 

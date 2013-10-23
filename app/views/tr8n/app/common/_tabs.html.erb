@@ -21,7 +21,14 @@
             <b class="caret"></b>
           </a>
           <div style="font-size:14px; font-weight:normal; color: #888; padding-left:13px;">
-            <%=selected_application.description%>
+            <div>
+              <%=selected_application.description%>
+            </div>
+            <% if selected_application.url %>
+              <div style="font-size:12px;">
+                <%= link_to(selected_application.url, selected_application.url) %>
+              </div>
+            <% end %>
           </div>
           <ul class="dropdown-menu">
             <% translator_applications.each do |app| %>

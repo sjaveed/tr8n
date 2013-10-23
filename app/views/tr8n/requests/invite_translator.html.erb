@@ -1,4 +1,4 @@
-<div style="padding-top:40px;padding-bottom:40px;">
+<div style="padding-top:40px;padding-bottom:200px;">
   <div class="row">
     <div class="span8 offset2 well">
       <legend><%= tr("Invitation to become a translator") %></legend>
@@ -10,7 +10,7 @@
           <button type="submit" class="btn btn-primary">
             <%=tra("Accept") %>
           </button>
-          <%=tra("or") %> <%=link_to(tra("decline"), "/") %>
+          <%=tra("or") %> <%=link_to(tra("decline"), :action => :reject, :id => @request.key) %>
         </div>
 
       <% end %>

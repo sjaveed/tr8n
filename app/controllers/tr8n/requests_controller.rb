@@ -31,8 +31,18 @@ class Tr8n::RequestsController < Tr8n::BaseController
 
   # general mechanism for request redirection
   def index
-    @request.mark_as_viewed! if @request.delivered?
+    if @request.accepted?
+      trfn("You have already accepted that request")
+      return redirect_to("/tr8n/app/phrases")
+    end
+
+    @request.mark_as_viewed! if @request.delivered? or  @request.new?
     redirect_to(@request.destination_url)
+  end
+
+  def reject
+    @request.mark_as_rejected! if @request.delivered? or  @request.new? or @request.viewed?
+    redirect_to(Tr8n::Config.default_url)
   end
 
   def invite_translator

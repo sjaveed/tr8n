@@ -54,7 +54,7 @@ class Tr8n::Requests::InviteTranslator < Tr8n::Requests::Base
   def email_tokens
     hash = {
         "user"                  => from.name,
-        "application_name"      => application.name,
+        "application"           => application.name,
         "application_logo_url"  => application.logo_url,
         "languages"             => language_names,
         "link"                  => lander_url

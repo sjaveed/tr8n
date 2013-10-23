@@ -1,0 +1,16 @@
+{
+  "keyword": "invite_translator",
+  "locale": "en-US",
+  "name": "Translators Join Email",
+  "description": "This email is sent when app administrator invites translators to join the application.",
+  "subject": "{% tr %} {user} needs your help! {% endtr %} ",
+  "html_body": "<p>{% tr %} {user} is requesting your help to translate {application} application. {% endtr %}</p>\n\n{% if message %}\n<p style=\"padding:20px;\"><i>\n    {{message}}\n</i></p>\n{% endif %}\n\n<p>{% tr %} Use the following link to view and accept {user}'s request: {% endtr %}</p>\n\n<p style=\"padding-top:20px;\">\n    <a href=\"{{ link }}\" style=\"text-decoration:none\">{% tr %}View request{% endtr %}</a>\n</p>",
+  "text_body": "{% tr %} {user} is requesting your help to translate {application} application. {% endtr %}\n\n   {{message}}\n\n{% tr %} Use the following link to view and accept {user}'s request: {% endtr %}\n\n{{ link }}\n",
+  "tokens": {
+    "user": "Berk",
+    "application": "MyHeritage Translation Services",
+    "link": "http://localhost:3000/tr8n/requests/signup/123456",
+    "message": "Please help us"
+  },
+  "layout": "default"
+}

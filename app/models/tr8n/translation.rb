@@ -214,7 +214,7 @@ class Tr8n::Translation < ActiveRecord::Base
   end
 
   def sanitized_label
-    @sanitized_label ||= label.gsub("\n", '<br>').html_safe
+    @sanitized_label ||= CGI::escapeHTML(label).gsub("\n", '<br>').html_safe
   end
 
   def clean?

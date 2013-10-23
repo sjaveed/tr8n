@@ -1,0 +1,76 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Translator Invitations") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Translator Invitations") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("This section allows you to view the invitations you sent out to your translators.") %>
+      </div>
+
+      <div class="tr8n_text_align_right">
+        <%=link_to(tra("Invite Translators"), {:action => :invite_wizard}, {"class" => "btn btn-small btn-primary", "data-toggle" => "dynamic_wizard"})%>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <%= tr8n_paginator_tag(@invitations, :subject => 'invitation') %>
+
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th><%=tra("Email") %></th>
+          <th><%=tra("Languages") %></th>
+          <th><%=tra("Sent By") %></th>
+          <th><%=tra("Sent On") %></th>
+          <th><%=tra("Status") %></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @invitations.each do |invitation| %>
+          <tr>
+            <td style="">
+              <% if invitation.viewed? %>
+                <%=image_tag("tr8n/icons/email_open.png", :style=>"height:16px;") %> &nbsp;
+              <% elsif invitation.accepted? %>
+                 <%=image_tag("tr8n/icons/email_open_image.png", :style=>"height:16px;") %> &nbsp;
+              <% elsif invitation.rejected? %>
+                <%=image_tag("tr8n/icons/email_delete.png", :style=>"height:16px;") %> &nbsp;
+              <% else %>
+                <%=image_tag("tr8n/icons/email_go.png", :style=>"height:16px;") %> &nbsp;
+              <% end %>
+              <%= invitation.email %>
+            </td>
+            <td>
+              <%= invitation.language_names.join(", ") %>
+            </td>
+            <td>
+              <%= invitation.from.name %>
+            </td>
+            <td>
+              <%= invitation.created_at.tr(:verbose) %>
+            </td>
+            <td>
+              <%= invitation.state %>
+            </td>
+            <td style="text-align:right">
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+<% end %>

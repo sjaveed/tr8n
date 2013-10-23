@@ -43,6 +43,11 @@
             <label for="application[description]"><%=tra("Description:")%></label>
             <%=f.text_area(:description, :placeholder => "Enter description", :class => "form-control input-block-level", :style => "height:90px;") %>
           </div>
+
+          <div class="form-group">
+            <label for="application[name]"><%=tra("Website Url:")%></label>
+            <%=f.text_field(:url, :placeholder => "Enter url", :class => "form-control input-block-level") %>
+          </div>
         </div>
 
         <div class="row" style="padding-top:30px;">

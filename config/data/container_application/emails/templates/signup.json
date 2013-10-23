@@ -6,9 +6,6 @@
   "subject": "{% tr %}Complete your registration with {application} {% endtr %}",
   "html_body": "<p>{% tr %} Please use the following link to complete your registration with {application}: {% endtr %}</p>\n\n<p style=\"padding-top:20px;\">\n    <a href=\"{{ link }}\" style=\"text-decoration:none\">{% tr %}Complete your registration{% endtr %}</a>\n</p>",
   "text_body": "{% tr %} Please use the following link to complete your registration with MyHeritage Translation Services: {% endtr %}\n\n{{ link }}\n",
-  "tokens": {
-    "application": "MyHeritage Translation Services",
-    "link": "http://localhost:3000/tr8n/requests/signup/123456"
-  },
+  "tokens": {"application":"MyHeritage Translation Services","link":"http://localhost:3000/tr8n/requests/signup/123456"},
   "layout": "default"
 }

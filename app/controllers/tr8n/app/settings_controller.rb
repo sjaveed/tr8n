@@ -27,6 +27,7 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     if request.post?
       selected_application.name = params[:application][:name]
       selected_application.description = params[:application][:description]
+      selected_application.url = params[:application][:url]
       selected_application.threshold = params[:application][:threshold]
       selected_application.translator_level = params[:application][:translator_level]
       selected_application.default_language = Tr8n::Language.by_locale(params["default_locale"])

@@ -36,9 +36,13 @@
         </thead>
         <tbody>
         <% Tr8n::Feature.by_object(selected_application).each do |key, data| %>
+          <% next if data["container_only"] %>
           <tr>
             <td>
-              <%=tra(data["description"])%>
+              <div style="font-weight:bold"><%=key%></div>
+              <div style="color:#888">
+                <%=tra(data["description"])%>
+              </div>
             </td>
             <td>
               <div class="make-switch switch_<%=key%>" data-on="primary" data-off="info">
@@ -61,6 +65,52 @@
       </table>
 
     </div>
+
+    <% if selected_application.default? %>
+      <div class="section_title">
+        <%=tra("Special {application} Features", :application => selected_application.name) %>
+      </div>
+      <div class="section">
+
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th><%=tra("Feature") %></th>
+            <th style="width:150px"><%=tra("Enable/Disable") %></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% Tr8n::Feature.by_object(selected_application).each do |key, data| %>
+            <% next unless data["container_only"] %>
+            <tr>
+              <td>
+                <div style="font-weight:bold"><%=key%></div>
+                <div style="color:#888">
+                  <%=tra(data["description"])%>
+                </div>
+              </td>
+              <td>
+                <div class="make-switch switch_<%=key%>" data-on="primary" data-off="info">
+                  <input type="checkbox" <%= "checked" if data["enabled"] %> >
+                </div>
+                <script>
+                  (function() {
+                    $('.switch_<%=key%>').on('switch-change', function (e, data) {
+                      $.ajax({
+                        url: "/tr8n/app/settings/toggle_feature?key=<%=key%>&flag=" + data.value
+                      }).done(function() {
+                          });
+                    });
+                  })();
+                </script>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+
+      </div>
+    <% end %>
 
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>

@@ -8,18 +8,6 @@
       <% if self? %>
         <%=tra("Your Dashboard") %>
       <% else %>
-        <div style="<%=tr8n_style_attribute_tag('float', 'right')%>; font-size:12px;">
-          <%
-            links = []
-            links << link_to("view profile", @translator.link)
-            if Tr8n::TranslatorFollowing.following_for(tr8n_current_translator, @translator)
-              links << link_to("unfollow", :controller => "/tr8n/translator/dashboard", :action => :unfollow, :translator_id => @translator.id)
-            else
-              links << link_to("follow", :controller => "/tr8n/translator/dashboard", :action => :follow, :translator_id => @translator.id)
-            end
-          %>
-          <%=links.join(" | ").html_safe %>
-        </div>
         <%=tra("{user::pos} Dashboard", nil, :user => [@translator, :name]) %>
       <% end %>
     </div>
@@ -62,6 +50,16 @@
                   </td>
                 </tr>
               </table>
+
+              <div style="padding-top:30px;">
+                <% unless self? %>
+                  <% if Tr8n::TranslatorFollowing.following_for(tr8n_current_translator, @translator) %>
+                    <%= link_to(tra("Stop Following {user::pos} Activity", :user => @translator), {:controller => "/tr8n/translator/dashboard", :action => :unfollow, :translator_id => @translator.id}, {:class=>"btn btn-primary"}) %>
+                  <% else %>
+                     <%= link_to(tra("Follow {user::pos} Activity", :user => @translator), {:controller => "/tr8n/translator/dashboard", :action => :follow, :translator_id => @translator.id}, {:class=>"btn btn-primary"}) %>
+                  <% end %>
+                <% end %>
+              </div>
             </td>
 
             <td style="width:50%;padding-top:3px;padding-right:3px;">

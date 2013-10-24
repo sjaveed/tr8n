@@ -21,55 +21,57 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::SyncLog Schema Information
+#-- Tr8n::Logs::ExchangeSync Schema Information
 #
 # Table name: tr8n_sync_logs
 #
-#  id                       INTEGER     not null, primary key
-#  started_at               datetime    
-#  finished_at              datetime    
-#  keys_sent                integer     
-#  translations_sent        integer     
-#  keys_received            integer     
-#  translations_received    integer     
-#  created_at               datetime    not null
-#  updated_at               datetime    not null
+#  id                       integer                        not null, primary key
+#  started_at               timestamp without time zone    
+#  finished_at              timestamp without time zone    
+#  keys_sent                integer                        
+#  translations_sent        integer                        
+#  keys_received            integer                        
+#  translations_received    integer                        
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
+#  application_id           integer                        
+#  data                     text                           
+#  type                     character varying(255)         
 #
 # Indexes
 #
+#  tr8n_sl_a_id    (application_id) 
 #
 #++
 
-class Tr8n::SyncLog < ActiveRecord::Base
-  self.table_name = :tr8n_sync_logs
-  attr_accessible :started_at, :finished_at, :keys_sent, :translations_sent, :keys_received, :translations_received
+class Tr8n::Logs::ExchangeSync < Tr8n::Logs::Sync
 
   def self.sync(opts = {})
-    sync_log = Tr8n::SyncLog.create(:started_at => Time.now, 
-                                    :keys_received => 0, :translations_received => 0, 
-                                    :keys_sent => 0, :translations_sent => 0)
+    sync_log = create(:started_at => Time.now,
+                      :keys_received => 0, :translations_received => 0,
+                      :keys_sent => 0, :translations_sent => 0)
     sync_log.sync(opts)
     sync_log
   end
-  
+
   def sync(opts = {})
     access_token
 
     translation_keys = []
     batch_count = 0
-    
+
     log("Begin synchronization process...")
     log("Pushing keys...")
-    
+
     conditions = "synced_at is null or updated_at > synced_at"
     conditions = nil if opts[:force]
 
     # STDOUT.sync = true
-    
+
     languages = Tr8n::Language.enabled_languages
     total_key_count = Tr8n::TranslationKey.count(:conditions => conditions)
     log("#{total_key_count} translation keys will be synchronized with the remote server in chunks of #{batch_size} keys...")
-    
+
     Tr8n::TranslationKey.find_each(:conditions => conditions, :batch_size => batch_size) do |key|
       self.keys_sent += 1
       tkey_hash = key.to_api_hash(:languages => languages)
@@ -77,11 +79,11 @@ class Tr8n::SyncLog < ActiveRecord::Base
       translation_keys << tkey_hash
 
       key.mark_as_synced!
-      
+
       # if sync_hash["label"] == "you have {count||message}"
       #   payload << sync_hash
-      # end  
-      
+      # end
+
       if translation_keys.size >= Tr8n::Config.synchronization_batch_size
         batch_count += 1
         push_translations(translation_keys, opts)
@@ -95,11 +97,11 @@ class Tr8n::SyncLog < ActiveRecord::Base
       push_translations(translation_keys, opts)
       log("Sent #{self.keys_sent} keys with #{self.translations_sent} translations.")
     end
-    
+
     log("Done. Sent #{total_key_count} keys with #{self.translations_sent} translations in #{batch_count} calls.")
 
     batch_count = 0
-    
+
     unless opts[:force]
       log("Pulling translations...")
 
@@ -113,11 +115,11 @@ class Tr8n::SyncLog < ActiveRecord::Base
 
     self.finished_at = Time.now
     save
-  rescue Exception => ex  
+  rescue Exception => ex
     log_error(ex)
     # pp ex.backtrace
   end
-  
+
   def access_token
     @access_token ||= begin
       uri = URI.parse("#{Tr8n::Config.synchronization_server}/platform/oauth/request_token?client_id=#{Tr8n::Config.synchronization_key}&client_secret=#{Tr8n::Config.synchronization_secret}&grant_type=client_credentials")
@@ -127,26 +129,26 @@ class Tr8n::SyncLog < ActiveRecord::Base
       data["access_token"]
     end
   end
-  
+
   def batch_size
     @batch_size ||= Tr8n::Config.synchronization_batch_size
   end
-  
-  def translator 
+
+  def translator
     @translator ||= Tr8n::Config.system_translator
   end
-  
+
   def push_translations(payload, opts = {})
     uri = URI.parse("#{Tr8n::Config.synchronization_server}/api/application/sync")
     params = {:method => "push", :batch_size => batch_size, :translation_keys => payload}
-    
+
     req = Net::HTTP::Post.new(uri.path)
     req["Content-Type"] = "application/json"
     req["Authorization"] = "Bearer #{access_token}"
     req.body = params.to_json
 
     # pp payload
-    
+
     response = Net::HTTP.start(uri.host, uri.port) do |http|
       http.request(req)
     end
@@ -154,15 +156,15 @@ class Tr8n::SyncLog < ActiveRecord::Base
     if response.is_a?(Net::HTTPInternalServerError)
       raise Exception.new("Failed to synchronize keys: #{response.body}")
     end
-    
+
     raise Tr8n::Exception.new("Synchronization failed") unless response.is_a?(Net::HTTPOK)
-    
+
     data = HashWithIndifferentAccess.new(JSON.parse(response.body))
     return unless data[:translation_keys]
-    
+
     # pp data
     self.keys_received += data[:translation_keys].size
-    
+
     data[:translation_keys].each do |tkey_hash|
       # pp tkey_hash
       self.translations_received += tkey_hash["translations"].size if tkey_hash["translations"]
@@ -174,7 +176,7 @@ class Tr8n::SyncLog < ActiveRecord::Base
     uri = URI.parse("#{Tr8n::Config.synchronization_server}/api/application/sync")
     params = {:method=>"pull", :batch_size => batch_size}
     params[:force] = true if opts[:force]
-    
+
     req = Net::HTTP::Post.new(uri.path)
     req["Content-Type"] = "application/json"
     req["Authorization"] = "Bearer #{access_token}"
@@ -187,23 +189,23 @@ class Tr8n::SyncLog < ActiveRecord::Base
     if response.is_a?(Net::HTTPInternalServerError)
       raise Exception.new("Failed to download translations: #{response.body}")
     end
-    
+
     raise Tr8n::Exception.new("Synchronization failed") unless response.is_a?(Net::HTTPOK)
-    
+
     data = HashWithIndifferentAccess.new(JSON.parse(response.body))
     return 0 unless data[:translation_keys]
 
     self.keys_received += data[:translation_keys].size
-    
+
     data[:translation_keys].each do |tkey_hash|
       self.translations_received += tkey_hash["translations"].size if tkey_hash["translations"]
       tkey, translations = Tr8n::TranslationKey.create_from_sync_hash(tkey_hash, translator)
       tkey.mark_as_synced!
     end
-    
+
     data[:translation_keys].size
   end
-  
+
   def log(msg)
     pp "#{Time.now}: #{msg}"
   end
@@ -211,5 +213,5 @@ class Tr8n::SyncLog < ActiveRecord::Base
   def log_error(msg)
     pp "Error: #{msg}"
   end
-  
+
 end

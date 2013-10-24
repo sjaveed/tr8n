@@ -21,29 +21,29 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Requests::TranslatorApplication Schema Information
+#-- Tr8n::Requests::InviteTranslator Schema Information
 #
 # Table name: tr8n_requests
 #
-#  id                INTEGER         not null, primary key
-#  type              varchar(255)    
-#  state             varchar(255)    
-#  key               varchar(255)    
-#  email             varchar(255)    
-#  from_id           integer         
-#  to_id             integer         
-#  data              text            
-#  expires_at        datetime        
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
-#  application_id    integer         
+#  id                integer                        not null, primary key
+#  type              character varying(255)         
+#  state             character varying(255)         
+#  key               character varying(255)         
+#  email             character varying(255)         
+#  from_id           integer                        
+#  to_id             integer                        
+#  data              text                           
+#  expires_at        timestamp without time zone    
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  application_id    integer                        
 #
 # Indexes
 #
-#  tr8n_req_t_a_e                                   (type, application_id, email) 
-#  index_tr8n_requests_on_to_id                     (to_id) 
 #  index_tr8n_requests_on_from_id                   (from_id) 
+#  index_tr8n_requests_on_to_id                     (to_id) 
 #  index_tr8n_requests_on_type_and_key_and_state    (type, key, state) 
+#  tr8n_req_t_a_e                                   (type, application_id, email) 
 #
 #++
 

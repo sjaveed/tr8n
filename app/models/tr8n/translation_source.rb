@@ -25,18 +25,18 @@
 #
 # Table name: tr8n_translation_sources
 #
-#  id                       INTEGER         not null, primary key
-#  application_id           integer         
-#  translation_domain_id    integer         
-#  parent_id                integer         
-#  source                   varchar(255)    
-#  completeness             integer         
-#  name                     varchar(255)    
-#  description              varchar(255)    
-#  url                      varchar(255)    
-#  key_count                integer         
-#  created_at               datetime        not null
-#  updated_at               datetime        not null
+#  id                       integer                        not null, primary key
+#  application_id           integer                        
+#  translation_domain_id    integer                        
+#  parent_id                integer                        
+#  source                   character varying(255)         
+#  completeness             integer                        
+#  name                     character varying(255)         
+#  description              character varying(255)         
+#  url                      character varying(255)         
+#  key_count                integer                        
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
 #
 # Indexes
 #

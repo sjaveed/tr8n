@@ -25,16 +25,18 @@
 #
 # Table name: tr8n_applications
 #
-#  id                     INTEGER         not null, primary key
-#  key                    varchar(255)    
-#  secret                 varchar(255)    
-#  name                   varchar(255)    
-#  description            varchar(255)    
-#  created_at             datetime        not null
-#  updated_at             datetime        not null
-#  version                varchar(255)    
-#  definition             text            
-#  default_language_id    integer         
+#  id                     integer                        not null, primary key
+#  key                    character varying(255)         
+#  secret                 character varying(255)         
+#  name                   character varying(255)         
+#  description            character varying(255)         
+#  created_at             timestamp without time zone    not null
+#  updated_at             timestamp without time zone    not null
+#  version                character varying(255)         
+#  definition             text                           
+#  default_language_id    integer                        
+#  type                   character varying(255)         
+#  url                    character varying(255)         
 #
 # Indexes
 #

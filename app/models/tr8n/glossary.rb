@@ -25,18 +25,18 @@
 #
 # Table name: tr8n_glossary
 #
-#  id                INTEGER         not null, primary key
-#  keyword           varchar(255)    
-#  description       text            
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
-#  application_id    integer         
-#  language_id       integer         
+#  id                integer                        not null, primary key
+#  keyword           character varying(255)         
+#  description       text                           
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  application_id    integer                        
+#  language_id       integer                        
 #
 # Indexes
 #
-#  tr8n_g_a                          (application_id) 
 #  index_tr8n_glossary_on_keyword    (keyword) 
+#  tr8n_g_a                          (application_id) 
 #
 #++
 

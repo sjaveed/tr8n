@@ -25,19 +25,19 @@
 #
 # Table name: tr8n_language_forum_messages
 #
-#  id                         INTEGER     not null, primary key
-#  language_id                integer     not null
-#  language_forum_topic_id    integer     not null
-#  translator_id              integer     not null
-#  message                    text        not null
-#  created_at                 datetime    not null
-#  updated_at                 datetime    not null
+#  id                         integer                        not null, primary key
+#  language_id                integer                        not null
+#  language_forum_topic_id    integer                        not null
+#  translator_id              integer                        not null
+#  message                    text                           not null
+#  created_at                 timestamp without time zone    not null
+#  updated_at                 timestamp without time zone    not null
 #
 # Indexes
 #
+#  tr8n_lfm_l     (language_id) 
 #  tr8n_lfm_ll    (language_id, language_forum_topic_id) 
 #  tr8n_lfm_t     (translator_id) 
-#  tr8n_lfm_l     (language_id) 
 #
 #++
 

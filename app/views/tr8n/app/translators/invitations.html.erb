@@ -23,7 +23,7 @@
     </div>
 
     <div class="section">
-      <%= tr8n_paginator_tag(@invitations, :subject => 'invitation') %>
+      <%= tr8n_paginator_tag(@invitations, :subject => 'invitation') if @invitations.any? %>
 
       <table class="table table-hover">
         <thead>

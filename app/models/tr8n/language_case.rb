@@ -25,22 +25,22 @@
 #
 # Table name: tr8n_language_cases
 #
-#  id               INTEGER         not null, primary key
-#  language_id      integer         not null
-#  translator_id    integer         
-#  keyword          varchar(255)    
-#  latin_name       varchar(255)    
-#  native_name      varchar(255)    
-#  description      text            
-#  application      varchar(255)    
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  language_id      integer                        not null
+#  translator_id    integer                        
+#  keyword          character varying(255)         
+#  latin_name       character varying(255)         
+#  native_name      character varying(255)         
+#  description      text                           
+#  application      character varying(255)         
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #
+#  tr8n_lc_l     (language_id) 
 #  tr8n_lc_lk    (language_id, keyword) 
 #  tr8n_lc_lt    (language_id, translator_id) 
-#  tr8n_lc_l     (language_id) 
 #
 #++
 

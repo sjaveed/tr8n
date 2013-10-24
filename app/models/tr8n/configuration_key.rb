@@ -25,23 +25,25 @@
 #
 # Table name: tr8n_translation_keys
 #
-#  id                   INTEGER         not null, primary key
-#  type                 varchar(255)    
-#  key                  varchar(255)    not null
-#  label                text            not null
-#  description          text            
-#  verified_at          datetime        
-#  translation_count    integer         
-#  admin                boolean         
-#  locale               varchar(255)    
-#  level                integer         default = 0
-#  synced_at            datetime        
-#  created_at           datetime        not null
-#  updated_at           datetime        not null
+#  id                   integer                        not null, primary key
+#  type                 character varying(255)         
+#  key                  character varying(255)         not null
+#  label                text                           not null
+#  description          text                           
+#  verified_at          timestamp without time zone    
+#  translation_count    integer                        
+#  admin                boolean                        
+#  locale               character varying(255)         
+#  level                integer                        default = 0
+#  synced_at            timestamp without time zone    
+#  created_at           timestamp without time zone    not null
+#  updated_at           timestamp without time zone    not null
+#  master_key           character varying(255)         
 #
 # Indexes
 #
-#  tr8n_tk_k    (key) UNIQUE
+#  tr8n_tk_k     (key) UNIQUE
+#  tr8n_tk_mk    (master_key) 
 #
 #++
 

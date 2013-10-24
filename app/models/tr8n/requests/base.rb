@@ -25,25 +25,25 @@
 #
 # Table name: tr8n_requests
 #
-#  id                INTEGER         not null, primary key
-#  type              varchar(255)    
-#  state             varchar(255)    
-#  key               varchar(255)    
-#  email             varchar(255)    
-#  from_id           integer         
-#  to_id             integer         
-#  data              text            
-#  expires_at        datetime        
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
-#  application_id    integer         
+#  id                integer                        not null, primary key
+#  type              character varying(255)         
+#  state             character varying(255)         
+#  key               character varying(255)         
+#  email             character varying(255)         
+#  from_id           integer                        
+#  to_id             integer                        
+#  data              text                           
+#  expires_at        timestamp without time zone    
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  application_id    integer                        
 #
 # Indexes
 #
-#  tr8n_req_t_a_e                                   (type, application_id, email) 
-#  index_tr8n_requests_on_to_id                     (to_id) 
 #  index_tr8n_requests_on_from_id                   (from_id) 
+#  index_tr8n_requests_on_to_id                     (to_id) 
 #  index_tr8n_requests_on_type_and_key_and_state    (type, key, state) 
+#  tr8n_req_t_a_e                                   (type, application_id, email) 
 #
 #++
 
@@ -60,6 +60,9 @@ class Tr8n::Requests::Base < ActiveRecord::Base
   before_create :generate_key
 
   serialize :data
+
+  include Tr8n::Modules::DataAttributes
+  extend Tr8n::Modules::DataAttributes::ClassMethods
 
   include AASM
 
@@ -97,12 +100,6 @@ class Tr8n::Requests::Base < ActiveRecord::Base
       transitions :from => :delivered,      :to => :canceled
       transitions :from => :viewed,         :to => :canceled
     end
-  end
-
-  def self.data_attributes(*attrs)
-    @data_attributes ||= []
-    @data_attributes += attrs.collect{|a| a.to_sym} unless attrs.nil?
-    @data_attributes
   end
 
   def self.find_or_create(email)
@@ -157,27 +154,6 @@ class Tr8n::Requests::Base < ActiveRecord::Base
   def accept(user)
     self.to = user
     mark_as_accepted!
-  end
-
-  def method_missing(meth, *args, &block)
-    self.data ||= {}
-
-    method_name = meth.to_s
-    method_suffix = method_name[-1, 1]
-    method_key = method_name.to_sym
-    if ['=', '?'].include?(method_suffix)
-      method_key = method_name[0..-2].to_sym
-    end
-
-    if self.class.data_attributes && self.class.data_attributes.index(method_key)
-      if method_name[-1, 1] == '='
-        self.data[method_key] = args.first
-        return self.data[method_key]
-      end
-      return self.data[method_key]
-    end
-
-    super
   end
 
   protected

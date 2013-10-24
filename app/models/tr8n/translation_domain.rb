@@ -25,13 +25,13 @@
 #
 # Table name: tr8n_translation_domains
 #
-#  id                INTEGER         not null, primary key
-#  name              varchar(255)    
-#  description       varchar(255)    
-#  application_id    integer         
-#  source_count      integer         default = 0
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
+#  id                integer                        not null, primary key
+#  name              character varying(255)         
+#  description       character varying(255)         
+#  application_id    integer                        
+#  source_count      integer                        default = 0
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
 #
 # Indexes
 #

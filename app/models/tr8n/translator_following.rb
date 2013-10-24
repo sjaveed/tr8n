@@ -25,12 +25,12 @@
 #
 # Table name: tr8n_translator_following
 #
-#  id               INTEGER         not null, primary key
-#  translator_id    integer         
-#  object_id        integer         
-#  object_type      varchar(255)    
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  translator_id    integer                        
+#  object_id        integer                        
+#  object_type      character varying(255)         
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #

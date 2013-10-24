@@ -25,24 +25,24 @@
 #
 # Table name: tr8n_translations
 #
-#  id                    INTEGER       not null, primary key
-#  translation_key_id    integer       not null
-#  language_id           integer       not null
-#  translator_id         integer       not null
-#  label                 text          not null
-#  rank                  integer       default = 0
-#  approved_by_id        integer(8)    
-#  rules                 text          
-#  synced_at             datetime      
-#  created_at            datetime      not null
-#  updated_at            datetime      not null
-#  context               text          
+#  id                    integer                        not null, primary key
+#  translation_key_id    integer                        not null
+#  language_id           integer                        not null
+#  translator_id         integer                        not null
+#  label                 text                           not null
+#  rank                  integer                        default = 0
+#  approved_by_id        bigint                         
+#  rules                 text                           
+#  synced_at             timestamp without time zone    
+#  created_at            timestamp without time zone    not null
+#  updated_at            timestamp without time zone    not null
+#  context               text                           
 #
 # Indexes
 #
 #  tr8n_trn_c       (created_at) 
-#  tr8n_trn_tktl    (translation_key_id, translator_id, language_id) 
 #  tr8n_trn_t       (translator_id) 
+#  tr8n_trn_tktl    (translation_key_id, translator_id, language_id) 
 #
 #++
 

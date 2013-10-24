@@ -25,14 +25,14 @@
 #
 # Table name: tr8n_countries
 #
-#  id                INTEGER         not null, primary key
-#  code              varchar(255)    
-#  english_name      varchar(255)    
-#  native_name       varchar(255)    
-#  telephone_code    varchar(255)    
-#  currency          varchar(255)    
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
+#  id                integer                        not null, primary key
+#  code              character varying(255)         
+#  english_name      character varying(255)         
+#  native_name       character varying(255)         
+#  telephone_code    character varying(255)         
+#  currency          character varying(255)         
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
 #
 # Indexes
 #

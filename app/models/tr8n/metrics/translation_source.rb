@@ -25,15 +25,15 @@
 #
 # Table name: tr8n_translation_source_metrics
 #
-#  id                       INTEGER     not null, primary key
-#  translation_source_id    integer     not null
-#  language_id              integer     not null
-#  key_count                integer     default = 0
-#  locked_key_count         integer     default = 0
-#  translation_count        integer     default = 0
-#  translated_key_count     integer     default = 0
-#  created_at               datetime    not null
-#  updated_at               datetime    not null
+#  id                       integer                        not null, primary key
+#  translation_source_id    integer                        not null
+#  language_id              integer                        not null
+#  key_count                integer                        default = 0
+#  locked_key_count         integer                        default = 0
+#  translation_count        integer                        default = 0
+#  translated_key_count     integer                        default = 0
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
 #
 # Indexes
 #

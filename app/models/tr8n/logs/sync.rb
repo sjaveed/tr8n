@@ -21,37 +21,39 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::TranslationSourceLanguage Schema Information
+#-- Tr8n::Logs::Sync Schema Information
 #
-# Table name: tr8n_translation_source_languages
+# Table name: tr8n_sync_logs
 #
 #  id                       integer                        not null, primary key
-#  language_id              integer                        
-#  translation_source_id    integer                        
+#  started_at               timestamp without time zone    
+#  finished_at              timestamp without time zone    
+#  keys_sent                integer                        
+#  translations_sent        integer                        
+#  keys_received            integer                        
+#  translations_received    integer                        
 #  created_at               timestamp without time zone    not null
 #  updated_at               timestamp without time zone    not null
+#  application_id           integer                        
+#  data                     text                           
+#  type                     character varying(255)         
 #
 # Indexes
 #
-#  tr8n_tsl_lt    (language_id, translation_source_id) 
+#  tr8n_sl_a_id    (application_id) 
 #
 #++
 
-class Tr8n::TranslationSourceLanguage < ActiveRecord::Base
-  self.table_name = :tr8n_translation_source_languages
-  attr_accessible :language_id, :translation_source_id
-  attr_accessible :translation_source, :language
+class Tr8n::Logs::Sync < ActiveRecord::Base
+  self.table_name = :tr8n_sync_logs
 
-  belongs_to  :translation_source,  :class_name => "Tr8n::TranslationSource"
-  belongs_to  :language,  :class_name => "Tr8n::Language"
-  
-  def self.find_or_create(translation_source, language = Tr8n::RequestContext.current_language)
-    source_lang = where("translation_source_id = ? and language_id = ?", translation_source.id, language.id).first
-    source_lang ||= create(:translation_source => translation_source, :language => language)
-  end  
-  
-  def self.touch(translation_source, language = Tr8n::RequestContext.current_language)
-    find_or_create(translation_source, language).touch
-  end
-  
+  attr_accessible :started_at, :finished_at, :keys_sent, :translations_sent, :keys_received, :translations_received, :application, :data
+
+  belongs_to :application
+
+  serialize :data
+
+  include Tr8n::Modules::DataAttributes
+  extend Tr8n::Modules::DataAttributes::ClassMethods
+
 end

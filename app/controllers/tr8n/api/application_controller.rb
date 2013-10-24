@@ -76,7 +76,7 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
   def sync
     ensure_push_enabled
 
-    sync_log = Tr8n::SyncLog.create(:started_at => Time.now, 
+    sync_log = Tr8n::Logs::ExchangeSync.create(:started_at => Time.now,
                                     :keys_received => 0, :translations_received => 0, 
                                     :keys_sent => 0, :translations_sent => 0)
 
@@ -101,8 +101,19 @@ class Tr8n::Api::ApplicationController < Tr8n::Api::BaseController
   end
 
   def translations
-    languages = tr8n_current_application.languages
-    source_ids = tr8n_current_application.sources.collect{|src| src.id}
+    ensure_get
+    ensure_application
+
+    sync_log = Tr8n::Logs::CacheSync.create(:application => application,
+                                              :started_at => Time.now,
+                                              :keys_received => 0, :translations_received => 0,
+                                              :keys_sent => 0, :translations_sent => 0)
+
+    languages = application.languages
+    source_ids = application.sources.collect{|src| src.id}
+
+    sync_log.locales = application.languages.collect{|l| l.locale}
+    sync_log.sources = application.sources.collect{|s| s.source}
 
     @filename = "translations_#{Date.today.to_s(:db)}.json"
     self.response.headers["Content-Type"] ||= 'text/json'
@@ -164,7 +175,7 @@ offset 0;
 
         #GC.start if i % 500==0
       end
-      pp "#{tk} keys and #{t} translations have been sent"
+      sync_log.update_attributes(:keys_sent => tk, :translations_sent => t, :finished_at => Time.now)
     end
   end
 

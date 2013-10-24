@@ -25,35 +25,35 @@
 #
 # Table name: tr8n_translators
 #
-#  id                      INTEGER         not null, primary key
-#  user_id                 integer         
-#  inline_mode             boolean         
-#  blocked                 boolean         
-#  reported                boolean         
-#  voting_power            integer         default = 1
-#  rank                    integer         default = 0
-#  fallback_language_id    integer         
-#  name                    varchar(255)    
-#  gender                  varchar(255)    
-#  email                   varchar(255)    
-#  password                varchar(255)    
-#  mugshot                 varchar(255)    
-#  link                    varchar(255)    
-#  locale                  varchar(255)    
-#  level                   integer         default = 0
-#  manager                 boolean         
-#  last_ip                 varchar(255)    
-#  country_code            varchar(255)    
-#  remote_id               integer         
-#  access_key              varchar(255)    
-#  created_at              datetime        not null
-#  updated_at              datetime        not null
+#  id                      integer                        not null, primary key
+#  user_id                 integer                        
+#  inline_mode             boolean                        
+#  blocked                 boolean                        
+#  reported                boolean                        
+#  voting_power            integer                        default = 1
+#  rank                    integer                        default = 0
+#  fallback_language_id    integer                        
+#  name                    character varying(255)         
+#  gender                  character varying(255)         
+#  email                   character varying(255)         
+#  password                character varying(255)         
+#  mugshot                 character varying(255)         
+#  link                    character varying(255)         
+#  locale                  character varying(255)         
+#  level                   integer                        default = 0
+#  manager                 boolean                        
+#  last_ip                 character varying(255)         
+#  country_code            character varying(255)         
+#  remote_id               integer                        
+#  access_key              character varying(255)         
+#  created_at              timestamp without time zone    not null
+#  updated_at              timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_t_ep    (email, password) 
-#  tr8n_t_e     (email) 
 #  tr8n_t_c     (created_at) 
+#  tr8n_t_e     (email) 
+#  tr8n_t_ep    (email, password) 
 #  tr8n_t_u     (user_id) 
 #
 #++

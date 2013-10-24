@@ -7,6 +7,7 @@
         link_to_unless(controller.action_name == 'tokens', tra("global tokens"), :action => :tokens),
         link_to_unless(controller.action_name == 'shortcuts', tra("shortcuts"), :action => :shortcuts),
         link_to_unless(controller.action_name == 'security', tra("security"), :action => :security),
+        link_to_unless(controller.action_name == 'logs', tra("logs"), :action => :logs),
       ].join(" | ").html_safe
   %>
 </div>

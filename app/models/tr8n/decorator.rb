@@ -25,11 +25,11 @@
 #
 # Table name: tr8n_decorators
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     
-#  css               text        
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
+#  id                integer                        not null, primary key
+#  application_id    integer                        
+#  css               text                           
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
 #
 # Indexes
 #

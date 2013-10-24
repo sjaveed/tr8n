@@ -25,15 +25,15 @@
 #
 # Table name: tr8n_components
 #
-#  id                INTEGER         not null, primary key
-#  application_id    integer         
-#  key               varchar(255)    
-#  state             varchar(255)    
-#  name              varchar(255)    
-#  description       varchar(255)    
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
-#  position          integer         
+#  id                integer                        not null, primary key
+#  application_id    integer                        
+#  key               character varying(255)         
+#  state             character varying(255)         
+#  name              character varying(255)         
+#  description       character varying(255)         
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  position          integer                        
 #
 # Indexes
 #

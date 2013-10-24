@@ -23,21 +23,42 @@
 
 module Tr8n
   module Modules
-    module Logger
+    module DataAttributes
 
-      def debug(msg)
-        Tr8n::Logger.debug(msg)
+      module ClassMethods
+
+        def data_attributes(*attrs)
+          @data_attributes ||= []
+          @data_attributes += attrs.collect{|a| a.to_sym} unless attrs.nil?
+          @data_attributes
+        end
+
       end
 
-      def info(msg)
-        Tr8n::Logger.info(msg)
-      end
+      def method_missing(meth, *args, &block)
+        self.data ||= {}
 
-      def error(msg)
-        Tr8n::Logger.error(msg)
+        method_name = meth.to_s
+        method_suffix = method_name[-1, 1]
+        method_key = method_name.to_sym
+        if ['=', '?'].include?(method_suffix)
+          method_key = method_name[0..-2].to_sym
+        end
+
+        if self.class.data_attributes && self.class.data_attributes.index(method_key)
+          if method_name[-1, 1] == '='
+            self.data[method_key] = args.first
+            return self.data[method_key]
+          end
+          return self.data[method_key]
+        end
+
+        super
       end
 
     end
   end
 end
+
+
 

@@ -25,14 +25,14 @@
 #
 # Table name: will_filter_filters
 #
-#  id                  INTEGER         not null, primary key
-#  type                varchar(255)    
-#  name                varchar(255)    
-#  data                text            
-#  user_id             integer         
-#  model_class_name    varchar(255)    
-#  created_at          datetime        not null
-#  updated_at          datetime        not null
+#  id                  integer                        not null, primary key
+#  type                character varying(255)         
+#  name                character varying(255)         
+#  data                text                           
+#  user_id             integer                        
+#  model_class_name    character varying(255)         
+#  created_at          timestamp without time zone    not null
+#  updated_at          timestamp without time zone    not null
 #
 # Indexes
 #
@@ -43,7 +43,7 @@
 class Tr8n::Filters::SyncLog < Tr8n::Filters::Base
 
   def model_class
-    Tr8n::SyncLog
+    Tr8n::Logs::Sync
   end
 
 end

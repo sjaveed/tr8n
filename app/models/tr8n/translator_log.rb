@@ -25,21 +25,21 @@
 #
 # Table name: tr8n_translator_logs
 #
-#  id               INTEGER         not null, primary key
-#  translator_id    integer         
-#  user_id          integer(8)      
-#  action           varchar(255)    
-#  action_level     integer         
-#  reason           varchar(255)    
-#  reference        varchar(255)    
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  translator_id    integer                        
+#  user_id          bigint                         
+#  action           character varying(255)         
+#  action_level     integer                        
+#  reason           character varying(255)         
+#  reference        character varying(255)         
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #
 #  tr8n_tl_c    (created_at) 
-#  tr8n_tl_u    (user_id) 
 #  tr8n_tl_t    (translator_id) 
+#  tr8n_tl_u    (user_id) 
 #
 #++
 

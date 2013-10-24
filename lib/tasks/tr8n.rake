@@ -131,6 +131,7 @@ namespace :tr8n do
       puts "Destroyed #{destroy_count} keys..." if destroy_count % 100 == 0
     end
 
+
     t1 = Time.now
 
     puts "Destroyed #{destroy_count} keys"
@@ -146,7 +147,7 @@ namespace :tr8n do
   task :sync => :environment do
     opts = {}
     opts[:force] = true if ENV["force"] == "true"
-    Tr8n::SyncLog.sync(opts)
+    Tr8n::Logs::ExchangeSync.sync(opts)
   end
 
   desc "fix languages"

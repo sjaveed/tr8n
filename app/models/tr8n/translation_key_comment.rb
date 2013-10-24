@@ -25,19 +25,19 @@
 #
 # Table name: tr8n_translation_key_comments
 #
-#  id                    INTEGER     not null, primary key
-#  language_id           integer     not null
-#  translation_key_id    integer     not null
-#  translator_id         integer     not null
-#  message               text        not null
-#  created_at            datetime    not null
-#  updated_at            datetime    not null
+#  id                    integer                        not null, primary key
+#  language_id           integer                        not null
+#  translation_key_id    integer                        not null
+#  translator_id         integer                        not null
+#  message               text                           not null
+#  created_at            timestamp without time zone    not null
+#  updated_at            timestamp without time zone    not null
 #
 # Indexes
 #
+#  tr8n_tkc_l     (language_id) 
 #  tr8n_tkc_lt    (language_id, translation_key_id) 
 #  tr8n_tkc_t     (translator_id) 
-#  tr8n_tkc_l     (language_id) 
 #
 #++
 

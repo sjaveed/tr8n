@@ -25,16 +25,16 @@
 #
 # Table name: tr8n_media
 #
-#  id            INTEGER         not null, primary key
-#  type          varchar(255)    
-#  position      integer         
-#  owner_id      integer         
-#  owner_type    varchar(255)    
-#  keyword       varchar(255)    
-#  path          varchar(255)    
-#  thumbnails    text            
-#  created_at    datetime        not null
-#  updated_at    datetime        not null
+#  id            integer                        not null, primary key
+#  type          character varying(255)         
+#  position      integer                        
+#  owner_id      integer                        
+#  owner_type    character varying(255)         
+#  keyword       character varying(255)         
+#  path          character varying(255)         
+#  thumbnails    text                           
+#  created_at    timestamp without time zone    not null
+#  updated_at    timestamp without time zone    not null
 #
 # Indexes
 #

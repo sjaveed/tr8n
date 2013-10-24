@@ -43,6 +43,10 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
 
   end
 
+  def logs
+    @logs = Tr8n::Logs::Sync.where(:application_id=>selected_application.id).order("created_at desc").page(page).per(per_page)
+  end
+
   def set_default_language
     redirect_back
   end

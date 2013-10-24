@@ -25,20 +25,20 @@
 #
 # Table name: tr8n_country_languages
 #
-#  id             INTEGER     not null, primary key
-#  position       integer     
-#  country_id     integer     
-#  language_id    integer     
-#  official       boolean     
-#  primary        boolean     
-#  population     integer     
-#  created_at     datetime    not null
-#  updated_at     datetime    not null
+#  id             integer                        not null, primary key
+#  position       integer                        
+#  country_id     integer                        
+#  language_id    integer                        
+#  official       boolean                        
+#  primary        boolean                        
+#  population     integer                        
+#  created_at     timestamp without time zone    not null
+#  updated_at     timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_cl_lid    (language_id) 
 #  tr8n_cl_cid    (country_id) 
+#  tr8n_cl_lid    (language_id) 
 #
 #++
 

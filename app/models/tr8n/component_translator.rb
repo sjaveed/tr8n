@@ -25,19 +25,19 @@
 #
 # Table name: tr8n_component_translators
 #
-#  id               INTEGER         not null, primary key
-#  component_id     integer         
-#  translator_id    integer         
-#  language_id      integer         
-#  state            varchar(255)    
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  component_id     integer                        
+#  translator_id    integer                        
+#  language_id      integer                        
+#  state            character varying(255)         
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #
+#  tr8n_comp_trn_comp_id    (component_id) 
 #  tr8n_comp_trn_lang_id    (language_id) 
 #  tr8n_comp_trn_trn_id     (translator_id) 
-#  tr8n_comp_trn_comp_id    (component_id) 
 #
 #++
 

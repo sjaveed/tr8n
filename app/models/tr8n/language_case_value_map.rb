@@ -25,19 +25,19 @@
 #
 # Table name: tr8n_language_case_value_maps
 #
-#  id               INTEGER         not null, primary key
-#  keyword          varchar(255)    not null
-#  language_id      integer         not null
-#  translator_id    integer         
-#  map              text            
-#  reported         boolean         
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  keyword          character varying(255)         not null
+#  language_id      integer                        not null
+#  translator_id    integer                        
+#  map              text                           
+#  reported         boolean                        
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_lcvm_t     (translator_id) 
 #  tr8n_lcvm_kl    (keyword, language_id) 
+#  tr8n_lcvm_t     (translator_id) 
 #
 #++
 

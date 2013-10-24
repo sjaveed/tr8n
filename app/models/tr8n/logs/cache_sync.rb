@@ -21,29 +21,33 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Filters::Component Schema Information
+#-- Tr8n::Logs::CacheSync Schema Information
 #
-# Table name: will_filter_filters
+# Table name: tr8n_sync_logs
 #
-#  id                  integer                        not null, primary key
-#  type                character varying(255)         
-#  name                character varying(255)         
-#  data                text                           
-#  user_id             integer                        
-#  model_class_name    character varying(255)         
-#  created_at          timestamp without time zone    not null
-#  updated_at          timestamp without time zone    not null
+#  id                       integer                        not null, primary key
+#  started_at               timestamp without time zone    
+#  finished_at              timestamp without time zone    
+#  keys_sent                integer                        
+#  translations_sent        integer                        
+#  keys_received            integer                        
+#  translations_received    integer                        
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
+#  application_id           integer                        
+#  data                     text                           
+#  type                     character varying(255)         
 #
 # Indexes
 #
-#  index_will_filter_filters_on_user_id    (user_id) 
+#  tr8n_sl_a_id    (application_id) 
 #
 #++
 
-class Tr8n::Filters::Component < Tr8n::Filters::Base
+class Tr8n::Logs::CacheSync < Tr8n::Logs::Sync
+  include Tr8n::Modules::DataAttributes
+  extend Tr8n::Modules::DataAttributes::ClassMethods
 
-  def model_class
-    Tr8n::Component
-  end
+  data_attributes :locales, :sources
 
 end

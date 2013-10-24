@@ -25,22 +25,22 @@
 #
 # Table name: tr8n_languages
 #
-#  id                      INTEGER         not null, primary key
-#  locale                  varchar(255)    not null
-#  english_name            varchar(255)    not null
-#  native_name             varchar(255)    
-#  threshold               integer         default = 1
-#  enabled                 boolean         
-#  right_to_left           boolean         
-#  completeness            integer         
-#  fallback_language_id    integer         
-#  curse_words             text            
-#  featured_index          integer         default = 0
-#  google_key              varchar(255)    
-#  facebook_key            varchar(255)    
-#  myheritage_key          varchar(255)    
-#  created_at              datetime        not null
-#  updated_at              datetime        not null
+#  id                      integer                        not null, primary key
+#  locale                  character varying(255)         not null
+#  english_name            character varying(255)         not null
+#  native_name             character varying(255)         
+#  threshold               integer                        default = 1
+#  enabled                 boolean                        
+#  right_to_left           boolean                        
+#  completeness            integer                        
+#  fallback_language_id    integer                        
+#  curse_words             text                           
+#  featured_index          integer                        default = 0
+#  google_key              character varying(255)         
+#  facebook_key            character varying(255)         
+#  myheritage_key          character varying(255)         
+#  created_at              timestamp without time zone    not null
+#  updated_at              timestamp without time zone    not null
 #
 # Indexes
 #

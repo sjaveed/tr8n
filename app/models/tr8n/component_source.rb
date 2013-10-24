@@ -25,17 +25,17 @@
 #
 # Table name: tr8n_component_sources
 #
-#  id                       INTEGER     not null, primary key
-#  component_id             integer     
-#  translation_source_id    integer     
-#  created_at               datetime    not null
-#  updated_at               datetime    not null
-#  position                 integer     
+#  id                       integer                        not null, primary key
+#  component_id             integer                        
+#  translation_source_id    integer                        
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
+#  position                 integer                        
 #
 # Indexes
 #
-#  tr8n_comp_src_id     (translation_source_id) 
 #  tr8n_comp_comp_id    (component_id) 
+#  tr8n_comp_src_id     (translation_source_id) 
 #
 #++
 

@@ -25,20 +25,20 @@
 #
 # Table name: tr8n_application_translators
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     
-#  translator_id     integer     
-#  language_id       integer     
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
-#  manager           boolean     
-#  inline_mode       boolean     
+#  id                integer                        not null, primary key
+#  application_id    integer                        
+#  translator_id     integer                        
+#  language_id       integer                        
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  manager           boolean                        
+#  inline_mode       boolean                        
 #
 # Indexes
 #
+#  tr8n_app_trn_comp_id    (application_id) 
 #  tr8n_app_trn_lang_id    (language_id) 
 #  tr8n_app_trn_trn_id     (translator_id) 
-#  tr8n_app_trn_comp_id    (application_id) 
 #
 #++
 

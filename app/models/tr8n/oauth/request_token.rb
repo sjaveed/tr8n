@@ -25,20 +25,20 @@
 #
 # Table name: tr8n_oauth_tokens
 #
-#  id                INTEGER         not null, primary key
-#  type              varchar(255)    
-#  token             varchar(255)    not null
-#  application_id    integer         
-#  translator_id     integer         
-#  scope             varchar(255)    
-#  expires_at        datetime        
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
+#  id                integer                        not null, primary key
+#  type              character varying(255)         
+#  token             character varying(255)         not null
+#  application_id    integer                        
+#  translator_id     integer                        
+#  scope             character varying(255)         
+#  expires_at        timestamp without time zone    
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_oauth_tokens_trn_id    (translator_id) 
 #  tr8n_oauth_tokens_app_id    (application_id) 
+#  tr8n_oauth_tokens_trn_id    (translator_id) 
 #
 #++
 

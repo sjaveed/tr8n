@@ -25,24 +25,24 @@
 #
 # Table name: tr8n_email_logs
 #
-#  id                   INTEGER         not null, primary key
-#  email_template_id    integer         
-#  language_id          integer         
-#  from_id              integer         
-#  to_id                integer         
-#  email                varchar(255)    
-#  tokens               text            
-#  sent_at              datetime        
-#  viewed_at            datetime        
-#  created_at           datetime        not null
-#  updated_at           datetime        not null
+#  id                   integer                        not null, primary key
+#  email_template_id    integer                        
+#  language_id          integer                        
+#  from_id              integer                        
+#  to_id                integer                        
+#  email                character varying(255)         
+#  tokens               text                           
+#  sent_at              timestamp without time zone    
+#  viewed_at            timestamp without time zone    
+#  created_at           timestamp without time zone    not null
+#  updated_at           timestamp without time zone    not null
 #
 # Indexes
 #
 #  index_tr8n_email_logs_on_email                (email) 
-#  index_tr8n_email_logs_on_to_id                (to_id) 
-#  index_tr8n_email_logs_on_from_id              (from_id) 
 #  index_tr8n_email_logs_on_email_template_id    (email_template_id) 
+#  index_tr8n_email_logs_on_from_id              (from_id) 
+#  index_tr8n_email_logs_on_to_id                (to_id) 
 #
 #++
 

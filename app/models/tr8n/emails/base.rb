@@ -25,23 +25,23 @@
 #
 # Table name: tr8n_email_templates
 #
-#  id                INTEGER         not null, primary key
-#  application_id    integer         
-#  language_id       integer         
-#  keyword           varchar(255)    
-#  name              varchar(255)    
-#  description       varchar(255)    
-#  subject           varchar(255)    
-#  html_body         text            
-#  tokens            text            
-#  created_at        datetime        not null
-#  updated_at        datetime        not null
-#  text_body         text            
-#  type              varchar(255)    
-#  parent_id         integer         
-#  layout            varchar(255)    
-#  version           integer         
-#  state             varchar(255)    
+#  id                integer                        not null, primary key
+#  application_id    integer                        
+#  language_id       integer                        
+#  keyword           character varying(255)         
+#  name              character varying(255)         
+#  description       character varying(255)         
+#  subject           character varying(255)         
+#  html_body         text                           
+#  tokens            text                           
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  text_body         text                           
+#  type              character varying(255)         
+#  parent_id         integer                        
+#  layout            character varying(255)         
+#  version           integer                        
+#  state             character varying(255)         
 #
 # Indexes
 #

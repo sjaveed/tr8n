@@ -25,14 +25,14 @@
 #
 # Table name: tr8n_application_languages
 #
-#  id                INTEGER     not null, primary key
-#  application_id    integer     not null
-#  language_id       integer     not null
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
-#  featured_index    integer     
-#  default           boolean     
-#  position          integer     
+#  id                integer                        not null, primary key
+#  application_id    integer                        not null
+#  language_id       integer                        not null
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
+#  featured_index    integer                        
+#  default           boolean                        
+#  position          integer                        
 #
 # Indexes
 #

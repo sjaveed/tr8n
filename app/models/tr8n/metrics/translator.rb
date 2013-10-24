@@ -25,23 +25,23 @@
 #
 # Table name: tr8n_translator_metrics
 #
-#  id                       INTEGER     not null, primary key
-#  translator_id            integer     not null
-#  language_id              integer     
-#  total_translations       integer     default = 0
-#  total_votes              integer     default = 0
-#  positive_votes           integer     default = 0
-#  negative_votes           integer     default = 0
-#  accepted_translations    integer     default = 0
-#  rejected_translations    integer     default = 0
-#  created_at               datetime    not null
-#  updated_at               datetime    not null
+#  id                       integer                        not null, primary key
+#  translator_id            integer                        not null
+#  language_id              integer                        
+#  total_translations       integer                        default = 0
+#  total_votes              integer                        default = 0
+#  positive_votes           integer                        default = 0
+#  negative_votes           integer                        default = 0
+#  accepted_translations    integer                        default = 0
+#  rejected_translations    integer                        default = 0
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
 #
 # Indexes
 #
 #  tr8n_tm_c     (created_at) 
-#  tr8n_tm_tl    (translator_id, language_id) 
 #  tr8n_tm_t     (translator_id) 
+#  tr8n_tm_tl    (translator_id, language_id) 
 #
 #++
 

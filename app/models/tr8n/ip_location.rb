@@ -25,16 +25,16 @@
 #
 # Table name: tr8n_ip_locations
 #
-#  id            INTEGER        not null, primary key
-#  low           integer(8)     
-#  high          integer(8)     
-#  registry      varchar(20)    
-#  assigned      date           
-#  ctry          varchar(2)     
-#  cntry         varchar(3)     
-#  country       varchar(80)    
-#  created_at    datetime       not null
-#  updated_at    datetime       not null
+#  id            integer                        not null, primary key
+#  low           bigint                         
+#  high          bigint                         
+#  registry      character varying(20)          
+#  assigned      date                           
+#  ctry          character varying(2)           
+#  cntry         character varying(3)           
+#  country       character varying(80)          
+#  created_at    timestamp without time zone    not null
+#  updated_at    timestamp without time zone    not null
 #
 # Indexes
 #

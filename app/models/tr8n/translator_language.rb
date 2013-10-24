@@ -25,13 +25,13 @@
 #
 # Table name: tr8n_translator_languages
 #
-#  id               INTEGER     not null, primary key
-#  translator_id    integer     
-#  language_id      integer     
-#  primary          boolean     
-#  created_at       datetime    not null
-#  updated_at       datetime    not null
-#  position         integer     
+#  id               integer                        not null, primary key
+#  translator_id    integer                        
+#  language_id      integer                        
+#  primary          boolean                        
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
+#  position         integer                        
 #
 # Indexes
 #

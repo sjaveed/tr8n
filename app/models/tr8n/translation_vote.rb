@@ -25,17 +25,17 @@
 #
 # Table name: tr8n_translation_votes
 #
-#  id                INTEGER     not null, primary key
-#  translation_id    integer     not null
-#  translator_id     integer     not null
-#  vote              integer     not null
-#  created_at        datetime    not null
-#  updated_at        datetime    not null
+#  id                integer                        not null, primary key
+#  translation_id    integer                        not null
+#  translator_id     integer                        not null
+#  vote              integer                        not null
+#  created_at        timestamp without time zone    not null
+#  updated_at        timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_tv_tt    (translation_id, translator_id) 
 #  tr8n_tv_t     (translator_id) 
+#  tr8n_tv_tt    (translation_id, translator_id) 
 #
 #++
 

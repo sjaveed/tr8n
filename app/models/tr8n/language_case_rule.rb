@@ -25,22 +25,22 @@
 #
 # Table name: tr8n_language_case_rules
 #
-#  id                  INTEGER         not null, primary key
-#  language_case_id    integer         not null
-#  language_id         integer         
-#  translator_id       integer         
-#  definition          text            not null
-#  position            integer         
-#  created_at          datetime        not null
-#  updated_at          datetime        not null
-#  description         varchar(255)    
-#  examples            varchar(255)    
+#  id                  integer                        not null, primary key
+#  language_case_id    integer                        not null
+#  language_id         integer                        
+#  translator_id       integer                        
+#  definition          text                           not null
+#  position            integer                        
+#  created_at          timestamp without time zone    not null
+#  updated_at          timestamp without time zone    not null
+#  description         character varying(255)         
+#  examples            character varying(255)         
 #
 # Indexes
 #
-#  tr8n_lcr_t     (translator_id) 
 #  tr8n_lcr_l     (language_id) 
 #  tr8n_lcr_lc    (language_case_id) 
+#  tr8n_lcr_t     (translator_id) 
 #
 #++
 

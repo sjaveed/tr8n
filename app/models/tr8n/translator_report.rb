@@ -25,15 +25,15 @@
 #
 # Table name: tr8n_translator_reports
 #
-#  id               INTEGER         not null, primary key
-#  translator_id    integer         
-#  state            varchar(255)    
-#  object_id        integer         
-#  object_type      varchar(255)    
-#  reason           varchar(255)    
-#  comment          text            
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  translator_id    integer                        
+#  state            character varying(255)         
+#  object_id        integer                        
+#  object_type      character varying(255)         
+#  reason           character varying(255)         
+#  comment          text                           
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #

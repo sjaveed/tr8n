@@ -25,13 +25,13 @@
 #
 # Table name: tr8n_features
 #
-#  id             INTEGER         not null, primary key
-#  object_type    varchar(255)    
-#  object_id      integer         
-#  keyword        varchar(255)    
-#  enabled        boolean         
-#  created_at     datetime        not null
-#  updated_at     datetime        not null
+#  id             integer                        not null, primary key
+#  object_type    character varying(255)         
+#  object_id      integer                        
+#  keyword        character varying(255)         
+#  enabled        boolean                        
+#  created_at     timestamp without time zone    not null
+#  updated_at     timestamp without time zone    not null
 #
 # Indexes
 #

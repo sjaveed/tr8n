@@ -25,17 +25,17 @@
 #
 # Table name: tr8n_translation_key_sources
 #
-#  id                       INTEGER     not null, primary key
-#  translation_key_id       integer     not null
-#  translation_source_id    integer     not null
-#  details                  text        
-#  created_at               datetime    not null
-#  updated_at               datetime    not null
+#  id                       integer                        not null, primary key
+#  translation_key_id       integer                        not null
+#  translation_source_id    integer                        not null
+#  details                  text                           
+#  created_at               timestamp without time zone    not null
+#  updated_at               timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_tks_ts    (translation_source_id) 
 #  tr8n_tks_tk    (translation_key_id) 
+#  tr8n_tks_ts    (translation_source_id) 
 #
 #++
 

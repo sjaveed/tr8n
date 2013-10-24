@@ -25,17 +25,17 @@
 #
 # Table name: tr8n_component_languages
 #
-#  id              INTEGER         not null, primary key
-#  component_id    integer         
-#  language_id     integer         
-#  state           varchar(255)    
-#  created_at      datetime        not null
-#  updated_at      datetime        not null
+#  id              integer                        not null, primary key
+#  component_id    integer                        
+#  language_id     integer                        
+#  state           character varying(255)         
+#  created_at      timestamp without time zone    not null
+#  updated_at      timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_comp_lang_lang_id    (language_id) 
 #  tr8n_comp_lang_comp_id    (component_id) 
+#  tr8n_comp_lang_lang_id    (language_id) 
 #
 #++
 

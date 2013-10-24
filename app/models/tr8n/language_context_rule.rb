@@ -25,15 +25,15 @@
 #
 # Table name: tr8n_language_context_rules
 #
-#  id                     INTEGER         not null, primary key
-#  language_context_id    integer         
-#  translator_id          integer         
-#  keyword                varchar(255)    
-#  description            varchar(255)    
-#  examples               varchar(255)    
-#  definition             text            
-#  created_at             datetime        not null
-#  updated_at             datetime        not null
+#  id                     integer                        not null, primary key
+#  language_context_id    integer                        
+#  translator_id          integer                        
+#  keyword                character varying(255)         
+#  description            character varying(255)         
+#  examples               character varying(255)         
+#  definition             text                           
+#  created_at             timestamp without time zone    not null
+#  updated_at             timestamp without time zone    not null
 #
 # Indexes
 #

@@ -25,17 +25,17 @@
 #
 # Table name: tr8n_notifications
 #
-#  id               INTEGER         not null, primary key
-#  type             varchar(255)    
-#  translator_id    integer         
-#  actor_id         integer         
-#  target_id        integer         
-#  action           varchar(255)    
-#  object_type      varchar(255)    
-#  object_id        integer         
-#  viewed_at        datetime        
-#  created_at       datetime        not null
-#  updated_at       datetime        not null
+#  id               integer                        not null, primary key
+#  type             character varying(255)         
+#  translator_id    integer                        
+#  actor_id         integer                        
+#  target_id        integer                        
+#  action           character varying(255)         
+#  object_type      character varying(255)         
+#  object_id        integer                        
+#  viewed_at        timestamp without time zone    
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
 #
 # Indexes
 #

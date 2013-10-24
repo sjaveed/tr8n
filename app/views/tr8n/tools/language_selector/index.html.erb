@@ -3,7 +3,7 @@ function removeLanguage(language_id) {
   Tr8n.Utils.ajax('/tr8n/tools/language_selector/remove_language', {
     parameters: {language_id: language_id}
   });
-  Tr8n.Effects.hide('lang_' + language_id);
+  Tr8n.Utils.Effects.hide('lang_' + language_id);
 }
 </script>
 
@@ -54,6 +54,35 @@ function removeLanguage(language_id) {
             <% end %>
           </ul>
         </div>
+
+        <% if @application_languages %>
+          <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
+            <div style="float:right">
+              <%=link_to("manage", "/tr8n/app/settings/languages", :target=>"_top") %>
+            </div>
+            <%=tra("Application Languages") %>
+          </div>
+
+          <div style="max-height: 160px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
+            <ul class="language_list">
+              <% @application_languages.each do |language| %>
+                <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
+
+                  <% if Tr8n::Config.enable_language_stats? %>
+                    <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
+                  <% end %>
+
+                  <%= tr8n_language_flag_tag(language) %>
+
+                  <span dir="ltr">
+                  <%= language.full_name %>
+                </span>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
         <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
             <%=tra("Other Languages") %>
         </div>
@@ -84,9 +113,9 @@ function removeLanguage(language_id) {
         <% if @inline_translations_allowed %>
           <div style="padding-top:5px; padding-bottom:5px; font-size: 11px; font-weight:bold; ">
               <% if @inline_translations_enabled %>
-                  <%=link_to_function(tra("Disable Inline Translations"), "Tr8n.postMessage({'subject': 'language_selector', 'action': 'toggle_inline_translations'}, '#{params[:origin]}')") %>
+                  <%=link_to_function(tra("Disable Inline Translations"), "Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'toggle_inline_translations'}, '#{params[:origin]}')") %>
               <% else %>
-                  <%=link_to_function(tra("Enable Inline Translations"), "Tr8n.postMessage({'subject': 'language_selector', 'action': 'toggle_inline_translations'}, '#{params[:origin]}')") %>
+                  <%=link_to_function(tra("Enable Inline Translations"), "Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'toggle_inline_translations'}, '#{params[:origin]}')") %>
               <% end %>
               <div style="font-weight:normal; color:grey;"><%=tra("Use right-mouse-click or ctr+click to translate the site.") %></div>
           </div>
@@ -95,30 +124,6 @@ function removeLanguage(language_id) {
         <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
             <%=link_to(tra("Translation Tools"), "/tr8n/translator/dashboard", :target => "_top") %>
             <div style="font-weight:normal; color:grey;"><%=tra("Search for translations by other users, vote on translations or add your own translations.") %></div>
-        </div>
-
-        <% if tr8n_current_translator.manager? %>
-          <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-              <%=link_to(tra("Manage Language"), "/tr8n/language/settings", :target => "_top") %>
-              <span style="color: grey; font-size: 10px; padding-left:0.5em; font-style:italic;">language admins only</span>
-              <div style="font-weight:normal; color:grey;"><%=tra("Change language native name and define language rules.") %></div>
-          </div>
-        <% end %>
-
-      <% else %>
-          <% if false # TODO: add domain check %>
-              <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-                  <%=link_to(tra("Become a Translator"), "/tr8n/dashboard/registration", :target => "_top") %>
-                  <div style="font-weight:normal; color:grey;"><%=tra("Allows you to submit and vote on translations") %></div>
-              </div>
-          <% end %>
-      <% end %>
-
-      <% if tr8n_current_user_is_admin? %>
-        <div style="padding-top:5px; padding-bottom:5px;font-size: 11px; font-weight:bold;">
-            <%=link_to(tra("Configure application"), "/tr8n/app/settings", :target => "_top") %>
-            <span style="color: grey; font-size: 10px; padding-left:0.5em; font-style:italic;">tr8n admins only</span>
-            <div style="font-weight:normal; color:grey;"><%=tra("Manage translators, languages and translations.") %></div>
         </div>
       <% end %>
 

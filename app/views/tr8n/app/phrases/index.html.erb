@@ -14,14 +14,16 @@
           <button type="submit" class="btn btn-primary">
               <%=tra("Search")%>
           </button>
-          <%=link_to("+", {:controller => "/tr8n/app/wizards", :action => :translation_key, :source_id => params[:source_id]}, {"class" => "btn", "data-toggle" => "dynamic_wizard"})%>
         </div>
 
         <div class="tr8n_text_align_left">
-          <%=text_field_tag(:search, params[:search], {:style => "width:87%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search phrases")})%>
+          <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 10px; border-radius:10px;", :placeholder => trla("Search phrases")})%>
         </div>
 
-        <div style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+        <div style="margin-top:10px; padding:3px; font-size:11px; color:#666;">
+          <div style="float:right">
+            <%=link_to(tra("Add New Phrase"), {:controller => "/tr8n/app/wizards", :action => :translation_key, :source_id => params[:source_id]}, {"class" => "btn", "data-toggle" => "dynamic_wizard"})%>
+          </div>
             <%=select_tag(:phrase_type, tr8n_options_for_select(Tr8n::TranslationKey.filter_phrase_type_options, params[:phrase_type]), :onChange => "toggleFilterOptions()")%>
             <span id="extended_filter_options" style="<%='display:none' unless params[:phrase_type]=="with" %>">
               <%=select_tag(:phrase_status, tr8n_options_for_select(Tr8n::TranslationKey.filter_phrase_status_options, params[:phrase_status]))%>

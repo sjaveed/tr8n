@@ -48,6 +48,15 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::Tools::BaseController
       @user_languages = Tr8n::LanguageUser.languages_for(tr8n_current_user).collect{|ul| ul.language}
     end
     @user_languages = @user_languages & @all_languages
+
+    if tr8n_current_application.default? and session[:tr8n_selected_app_id]
+      application = Tr8n::Application.find_by_id(session[:tr8n_selected_app_id])
+      if application != tr8n_current_application
+        @application_languages = application.languages
+        @all_languages = @all_languages - @application_languages
+      end
+    end
+
   end
 
   def change

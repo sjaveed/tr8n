@@ -137,18 +137,20 @@ select tr8n_translations.translation_key_id as translation_key_id, tr8n_translat
 from tr8n_translations
 inner join tr8n_translation_keys on tr8n_translations.translation_key_id = tr8n_translation_keys.id
 where tr8n_translations.translation_key_id in (select tr8n_translation_key_sources.translation_key_id from tr8n_translation_key_sources where tr8n_translation_key_sources.translation_source_id in (#{source_ids.join(',')}))
-order by tr8n_translations.translation_key_id asc
-limit 1000000
-offset 0;
+      and tr8n_translations.language_id in (#{lang_ids.join(',')})
+      and tr8n_translations.rank >= #{application.threshold}
+order by tr8n_translations.translation_key_id asc;
 "
       #pp sql
       tkey = nil
+      last_sent_id = nil
       Tr8n::Translation.connection.execute(sql).each do |rec|
         #pp rec["translation_key_label"]
 
         if tkey.nil? or tkey["id"] != rec["translation_key_id"]
           unless tkey.nil?
             results << "#{tkey.to_json}\n"
+            last_sent_id = tkey["id"]
             pp "#{tk} keys and #{t} translations have been sent" if tk % 1000 == 0
           end
 
@@ -175,6 +177,11 @@ offset 0;
 
         #GC.start if i % 500==0
       end
+
+      if tkey and last_sent_id != tkey["id"]
+        results << "#{tkey.to_json}\n"
+      end
+
       sync_log.update_attributes(:keys_sent => tk, :translations_sent => t, :finished_at => Time.now)
     end
   end

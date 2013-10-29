@@ -59,5 +59,16 @@ class Tr8n::Emails::Log < ActiveRecord::Base
 
   serialize :tokens
 
+  before_create :generate_key
+
+  def link_url
+    "#{Tr8n::Config.base_url}/tr8n/app/emails/view/#{key}"
+  end
+
+  protected
+
+  def generate_key
+    self.key = Tr8n::Utils.guid if key.nil?
+  end
 
 end

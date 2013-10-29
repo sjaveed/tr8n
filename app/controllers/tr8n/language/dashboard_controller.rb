@@ -24,7 +24,6 @@
 class Tr8n::Language::DashboardController < Tr8n::Language::BaseController
 
   def index
-
   end
 
 end

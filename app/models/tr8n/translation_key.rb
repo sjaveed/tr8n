@@ -100,6 +100,15 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
   end
 
+  def fallback_key
+    return nil if master_key.nil?
+    @fallback_key ||= Tr8n::TranslationKey.find_by_key(master_key)
+  end
+
+  def derivations
+    @derivations ||= Tr8n::TranslationKey.where("master_key = ?", key).all
+  end
+
   def sources(app = Tr8n::RequestContext.container_application)
     translation_sources.where(:application_id => app.id)
   end
@@ -473,18 +482,22 @@ class Tr8n::TranslationKey < ActiveRecord::Base
       return translation if translation.matches_rules?(token_values)
     end
 
+    unless fallback_key.nil?
+      return fallback_key.find_first_valid_translation(language, translator, token_values, opts)
+    end
+
     if opts[:fallback_onto_translator]
       if translator.fallback_language and not translator.fallback_language.default?
         fallback_language = translator.fallback_language
       end
-    elsif opts[:fallback_onto_language]
+      return find_first_valid_translation(fallback_language, translator, token_values, opts) if fallback_language
+    end
+
+    if opts[:fallback_onto_language]
       if language.fallback_language and not language.fallback_language.default?
         fallback_language = language.fallback_language
       end
-    end
-
-    if fallback_language
-      return find_first_valid_translation(fallback_language, translator, token_values, opts)
+      return find_first_valid_translation(fallback_language, translator, token_values, opts) if fallback_language
     end
 
     nil
@@ -523,6 +536,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
 
     translation_options = {}
+
     if Tr8n::Config.enable_translator_language? and Tr8n::RequestContext.current_user_is_translator?
       translation_options[:fallback_onto_translator] = true
     elsif Tr8n::Config.enable_fallback_languages?

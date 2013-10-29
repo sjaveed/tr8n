@@ -28,20 +28,20 @@
         </div>
         <table>
           <tr>
-            <th style="text-align:left;vertical-align: top;">Keyword:</th>
+            <th style="text-align:left;vertical-align: top;"><%=tra("Keyword:") %></th>
             <td><%=f.text_field(:keyword, :style=>"width:950px;", :id => :email_template_keyword)%></td>
           </tr>
           <tr>
-            <th style="text-align:left;vertical-align: top">Name:</th>
+            <th style="text-align:left;vertical-align: top"><%=tra("Name:") %></th>
             <td><%=f.text_field(:name, :style=>"width:950px;", :id => :email_template_name)%></td>
           </tr>
           <tr>
-            <th style="text-align:left;padding-right:15px;vertical-align: top">Description:</th>
+            <th style="text-align:left;padding-right:15px;vertical-align: top"><%=tra("Description:") %></th>
             <td><%=f.text_area(:description, :style=>"width:950px; height: 50px;", :id => :email_template_description)%></td>
           </tr>
           <% if @et.is_a?(Tr8n::Emails::Template) %>
             <tr>
-              <th style="text-align:left;padding-right:15px;vertical-align: top">Email Layout:</th>
+              <th style="text-align:left;padding-right:15px;vertical-align: top"><%=tra("Email Layout:") %></th>
               <td>
                 <select id="email_template_layout" data-placeholder="Email template layout" style="width:965px;" class="chzn-select">
                   <option value=""></option>
@@ -237,7 +237,6 @@
       var diff = (now - last_modified) / 1000;
       if (diff > 2 && autosave) {
         saveTemplate();
-        last_modified = null;
       }
     }
     window.setTimeout(checkIdleTime, 1000);
@@ -248,7 +247,25 @@
     autosave = data.value;
   });
 
+  $('#email_template_keyword').on('keyup', function() {
+    last_modified = new Date();
+  });
+
+  $('#email_template_name').on('keyup', function() {
+    last_modified = new Date();
+  });
+
+  $('#email_template_description').on('keyup', function() {
+    last_modified = new Date();
+  });
+
+  $('#email_template_layout').on('change', function() {
+    last_modified = new Date();
+  });
+
   function saveTemplate() {
+    last_modified = null;
+
     $("#template_status").show();
 //    console.log("Saving...");
 
@@ -284,5 +301,12 @@
       return false;
     }
   });
+
+
+  window.onbeforeunload = function() {
+    if (last_modified != null) {
+      return "You have unsaved changes in one or more fields. If you live the page, your changes will be lost. \n\nDo you still want to proceed?";
+    }
+  }
 </script>
 

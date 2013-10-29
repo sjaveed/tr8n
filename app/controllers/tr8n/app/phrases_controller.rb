@@ -63,7 +63,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     end
 
     unless params[:search].blank?
-      @translation_keys = @translation_keys.where("(tr8n_translation_keys.label like ? or tr8n_translation_keys.description like ?)", "%#{params[:search]}%", "%#{params[:search]}%")
+      @translation_keys = @translation_keys.where("(lower(tr8n_translation_keys.label) like ? or lower(tr8n_translation_keys.description) like ?)", "%#{params[:search].downcase}%", "%#{params[:search].downcase}%")
     end
 
     @translation_keys = @translation_keys.page(page).per(per_page)
@@ -192,6 +192,38 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     redirect_to_source
   end
 
+  def remove_master_key
+    unless translation_key
+      return redirect_to(:action => :index)
+    end
+
+    translation_key.master_key = nil
+    translation_key.save
+    redirect_back
+  end
+
+  def set_fallback_modal
+    translation_key
+
+    if request.post?
+      translation_key.master_key = Tr8n::TranslationKey.generate_key(params[:fallback_label], params[:fallback_description])
+
+      if translation_key.fallback_key
+        if translation_key.master_key != translation_key.key
+          translation_key.save
+        else
+          trfe("Cannot fallback onto itself")
+        end
+      else
+        trfe("No such phrase exists")
+      end
+
+      return redirect_back
+    end
+
+    render :layout=>false
+  end
+
 private
 
   def translation_key
@@ -266,9 +298,7 @@ private
     section.children.each do |section|
       collect_sitemap_section_sources(section, sources)
     end
-  end  
-
-private
+  end
 
   def init_breadcrumb
     if params[:component_id]

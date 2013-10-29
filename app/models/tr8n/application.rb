@@ -65,9 +65,9 @@ class Tr8n::Application < ActiveRecord::Base
 
   has_one :decorator, :class_name => 'Tr8n::Decorator', :dependent => :destroy
 
-  has_many :email_templates, :class_name => 'Tr8n::Emails::Template', :dependent => :destroy
-  has_many :email_partials, :class_name => 'Tr8n::Emails::Partial', :dependent => :destroy
-  has_many :email_layouts, :class_name => 'Tr8n::Emails::Layout', :dependent => :destroy
+  has_many :email_templates, :class_name => 'Tr8n::Emails::Template', :order => "keyword asc", :dependent => :destroy
+  has_many :email_partials, :class_name => 'Tr8n::Emails::Partial', :order => "keyword asc", :dependent => :destroy
+  has_many :email_layouts, :class_name => 'Tr8n::Emails::Layout', :order => "keyword asc", :dependent => :destroy
 
   before_create :generate_keys
 

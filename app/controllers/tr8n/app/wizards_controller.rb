@@ -95,6 +95,13 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
       src = Tr8n::TranslationSource.find_or_create("/manual_keys", selected_application)
       tkey = Tr8n::TranslationKey.find_or_create(params[:label], params[:description], {:locale => params[:default_locale], :source => src})
 
+      unless params[:fallback_label].blank?
+        tkey.master_key = Tr8n::TranslationKey.generate_key(params[:fallback_label], params[:fallback_description])
+        if tkey.master_key != tkey.key
+          tkey.save
+        end
+      end
+
       unless params[:sources].blank?
         params[:sources].each do |src_id|
           src = Tr8n::TranslationSource.find_by_id(src_id)

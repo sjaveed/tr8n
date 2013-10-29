@@ -129,7 +129,7 @@ function removeLanguage(language_id) {
 
       <div class="ft" style="font-size:10px;height:10px;">
           <%=tr8n_help_icon_tag %>
-          &nbsp;<%=tra("Click this icon to view [link: translation help] in a new window.", "", :link => lambda{|txt| link_to(txt, {:controller => "/tr8n/help", :action => :index}, :target => "new")}) %>
+          &nbsp;<%=tra("Click this icon to view [link: translation help] in a new window.", :link => lambda{|txt| link_to(txt, "http://wiki.tr8nhub.com", :target => "new")}) %>
       </div>
     </div>
   </div>

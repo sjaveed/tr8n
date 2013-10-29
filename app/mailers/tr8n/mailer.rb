@@ -16,6 +16,13 @@ module Tr8n
           :language             => options[:language] || Tr8n::RequestContext.current_language
       })
 
+      tokens = tokens.merge({
+        "email_log" => {
+            "key" => options[:email_log].key,
+            "href" => options[:email_log].link_url
+        }
+      })
+
       options[:skip_decorations] = true
 
       message = mail(:to => to_email, :from => from_email, :subject => email_template.render_subject(tokens, options)) do |format|

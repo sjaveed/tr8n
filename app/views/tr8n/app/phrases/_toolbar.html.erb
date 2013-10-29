@@ -1,37 +1,42 @@
-<div id="translation_key_toolbar" style="font-size:12px; margin-top:0px; background-color:#f8f7f6; border:1px solid #eee; padding:5px; color:grey; background: url('/assets/tr8n/toolbar_bg.gif') repeat-x scroll 0 0 transparent;">
+<div id="translation_key_toolbar" style="padding-top:5px; padding-bottom: 10px;">
+  <div style="float:right">
+    <%=link_to(tra("Set Fallback"), {:action => :set_fallback_modal, :id => @translation_key.id}, {"class" => "btn", "data-toggle" => "dynamic_modal"})%>
+    <%=link_to(tra("Derive New Phrase"), {:controller => "/tr8n/app/wizards", :action => :translation_key, :source_id => params[:source_id], :fallback_label => @translation_key.label, :fallback_description => @translation_key.description}, {"class" => "btn", "data-toggle" => "dynamic_wizard"})%>
+  </div>
+
   <%
     actions = []
 
     unless translation_key.in_current_language?
       if tr8n_current_user_is_translator? and tr8n_current_translator.manager?
         if translation_key.locked?
-          actions << link_to("#{image_tag('tr8n/lock_delete.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Unlock")}".html_safe,{:action => :unlock, :id => @translation_key.id}, :confirm => trla("Once the key is unlocked, users will be able to submit or vote on translations for this key. Are you sure you want to unlock it?") )
+          actions << link_to("#{image_tag('tr8n/lock_delete.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("Unlock Phrase")}".html_safe, {:action => :unlock, :id => @translation_key.id}, :confirm => trla("Once the key is unlocked, users will be able to submit or vote on translations for this key. Are you sure you want to unlock it?"), :class=>"btn" )
         else
-          actions << link_to("#{image_tag('tr8n/lock_add.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Lock")}".html_safe, {:action => :lock, :id => @translation_key.id}, :confirm => trla("Once the key is locked, users will no longer be able to submit or vote on translations for this key. Are you sure you want to lock it?") )
+          actions << link_to("#{image_tag('tr8n/lock_add.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("Lock Phrase")}".html_safe, {:action => :lock, :id => @translation_key.id}, :confirm => trla("Once the key is locked, users will no longer be able to submit or vote on translations for this key. Are you sure you want to lock it?"), :class=>"btn"  )
         end
       end
 
       unless translation_key.locked?
         if translation_key.permutable?
-          actions << link_to_function("#{image_tag('tr8n/script_gear.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Generate Context Rules")}".html_safe, "addContextRules()")
+          actions << link_to_function("#{image_tag('tr8n/script_gear.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("Generate Context Rules")}".html_safe, "addContextRules()", :class=>"btn")
         end
       end
     end
 
 		if translation_key.sources?
-      actions << link_to_function("#{image_tag('tr8n/table_multiple.png', :style=>'height:15px; vertical-align:bottom')} #{tra("View Sources")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/app/phrases/lb_sources?translation_key_id=#{@translation_key.id}', {width:600});")
+      actions << link_to_function("#{image_tag('tr8n/table_multiple.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("View Sources")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/app/phrases/lb_sources?translation_key_id=#{@translation_key.id}', {width:600});", :class=>"btn")
 		end
 			
     if translation_key.followed?
-      actions << link_to("#{image_tag('tr8n/eye_not.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Unfollow")}".html_safe, :controller => '/tr8n/translator/following', :action => :unfollow, :translation_key_id => @translation_key.id)
+      actions << link_to("#{image_tag('tr8n/eye_not.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("Unfollow")}".html_safe, {:controller => '/tr8n/translator/following', :action => :unfollow, :translation_key_id => @translation_key.id}, :class=>"btn")
     else
-      actions << link_to("#{image_tag('tr8n/eye.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Follow")}".html_safe, :controller => '/tr8n/translator/following', :action => :follow, :translation_key_id => @translation_key.id)
-    end 
+      actions << link_to("#{image_tag('tr8n/eye.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("Follow")}".html_safe, {:controller => '/tr8n/translator/following', :action => :follow, :translation_key_id => @translation_key.id}, :class=>"btn")
+    end
 
-    actions << link_to_function("#{image_tag('tr8n/exclamation.png', :style=>'height:15px; vertical-align:bottom')} #{tra("Report")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/translator/reports/lb_report?translation_key_id=#{@translation_key.id}', {width:600, height:360});")
+    actions << link_to_function("#{image_tag('tr8n/exclamation.png', :style=>'height:15px; vertical-align:middle; padding-right:5px;')} #{tra("Report")}".html_safe, "Tr8n.UI.Lightbox.show('/tr8n/translator/reports/lb_report?translation_key_id=#{@translation_key.id}', {width:600, height:360});", :class=>"btn")
   %>
   
   <div class="tr8n_text_align_left">
-    <%= actions.join(' &nbsp;|&nbsp; ').html_safe %>  
+    <%= actions.join(' ').html_safe %>
   </div>
 </div>

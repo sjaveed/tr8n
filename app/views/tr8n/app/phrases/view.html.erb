@@ -18,10 +18,9 @@
       <%= render :partial => "permutations_module" %>
     <% end %>
 
-
     <%= render :partial => "comments_module" %>
 
-    <% if @show_add_dialog and not @translation_key.locked? %>
+    <% if @show_add_dialog and not @translation_key.locked? and @translation_key.fallback_key.nil? %>
       <script>
         window.setTimeout(function() {
           addTranslation();

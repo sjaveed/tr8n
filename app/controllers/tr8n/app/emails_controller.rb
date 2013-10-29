@@ -23,9 +23,9 @@
 
 class Tr8n::App::EmailsController < Tr8n::App::BaseController
 
-  skip_before_filter :validate_current_translator, :only => :track
-  skip_before_filter :validate_selected_application, :only => :track
-  skip_before_filter :validate_guest_user, :only => :track
+  skip_before_filter :validate_current_translator, :only => [:view, :track]
+  skip_before_filter :validate_selected_application, :only => [:view, :track]
+  skip_before_filter :validate_guest_user, :only => [:view, :track]
 
   def index
     @emails = selected_application.email_templates.page(page).per(per_page)
@@ -72,24 +72,6 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
 
     et.save
     render :json => {"status" => "Ok"}
-  end
-
-  def preview
-    if params[:keyword]
-      @et = selected_application.email_templates.where(:keyword => params[:keyword]).first
-    else
-      @et = Tr8n::Emails::Base.find_by_id(params[:id])
-    end
-
-    @title = "Preview #{@et.title} (#{params[:mode]} mode)"
-    @subject = @et.render_subject
-    @body = @et.render_body(params[:mode])
-
-    if params[:mode] == "text"
-      @body = @body.gsub("\n", "<br>").html_safe
-    end
-
-    render :layout => "/tr8n/emails/translate"
   end
 
   def delete_template
@@ -160,17 +142,6 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
     render :layout => false
   end
 
-  def track
-    log = Tr8n::Emails::Log.find_by_id(params[:id]) if params[:id]
-    log.update_attributes(:viewed_at => Time.now) if log
-    image_path = File.expand_path("#{__FILE__}/../../../../assets/images/tr8n/pixel.gif")
-    data = File.open(image_path, "rb").read
-    response.headers['Cache-Control'] = "public, max-age=#{12.hours.to_i}"
-    response.headers['Content-Type'] = 'image/gif'
-    response.headers['Content-Disposition'] = 'inline'
-    render :text => data
-  end
-
   def email_template_wizard
     if request.post?
       if Tr8n::Emails::Template.where(:application_id => selected_application.id, :keyword => params[:keyword]).any?
@@ -216,6 +187,52 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
     end
 
     render :layout => false
+  end
+
+  def preview
+    if params[:keyword]
+      @et = selected_application.email_templates.where(:keyword => params[:keyword]).first
+    else
+      @et = Tr8n::Emails::Base.find_by_id(params[:id])
+    end
+
+    @title = "Preview #{@et.title} (#{params[:mode]} mode)"
+    @subject = @et.render_subject
+    @body = @et.render_body(params[:mode])
+
+    if params[:mode] == "text"
+      @body = @body.gsub("\n", "<br>").html_safe
+    end
+
+    render :layout => "/tr8n/emails/translate"
+  end
+
+  def view
+    log = Tr8n::Emails::Log.find_by_key(params[:id])
+    unless log
+      trfe("Email information was not found")
+      return redirect_to_site_default_url
+    end
+
+    @et = log.email_template
+    @from =
+
+    @title = @et.title
+    @subject = @et.render_subject
+    @body = @et.render_body(:html, log.tokens)
+
+    render :layout => "/tr8n/emails/translate"
+  end
+
+  def track
+    log = Tr8n::Emails::Log.find_by_id(params[:id]) if params[:id]
+    log.update_attributes(:viewed_at => Time.now) if log
+    image_path = File.expand_path("#{__FILE__}/../../../../assets/images/tr8n/pixel.gif")
+    data = File.open(image_path, "rb").read
+    response.headers['Cache-Control'] = "public, max-age=#{12.hours.to_i}"
+    response.headers['Content-Type'] = 'image/gif'
+    response.headers['Content-Disposition'] = 'inline'
+    render :text => data
   end
 
 end

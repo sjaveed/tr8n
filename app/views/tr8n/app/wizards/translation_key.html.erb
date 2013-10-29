@@ -1,13 +1,13 @@
 <%= tr8n_with_options_tag(:source => 'app/wizards/translation-key') do %>
   <div class="wizard" id="new-translation-key-wizard">
-    <h1><%=tra("Register New Translation Key") %></h1>
+    <h1><%=tra("Add New Phrase") %></h1>
 
     <div class="wizard-card" data-cardname="card1">
-      <h3><%=tra("Details") %></h3>
+      <h3><%=tra("Language") %></h3>
 
       <div class="wizard-input-section">
         <p>
-          What language is this translation key in?
+          <%= tra("To begin, tell us what language this new phrase is in:") %>
         </p>
 
         <div class="control-group">
@@ -18,7 +18,17 @@
             <% end %>
           </select>
         </div>
+
+
+        <p style="padding-top:20px; color:#666;">
+          <%= tra("By default, we have selected the base language of the application.") %>
+        </p>
+
       </div>
+    </div>
+
+    <div class="wizard-card" data-cardname="card2">
+      <h3><%=tra("Phrase") %></h3>
 
       <div class="wizard-input-section">
         <p>
@@ -26,26 +36,46 @@
         </p>
 
         <div class="control-group">
-          <%=text_area_tag(:new_translation_key_label, "", :placeholder => "Word, phrase, sentence or paragraph...", :style=>"width:350px;height:120px;", "data-validate" => "validateTranslationKeyLabel" ) %>
+          <%=text_area_tag(:new_translation_key_label, "", :placeholder => "Word, phrase, sentence or paragraph...", :style=>"width:400px;height:75px;", "data-validate" => "validateTranslationKeyLabel") %>
         </div>
-      </div>
 
-    </div>
-
-    <div class="wizard-card" data-cardname="card2">
-      <h3><%=tra("Context") %></h3>
-
-      <div class="wizard-input-section">
         <p>
-          <%=tra("Optionally, provide a description for this translation key.") %>
+          <%=tra("Optionally, provide a description for this phrase (context).") %>
         </p>
 
         <div class="control-group">
-          <%=text_area_tag(:new_translation_key_description, "", :placeholder => "Description", :style=>"width:400px;height:80px;") %>
+          <%=text_area_tag(:new_translation_key_description, "", :placeholder => "Description of the phrase", :style=>"width:400px;height:40px;") %>
         </div>
 
-        <div style="padding-top:20px; color: #ccc">
-          <%=tra("The combined label and description constitute a unique key for the translation key.")%>
+        <div style="color: #666;">
+          <%=tra("The combined label and description are used as a unique key for the phrase.")%>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="wizard-card" data-cardname="card2">
+      <h3><%=tra("Fallback Phrase") %></h3>
+
+      <div class="wizard-input-section">
+        <p>
+          <%=tra("Optionally, enter a fallback phrase:") %>
+        </p>
+
+        <div class="control-group">
+          <%=text_area_tag(:fallback_translation_key_label, params[:fallback_label], :placeholder => "Word, phrase, sentence or paragraph...", :style=>"width:400px;height:75px;") %>
+        </div>
+
+        <p>
+          <%=tra("Optionally, provide a description for this fallback phrase.") %>
+        </p>
+
+        <div class="control-group">
+          <%=text_area_tag(:fallback_translation_key_description, params[:fallback_description], :placeholder => "Description", :style=>"width:400px;height:40px;") %>
+        </div>
+
+        <div style="color: #666;">
+          <%=tra("The translations of the fallback phrase will be used when no translations are available for the new phrase.")%>
         </div>
 
       </div>
@@ -56,7 +86,7 @@
 
       <div class="wizard-input-section">
         <p>
-          <%=tra("Enter a list of sources to add this translation key to.") %>
+          <%=tra("Enter a list of sources to add this phrase to.") %>
         </p>
 
         <div class="control-group">
@@ -67,6 +97,11 @@
             <% end %>
           </select>
         </div>
+
+        <div style="color: #666; padding-top:20px;">
+          <%=tra("By default, the new phrase will be added to a source called {source_name}.", :source_name => "/manual_keys")%>
+        </div>
+
       </div>
     </div>
 
@@ -115,6 +150,8 @@
           "default_locale": $("#new_translation_key_language").val(),
           "label": $("#new_translation_key_label").val(),
           "description": $("#new_translation_key_description").val(),
+          "fallback_label": $("#fallback_translation_key_label").val(),
+          "fallback_description": $("#fallback_translation_key_description").val(),
           "sources": $("#new_translation_key_sources").val()
         }).done(function(params) {
           if (params["error"]) {

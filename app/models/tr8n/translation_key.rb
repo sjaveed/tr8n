@@ -556,8 +556,11 @@ class Tr8n::TranslationKey < ActiveRecord::Base
         return decorator.decorate_translation(language, self, sanitized_label, options.merge(:translated => true)).html_safe
       end
 
+      options[:translated] = true
+      options[:fallback] = (translation.translation_key != self || translation.language != language)
+
       translated_label = substitute_tokens(translation.language, translation.label, token_values, options)
-      return decorator.decorate_translation(translation.language, self, translated_label, options.merge(:translated => true, :fallback => (translation.language != language))).html_safe
+      return decorator.decorate_translation(translation.language, self, translated_label, options).html_safe
     end
 
     untranslated_label = substitute_tokens(self.language, label, token_values, options)

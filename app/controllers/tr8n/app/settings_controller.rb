@@ -130,13 +130,35 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
   end
 
   def remove_language
-    selected_application.remove_language(Tr8n::Language.by_locale(params[:locale]))
+    selected_application.remove_language(Tr8n::Language.by_locale(params[:lang]))
+    render :json => {:success=>true}
+  end
+
+  def toggle_featured_language
+    al = Tr8n::ApplicationLanguage.where(:application_id=>selected_application.id, :language_id => Tr8n::Language.by_locale(params[:lang]).id).first
+    if al
+      al.featured_index = (al.featured_index.nil? ? selected_application.featured_languages.count + 1 : nil)
+      al.save
+    end
+    render :json => {:success=>true}
+  end
+
+  def featured_languages
+
+  end
+
+  def unfeature_language
+    al = Tr8n::ApplicationLanguage.where(:application_id=>selected_application.id, :language_id => Tr8n::Language.by_locale(params[:lang]).id).first
+    if al
+      al.featured_index = nil
+      al.save
+    end
     redirect_back
   end
 
-  def update_languages_order
+  def update_featured_languages_order
     params[:languages].each_with_index do |id, index|
-      Tr8n::ApplicationLanguage.update_all({:position => index+1}, {:id => id})
+      Tr8n::ApplicationLanguage.update_all({:featured_index => index+1}, {:id => id})
     end
 
     render :nothing => true

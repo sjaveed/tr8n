@@ -2,6 +2,7 @@
   <%= [
         link_to_unless(controller.action_name == 'index', tra("basics"), :action => :index),
         link_to_unless(controller.action_name == 'languages', tra("languages"), :action => :languages),
+        link_to_unless(controller.action_name == 'featured_languages', tra("featured languages"), :action => :featured_languages),
         link_to_unless(controller.action_name == 'features', tra("features"), :action => :features),
         link_to_unless(controller.action_name == 'decorations', tra("inline decorators"), :action => :decorations),
         link_to_unless(controller.action_name == 'tokens', tra("global tokens"), :action => :tokens),

@@ -57,8 +57,10 @@ class Tr8n::Application < ActiveRecord::Base
   alias :sources :translation_sources
 
   belongs_to :default_language, :class_name => 'Tr8n::Language', :foreign_key => :default_language_id
-  has_many :application_languages, :class_name => 'Tr8n::ApplicationLanguage', :order => "position asc", :dependent => :destroy
-  has_many :languages, :class_name => 'Tr8n::Language', :order => "tr8n_application_languages.position asc", :through => :application_languages
+  has_many :application_languages, :class_name => 'Tr8n::ApplicationLanguage', :dependent => :destroy
+  has_many :languages, :class_name => 'Tr8n::Language', :order => "english_name asc", :through => :application_languages
+
+  has_many :featured_application_languages, :class_name => 'Tr8n::ApplicationLanguage', :order => "featured_index asc", :conditions => "featured_index is not null"
 
   has_many :application_translators, :class_name => 'Tr8n::ApplicationTranslator', :dependent => :destroy
   has_many :translators, :class_name => 'Tr8n::Translator', :through => :application_translators

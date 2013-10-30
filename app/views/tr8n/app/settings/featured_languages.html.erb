@@ -1,0 +1,77 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <div class="section_title">
+      <%=render(:partial => "sections") %>
+      <%=tra("Featured Languages") %>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Featured Languages") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%=tra("Featured languages usually appear at the bottom of a page as a language strip.") %>
+        <%=tra("The section allows you to change the order in which the languages appear.") %>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <table class="table table-hover ">
+        <thead>
+        <tr>
+          <th style="width:8px;"></th>
+          <th><%=tra("English Name") %></th>
+          <th><%=tra("Native Name") %></th>
+          <th><%=tra("Locale") %></th>
+          <th><%=tra("Direction") %></th>
+        </tr>
+        </thead>
+        <tbody id="languages" data-update-url="/tr8n/app/settings/update_featured_languages_order">
+        <% selected_application.featured_application_languages.each do |app_lang| %>
+          <% lang = app_lang.language %>
+          <tr id="languages_<%=app_lang.id%>">
+            <td><i class='icon-align-justify handle'></i></td>
+            <td>
+              <%= tr8n_language_flag_tag(lang) %>
+              <%=lang.english_name%>
+            </td>
+            <td><%=lang.native_name%></td>
+            <td><%=lang.locale%></td>
+            <td><%= (lang.dir == "ltr" ? "&rarr;" : "&larr;").html_safe %></td>
+            <td style="text-align:right">
+              <%=link_to("&times;".html_safe, {:action => :unfeature_language, :lang => lang.locale})%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>
+
+<style>
+  #languages .handle {
+    cursor: move;
+  }
+</style>
+
+<script>
+  $(function() {
+    $( "#languages" ).sortable({
+      handle: '.handle',
+      update: function() {
+        $.post($(this).data('update-url'), $(this).sortable('serialize'))
+      }
+    });
+    $( "#languages" ).disableSelection();
+  });
+</script>

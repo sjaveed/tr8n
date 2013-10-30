@@ -55,7 +55,7 @@
             <div class="form-group">
               <label for="locale"><%=tra("Source Language:")%></label>
               <select name="default_locale">
-                <% Tr8n::Language.enabled_languages.each do |lang| %>
+                <% selected_application.languages.each do |lang| %>
                   <option <%="selected" if selected_application.default_language == lang %> value="<%=lang.locale%>"><%=lang.english_name%></option>
                 <% end %>
               </select>

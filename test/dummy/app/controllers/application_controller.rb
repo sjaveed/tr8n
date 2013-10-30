@@ -78,8 +78,7 @@ private
     session[:user_id] = nil
     @current_user = nil
     # Tr8n::Config.reset!
-    # Platform::Config.reset!
-  end  
+  end
   
   def lightbox?
     ["lightbox", "mobile"].include?(params[:mode])

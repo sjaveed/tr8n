@@ -36,6 +36,11 @@ class Tr8n::RequestsController < Tr8n::BaseController
       return redirect_to("/tr8n/app/phrases")
     end
 
+    unless @request.application
+      trfn("This request is invalid")
+      return redirect_to(Tr8n::Config.default_url)
+    end
+
     @request.mark_as_viewed! if @request.delivered? or  @request.new?
     redirect_to(@request.destination_url)
   end
@@ -72,7 +77,11 @@ private
       return redirect_to(Tr8n::Config.default_url)
     end
 
-    login!(@request.to) if @request.to
+    if @request.to
+      login!(@request.to)
+    #else
+    #  logout!
+    end
   end
 
 end

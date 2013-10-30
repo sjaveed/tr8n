@@ -25,19 +25,25 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
 
   def application
     if request.post?
-      domains = params[:domains].split("\n")
-      translators_emails = params[:translators].split(',')
-
-      if Tr8n::TranslationDomain.where("name in (?)", domains).any?
-        return render(:json => {"error" => tra("Application with this domain already exists. Please contact application administrator to be added to the application")}.to_json)
-      end
 
       default_language = Tr8n::Language.by_locale(params[:default_locale])
+
       app = Tr8n::Application.create(:name => params[:name], :description => params[:description], :default_language => default_language)
 
-      domains.each do |domain|
-        Tr8n::TranslationDomain.create(:name => domain, :application => app)
+      unless params[:site_url].blank?
+        app.url = params[:site_url]
+        app.save
       end
+
+      #domains = params[:domains].split("\n")
+      #
+      #if Tr8n::TranslationDomain.where("name in (?)", domains).any?
+      #  return render(:json => {"error" => tra("Application with this domain already exists. Please contact application administrator to be added to the application")}.to_json)
+      #end
+      #
+      #domains.each do |domain|
+      #  Tr8n::TranslationDomain.create(:name => domain, :application => app)
+      #end
 
       app.add_language(default_language)
       unless params[:locales].blank?
@@ -46,11 +52,21 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
         end
       end
 
-      translators_emails.each do |email|
-        # TODO: generate translator join request
-      end
-
       app.add_translator(tr8n_current_translator)
+
+      emails = params[:translators].strip.blank? ? [] : params[:translators].split(',')
+      emails.each do |email|
+        user = Tr8n::Config.user_class.find_by_email(email)
+        translator = Tr8n::Translator.by_user(user) if user
+        next if user == tr8n_current_user
+        next if translator and Tr8n::ApplicationTranslator.by_application_and_translator(app, translator)
+
+        req = Tr8n::Requests::InviteTranslator.where(:application_id => app.id, :email => email).first
+        req ||= Tr8n::Requests::InviteTranslator.create(:application_id => app.id, :email => email)
+        req.from=tr8n_current_user
+        req.to=user
+        req.save_and_deliver
+      end
 
       session[:tr8n_selected_app_id] = app.id
 

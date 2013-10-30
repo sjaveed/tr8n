@@ -215,7 +215,8 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
     end
 
     @et = log.email_template
-    @from =
+    @from = Tr8n::Config.contact_email
+    @to = log.email
 
     @title = @et.title
     @subject = @et.render_subject

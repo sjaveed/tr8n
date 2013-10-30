@@ -1,4 +1,8 @@
-<div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:#f1f4f9;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
+<%
+   color = "#f1f4f9" # selected_application.default? ? "#E0FFD9" : "#f1f4f9"
+%>
+
+<div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="background-color:<%=color%>;border-top: solid 1px #ddd;border-right: solid 1px #ddd;border-left: solid 1px #ddd;border-top-left-radius:10px;border-top-right-radius:10px; ">
   <div style="padding:15px;padding-bottom:10px;">
     <div style="float:right">
       <div style="float:right">
@@ -18,6 +22,9 @@
 
           <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1" style="color:#666; font-size:25px;">
             <%= selected_application.name %>
+            <% if selected_application.default? %>
+              <%=image_tag("tr8n/lock.png", :style=>"vertical-align:top")%>
+            <% end %>
             <b class="caret"></b>
           </a>
           <div style="font-size:14px; font-weight:normal; color: #888; padding-left:13px;">
@@ -34,10 +41,14 @@
             <% translator_applications.each do |app| %>
               <li>
                 <%=link_to({:app_id => app.id}, :style => "#{translator_applications.last != app ? "padding-bottom:10px;border-bottom:1px dashed #ccc" : ""}") do %>
+                  <% if app.default? %>
+                    <div style="float:right;padding-top:5px;"><%=image_tag("tr8n/lock.png")%></div>
+                  <% end %>
                   <div style="display:inline-block; width:70px; text-align: center; padding-top:10px;">
                     <%=image_tag(app.logo_url, :style=>"max-width:50px;max-height:50px;") %>
                   </div>
                   <div style="display:inline-block; vertical-align: top; padding-left:10px;">
+
                     <div style="font-size:16px; font-weight:bold; padding-top:5px;padding-bottom:5px;">
                       <%= app.name %>
                     </div>

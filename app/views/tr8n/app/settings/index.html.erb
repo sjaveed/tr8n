@@ -23,12 +23,12 @@
               <%=image_tag(selected_application.logo_url, :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
             </div>
             <div style="padding:15px;">
-             <span class="btn btn-primary fileinput-button">
+             <span class="btn fileinput-button">
                 <span><%=tra("Upload...") %></span>
                 <input id="fileupload" type="file" name="files[]" multiple>
               </span>
               <% if selected_application.logo %>
-                <%=link_to("Delete", {:action => :delete_logo}, :class=>"btn btn-danger", :confirm => trla("Are you sure you want to remove the logo?")) %>
+                <%=link_to("Delete", {:action => :delete_logo}, :class=>"btn", :confirm => trla("Are you sure you want to remove the logo?")) %>
               <% end %>
             </div>
           </div>
@@ -90,9 +90,14 @@
         </div>
 
 
-        <div class="form-group" style="padding-top:25px;padding-bottom:15px; padding-right:40px; text-align:right">
+        <div class="form-group" style="padding-top:25px;padding-bottom:15px; padding-right:15px;">
+          <% unless selected_application.default? %>
+            <div style="float:right;">
+              <%=link_to("Delete Application", {:action => :delete}, :confirm => tra("Are you absolutely sure you want to delete this application?"), :class=>"btn btn-danger") %>
+            </div>
+          <% end %>
           <button type="submit" class="btn btn-primary">
-            <%=tra("Update Application")%>
+            <%=tra("Save Changes")%>
           </button>
         </div>
 

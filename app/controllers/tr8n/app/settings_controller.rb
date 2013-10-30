@@ -248,4 +248,17 @@ class Tr8n::App::SettingsController < Tr8n::App::BaseController
     end
     render :layout => false
   end
+
+  def delete
+    if selected_application.default?
+      trfe("{application} cannot be deleted", :application => selected_application.name)
+      return redirect_back
+    end
+
+    selected_application.destroy
+    session[:tr8n_selected_app_id] = tr8n_current_translator.applications.first.id
+    trfn("{application} has been deleted", :application => selected_application.name)
+    redirect_to(:action => :index)
+  end
+
 end

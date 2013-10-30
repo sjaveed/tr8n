@@ -74,9 +74,14 @@ class Tr8n::Requests::Base < ActiveRecord::Base
     state :rejected
     state :canceled
 
+    # for resending purposes
     event :mark_as_delivered do
       transitions :from => :new,            :to => :delivered
+      transitions :from => :delivered,      :to => :delivered
+      transitions :from => :viewed,         :to => :delivered
+      transitions :from => :accepted,       :to => :delivered
       transitions :from => :rejected,       :to => :delivered
+      transitions :from => :canceled,       :to => :delivered
     end
 
     event :mark_as_viewed do

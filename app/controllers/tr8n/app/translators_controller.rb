@@ -33,7 +33,8 @@ class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
 
   def invite_wizard
     if request.post?
-      emails = params[:emails].split(",")
+
+      emails = params[:emails].strip.blank? ? [] : params[:emails].split(",")
       languages = params[:languages] unless params[:languages].blank?
       message = params[:message]
 
@@ -56,5 +57,16 @@ class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
     end
 
     render :layout => false
+  end
+
+  def remove
+    at = Tr8n::ApplicationTranslator.where(:application_id => selected_application.id, :translator_id => params[:id]).first
+
+    if at
+      trfn("Translator has been removed from the application")
+      at.destroy
+    end
+
+    redirect_back
   end
 end

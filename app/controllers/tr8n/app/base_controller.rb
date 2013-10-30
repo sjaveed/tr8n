@@ -48,7 +48,6 @@ private
     end
 
     unless @selected_application
-      # temp
       if tr8n_current_translator.applications.empty?
         Tr8n::RequestContext.container_application.add_translator(tr8n_current_translator)
       end

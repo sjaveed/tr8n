@@ -7,50 +7,60 @@
 
       <div class="wizard-input-section">
         <p>
-          To begin, please enter your application name.
+          <%=tra("To begin, please enter your application name.") %>
         </p>
 
         <div class="control-group">
-          <%=text_field_tag(:new_application_name, "", :placeholder => "Name", :class=>"input-xlarge", "data-validate" => "validateName" ) %>
+          <%=text_field_tag(:new_application_name, "", :placeholder => "Name", "data-validate" => "validateName", :style=>"width:400px;") %>
         </div>
       </div>
 
       <div class="wizard-input-section">
         <p>
-          Optionally, provide a description for this application.
+          <%=tra("Optionally, provide a description for this application.") %>
         </p>
 
         <div class="control-group">
-          <%=text_area_tag(:new_application_description, "", :placeholder => "Description", :style=>"width:400px;height:80px;") %>
+          <%=text_area_tag(:new_application_description, "", :placeholder => "Description", :style=>"width:400px;height:50px;") %>
+        </div>
+      </div>
+
+      <div class="wizard-input-section">
+        <p>
+          <%=tra("If this is a website, provide the site URL.") %>
+        </p>
+
+        <div class="control-group">
+          <%=text_field_tag(:new_application_url, "", :placeholder => "Website URL", :style=>"width:400px;" ) %>
         </div>
       </div>
 
     </div>
 
+    <!--<div class="wizard-card" data-cardname="card2">-->
+      <!--<h3>Domains</h3>-->
+
+      <!--<div class="wizard-input-section">-->
+        <!--<p>-->
+          <!--For extra security, you can restrict Tr8n API access to only domains listed below.-->
+        <!--</p>-->
+
+        <!--<div class="control-group">-->
+          <!--<%=text_area_tag(:new_application_domains, "", :placeholder => "www.sample.com", :style=>"width:400px;height:80px;") %>-->
+          <!--<p class="muted">-->
+            <!--Enter one domain per line-->
+          <!--</p>-->
+        <!--</div>-->
+
+      <!--</div>-->
+    <!--</div>-->
+
     <div class="wizard-card" data-cardname="card2">
-      <h3>Domains</h3>
+      <h3><%=tra("Languages") %></h3>
 
       <div class="wizard-input-section">
         <p>
-          For extra security, you can restrict Tr8n API access to only domains listed below.
-        </p>
-
-        <div class="control-group">
-          <%=text_area_tag(:new_application_domains, "", :placeholder => "www.sample.com", :style=>"width:400px;height:80px;") %>
-          <p class="muted">
-            Enter one domain per line
-          </p>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="wizard-card" data-cardname="card2">
-      <h3>Languages</h3>
-
-      <div class="wizard-input-section">
-        <p>
-          What is the main language of your application?
+          <%=tra("What is the main language of your application?") %>
         </p>
 
         <div class="control-group">
@@ -65,7 +75,7 @@
 
       <div class="wizard-input-section">
         <p>
-          Enter a list of languages you want to support in your application.
+          <%=tra("Enter a list of languages you want to support in your application.") %>
         </p>
 
         <div class="control-group">
@@ -76,15 +86,20 @@
             <% end %>
           </select>
         </div>
+
+        <p class="muted">
+          <%=tra("This is an initial set of languages. You will be able to modify them later.") %>
+        </p>
+
       </div>
     </div>
 
     <div class="wizard-card" data-cardname="card2">
-      <h3>Translators</h3>
+      <h3><%=tra("Translators") %></h3>
 
       <div class="wizard-input-section">
         <p>
-          Optionally, enter a list of email addresses for translators you want to invite to help you translate your app.
+          <%=tra("Optionally, enter a list of email addresses for translators you want to invite to help you translate your app.") %>
         </p>
 
         <div class="control-group">
@@ -154,7 +169,7 @@
         'onAddTag': function(tag) {
           if (!validateEmail(tag)) {
             alert("Invalid email address");
-            $('#translators').removeTag(tag);
+            $('#new_application_translators').removeTag(tag);
             return false;
           }
         }
@@ -171,7 +186,8 @@
           "domains": $("#new_application_domains").val(),
           "default_locale": $("#new_application_default_language").val(),
           "locales": $("#new_application_languages").val(),
-          "translators": $("#new_application_translators").val()
+          "translators": $("#new_application_translators").val(),
+          "site_url": $("#new_application_url").val()
         }).done(function(params) {
             if (params["error"]) {
               $(".create-application-error-message").html(params['error']);

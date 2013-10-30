@@ -5,7 +5,7 @@
     <%=link_to("Translations", {:action => :index})%> 
     | <%=link_to("Votes", {:action => :votes})%> 
   </span> 
-	<%=image_tag("tr8n/flags/#{@translation.language.flag}.png")%> Translation Details
+	<%=image_tag(@translation.language.flag_url)%> Translation Details
 </div>
 
 <table class="admin_table">

@@ -4,7 +4,7 @@
         <%= tr8n_lightbox_title_tag(tra("Language Details")) %>
     </div>
     <div class="bd" style="padding-bottom:60px;">
-        <%= form_for(@language, :as => :language, :url => {:action => :update}, :html => {:id => 'tr8n_form', :method => :post, :class => "tr8n"}) do |form| %>
+        <%= form_for(@language, :as => :language, :url => {:action => :update, :id => @language.id}, :html => {:id => 'tr8n_form', :method => :post, :class => "tr8n"}) do |form| %>
         <%= form.hidden_field :id %>
         <%= hidden_field_tag(:origin, params[:origin]) %>
         <table class="admin_table">

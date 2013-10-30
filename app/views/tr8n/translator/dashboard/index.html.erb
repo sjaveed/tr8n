@@ -95,7 +95,7 @@
         </div>
 
         <%=tr8n_toggler_tag("lang_content_#{lang.id}")%>
-        <%=image_tag("tr8n/flags/#{lang.flag}.png", :title=>lang.native_name) if Tr8n::Config.enable_language_flags? %>&nbsp;
+        <%=image_tag(lang.flag_url, :title=>lang.native_name) if Tr8n::Config.enable_language_flags? %>&nbsp;
 
         <span dir="ltr">
           <a name="<%=lang.locale%>" style="text-decoration:none;color:black;"><%=lang.native_name%></a>

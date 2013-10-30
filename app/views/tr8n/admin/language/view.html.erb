@@ -1,5 +1,5 @@
 <%= render :partial => "/tr8n/admin/common/header" %>
-<%= render :partial => "tabs", :locals => {:current_tab => "#{image_tag("tr8n/flags/#{@lang.flag}.png")} Language Details".html_safe} %>
+<%= render :partial => "tabs", :locals => {:current_tab => "#{image_tag(@lang.flag_url)} Language Details".html_safe} %>
 
 <table class="admin_table">
     <tr>
@@ -105,11 +105,10 @@
             
         </th>
         <td>
-        	<%=link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/language/lb_update?lang_id=#{@lang.id}', {height:450})") %>
+          <%= link_to("Update", {:action => :language_modal, :id => @lang.id}, {"data-toggle" => "dynamic_modal", :class=>"btn"}) %>
         </td>
     </tr>    
 </table>
-
 
 <%=  tr8n_sections_tag(:modes => [
             ["Metrics",   {:mode => :metrics}],

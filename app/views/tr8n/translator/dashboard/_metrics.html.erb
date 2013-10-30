@@ -2,11 +2,10 @@
   <% if lang.total_metric.not_translated_count == 0 and lang.total_metric.key_count > 0 %>
     <%=tra("{language} is fully translated.", :language => lang.native_name)%>
   <% else %>
-    <%=tra("{language} has [link: {count} {_phrases}] that need to be translated.",
+    <%=tra("{language} has [link: {count||phrase}] that need to be translated.",
         :language => lang.native_name,
         :count => lang.total_metric.not_translated_count,
-        :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :index, :locale => lang.locale, :phrase_type => :without)},
-        :_phrases => "phrase".pluralize_for(lang.total_metric.not_translated_count)
+        :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :index, :locale => lang.locale, :phrase_type => :without)}
      )%>
   <% end %>
 </div>

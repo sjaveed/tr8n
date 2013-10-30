@@ -1,1 +1,39 @@
 </div>
+
+<script>
+  $(document).ready(function() {
+
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+
+    $('[data-toggle="dynamic_modal"]').click(function(e) {
+      e.preventDefault();
+      var url = $(this).attr('href');
+      if (url.indexOf('#') == 0) {
+        $(url).modal('open');
+      } else {
+        $.get(url, function(data) {
+          $('<div class="modal hide fade">' + data + '</div>').modal();
+        }).success(function() {
+            });
+      }
+    });
+
+    $('[data-toggle="dynamic_wizard"]').click(function(e) {
+      e.preventDefault();
+      var url = $(this).attr('href');
+      if (url.indexOf('#') == 0) {
+        $(url).modal('open');
+      } else {
+        $.get(url, function(data) {
+//          $( ".tr8n_container" ).append(data);
+          $('#tr8n_wizards').html(data);
+        }).success(function() {
+            });
+      }
+    });
+  });
+</script>

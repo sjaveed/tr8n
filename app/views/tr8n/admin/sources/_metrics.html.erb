@@ -9,7 +9,7 @@
                         link_to(image_tag("tr8n/arrow_rotate_clockwise.png"), {:action => :recalculate_metric, :metric_id => metric.id}, {:confirm => "Are you sure you want to recaluclate this metric?"})
                         ]) %>
               </div>
-              <div style="font-weight:bold;"><%=image_tag("tr8n/flags/#{metric.language.flag}.png")%> &nbsp; <%=metric.language.english_name%></div>
+              <div style="font-weight:bold;"><%=image_tag(metric.language.flag_url)%> &nbsp; <%=metric.language.english_name%></div>
           </div>
           <%=render :partial => "/tr8n/dashboard/translation_source_metric", :locals => {:translation_source => metric.translation_source, :translation_source_metric => metric} %>
       </div>
@@ -17,7 +17,7 @@
 
 <% else %>
   <%= will_filter_table_tag(@metrics, :columns => [
-      [:flag, lambda{|metric| metric.language ? image_tag("tr8n/flags/#{metric.language.flag}.png") : ''}, 'width:30px;'],
+      [:flag, lambda{|metric| metric.language ? image_tag(metric.language.flag_url) : ''}, 'width:30px;'],
       [:language_id, lambda{|metric| 
          metric.language.english_name
       }],    

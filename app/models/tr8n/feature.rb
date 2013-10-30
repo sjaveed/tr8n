@@ -60,6 +60,7 @@ class Tr8n::Feature < ActiveRecord::Base
         "awards"              => {"enabled" => true,  "container_only"=>false, "description" => "Translator awards",                          },
         "admin_translations"  => {"enabled" => true,  "container_only"=>true,  "description" => "Enables inline translations of the administration tools", },
         "open_registration"   => {"enabled" => true,  "container_only"=>true,  "description" => "Allow anyone to register as translator. If disabled, translators will be able to join by invitation only.",     },
+        "language_flags"      => {"enabled" => true,  "container_only"=>false, "description" => "Displays flag icons next to languages in the language selector window and other sections of the site",   },
     }
   end
 

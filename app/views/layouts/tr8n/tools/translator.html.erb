@@ -22,9 +22,6 @@
   <script type="text/javascript">
     function resizeFrame() {
       var height = Tr8n.element('tr8n_translator_content').offsetHeight;
-      if (document.getElementById('tr8n_translator_translation_label')) {
-        height += 60;
-      }
       Tr8n.Dispatcher.postMessage({'subject': 'translator', 'action': 'resize', 'height':  height+50}, '<%=params[:origin]%>');
     }
 

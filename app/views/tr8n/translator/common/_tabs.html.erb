@@ -34,7 +34,7 @@
               <span style="font-size:10px;">(level <%=tr8n_page_translator.level%>)</span>
             </div>
             <div style="color:#999; font-size:14px; padding-top:5px; font-weight:normal;">
-              <%= tr8n_page_translator.languages.collect{|lang| "#{image_tag("tr8n/flags/#{lang.flag}.png", :style => "align:middle")} #{lang.name}"}.join("&nbsp; ").html_safe %>
+              <%= tr8n_page_translator.languages.collect{|lang| "#{image_tag(lang.flag_url, :style => "align:middle")} #{lang.name}"}.join("&nbsp; ").html_safe %>
             </div>
           </td>
         </tr>

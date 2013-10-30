@@ -70,7 +70,7 @@ class Tr8n::Language < ActiveRecord::Base
   has_many :translation_key_locks,  :class_name => 'Tr8n::TranslationKeyLock',  :dependent => :destroy
   has_many :language_metrics,       :class_name => 'Tr8n::Metrics::Language'
 
-  has_many :country_languages,      :class_name => 'Tr8n::CountryLanguage',    :order => "position asc", :dependent => :destroy
+  has_many :country_languages,      :class_name => 'Tr8n::CountryLanguage',     :order => "position asc", :dependent => :destroy
   has_many :countries,              :class_name => 'Tr8n::Country',             :through => :country_languages, :order => "tr8n_country_languages.position asc"
 
   ###############################################################
@@ -78,6 +78,14 @@ class Tr8n::Language < ActiveRecord::Base
   ###############################################################
   def self.cache_key(locale)
     "language_[#{locale}]"
+  end
+
+  def flag
+    @flag ||= Tr8n::Media::LanguageFlag.where(:owner_type => self.class.name, :owner_id => self.id).first
+  end
+
+  def flag_url
+    flag ? flag.url(:original, :full => true) : "#{Tr8n::Config.base_url}/assets/tr8n/tr8n_flag.png"
   end
 
   def cache_key
@@ -172,10 +180,6 @@ class Tr8n::Language < ActiveRecord::Base
   
   def default?
     self.locale == Tr8n::Config.default_locale
-  end
-  
-  def flag
-    locale
   end
   
   def cases?

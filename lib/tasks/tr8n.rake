@@ -45,6 +45,11 @@ namespace :tr8n do
     end
   end
 
+  desc "Import language flags"
+  task :import_language_flags => :environment do
+    Tr8n::Initializer.init_language_flags
+  end
+
   desc "Resets all metrics"
   task :reset_metrics => :environment do
     Tr8n::LanguageMetric.reset_metrics

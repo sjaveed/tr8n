@@ -31,13 +31,13 @@ class Tr8n::Admin::LanguageController < Tr8n::Admin::BaseController
     @lang = Tr8n::Language.find(params[:lang_id])
 
     klass = {
-      :metrics => Tr8n::LanguageMetric,
-      :context_rules => Tr8n::LanguageRule,
-      :cases => Tr8n::LanguageCase,
+      :metrics => Tr8n::Metrics::Language,
+      :context_rules => Tr8n::LanguageContextRule,
+      :cases => Tr8n::LanguageCaseRule,
       :case_rules => Tr8n::LanguageCaseRule,
       :case_exceptions => Tr8n::LanguageCaseValueMap,
     }[params[:mode].to_sym] if params[:mode]
-    klass ||= Tr8n::LanguageMetric
+    klass ||= Tr8n::Metrics::Language
 
     filter = {"wf_c0" => "language_id", "wf_o0" => "is", "wf_v0_0" => @lang.id}
     extra_params = {:lang_id => @lang.id, :mode => params[:mode]}
@@ -96,25 +96,22 @@ class Tr8n::Admin::LanguageController < Tr8n::Admin::BaseController
   def cases
     @cases = Tr8n::LanguageCase.filter(:params => params, :filter => Tr8n::LanguageCaseFilter)
   end
-  
-  def lb_update
-    @language = Tr8n::Language.find_by_id(params[:lang_id]) unless params[:lang_id].blank?
-    @language = Tr8n::Language.new unless @language
-    
-    render_lightbox
-  end
 
-  def update
-    language = Tr8n::Language.find_by_id(params[:language][:id]) unless params[:language][:id].blank?
-    
-    if language
-      language.update_attributes(params[:language])
-    else
-      language = Tr8n::Language.create(params[:language])
-      language.reset!
+  def language_modal
+    @language = Tr8n::Language.find_by_id(params[:id]) unless params[:id].blank?
+    @language ||= Tr8n::Language.new
+
+    if request.post?
+      if @language.id
+        @language.update_attributes(params[:language])
+      else
+        @language = Tr8n::Language.create(params[:language])
+        @language.reset!
+      end
+      return redirect_back
     end
-    
-    dismiss_lightbox
+
+    render_modal
   end
 
   def case_rules

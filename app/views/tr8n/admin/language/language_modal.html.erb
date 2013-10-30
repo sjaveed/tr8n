@@ -1,0 +1,67 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <%= form_for(@language, :as => :language, :url => {:id => @language.id}, :html => {:method => :post, :role => "form", :class => "form-inline", :id => "sources_form", :style=>"margin:0px;"}) do |f| %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <% if @language.id %>
+            <%=tra("Add New Language")%>
+          <% else %>
+            <%=tra("Update Language")%>
+          <% end %>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="language[locale]"><%=tra("Locale:")%></label>
+          <%=f.text_field(:locale, :placeholder => "Enter locale", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="language[english_name]"><%=tra("English Name:")%></label>
+          <%=f.text_field(:english_name, :placeholder => "Enter English name", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="language[native_name]"><%=tra("Native Name:")%></label>
+          <%=f.text_field(:native_name, :placeholder => "Enter native name", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="language[google_key]"><%=tra("Google Key:")%></label>
+          <%=f.text_field(:google_key, :placeholder => "Enter Google key", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="language[facebook_key]"><%=tra("Facebook Key:")%></label>
+          <%=f.text_field(:facebook_key, :placeholder => "Enter Facebook key", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="language[myheritage_key]"><%=tra("MyHeritage Key:")%></label>
+          <%=f.text_field(:myheritage_key, :placeholder => "Enter MyHeritage key", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <%= f.check_box :right_to_left %>
+          <label for="language[right_to_left]"><%=tra("Right to Left")%></label>
+        </div>
+
+        <div class="form-group">
+          <%= f.check_box :enabled %>
+          <label for="language[enabled]"><%=tra("Enabled")%></label>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+        <button type="submit" class="btn btn-primary"><%=tra("Submit") %></button>
+      </div>
+    </div><!-- /.modal-content -->
+  <% end %>
+</div><!-- /.modal-dialog -->
+

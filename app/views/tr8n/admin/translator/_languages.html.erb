@@ -3,7 +3,7 @@
 <%= will_filter_table_tag(@results, :columns => [
     [:flag, lambda{|ulang| 
       return "deleted" unless ulang.language
-      image_tag("tr8n/flags/#{ulang.language.flag}.png")
+      image_tag(ulang.language.flag_url)
     }, :title => ""],
     [:locale, lambda{|ulang|
       return "deleted" unless ulang.language

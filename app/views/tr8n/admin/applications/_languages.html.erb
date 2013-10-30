@@ -3,7 +3,7 @@
 <%= form_tag("", :id => "tr8n_form") do %>
   <%= hidden_field_tag(:type, "application_language") %>
   <%= will_filter_table_tag(@results, :columns => [
-    [:flag, lambda{|al| al.language ? image_tag("tr8n/flags/#{al.language.flag}.png") : ''}, :style => 'width:20px;', :title => ''],
+    [:flag, lambda{|al| al.language ? image_tag(al.language.flag_url) : ''}, :style => 'width:20px;', :title => ''],
     [:checkbox, 'ids'],     
     [:id, lambda{|al| al.language ?  al.language.id : ''}, 'width:60px;'],
     [:locale, lambda{|al|

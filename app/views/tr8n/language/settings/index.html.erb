@@ -10,11 +10,18 @@
 
     <%= form_for(tr8n_current_language, :as => :language, :url => {}, :html => {:id => 'basic_info_form', :method => :post}) do |f| %>
       <div id="basic_info_content" class="section grey">
-        <div class="tr8n_float_right" style="padding-right:5px;">
-            <%=tr8n_help_icon_tag("Language Settings") %>
-        </div>
         <div>
+          <div class="tr8n_float_right" style="padding-right:5px;">
+            <%=tr8n_help_icon_tag("Language Settings") %>
+          </div>
+
           <table cellpadding="0px" cellspacing="0px">
+            <tr>
+              <th class="tr8n_text_align_left" style="width:220px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("Language Flag:")%></th>
+              <td class="tr8n_text_align_left" style="padding:3px;">
+                <%=image_tag(tr8n_current_language.flag_url, :style=>"max-width:120px; max-height: 120px; padding:5px;") %>
+              </td>
+            </tr>
             <tr>
               <th class="tr8n_text_align_left" style="width:220px;padding:3px; vertical-align:middle;font-weight:bold;"><%=tra("English Name:")%></th>
               <td class="tr8n_text_align_left" style="padding:3px;">
@@ -47,9 +54,17 @@
             <tr>
               <th style="padding:3px;vertical-align:middle;font-weight:bold;"></th>
               <td style="padding-top:15px;padding-bottom:15px;">
-                 <button type="submit" class="btn btn-primary" onClick="Tr8n.submit('basic_info_form'); return false;">
-                    <%=tra("Update")%>
-                  </button>
+                <button type="submit" class="btn btn-primary" onClick="Tr8n.submit('basic_info_form'); return false;">
+                  <%=tra("Update")%>
+                </button>
+
+                <span class="btn fileinput-button">
+                  <span><%=tra("Upload Flag...") %></span>
+                  <input id="fileupload" type="file" name="files[]" multiple>
+                </span>
+                <% if tr8n_current_language.flag %>
+                  <%=link_to("Remove Flag", {:action => :delete_flag}, :class=>"btn", :confirm => trla("Are you sure you want to remove the flag?")) %>
+                <% end %>
               </td>
             </tr>
 
@@ -62,3 +77,22 @@
 <%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>
+
+<%= stylesheet_link_tag('tr8n/jquery/fileupload/jquery.fileupload.css') %>
+<%=javascript_include_tag('tr8n/vendor/jquery/fileupload/jquery.iframe-transport.js') %>
+<%=javascript_include_tag('tr8n/vendor/jquery/fileupload/jquery.fileupload.js') %>
+
+<script>
+  $(function () {
+    $('#fileupload').fileupload({
+      dataType: 'json',
+      acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+      maxFileSize: 5000000, // 5 MB
+      url: "/tr8n/language/settings/upload_flag",
+      done: function (e, data) {
+        window.location.reload();
+      }
+
+    });
+  });
+</script>

@@ -89,11 +89,11 @@
 
           <div id="translation_key_toolbar" style="padding-top:25px; padding-bottom: 10px;">
             <div style="float:right">
-              <%=link_to_function(tra("Lock"), "lockKeys()", {"class" => "btn btn-success", "data-toggle" => "dynamic_modal"})%>
-              <%=link_to_function(tra("Unlock"), "unlockKeys()", {"class" => "btn btn-warning", "data-toggle" => "dynamic_modal"})%>
-              <%=link_to_function(tra("Remove"), "removeKeys()", {"class" => "btn btn-danger", "data-toggle" => "dynamic_modal"})%>
+              <%=link_to_function(tra("Lock"), "lockKeys()", {"class" => "btn btn-success"})%>
+              <%=link_to_function(tra("Unlock"), "unlockKeys()", {"class" => "btn btn-warning"})%>
+              <%=link_to_function(tra("Remove"), "removeKeys()", {"class" => "btn btn-danger"})%>
             </div>
-            <%=link_to_function(tra("Add To Source..."), "addSelectedKeysToSource()", {"class" => "btn", "data-toggle" => "dynamic_modal"})%>
+            <%=link_to_function(tra("Add To Source..."), "addSelectedKeysToSource()", {"class" => "btn"})%>
           </div>
 
         <% end %>

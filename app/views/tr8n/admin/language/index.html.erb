@@ -1,22 +1,15 @@
-<style>
-.wf_results_table td {
-  padding: 0px;
-}
-</style>
-
 <%= render :partial => "/tr8n/admin/common/header" %>
 <%= render :partial => "tabs" %>
 
 <%= tr8n_will_filter(@results) %>
 
-<%=link_to_function("+ Add New Language", "Tr8n.UI.Lightbox.show('/tr8n/admin/language/lb_update', {height:400})")%>
- | 
-<%=link_to_function("Calculate Completeness", 'calculateCompleteness()')%>
+<%=link_to("Add New Language", {:action => :language_modal}, {"data-toggle" => "dynamic_modal", :class=>"btn"})%>
+
 <br>
 
 <%= form_tag("", :id => "languages_form") do %>
 	<%= will_filter_table_tag(@results, :columns => [
-    [:flag, lambda{|lang| image_tag("tr8n/flags/#{lang.flag}.png")}, :style => 'width:20px;', :title => ''],
+    [:flag, lambda{|lang| image_tag(lang.flag_url)}, :style => 'width:20px;', :title => ''],
     [:checkbox, 'languages'],
 	  [:locale, lambda{|lang|
 	    html = []
@@ -61,16 +54,16 @@
 	    html.join(' ').html_safe
 	  }, 'text-align:right;'],
 	  [:actions, lambda{|lang|
-	     html = [] 
-	     html << link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/language/lb_update?lang_id=#{lang.id}', {height:400})")
+	     html = []
+       html << link_to("Update", {:action => :language_modal, :id => lang.id}, {"data-toggle" => "dynamic_modal", :class=>"btn"})
 	     unless lang.default?
 	      if lang.enabled?
-	        html << link_to("Disable", :action => :disable, :lang_id => lang.id)
+	        html << link_to("Disable", {:action => :disable, :lang_id => lang.id}, :class=>"btn")
 	      else
-	        html << link_to("Enable", :action => :enable, :lang_id => lang.id) 
+	        html << link_to("Enable", {:action => :enable, :lang_id => lang.id}, :class=>"btn")
 	      end
 	     end 
-	     html.join(' | ').html_safe 
+	     html.join(' ').html_safe
 	  }, 'text-align:right;white-space:nowrap;']
 	]) %>
 <% end %>

@@ -52,37 +52,38 @@ module Tr8n
     def self.init
       #raise "This action is prohibited in this environment" if ['production', 'stage', 'staging'].include?(env)
 
-      puts "Resetting tr8n tables..."
+      log "Resetting tr8n tables..."
 
       models.each do |cls|
-        puts ">> Resetting #{cls.name}..."
+        log ">> Resetting #{cls.name}..."
         cls.delete_all
       end
-      puts "Done."
+      log "Done."
 
       init_countries
       init_languages
+      init_language_flags
       init_container_application
       init_glossary
       init_emails
 
-      puts "Done."
+      log "Done."
     end
 
     def self.init_countries
-      puts "Initializing countries..."
+      log "Initializing countries..."
       countries_file = File.expand_path(File.join(data_path, "countries.json"))
       json = load_json(countries_file)
       json.each do |code, name|
-        puts ">> Importing #{name}..."
+        log ">> Importing #{name}..."
         Tr8n::Country.create(:code => code.downcase, :english_name => name)
       end
-      puts "Created #{Tr8n::Country.count} countries."
+      log "Created #{Tr8n::Country.count} countries."
     end
 
 
     def self.init_container_application
-      puts "Initializing container application..."
+      log "Initializing container application..."
 
       app = Tr8n::Application.find_by_key("default") || Tr8n::Application.create(:key => "default", :name => "Tr8n Translation Service", :default_language => Tr8n::Language.by_locale("en-US"))
 
@@ -109,7 +110,7 @@ module Tr8n
 
       json = load_json(files[locale])
 
-      puts ">> Initializing #{json["english_name"]}..."
+      log ">> Initializing #{json["english_name"]}..."
 
       if json["fallback"]
         fallback_json = load_json(files[json["fallback"]])
@@ -129,7 +130,7 @@ module Tr8n
     end
 
     def self.init_languages
-      puts "Initializing languages..."
+      log "Initializing languages..."
 
       folder = File.expand_path(File.join(data_path, "languages"))
 
@@ -146,11 +147,38 @@ module Tr8n
         lang = import_language(language_files, locale)
       end
 
-      puts "Created #{Tr8n::Language.count} languages."
+      log "Created #{Tr8n::Language.count} languages."
+    end
+
+    def self.init_language_flags
+      log "Initializing language flags..."
+
+      folder = File.expand_path(File.join(data_path, "languages", "flags"))
+      updated_locales = []
+      Dir[File.join(folder, "*.png")].each do |file|
+        locale = File.basename(file, ".png")
+        lang = Tr8n::Language.by_locale(locale)
+        unless lang
+          log("#{locale} does not exist, yet the flag is there. Skipping...")
+          next
+        end
+        if lang.flag
+          log("#{locale} already has a flag. Skipping...")
+          updated_locales << locale
+          next
+        end
+
+        Tr8n::Media::LanguageFlag.create_from_file(lang, locale, File.read(file))
+
+        updated_locales << locale
+      end
+
+      missing_flags = Tr8n::Language.where("locale not in (?)", updated_locales).collect{|l| l.locale}
+      log("The following languages are missing flags: #{missing_flags.join(", ")}")
     end
 
     def self.init_glossary
-      puts "Initializing default glossary..."
+      log "Initializing default glossary..."
 
       glossary_file = File.expand_path(File.join(data_path, "container_application", "glossary.yml"))
       glossary = load_yml(glossary_file)
@@ -161,7 +189,7 @@ module Tr8n
     end
 
     def self.init_emails
-      puts "Initializing default emails..."
+      log "Initializing default emails..."
 
       Tr8n::Emails::Template.delete_all
       Tr8n::Emails::Partial.delete_all
@@ -172,26 +200,26 @@ module Tr8n
       Dir[File.join(folder, "templates", "*.json")].each do |file|
         json = load_json(file)
         language = Tr8n::Language.by_locale(json.delete(:locale)) if json[:locale]
-        pp "Importing template #{json[:keyword]}..."
+        log "Importing template #{json[:keyword]}..."
         Tr8n::Emails::Template.create(json.merge(:application => Tr8n::RequestContext.container_application, :language => language))
       end
 
       Dir[File.join(folder, "partials", "*.json")].each do |file|
         json = load_json(file)
         language = Tr8n::Language.by_locale(json.delete(:locale)) if json[:locale]
-        pp "Importing partial #{json[:keyword]}..."
+        log "Importing partial #{json[:keyword]}..."
         Tr8n::Emails::Partial.create(json.merge(:application => Tr8n::RequestContext.container_application, :language => language))
       end
 
       Dir[File.join(folder, "layouts", "*.json")].each do |file|
         json = load_json(file)
         language = Tr8n::Language.by_locale(json.delete(:locale)) if json[:locale]
-        pp "Importing layout #{json[:keyword]}..."
+        log "Importing layout #{json[:keyword]}..."
         Tr8n::Emails::Layout.create(json.merge(:application => Tr8n::RequestContext.container_application, :language => language))
       end
 
       Dir[File.join(folder, "assets", "*.*")].each do |file|
-        pp "Importing asset #{file}..."
+        log "Importing asset #{file}..."
         name = file.split(File::SEPARATOR).last
         ext = name.split('.').last
         next unless ['jpg', 'png', 'gif'].include?(ext)
@@ -213,5 +241,8 @@ module Tr8n
       HashWithIndifferentAccess.new(yml)
     end
 
+    def self.log(msg)
+      puts msg
+    end
   end
 end

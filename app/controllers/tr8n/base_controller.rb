@@ -48,9 +48,13 @@ module Tr8n
     layout Tr8n::Config.site_info[:tr8n_layout]
   
   private
-  
-    def render_lightbox
+
+    def render_modal
       render(:layout => false)
+    end
+
+    def render_lightbox
+      render_modal
     end
 
     def dismiss_lightbox

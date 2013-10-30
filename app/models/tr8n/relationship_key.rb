@@ -121,7 +121,7 @@ class Tr8n::RelationshipKey < Tr8n::TranslationKey
 
   def default_translation
     @default_translation ||= begin
-      trn = valid_translations_for(Tr8n::Config.default_language).first
+      trn = valid_translations_for_language(Tr8n::Config.default_language).first
       trn.nil? ? "" : trn.label
     end  
   end

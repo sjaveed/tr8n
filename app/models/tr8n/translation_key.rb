@@ -100,6 +100,14 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
   end
 
+  def default_translation
+    @default_translation ||= begin
+      pp fallback_key
+      trn = fallback_key.valid_translations_for_language(Tr8n::RequestContext.current_language).first if fallback_key
+      trn.nil? ? sanitized_label : trn.label
+    end
+  end
+
   def fallback_key
     return nil if master_key.nil?
     @fallback_key ||= Tr8n::TranslationKey.find_by_key(master_key)
@@ -185,14 +193,18 @@ class Tr8n::TranslationKey < ActiveRecord::Base
     end
   end
 
-  def sanitized_label
+  def sanitized_label(replace_tokens = true)
     @sanitized_label ||= begin
       lbl = label.clone
-      data_tokens.each do |token|
-        lbl = token.prepare_label_for_translator(lbl, self.language)
+      if replace_tokens
+        data_tokens.each do |token|
+          lbl = token.prepare_label_for_translator(lbl, self.language)
+        end
       end
       CGI::escapeHTML(lbl).gsub("\n", '<br>').html_safe
     end
+  rescue
+    lbl
   end
 
   def translatable_label

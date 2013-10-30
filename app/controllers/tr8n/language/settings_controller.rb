@@ -54,6 +54,29 @@ class Tr8n::Language::SettingsController < Tr8n::Language::BaseController
     render :text => {"result" => "Ok"}.to_json
   end
 
+  def delete_flag
+    if tr8n_current_language.flag
+      tr8n_current_language.flag.destroy
+    end
+
+    redirect_back
+  end
+
+  def upload_flag
+    if tr8n_current_language.flag
+      tr8n_current_language.flag.destroy
+    end
+
+    file = params[:files].first
+
+    Tr8n::Media::LanguageFlag.create_from_file(tr8n_current_language, file.original_filename, File.read(file.tempfile))
+
+    files = [{
+                 "name"=> file.original_filename
+             }]
+
+    render :json => {"files" => files}
+  end
 
 #  before_filter :validate_guest_user, :except => [:select, :switch, :toggle_inline_translations, :change, :table]
 #  before_filter :validate_current_translator, :except => [:select, :switch, :toggle_inline_translations, :change, :table]

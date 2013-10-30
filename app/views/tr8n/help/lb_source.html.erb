@@ -9,7 +9,7 @@
       <%= link_to_function(image_tag("tr8n/close.gif"), "hideLightbox();") %>
     </div>
 
-    <%= image_tag("tr8n/flags/#{@translation_source_metric.language.flag}.png", :style => 'vertical-align:top') %>
+    <%= image_tag(@translation_source_metric.language.flag_url, :style => 'vertical-align:top') %>
     <%= @translation_source_metric.language.native_name %>
   </div>
 

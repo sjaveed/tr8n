@@ -35,11 +35,14 @@
           </tr>
         </thead>
         <tbody>
-        <% Tr8n::Feature.by_object(selected_application).each do |key, data| %>
+        <% features = Tr8n::Feature.by_object(selected_application) %>
+        <% keys = features.keys.sort %>
+        <% keys.each do |key| %>
+          <% data = features[key] %>
           <% next if data["container_only"] %>
           <tr>
             <td>
-              <div style="font-weight:bold"><%=key%></div>
+              <div style="font-weight:bold"><%=key.split('_').collect{|w| w.capitalize}.join(' ')%></div>
               <div style="color:#888">
                 <%=tra(data["description"])%>
               </div>
@@ -80,11 +83,14 @@
           </tr>
           </thead>
           <tbody>
-          <% Tr8n::Feature.by_object(selected_application).each do |key, data| %>
+          <% features = Tr8n::Feature.by_object(selected_application) %>
+          <% keys = features.keys.sort %>
+          <% keys.each do |key| %>
+            <% data = features[key] %>
             <% next unless data["container_only"] %>
             <tr>
               <td>
-                <div style="font-weight:bold"><%=key%></div>
+                <div style="font-weight:bold"><%=key.split('_').collect{|w| w.capitalize}.join(' ')%></div>
                 <div style="color:#888">
                   <%=tra(data["description"])%>
                 </div>

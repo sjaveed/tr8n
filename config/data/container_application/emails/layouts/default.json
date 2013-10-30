@@ -3,7 +3,14 @@
   "locale": "en-US",
   "name": "Default",
   "description": "This layout is used by all emails of the applications by default",
-  "html_body": "<div style=\"border:1px solid #eee; border-top-left-radius:10px; border-bottom-right-radius:10px;\">\n<div style=\"background: #eee; padding: 10px;  border-top-left-radius:10px;\">\n    <div style=\"float:right; color: #888; padding-top:5px;\">{% tracker %} {{ application }}</div>\n    <div>{% asset tr8n_logo style=\"width:50px\" %} </div>\n</div>\n<div style=\"padding: 10px;\">\n    {! yield !}\n</div>    \n\n<div style=\"padding: 10px; color: #ccc; font-size:10px;\">\n    Copyright © 2013 {{ application }}\n</div>\n</div>\n\n",
+  "html_body": "<div style=\" border-top-left-radius:10px; border-bottom-right-radius:10px;\">\n<div style=\"border:1px solid #eee; background: #eee; padding: 10px;  border-top-left-radius:10px; border-bottom-right-radius:10px;\">\n    <div style=\"float:right; color: #888; padding-top:5px;\">{% tracker %} {{ site }}</div>\n    <div>{% asset tr8n_logo style=\"width:50px\" %} </div>\n</div>\n<div style=\"padding-top: 10px; padding-bottom: 10px;\">\n    {! yield !}\n</div>    \n\n<div style=\"color: #888; font-size:10px; margin-top:20px;\">\n    <div style=\"padding-bottom:10px; border-bottom:1px solid #eee; margin-bottom:10px;\"><i>\n        The {{site}} Team\n    </i></div>\n    \n    <div>\n        Please do not reply to this message; it was sent from an unmonitored email address. \n        This message is a service email related to your use of {{application}}. \n        <a href=\"{{email_log.href}}\" style=\"text-decoration:none\">Click here</a> if you would like to see this email online.\n    </div>\n</div>\n</div>\n\n",
   "text_body": "{! yield !}",
-  "tokens": {"name":"Michael","application":"My Site"}
+  "tokens": {
+    "name": "Michael",
+    "application": "My Application",
+    "site": "Tr8n Development",
+    "email_log": {
+      "href": "http://www.google.com"
+    }
+  }
 }

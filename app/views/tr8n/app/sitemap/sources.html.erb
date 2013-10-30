@@ -24,6 +24,10 @@
         <%= tra("Most of the application sources are dynamically generated from the source code.") %>
         <%= tra("Usually keys are grouped into sources by a page.") %> <%= tra("But a single page can also contain multiple sources.") %>
         <%= tra("Administrators and managers can manually create sources and assign keys to them.") %>
+
+        <div style="text-align: right">
+          <%=link_to("Create New Source", {:action => :source_modal, :forward_to => "sources"}, {"class" => "btn btn-primary", "data-toggle" => "dynamic_modal"})%>
+        </div>
       </div>
 
     </div>
@@ -34,12 +38,12 @@
           <button type="submit" class="btn btn-primary">
             <%=tra("Search")%>
           </button>
-          <%=link_to("+", {:action => :source_modal, :forward_to => "sources"}, {"class" => "btn", "data-toggle" => "dynamic_modal"})%>
         </div>
 
         <div class="tr8n_text_align_left">
-          <%=text_field_tag(:search, params[:search], {:style => "width:87%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search sources")})%>
+          <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 10px; border-radius:10px;", :placeholder => trla("Search sources")})%>
         </div>
+
       <% end %>
     </div>
 

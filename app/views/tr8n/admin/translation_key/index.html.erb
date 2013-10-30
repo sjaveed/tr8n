@@ -2,14 +2,6 @@
 <%= render :partial => "tabs" %>
 <%= tr8n_will_filter(@keys) %>
 
-
-<%= tr8n_actions_tag([
-        link_to_function("Add Translation Key", "Tr8n.UI.Lightbox.show('/tr8n/admin/translation_key/lb_update')"),
-        link_to_function("Update Translation Counts", 'updateTranslationCounts()')
-      ])
-%>
-<br>
-
 <%= form_tag("", :id => "tr8n_form") do %>
   <%= hidden_field_tag(:type, "translation_key") %>
 	<%= will_filter_table_tag(@keys, :columns => [

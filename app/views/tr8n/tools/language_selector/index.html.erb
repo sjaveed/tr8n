@@ -83,29 +83,33 @@ function removeLanguage(language_id) {
           </div>
         <% end %>
 
+        <% if @all_languages.any? %>
         <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
             <%=tra("Other Languages") %>
         </div>
+        <% end %>
       <% end %>
 
-      <div id="tr8n_languages_list" style="max-height: 210px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
-        <ul class="language_list">
-          <% @all_languages.each do |language| %>
-            <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
+      <% if @all_languages.any? %>
+        <div id="tr8n_languages_list" style="max-height: 210px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
+          <ul class="language_list">
+            <% @all_languages.each do |language| %>
+              <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
 
-              <% if Tr8n::Config.enable_language_stats? %>
-                  <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
-              <% end %>
+                <% if Tr8n::Config.enable_language_stats? %>
+                    <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
+                <% end %>
 
-              <%= tr8n_language_flag_tag(language) %>
+                <%= tr8n_language_flag_tag(language) %>
 
-              <span dir="ltr">
-                <%= language.full_name %>
-              </span>
-            </li>
-          <% end %>
-        </ul>
-      </div>
+                <span dir="ltr">
+                  <%= language.full_name %>
+                </span>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
     </div>
     
     <div style="padding-bottom:40px;">

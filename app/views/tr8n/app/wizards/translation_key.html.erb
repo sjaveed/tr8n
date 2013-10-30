@@ -54,32 +54,34 @@
       </div>
     </div>
 
-    <div class="wizard-card" data-cardname="card2">
-      <h3><%=tra("Fallback Phrase") %></h3>
+    <% unless params[:fallback_label].blank? %>
+      <div class="wizard-card" data-cardname="card2">
+        <h3><%=tra("Fallback Phrase") %></h3>
 
-      <div class="wizard-input-section">
-        <p>
-          <%=tra("Optionally, enter a fallback phrase:") %>
-        </p>
+        <div class="wizard-input-section">
+          <p>
+            <%=tra("Optionally, enter a fallback phrase:") %>
+          </p>
 
-        <div class="control-group">
-          <%=text_area_tag(:fallback_translation_key_label, params[:fallback_label], :placeholder => "Word, phrase, sentence or paragraph...", :style=>"width:400px;height:75px;") %>
+          <div class="control-group">
+            <%=text_area_tag(:fallback_translation_key_label, params[:fallback_label], :placeholder => "Word, phrase, sentence or paragraph...", :style=>"width:400px;height:75px;") %>
+          </div>
+
+          <p>
+            <%=tra("Optionally, provide a description for this fallback phrase.") %>
+          </p>
+
+          <div class="control-group">
+            <%=text_area_tag(:fallback_translation_key_description, params[:fallback_description], :placeholder => "Description", :style=>"width:400px;height:40px;") %>
+          </div>
+
+          <div style="color: #666;">
+            <%=tra("The translations of the fallback phrase will be used when no translations are available for the new phrase.")%>
+          </div>
+
         </div>
-
-        <p>
-          <%=tra("Optionally, provide a description for this fallback phrase.") %>
-        </p>
-
-        <div class="control-group">
-          <%=text_area_tag(:fallback_translation_key_description, params[:fallback_description], :placeholder => "Description", :style=>"width:400px;height:40px;") %>
-        </div>
-
-        <div style="color: #666;">
-          <%=tra("The translations of the fallback phrase will be used when no translations are available for the new phrase.")%>
-        </div>
-
       </div>
-    </div>
+    <% end %>
 
     <div class="wizard-card" data-cardname="card2">
       <h3><%=tra("Sources") %></h3>
@@ -93,7 +95,7 @@
           <select id="new_translation_key_sources" data-placeholder="Sources" multiple class="chzn-select" style="width:400px;">
             <option value=""></option>
             <% selected_application.sources.each do |src| %>
-              <option <%="selected" if src.id == params[:source_id] %> value="<%=src.id%>"><%=src.name || src.source%></option>
+              <option <%="selected" if src.id.to_s == params[:source_id] %> value="<%=src.id%>"><%=src.name || src.source%></option>
             <% end %>
           </select>
         </div>

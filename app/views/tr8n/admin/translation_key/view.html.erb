@@ -100,7 +100,7 @@
         <td>
         <%= tr8n_actions_tag([
                 link_to_function("Update", "Tr8n.UI.Lightbox.show('/tr8n/admin/translation_key/lb_update?id=#{@key.id}', {height:450})"),
-                link_to("View as Translator", {:controller => "/tr8n/phrases", :action => :view, :translation_key_id => @key.id}),
+                link_to("View as Translator", {:controller => "/tr8n/app/phrases", :action => :view, :id => @key.id}),
         ]) %>
         </td>
     </tr>    

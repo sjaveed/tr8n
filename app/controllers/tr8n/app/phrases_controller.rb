@@ -49,22 +49,51 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     @translation_keys = Tr8n::TranslationKey.order("id desc")
 
     if @source
-      # TODO: check if the source belongs to the application
-      @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select translation_key_id from tr8n_translation_key_sources where translation_source_id = ?)", @source.id)
+      @source_ids = [@source.id]
+    elsif @component
+      @source_ids = @component.sources.collect{|s| s.id}
     else
-      # Fallback onto application
       @source_ids = selected_application.sources.collect{|s| s.id}
+    end
+
+    if @source_ids
       if @source_ids.size > 0
         @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select tr8n_translation_key_sources.translation_key_id from tr8n_translation_key_sources where tr8n_translation_key_sources.translation_source_id in (?))", @source_ids)
       else
         @translation_keys = @translation_keys.where("1=2")
       end
-
     end
 
     unless params[:search].blank?
       @translation_keys = @translation_keys.where("(lower(tr8n_translation_keys.label) like ? or lower(tr8n_translation_keys.description) like ?)", "%#{params[:search].downcase}%", "%#{params[:search].downcase}%")
     end
+
+    if params[:phrase_type] == "with"
+      @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select tr8n_translations.translation_key_id from tr8n_translations where tr8n_translations.language_id = ?)", tr8n_current_language.id)
+
+      # if approved, ensure that translation key is locked
+      #if params[:phrase_status] == "approved"
+      #  @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select tr8n_translation_key_locks.translation_key_id from tr8n_translation_key_locks where tr8n_translation_key_locks.language_id = ? and tr8n_translation_key_locks.locked = ?)", tr8n_current_language.id, true)
+      #
+      #  # if approved, ensure that translation key does not have a lock or unlocked
+      #elsif params[:phrase_status] == "pending"
+      #  @translation_keys = @translation_keys.where("tr8n_translation_keys.id not in (select tr8n_translation_key_locks.translation_key_id from tr8n_translation_key_locks where tr8n_translation_key_locks.language_id = ? and tr8n_translation_key_locks.locked = ?)", tr8n_current_language.id, true)
+      #end
+
+    elsif params[:phrase_type] == "without"
+      @translation_keys = @translation_keys.where("tr8n_translation_keys.id not in (select tr8n_translations.translation_key_id from tr8n_translations where tr8n_translations.language_id = ?)", tr8n_current_language.id)
+
+    elsif params[:phrase_type] == "followed" and Tr8n::RequestContext.current_user_is_translator?
+      @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select tr8n_translator_following.object_id from tr8n_translator_following where tr8n_translator_following.translator_id = ? and tr8n_translator_following.object_type = ?)", tr8n_current_translator.id, 'Tr8n::TranslationKey')
+    end
+
+    if params[:phrase_lock] == "locked"
+      @translation_keys = @translation_keys.where("tr8n_translation_keys.id in (select tr8n_translation_key_locks.translation_key_id from tr8n_translation_key_locks where tr8n_translation_key_locks.language_id = ? and tr8n_translation_key_locks.locked = ?)", tr8n_current_language.id, true)
+
+    elsif params[:phrase_lock] == "unlocked"
+      @translation_keys = @translation_keys.where("tr8n_translation_keys.id not in (select tr8n_translation_key_locks.translation_key_id from tr8n_translation_key_locks where tr8n_translation_key_locks.language_id = ? and tr8n_translation_key_locks.locked = ?)", tr8n_current_language.id, true)
+    end
+
 
     @translation_keys = @translation_keys.page(page).per(per_page)
   end
@@ -145,12 +174,51 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
   end
 
   def lock
+    if params[:keys]
+      params[:keys].split(",").each do |key_id|
+        key = Tr8n::TranslationKey.find_by_id(key_id)
+        next unless key
+        key.lock!
+      end
+
+      trfn("Keys have been locked")
+      return redirect_back
+    end
+
     translation_key.lock!
     redirect_back
   end
 
   def unlock
+    if params[:keys]
+      params[:keys].split(",").each do |key_id|
+        key = Tr8n::TranslationKey.find_by_id(key_id)
+        next unless key
+        key.unlock!
+      end
+
+      trfn("Keys have been unlocked")
+      return redirect_back
+    end
+
     translation_key.unlock!
+    redirect_back
+  end
+
+  def remove
+    total = 0
+    params[:keys].split(",").each do |key_id|
+      key = Tr8n::TranslationKey.find_by_id(key_id)
+      next unless key
+      total += 1
+      key.translation_key_sources.each do |tks|
+        next unless tks.translation_source
+        next unless tks.translation_source.application == selected_application
+        tks.destroy
+      end
+    end
+
+    trfn("{count| Phrase has, Phrases have} been removed from the application", :count => total)
     redirect_back
   end
 
@@ -218,6 +286,40 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
         trfe("No such phrase exists")
       end
 
+      return redirect_back
+    end
+
+    render :layout=>false
+  end
+
+  def add_to_source_modal
+    if request.post?
+      keys = []
+      params[:keys].split(",").each do |key_id|
+        key = Tr8n::TranslationKey.find_by_id(key_id)
+        next unless key
+        keys << key
+      end
+
+      if params[:source_key].blank?
+        params[:sources].split(",").each do |src_id|
+          src = Tr8n::TranslationSource.find_by_id(src_id)
+          next unless src
+          keys.each do |key|
+            src.add_translation_key(key)
+          end
+        end
+      else
+        src = Tr8n::TranslationSource.find_or_create(params[:source_key], selected_application)
+        src.name = params[:source_name]
+        src.description = params[:source_description]
+        src.save
+        keys.each do |key|
+          src.add_translation_key(key)
+        end
+      end
+
+      trfn("Phrases have been added to specified sources")
       return redirect_back
     end
 
@@ -301,11 +403,11 @@ private
   end
 
   def init_breadcrumb
-    if params[:component_id]
-      @component = Tr8n::Component.find_by_id(params[:component_id])
-    end
     if params[:source_id]
       @source = Tr8n::TranslationSource.find_by_id(params[:source_id])
+    end
+    if params[:component_id]
+      @component = Tr8n::Component.find_by_id(params[:component_id])
     end
   end
 

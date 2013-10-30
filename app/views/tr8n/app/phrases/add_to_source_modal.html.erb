@@ -1,0 +1,60 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <%= form_tag({}, {:id=>"sources_form", :method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
+    <%= hidden_field_tag :keys, params[:keys] %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <%=tra("Add Phrases to Source")%>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="component[keyword]">
+            <%=tra("Enter a list of sources you want to add the phrases to:") %>
+          </label>
+
+          <%=hidden_field_tag(:sources, "") %>
+
+          <select id="destination_sources" data-placeholder="Sources" multiple class="chzn-select" style="width:530px;">
+            <option value=""></option>
+            <% selected_application.sources.each do |src| %>
+              <option value="<%=src.id%>"><%=src.name || src.source%></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div style="font-size:18px; font-weight: bold; margin-top:15px;">
+          <%= tra("Or create a new source") %>
+        </div>
+
+        <div class="form-group">
+          <label for="source[keyword]"><%=tra("Keyword:")%> <span style="color:#999; font-size:11px;"><%=tra("optional, for referencing it from source code")%></span></label>
+          <%=text_field_tag(:source_key, "", :placeholder => "Enter source keyword", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="source[name]"><%=tra("Name")%></label>
+          <%=text_field_tag(:source_name, "", :placeholder => "Enter source name", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="source[description]"><%=tra("Description")%> <span style="color:#999; font-size:11px;"><%=tra("optional")%></span></label>
+          <%=text_area_tag(:source_description, "", :placeholder => "Enter source description", :class => "form-control input-block-level", :style => "height:80px;") %>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+        <button type="button" class="btn btn-primary" onClick="$('#sources').val($('#destination_sources').val()); $('#sources_form').submit();"><%=tra("Submit") %></button>
+      </div>
+    </div><!-- /.modal-content -->
+  <% end %>
+</div><!-- /.modal-dialog -->
+
+<script>
+  (function() {
+    $("#destination_sources").chosen({});
+  })();
+</script>

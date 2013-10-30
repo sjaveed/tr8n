@@ -13,7 +13,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'bootstrap-sass'
 gem 'kaminari'
-gem 'will_filter', '~> 3.1.10'
+gem 'will_filter', '~> 3.1.11'
 
 group :development, :test do
   gem 'rspec'

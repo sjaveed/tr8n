@@ -80,7 +80,7 @@ module Tr8n
     end
   
     def per_page
-      params[:per_page] || 30
+      params[:per_page] || 100
     end
   
     def sanitize_label(label)

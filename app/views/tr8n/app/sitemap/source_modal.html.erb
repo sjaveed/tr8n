@@ -5,7 +5,11 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">
-          <%=tra("Update Source")%>
+          <% if @source.id %>
+            <%=tra("Update Source")%>
+          <% else %>
+            <%=tra("Create New Source")%>
+          <% end %>
         </h4>
       </div>
 

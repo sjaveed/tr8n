@@ -60,9 +60,9 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
     params[:submitted_by] = nil if params[:submitted_by] == "anyone"
     unless params[:submitted_by].blank?
       if params[:submitted_by] == "me"
-        @translations = @translations.where("tr8n_translations.translator_id = ?", Tr8n::RequestContext.current_user_is_translator? ? Tr8n::RequestContext.current_translator.id : 0)
+        @translations = @translations.where("tr8n_translations.translator_id = ?", tr8n_current_translator.id)
       else
-        @translations = @translations.where("tr8n_translations.translator_id = ?", params[:submitted_by].id)
+        @translations = @translations.where("tr8n_translations.translator_id = ?", params[:submitted_by])
       end
     end
 
@@ -75,6 +75,9 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
     elsif params[:submitted_on] == "last_week"
       date = Date.today - 7.days
       @translations = @translations.where("tr8n_translations.created_at >= ? and tr8n_translations.created_at < ?", date, Date.today)
+    elsif params[:submitted_on] == "last_month"
+      date = Date.today - 1.month
+      @translations = @translations.where("tr8n_translations.created_at >= ? and tr8n_translations.created_at < ?", date, Date.today)
     end
 
     unless params[:search].blank?
@@ -83,17 +86,22 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
 
     @translations = @translations.order("tr8n_translations.id desc").page(page).per(per_page).includes(:translation_key)
 
-    @followed_translators = tr8n_current_translator.followed_objects("Tr8n::Translator")
-    unless [nil, "", "anyone", "me"].include?(params[:submitted_by])
-      dashboard = Tr8n::Translator.find_by_id(params[:submitted_by])
-      if dashboard
-        if dashboard == tr8n_current_translator
-          params[:submitted_by] = :me
-        elsif not @followed_translators.include?(dashboard)
-          @followed_translators << dashboard
-        end
-      end
+    @translator_options = []
+    @translator_options << ["by anyone", "anyone"]
+    @translator_options << ["by me", "me"]
+    selected_application.translators.each do |t|
+      next if tr8n_current_translator == t
+      @translator_options << ["by #{t.name}", t.id]
     end
+
+    @date_options =  [
+        ["on any date", "any"],
+        ["today", "today"],
+        ["yesterday", "yesterday"],
+        ["in the last week", "last_week"],
+        ["in the last month", "last_month"]
+    ].collect{|option| [option.first.trl("Translation filter date option"), option.last]}
+
   end
 
   # main translation method used by the dashboard and translation screens

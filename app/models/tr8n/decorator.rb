@@ -185,7 +185,9 @@ class Tr8n::Decorator < ActiveRecord::Base
 
     classes = ['tr8n_translatable']
 
-    if translation_key.cached_translations_for_language(language).any?
+    application = options[:application] || Tr8n::RequestContext.current_application
+
+    if translation_key.translations_for(language, application.threshold).any?
       classes << 'tr8n_translated'
     else
       classes << 'tr8n_not_translated'

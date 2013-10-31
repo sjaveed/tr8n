@@ -56,7 +56,7 @@ class Tr8n::LanguageForumMessage < ActiveRecord::Base
 
   def toHTML
     return "" unless message
-    ERB::Util.html_escape(message).gsub("\n", "<br>")
+    ERB::Util.html_escape(message).gsub("\n", "<br>").html_safe
   end
 
   def distribute_notification

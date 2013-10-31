@@ -116,6 +116,11 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
     )
   end
 
+  def notification_count
+    return render :json => {'count' => 0} unless tr8n_current_translator
+    render :json => {'count' => tr8n_current_translator.unread_notifications_count}
+  end
+
   def notifications
     @translator = Tr8n::RequestContext.current_translator
     @stories = Tr8n::Notification.where("translator_id = ?", Tr8n::RequestContext.current_translator.id).order("created_at desc").page(page).per(per_page)

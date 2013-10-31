@@ -56,7 +56,7 @@ class Tr8n::TranslationKeyComment < ActiveRecord::Base
 
   def toHTML
     return "" unless message
-    message.gsub("\n", "<br>")
+    message.gsub("\n", "<br>").html_safe
   end
 
   def distribute_notification

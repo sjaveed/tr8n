@@ -65,7 +65,8 @@ class Tr8n::Notification < ActiveRecord::Base
     object = opts[:object_type].constantize.find_by_id(opts[:object_id])
     return unless object
 
-    "Tr8n::Notifications::#{object.class.name}".constantize.distribute(object)
+    class_name = object.class.name.split("::").last
+    "Tr8n::Notifications::#{class_name}".constantize.distribute(object)
   end
 
   def self.key(object)
@@ -122,6 +123,12 @@ class Tr8n::Notification < ActiveRecord::Base
 
   def language
     nil
+  end
+
+  def mark_as_viewed!
+    return unless viewed_at.nil?
+    self.viewed_at = Time.now
+    save
   end
 
   def tr(label, description = nil, tokens = {}, options = {})

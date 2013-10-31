@@ -4,6 +4,8 @@
     <%=link_to(image_tag("tr8n/close.gif", :style => "border:0px; padding:5px;", :alt=>trla("Remove")), {:action => :delete_notification, :id => notification.id}) %>
   </div>
 
+  <% notification.mark_as_viewed! %>
+
   <table style="width:90%">
     <tr>
       <td style="padding-right:5px; width:60px;vertical-align:top;">
@@ -25,7 +27,7 @@
             </div>
 
             <div>
-              <%= render(:partial => "/tr8n/dashboard/notifications/phrase", :locals => {
+              <%= render(:partial => "/tr8n/translator/notifications/stories/phrase", :locals => {
                                       :translation_key => notification.translation.translation_key, 
                                       :language => notification.translation.language
                                     }) %>

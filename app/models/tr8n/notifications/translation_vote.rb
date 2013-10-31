@@ -49,7 +49,7 @@ class Tr8n::Notifications::TranslationVote < Tr8n::Notification
   def self.distribute(vote)
     return if vote.translation.translator == vote.translator
 
-    last_notification = Tr8n::TranslationVoteNotification.find(:first, 
+    last_notification = find(:first,
         :conditions => ["object_type = ? and object_id = ?", vote.class.name, vote.id],
         :order => "updated_at desc")
 

@@ -12,7 +12,12 @@
       <%= tr8n_paginator_tag(@stories, :subject => 'notification') if @stories.any? %>
 
       <% @stories.each do |n| %>
-        <% next unless n.valid_notification? %>
+        <%
+           unless n.valid_notification?
+             n.mark_as_viewed!
+             next
+           end
+        %>
         <%= render :partial => "notification", :locals => {:notification => n} %>
       <% end %>
 

@@ -342,7 +342,7 @@ class Tr8n::Translator < ActiveRecord::Base
   end
 
   def url
-    "/tr8n/dashboard/index/#{id}"
+    "/tr8n/translator/index/#{id}"
   end
 
   def admin?
@@ -431,6 +431,11 @@ class Tr8n::Translator < ActiveRecord::Base
     al.destroy if al
     al
   end
+
+  def unread_notifications_count
+    @unread_notifications_count ||= Tr8n::Notification.where(:translator_id => id).where("viewed_at is null").count
+  end
+
 
   ###############################################################
   ## Synchronization Methods

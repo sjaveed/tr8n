@@ -12,7 +12,12 @@
         </div>
       <% else %>
         <% @stories.each do |n| %>
-          <% next unless n.valid_notification? %>
+          <%
+             unless n.valid_notification?
+               n.mark_as_viewed!
+               next
+             end
+          %>
           <%= render :partial => "notification", :locals => {:notification => n} %>
         <% end %>
 

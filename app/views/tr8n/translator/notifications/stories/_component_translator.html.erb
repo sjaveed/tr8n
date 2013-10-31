@@ -1,11 +1,11 @@
 <div style="padding:5px;">
   <div>
     <div style='display:inline-block'><%=tr("Component:") %></div>
-    <div style='display:inline-block'><%= link_to(notification.object.component.title, "/tr8n/dashboard/assignments#comp-#{notification.object.component.id}", :target => '_top') %></div>
+    <div style='display:inline-block'><%= link_to(notification.object.component.title, "/tr8n/translator/assignments#comp-#{notification.object.component.id}", :target => '_top') %></div>
   </div>
-  <div>
-    <div style='display:inline-block'><%=tr("Sections:") %></div>
-    <div style='display:inline-block'><%= notification.object.component.sources.count %></div>
-  </div>
+  <!--<div>-->
+    <!--<div style='display:inline-block'><%=tr("Sections:") %></div>-->
+    <!--<div style='display:inline-block'><%= notification.object.component.sources.count %></div>-->
+  <!--</div>-->
 </div>
 

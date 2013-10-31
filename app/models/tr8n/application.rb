@@ -109,7 +109,7 @@ class Tr8n::Application < ActiveRecord::Base
   end
 
   def featured_languages
-    @featured_languages ||= application_languages.where("featured_index != null").order('featured_index asc').collect{|aplang| aplang.language}
+    @featured_languages ||= featured_application_languages.collect{|aplang| aplang.language}
   end
 
   def clear_cache

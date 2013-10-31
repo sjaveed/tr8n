@@ -6,8 +6,9 @@
 .tr8n_language_strip a:hover                    {text-decoration:underline}  
 </style>
 <div class="tr8n_language_strip">
-    <% tr8n_current_application.featured_application_languages[0..9].each do |a_lang| %>
-        <%= tr8n_language_name_tag(a_lang.language, opts) %> &nbsp;
+
+    <% tr8n_current_application.featured_languages[0..9].each do |lang| %>
+        <%= tr8n_language_name_tag(lang, opts) %> &nbsp;
     <% end %>
     
     <% if tr8n_current_application.application_languages.count > tr8n_current_application.featured_application_languages.count %>

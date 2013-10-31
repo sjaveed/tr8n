@@ -27,12 +27,12 @@
           </select>
         </div>
 
-        <div style="font-size:18px; font-weight: bold; margin-top:15px;">
-          <%= tra("Or create a new source") %>
+        <div style="font-weight: bold; margin-top:15px;">
+          <%= tra("and/or create a new source:") %>
         </div>
 
         <div class="form-group">
-          <label for="source[keyword]"><%=tra("Keyword:")%> <span style="color:#999; font-size:11px;"><%=tra("optional, for referencing it from source code")%></span></label>
+          <label for="source[source]"><%=tra("Keyword:")%> <span style="color:#999; font-size:11px;"><%=tra("for referencing it from source code")%></span></label>
           <%=text_field_tag(:source_key, "", :placeholder => "Enter source keyword", :class => "form-control input-block-level") %>
         </div>
 

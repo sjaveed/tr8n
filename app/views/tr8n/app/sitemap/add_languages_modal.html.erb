@@ -13,20 +13,20 @@
 
         <div class="form-group">
           <p>
-            <%=tra("Enter a list of translators you want this component to be translated by.") %>
+            <%=tra("Enter a list of languages you want this component to be translated to.") %>
           </p>
 
-          <%=hidden_field_tag(:translators, "") %>
+          <%=hidden_field_tag(:locales, "") %>
 
-          <select id="component_translators" data-placeholder="Translators" multiple class="chzn-select" style="width:400px;">
+          <select id="component_languages" data-placeholder="Languages" multiple class="chzn-select" style="width:400px;">
             <option value=""></option>
-            <% selected_application.translators.each do |t| %>
-              <option value="<%=t.id%>"><%=t.name%></option>
+            <% selected_application.languages.each do |lang| %>
+              <option value="<%=lang.locale%>"><%=lang.english_name%></option>
             <% end %>
           </select>
 
           <p style="padding-top:20px; color:#666">
-            <%= tra("Start typing translator's name.") %>
+            <%= tra("Start typing a language name.") %>
           </p>
 
         </div>
@@ -36,13 +36,13 @@
 
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
-      <button type="button" class="btn btn-primary" onClick="$('#translators').val($('#component_translators').val()); $('#languages_form').submit();"><%=tra("Submit") %></button>
+      <button type="button" class="btn btn-primary" onClick="$('#locales').val($('#component_languages').val()); $('#languages_form').submit();"><%=tra("Submit") %></button>
     </div>
   </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 
 <script>
   (function() {
-    $("#component_translators").chosen({});
+    $("#component_languages").chosen({});
   })();
 </script>

@@ -1,0 +1,80 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+  <style>
+    label {
+      font-weight:bold;
+      padding-top:15px;
+    }
+  </style>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="tr8n tr8n_container">
+
+    <ul class="breadcrumb">
+      <li><%=link_to(tra("Application Components"), :action => :index, :mode => :list) %></li>
+      <span class="divider">/</span>
+      <li class="active"><%=@component.name %></li>
+    </ul>
+
+    <div class="section_title">
+      <%=render(:partial => "component_sections") %>
+      <%=tra("Sources")%>
+    </div>
+
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Component Sources") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;font-size:12px;">
+        <%= tra("This section shows all sources assigned to the component.") %>
+
+        <div style="text-align: right; padding-top:20px;">
+          <%=link_to(tra("Edit Component"), {:action => :component_modal, :id => @component.id}, {"data-toggle" => "dynamic_modal", "class" => "btn btn-small"})%>
+          <%=link_to(tra("Add Sources"), {:action => :add_sources_modal, :id => @component.id}, {"data-toggle" => "dynamic_modal", "class" => "btn btn-small btn-primary"})%>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="section">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th style="width:10%"><%=tra("Keyword/Path") %></th>
+          <th style="width:20%"><%=tra("Name") %></th>
+          <th style="width:10%; text-align:right; padding-right:15px;"><%=tra("Keys") %></th>
+          <th style="width:15%; text-align:right"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @component.component_sources.each do |comp_src| %>
+          <% source = comp_src.translation_source %>
+          <tr>
+            <td>
+              <%=source.source%>
+            </td>
+            <td>
+              <%=source.name%>
+            </td>
+            <td style="text-align:right; padding-right:15px;">
+              <%=link_to(source.translation_keys.count, :controller => "/tr8n/app/phrases", :action => :index, :component_id=>@component.id, :source_id => source.id)%>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-pencil'></i>".html_safe, {:action => :source_modal, :id => source.id}, {"data-toggle" => "dynamic_modal"})%>
+              <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :remove_source, :id => comp_src.id}, {:confirm => trla("Are you sure you want to remove this source from the component?")})%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+  <%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+  <%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>
+
+<% end %>

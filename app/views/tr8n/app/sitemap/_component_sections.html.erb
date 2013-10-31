@@ -1,0 +1,8 @@
+<div style="float:right; font-size:12px;">
+  <%= [
+        link_to_unless(controller.action_name == 'view', tra("sources"), :action => :view, :id => @component.id),
+        link_to_unless(controller.action_name == 'languages', tra("languages"), :action => :languages, :id => @component.id),
+        link_to_unless(controller.action_name == 'translators', tra("translators"), :action => :translators, :id => @component.id),
+      ].join(" | ").html_safe
+  %>
+</div>

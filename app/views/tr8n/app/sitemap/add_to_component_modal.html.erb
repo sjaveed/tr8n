@@ -1,0 +1,60 @@
+<!-- Modal -->
+<div class="modal-dialog">
+  <%= form_tag({}, {:id=>"sources_form", :method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
+    <%= hidden_field_tag :sources, params[:sources] %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">
+          <%=tra("Add Sources To Component")%>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="component[keyword]">
+            <%=tra("Enter a list of component you want to add the sources to:") %>
+          </label>
+
+          <%=hidden_field_tag(:components, "") %>
+
+          <select id="destination_components" data-placeholder="Components" multiple class="chzn-select" style="width:530px;">
+            <option value=""></option>
+            <% selected_application.components.each do |comp| %>
+              <option value="<%=comp.id%>"><%=comp.name || comp.keyword%></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div style="font-weight: bold; margin-top:15px;">
+          <%= tra("and/or create a new component:") %>
+        </div>
+
+        <div class="form-group">
+          <label for="component[keyword]"><%=tra("Keyword:")%> <span style="color:#999; font-size:11px;"><%=tra("for referencing it from source code")%></span></label>
+          <%=text_field_tag(:component_key, "", :placeholder => "Enter component keyword", :class => "form-control input-block-level") %>
+        </div>
+
+        <div class="form-group">
+          <label for="component[name]"><%=tra("Name")%></label>
+          <%=text_field_tag(:component_name, "", :placeholder => "Enter component name", :class => "form-control input-block-level") %>
+        </div>
+        <div class="form-group">
+          <label for="component[description]"><%=tra("Description")%> <span style="color:#999; font-size:11px;"><%=tra("optional")%></span></label>
+          <%=text_area_tag(:component_description, "", :placeholder => "Enter component description", :class => "form-control input-block-level", :style => "height:80px;") %>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+        <button type="button" class="btn btn-primary" onClick="$('#components').val($('#destination_components').val()); $('#sources_form').submit();"><%=tra("Submit") %></button>
+      </div>
+    </div><!-- /.modal-content -->
+  <% end %>
+</div><!-- /.modal-dialog -->
+
+<script>
+  (function() {
+    $("#destination_components").chosen({});
+  })();
+</script>

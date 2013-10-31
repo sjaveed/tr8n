@@ -301,7 +301,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
         keys << key
       end
 
-      if params[:source_key].blank?
+      unless params[:sources].blank?
         params[:sources].split(",").each do |src_id|
           src = Tr8n::TranslationSource.find_by_id(src_id)
           next unless src
@@ -309,7 +309,9 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
             src.add_translation_key(key)
           end
         end
-      else
+      end
+
+      unless params[:source_key].blank?
         src = Tr8n::TranslationSource.find_or_create(params[:source_key], selected_application)
         src.name = params[:source_name]
         src.description = params[:source_description]

@@ -284,6 +284,10 @@ class Tr8n::Language < ActiveRecord::Base
 
     translation_key = Tr8n::TranslationKey.find_or_create(label, desc, options)
     translation_key.translate(self, tokens.merge(:viewing_user => Tr8n::RequestContext.current_user), options).tr8n_translated.html_safe
+  rescue Exception => ex
+    pp ex
+    #return label if options[:skip_decorations]
+    "<span style='background:red; padding:5px; color:white'>#{label}</span>".html_safe
   end
   alias :tr :translate
 

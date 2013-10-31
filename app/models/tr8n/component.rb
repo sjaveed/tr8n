@@ -77,7 +77,7 @@ class Tr8n::Component < ActiveRecord::Base
     key = key.to_s
 
     Tr8n::Cache.fetch(cache_key(key)) do 
-      where("application_id = ? and key = ?", application.id, key.to_s).first || create(:application => application, :key => key.to_s, :state => "restricted")
+      where("tr8n_components.application_id = ? and tr8n_components.key = ?", application.id, key.to_s).first || create(:application => application, :key => key.to_s, :state => "restricted")
     end  
   end
 

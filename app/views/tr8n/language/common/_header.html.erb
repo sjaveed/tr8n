@@ -1,6 +1,25 @@
 <%= render :partial => "/tr8n/common/header" %>
+<div class="section-header" >
+    <%=tra("{language} Language Settings", nil, :language => tr8n_current_language.english_name)%>
+</div>
+<div style="font-size:12px;">
+  <% ctrl = controller.class.name.underscore.gsub("tr8n/", "").gsub("_controller", "") %>
+  <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+    <% [
+           [nil, "Basics", "language/settings", ["index"], true],
+           [nil, "Context Rules", "language/context_rules", ["index", "view"], true],
+           [nil, "Language Cases", "language/cases", ["index", "view"], true],
+           [nil, "Prohibited Words", "language/censorship", ["index"], true],
+           [nil, "Countries", "language/settings", ["countries"], true],
+           [nil, "Features", "language/settings", ["features"], true],
+       ].each do |tab| %>
 
-<% if Tr8n::Config.enable_translator_tabs? %>
-  <%= render :partial => "/tr8n/language/common/tabs" %>
-<% end %>
-
+      <li class="<%='active' if ctrl == tab[2] and tab[3].include?(controller.action_name)  %>">
+        <%=link_to("/tr8n/#{tab[2]}/#{tab[3].first}") do %>
+          <% if tab[0] %> <i class='<%=tab[0]%>'></i><% end %>
+          <%= tra(tab[1]) %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -1,14 +1,27 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
-  <%= render :partial => "/tr8n/translator/common/header" %>
+  <%= render :partial => "/tr8n/common/header" %>
+
+  <div class="section-header">
+    <%=tra("Bookmarks") %>
+  </div>
 
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%> >
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Following") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("You can follow translators and phrases.") %>
+      </div>
+    </div>
 
     <div class="section_title">
       <%= tra("Translators") %>
     </div>
 
-    <div class="section grey" style="margin-top:10px; margin-bottom:10px; padding:10px;">
+    <div class="grey" style="margin-top:10px; margin-bottom:30px;">
       <% if @translators.empty? %>
         <%=tra("You are not following any translators") %>
 
@@ -53,7 +66,7 @@
       <%= tra("Phrases") %>
     </div>
 
-    <div class="section " style="margin-top:10px; margin-bottom:10px; padding:10px;">
+    <div class="section " style="margin-top:10px; margin-bottom:10px;">
       <% if @translation_keys.empty? %>
         <%=tra("You are not following any phrases") %>
       <% else %>
@@ -98,6 +111,6 @@
 
   </div>
 
-  <%= render :partial => "/tr8n/translator/common/footer" %>
+  <%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>  

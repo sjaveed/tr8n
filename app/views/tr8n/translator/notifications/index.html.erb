@@ -1,14 +1,23 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
-  <%= render :partial => "/tr8n/translator/common/header" %>
+  <%= render :partial => "/tr8n/common/header" %>
+
+  <div class="section-header">
+    <%=tra("Notifications") %>
+  </div>
 
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%> >
-  
-    <div class="section_title">
-      <%=tra("Your Notifications") %>
+    <div class="section grey">
+      <div class="tr8n_float_right" style="padding-right:5px;">
+        <%=tr8n_help_icon_tag("Notifications") %>
+      </div>
+
+      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
+        <%= tra("Actions performed on objects you are following will be sent to you as notifications. ") %>
+      </div>
     </div>
 
-    <div class="section grey" style="margin-top:10px; margin-bottom:10px; padding:10px;">
+    <div class="" style="margin-top:10px; margin-bottom:10px; padding:10px;">
       <%= tr8n_paginator_tag(@stories, :subject => 'notification') if @stories.any? %>
 
       <% @stories.each do |n| %>
@@ -28,6 +37,6 @@
 
   </div>
 
-  <%= render :partial => "/tr8n/translator/common/footer" %>
+  <%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>  

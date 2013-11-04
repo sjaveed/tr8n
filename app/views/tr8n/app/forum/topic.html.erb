@@ -1,6 +1,10 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
   <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="section-header">
+    <%=tra("{language} Language Forum", :language => tr8n_current_language.native_name) %>
+  </div>
+
   <div class="tr8n tr8n_container">
 	
     <% if @topic %>
@@ -19,9 +23,9 @@
 
       <div class="section_title tr8n_text_align_left">
         <div class="tr8n_float_right" style="font-size:12px; color: #ccc;">
-          <%=link_to("<i class='icon-edit'></i> #{tra("Reply")}".html_safe, :topic_id => @topic.id, :page => params[:page], :anchor => :reply_message) %>
+          <%=link_to(tra("Reply"), :topic_id => @topic.id, :page => params[:page], :anchor => :reply_message) %>
           &nbsp; | &nbsp;
-          <%=link_to("<i class='icon-plus-sign'></i> #{tra("Start a new discussion topic")}".html_safe, :mode => :create) %>
+          <%=link_to(tra("Start a new discussion topic"), :mode => :create) %>
         </div>
 
         <div class="tr8n_text_align_left" style="color:grey;font-size:12px;font-style:italic;padding-top:3px;padding-bottom:3px;">

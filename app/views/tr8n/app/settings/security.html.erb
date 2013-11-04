@@ -7,14 +7,9 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
   <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "sections") %>
 
   <div class="tr8n tr8n_container">
-
-    <div class="section_title">
-      <%=render(:partial => "sections") %>
-      <%=tra("Security Settings") %>
-    </div>
-
     <div class="section grey">
       <div class="tr8n_float_right" style="padding-right:5px;">
         <%=tr8n_help_icon_tag("Application Settings") %>

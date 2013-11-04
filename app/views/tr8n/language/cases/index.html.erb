@@ -3,35 +3,25 @@
   <%= render :partial => "/tr8n/language/common/header" %>
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%>>
 
-    <div class="section_title">
-      <%= tra("Language Cases") %>
-    </div>
-
     <%= form_for(tr8n_current_language, :as => :language, :url => {:action => :index}, :html => {:id => 'language_cases_form', :method => :post}) do |f| %>
       <div id="language_cases_content" class="section grey">
         <div class="tr8n_float_right" style="padding-right:5px;">
             <%=tr8n_help_icon_tag("Language Cases") %>
         </div>
 
-        <div>
-          <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:15px;font-size:12px;">
-            <%=tra("A language case is an inflection or use of a noun (or pronoun) to show its relation to other words in the sentence.")%>
-            <%=tra("In some languages, like Russian, the form of a token {actor} will change based on where and how the token is used in a sentence.", "", :actor => "{actor}")%>
-            <%=tra("For instance, in {example}, {actor} token will be in the genitive form of the language.", "",
-                    :example => "<span dir='ltr' style='display:inline-block;font-weight:bold;'>{target} received a gift from {actor}</span>",
-                    :actor => "{actor}")%>
+        <div class="tr8n_text_align_left">
+          <%=tra("A language case is an inflection or use of a noun (or pronoun) to show its relation to other words in the sentence.")%>
+          <%=tra("In some languages, like Russian, the form of a token {actor} will change based on where and how the token is used in a sentence.", "", :actor => "{actor}")%>
+          <%=tra("For instance, in {example}, {actor} token will be in the genitive form of the language.", "",
+                  :example => "<span dir='ltr' style='display:inline-block;font-weight:bold;'>{target} received a gift from {actor}</span>",
+                  :actor => "{actor}")%>
 
-            <div style="float:right; font-size: 12px; color: grey; padding:5px; padding-top:35px;">
-              <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/language/cases/case_modal">
-                <%= tra("Add Language Case") %>
-              </button>
-            </div>
-
-            <br><br>
-
-            <%=tra("This section allows you to define language cases for the language.")%>
-
+          <div style="text-align:right; padding-top:10px;">
+            <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/language/cases/case_modal">
+              <%= tra("Add Language Case") %>
+            </button>
           </div>
+
         </div>
       </div>
 

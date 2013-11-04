@@ -1,21 +1,20 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
   <%= render :partial => "/tr8n/app/common/header" %>
-  <div class="tr8n tr8n_container">
+  <div class="section-header">
+    <%
+       if @et.is_a?(Tr8n::Emails::Partial)
+         header = tra("Edit Email Partial")
+       elsif @et.is_a?(Tr8n::Emails::Layout)
+         header = tra("Edit Email Layout")
+       else
+         header = tra("Edit Email Template")
+       end
+    %>
+    <%=header%>
+  </div>
 
-    <div class="section_title">
-      <%=render(:partial => "sections") %>
-      <%
-            if @et.is_a?(Tr8n::Emails::Partial)
-               header = tra("Edit Email Partial")
-            elsif @et.is_a?(Tr8n::Emails::Layout)
-               header = tra("Edit Email Layout")
-            else
-               header = tra("Edit Email Template")
-            end
-      %>
-      <%=header%>
-    </div>
+  <div class="tr8n tr8n_container">
 
     <%=render :partial=>"breadcrumb" %>
 
@@ -29,21 +28,21 @@
         <table>
           <tr>
             <th style="text-align:left;vertical-align: top;"><%=tra("Keyword:") %></th>
-            <td><%=f.text_field(:keyword, :style=>"width:950px;", :id => :email_template_keyword)%></td>
+            <td><%=f.text_field(:keyword, :style=>"width:750px;", :id => :email_template_keyword)%></td>
           </tr>
           <tr>
             <th style="text-align:left;vertical-align: top"><%=tra("Name:") %></th>
-            <td><%=f.text_field(:name, :style=>"width:950px;", :id => :email_template_name)%></td>
+            <td><%=f.text_field(:name, :style=>"width:750px;", :id => :email_template_name)%></td>
           </tr>
           <tr>
             <th style="text-align:left;padding-right:15px;vertical-align: top"><%=tra("Description:") %></th>
-            <td><%=f.text_area(:description, :style=>"width:950px; height: 50px;", :id => :email_template_description)%></td>
+            <td><%=f.text_area(:description, :style=>"width:750px; height: 50px;", :id => :email_template_description)%></td>
           </tr>
           <% if @et.is_a?(Tr8n::Emails::Template) %>
             <tr>
               <th style="text-align:left;padding-right:15px;vertical-align: top"><%=tra("Email Layout:") %></th>
               <td>
-                <select id="email_template_layout" data-placeholder="Email template layout" style="width:965px;" class="chzn-select">
+                <select id="email_template_layout" data-placeholder="Email template layout" style="width:765px;" class="chzn-select">
                   <option value=""></option>
                   <option value="-1" <%="selected" if @et.layout.nil? %>>-- no layout --</option>
                   <% selected_application.email_layouts.each do |el| %>
@@ -142,7 +141,7 @@
     position: relative;
     top: 0;
     left: 0;
-    width:1150px;
+    width:930px;
     height:500px;
   }
 </style>

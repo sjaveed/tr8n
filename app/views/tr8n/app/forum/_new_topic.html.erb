@@ -2,21 +2,38 @@
   <% if tr8n_current_language.default? %>
     <%=tra("Start a New Discussion Topic For All Translators")%>
 	<% else %>
-	   <%=tra("Start a New Discussion Topic For {language} Language", nil, :language => tr8n_current_language.native_name)%>
+	   <%=tra("Start a New Discussion Topic")%>
 	<% end %>
 </div>
 
 <div class="section grey tr8n_text_align_left">
   <%= form_tag({:action => :topic}, {:method => :post, :id => "forum_topic_form"}) do %>
     <%=hidden_field_tag(:language_id, params[:language_id])%>
-    
+
     <table style="width:99%">
+      <tr>
+        <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold; vertical-align: top">
+          <%=tra("Languages:")%>
+        </td>
+        <td>
+          <%=hidden_field_tag(:locales, "") %>
+          <select id="forum_languages" data-placeholder="Languages" multiple class="chzn-select" style="width:815px;">
+            <option value=""></option>
+            <% selected_application.languages.each do |lang| %>
+              <option value="<%=lang.locale%>" <%="selected" if lang == tr8n_current_language %>><%=lang.english_name%></option>
+            <% end %>
+          </select>
+          <p class="muted">
+            If you would like to create a topic that appears in all languages, leave the field blank.
+          </p>
+        </td>
+      </tr>
       <tr>
         <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold; vertical-align: top">
           <%=tra("Topic:")%>
         </td>
         <td>
-          <%=text_field_tag(:topic, "", :style=>"width:99%")%>
+          <%=text_field_tag(:topic, "", :style=>"width:800px;")%>
         </td>
       </tr>
       <tr>
@@ -24,7 +41,7 @@
           <%=tra("Message:") %>
         </td>
         <td style="padding-top:5px;">
-          <%=text_area_tag(:message, "", :style=>"width:99%; height:80px;")%>
+          <%=text_area_tag(:message, "", :style=>"width:800px; height:80px;")%>
         </td>
       </tr>
       <tr>
@@ -46,4 +63,16 @@
     </div>
   <% end %>
 </div>
-  
+
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery.caretposition.js") %>
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery.sew.js") %>
+
+<script>
+  (function() {
+    $("#forum_languages").chosen({});
+  })();
+
+  var values = <%= selected_application.translators.collect{|t| {'val' => t.name, 'meta' => t.name}}.to_json.html_safe  %>;
+
+  $('#message').sew({values: values});
+</script>

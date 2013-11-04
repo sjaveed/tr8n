@@ -1,15 +1,11 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
-  <%= render :partial => "/tr8n/translator/common/header" %>
+  <%= render :partial => "/tr8n/common/header" %>
+  <%=render(:partial => "sections") %>
 
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%> >
 
     <div id="basic_info_container">
-      <div class="section_title">
-        <%=render(:partial => "sections") %>
-        <%=tra("Basic Information") %>
-      </div>
-
       <%= form_for(tr8n_current_translator, :as => :translator, :url => {}, :html => {:id => 'basic_info_form', :method => :post}) do |f| %>
         <div class="section grey">
             <table>
@@ -45,6 +41,6 @@
 
   </div>
 
-  <%= render :partial => "/tr8n/translator/common/footer" %>
+  <%= render :partial => "/tr8n/common/footer" %>
 
 <% end %>	

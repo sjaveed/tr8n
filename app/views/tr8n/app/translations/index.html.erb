@@ -1,5 +1,9 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
   <%= render :partial => "/tr8n/app/common/header" %>
+  <div class="section-header">
+    <%=tra("Translations") %>
+  </div>
+
   <div class="tr8n tr8n_container">
 	
     <div class="section blue">
@@ -12,7 +16,7 @@
          </div>
 
         <div class="tr8n_text_align_left">
-         <%=text_field_tag(:search, params[:search], {:style => "width:90%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translations")})%>
+         <%=text_field_tag(:search, params[:search], {:style => "width:85%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translations")})%>
         </div>
 
         <div class="tr8n_text_align_left" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">

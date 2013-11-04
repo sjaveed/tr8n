@@ -1,14 +1,27 @@
-<div style="float:right; font-size:12px;">
-  <%= [
-        link_to_unless(controller.action_name == 'index', tra("basics"), :action => :index),
-        link_to_unless(controller.action_name == 'languages', tra("languages"), :action => :languages),
-        link_to_unless(controller.action_name == 'featured_languages', tra("featured languages"), :action => :featured_languages),
-        link_to_unless(controller.action_name == 'features', tra("features"), :action => :features),
-        link_to_unless(controller.action_name == 'decorations', tra("inline decorators"), :action => :decorations),
-        link_to_unless(controller.action_name == 'tokens', tra("global tokens"), :action => :tokens),
-        link_to_unless(controller.action_name == 'shortcuts', tra("shortcuts"), :action => :shortcuts),
-        link_to_unless(controller.action_name == 'security', tra("security"), :action => :security),
-        link_to_unless(controller.action_name == 'logs', tra("logs"), :action => :logs),
-      ].join(" | ").html_safe
-  %>
+<div class="section-header">
+  <%=tra("Application Settings") %>
 </div>
+
+<ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+  <% [
+         [nil, "Basics", ["index"], true],
+         [nil, "Languages", ["languages"], true],
+         [nil, "Featured Languages", ["featured_languages"], true],
+         [nil, "Features", ["features"], true],
+         [nil, "Decorators", ["decorations"], true],
+         [nil, "Tokens", ["tokens"], true],
+         [nil, "Shortcuts", ["shortcuts"], true],
+         [nil, "Security", ["security"], true],
+         [nil, "Logs", ["logs"], true],
+     ].each do |tab| %>
+
+    <li class="<%='active' if tab[2].include?(controller.action_name)  %>">
+      <%=link_to("/tr8n/app/settings/#{tab[2].first}") do %>
+        <% if tab[0] %>
+          <i class='<%=tab[0]%>'></i>
+        <% end %>
+        <%= tra(tab[1]) %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

@@ -90,8 +90,8 @@ Tr8n.UI.Lightbox = {
       var iframe_doc = self.content_frame.contentWindow.document;
       iframe_doc.body.setAttribute('style', 'background-color:white;padding:10px;margin:0px;font-size:10px;font-family:Arial;');
 
-      Tr8n.Utils.insertCSS(Tr8n.host + "/assets/tr8n/tr8n.css", iframe_doc.body);
-      Tr8n.Utils.insertScript(Tr8n.host + "/assets/tr8n/tr8n.js", function() {
+      Tr8n.Utils.insertCSS(Tr8n.host + "/assets/tr8n/tools.css", iframe_doc.body);
+      Tr8n.Utils.insertScript(Tr8n.host + "/assets/tr8n/tools.js", function() {
         self.content_frame.contentWindow.Tr8n.host = Tr8n.host;
         self.content_frame.contentWindow.Tr8n.Logger.object_keys = Tr8n.Logger.object_keys;
         

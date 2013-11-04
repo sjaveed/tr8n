@@ -27,6 +27,9 @@ class Tr8n::Translator::DashboardController < Tr8n::Translator::BaseController
   before_filter :validate_current_translator, :except => [:lb_notifications, :registration]
 
   def index
+
+    return redirect_to :controller => :assignments
+
     @translator = Tr8n::Translator.find_by_id(params[:id]) if params[:id]
     @translator ||= Tr8n::RequestContext.current_translator
     @languages = tr8n_page_translator.translator_languages

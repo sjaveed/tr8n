@@ -1,12 +1,26 @@
-<div style="float:right; font-size:12px;">
-  <%= [
-        link_to_unless(controller.action_name == 'index', tra("templates"), :action => :index),
-        link_to_unless(controller.action_name == 'partials', tra("partials"), :action => :partials),
-        link_to_unless(controller.action_name == 'layouts', tra("layouts"), :action => :layouts),
-        link_to_unless(controller.action_name == 'assets', tra("assets"), :action => :assets),
-      ].join(" | ").html_safe
-  %>
+<div class="section-header">
+  <%=tra("Emails") %>
 </div>
+
+<ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+  <% [
+         [nil, "Templates", "index"],
+         [nil, "Partials", "partials"],
+         [nil, "Layouts", "layouts"],
+         [nil, "Assets", "assets"],
+     ].each do |tab| %>
+
+    <li class="<%='active' if tab[2] == controller.action_name  %>">
+      <%=link_to("/tr8n/app/emails/#{tab[2]}") do %>
+        <% if tab[0] %>
+          <i class='<%=tab[0]%>'></i>
+        <% end %>
+        <%= tra(tab[1]) %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
 
 <script>
   function previewEmail(id, mode) {

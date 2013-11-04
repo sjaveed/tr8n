@@ -25,7 +25,7 @@ class Tr8n::App::SitemapController < Tr8n::App::BaseController
 
   def index
     @editable = application_admin?
-    @column_width = 383    # 3 columns
+    @column_width = 470    # 3 columns
     @mode = (params[:mode] || :grid).to_sym
     @components = selected_application.components
     # @column_width = 1165   # 1 column

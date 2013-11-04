@@ -7,12 +7,9 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
   <%= render :partial => "/tr8n/app/common/header" %>
-  <div class="tr8n tr8n_container">
+  <%=render(:partial => "sections") %>
 
-    <div class="section_title">
-      <%=render(:partial => "sections") %>
-      <%=tra("Basic Information") %>
-    </div>
+  <div class="tr8n tr8n_container">
 
     <%= form_for(selected_application, :as => :application, :url => {}, :html => {:method => :post}) do |f| %>
       <div class="section grey" style="padding-left:25px;">
@@ -33,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div style="display:inline-block; width: 850px;">
+        <div style="display:inline-block; width: 600px;">
           <div class="form-group">
             <label for="application[name]"><%=tra("Application Name:")%></label>
             <%=f.text_field(:name, :placeholder => "Enter name", :class => "form-control input-block-level") %>

@@ -2,31 +2,23 @@
 
   <%= render :partial => "/tr8n/language/common/header" %>
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%>>
-
-    <div class="section_title">
-      <%= tra("Language Contexts") %>
-    </div>
-
     <div class="section grey">
       <div class="tr8n_float_right" style="padding-right:5px;">
         <%=tr8n_help_icon_tag("Language Context Rules") %>
       </div>
 
-      <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:10px;font-size:12px;">
+      <div class="tr8n_text_align_left">
         <%=tra("Tokens are parts of a phrase that are not translated, such as a profile name or a number.") %>
         <%=tra("Translations in some languages can depend on the gender or numerical value of the tokens in the phrase.") %>
         <%=tra("For example, the translation for {english_sample} can depend on the gender of the actor and target as well as the number of photos.", :english_sample => "<span dir='ltr' style='display:inline-block;font-weight:bold;'>{actor} tagged {target} in {count} photos</span>")%>
         <%=tra("If translations in this language depend on any of these rules, you can add them here.") %>
 
-        <div style="float:right; font-size: 12px; color: grey; padding:5px; padding-top:20px;">
+        <div style="text-align:right; padding:5px; padding-top:10px;">
           <button class="btn btn-primary" data-toggle="dynamic_modal" href="/tr8n/language/context_rules/context_modal">
             <%= tra("Add Language Context") %>
           </button>
         </div>
 
-        <div class="tr8n_text_align_left" style="padding-top:10px;">
-          <%=tra("Translations in this language may use the following contexts:")%>
-        </div>
       </div>
     </div>
 

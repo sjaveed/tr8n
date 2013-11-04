@@ -25,4 +25,16 @@
     </div>
   <% end %>
   
-</div>  
+</div>
+
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery.caretposition.js") %>
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery.sew.js") %>
+
+<script>
+  (function() {
+    $("#forum_languages").chosen({});
+  })();
+
+  var values = [{val: 'foo', meta: 'extended foo'}, {val: 'foo1', meta: 'extended foo'}, {val: 'foo2', meta: 'extended foo'}]; // meta is extended search field
+  $('#message').sew({values: values});
+</script>

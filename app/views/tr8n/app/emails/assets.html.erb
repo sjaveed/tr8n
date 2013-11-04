@@ -1,12 +1,10 @@
 <% @column_width = 225 %>
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
-  <%= render :partial => "/tr8n/app/common/header" %>
-  <div class="tr8n tr8n_container">
 
-    <div class="section_title">
-      <%=render(:partial => "sections") %>
-      <%=tra("Email Assets") %>
-    </div>
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "sections") %>
+
+  <div class="tr8n tr8n_container">
 
     <div class="section grey">
       <div class="tr8n_float_right" style="padding-right:5px;">

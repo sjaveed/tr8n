@@ -1,7 +1,20 @@
-<div style="float:right; font-size:12px;">
-  <%= [
-        link_to_unless(controller.action_name == 'index', tra("translators"), :action => :index),
-        link_to_unless(controller.action_name == 'invitations', tra("invitations"), :action => :invitations),
-      ].join(" | ").html_safe
-  %>
+<div class="section-header">
+  <%=tra("Application Translators") %>
 </div>
+
+<ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+  <% [
+         [nil, "Translators", ["index"], true],
+         [nil, "Invitations", ["invitations"], true],
+     ].each do |tab| %>
+
+    <li class="<%='active' if tab[2].include?(controller.action_name)  %>">
+      <%=link_to("/tr8n/app/translators/#{tab[2].first}") do %>
+        <% if tab[0] %>
+          <i class='<%=tab[0]%>'></i>
+        <% end %>
+        <%= tra(tab[1]) %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

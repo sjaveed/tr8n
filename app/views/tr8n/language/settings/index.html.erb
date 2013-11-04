@@ -1,13 +1,8 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
 
   <%= render :partial => "/tr8n/language/common/header" %>
+
   <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%>>
-
-    <div class="section_title">
-      <%=render(:partial => "sections") %>
-      <%= tra("Basic Information") %>
-    </div>
-
     <%= form_for(tr8n_current_language, :as => :language, :url => {}, :html => {:id => 'basic_info_form', :method => :post}) do |f| %>
       <div id="basic_info_content" class="section grey">
         <div>

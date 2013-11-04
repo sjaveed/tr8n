@@ -23,55 +23,6 @@
 
 class Tr8n::App::BaseController < Tr8n::BaseController
 
-  before_filter :validate_current_translator
-  before_filter :validate_selected_application
 
-private
-
-  def selected_application
-    @selected_application ||= Tr8n::Application.find_by_id(session[:tr8n_selected_app_id])
-  end
-  helper_method :selected_application
-
-  def validate_selected_application
-    if params[:app_id]
-      @selected_application = Tr8n::Application.find_by_id(params[:app_id])
-
-      unless @selected_application
-        @selected_application = tr8n_current_translator.applications.first
-        trfe("Invalid application id")
-      end
-
-      session[:tr8n_selected_app_id] = @selected_application.id
-    elsif session[:tr8n_selected_app_id]
-      @selected_application = Tr8n::Application.find_by_id(session[:tr8n_selected_app_id])
-    end
-
-    unless @selected_application
-      if tr8n_current_translator.applications.empty?
-        Tr8n::RequestContext.container_application.add_translator(tr8n_current_translator)
-      end
-      @selected_application = tr8n_current_translator.applications.first
-      session[:tr8n_selected_app_id] = @selected_application.id
-    end
-
-    unless tr8n_current_user_is_admin?
-      unless tr8n_current_translator.applications.include?(@selected_application)
-        trfe("You are not authorized to view this application")
-        @selected_application = tr8n_current_translator.applications.first
-        session[:tr8n_selected_app_id] = @selected_application.id
-      end
-    end
-  end
-
-  def translator_applications
-    tr8n_current_translator.applications
-  end
-  helper_method :translator_applications
-
-  def application_admin?
-    tr8n_current_user.admin?
-  end
-  helper_method :application_admin?
 
 end

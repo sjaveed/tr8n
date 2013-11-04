@@ -7,20 +7,9 @@
   </style>
 
   <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "component_sections") %>
+
   <div class="tr8n tr8n_container">
-
-    <ul class="breadcrumb">
-      <li><%=link_to(tra("Application Components"), :action => :index, :mode => :list) %></li>
-      <span class="divider">/</span>
-      <li class="active"><%=@component.name %></li>
-    </ul>
-
-    <div class="section_title">
-      <%=render(:partial => "component_sections") %>
-      <%=tra("Languages")%>
-    </div>
-
-
     <div class="section grey">
       <div class="tr8n_float_right" style="padding-right:5px;">
         <%=tr8n_help_icon_tag("Component Sources") %>

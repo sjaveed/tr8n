@@ -2,3 +2,168 @@
 <%= javascript_include_tag('tr8n/tr8n_container.js') %>
 
 <div class="tr8n tr8n_container" id="tr8n_wizards"></div>
+
+<div class="tr8n_container" <%=tr8n_dir_attribute_tag%> style="margin-bottom:60px; padding:10px; margin-left:-10px; background:#f9f8f7">
+  <div style="padding-bottom:0px;">
+    <div style="float:right">
+      <div style="float:right">
+        <%= form_tag("/tr8n/app/phrases", :id => "tr8n_key_search_form", :method => :get) do %>
+          <%= text_field_tag("search", "", :style => "width:250px;font-size:13px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search for phrases")) %>
+        <% end %>
+      </div>
+    </div>
+    <div style="font-size:14px; font-weight: bold; padding-bottom:25px; <%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+      <div style="display:inline-block; width:80px; text-align: left; float:left; margin-right:10px;">
+        <%=image_tag(selected_application.logo_url, :style=>"max-width:80px;max-height:80px; padding:5px;") %>
+      </div>
+
+      <ul class="nav nav-pills" id="application_list_menu" style="margin-bottom:-20px;padding-bottom:0px;margin-left:-10px;">
+        <li class="dropdown" id="applications_dropdown" style="max-width:700px;">
+          <a class="dropdown-toggle"  id="applications_menu"  data-toggle="dropdown" href="#applications_dropdown" style="color:#666; font-size:25px;">
+            <%= selected_application.name %>
+            <% if selected_application.default? %>
+              <%=image_tag("tr8n/lock.png", :style=>"vertical-align:top")%>
+            <% end %>
+            <b class="caret"></b>
+          </a>
+          <div style="font-size:14px; font-weight:normal; color: #888; padding-left:13px;">
+            <div>
+              <%=selected_application.description%>
+            </div>
+            <% if selected_application.url %>
+              <div style="font-size:12px;">
+                <%= link_to(selected_application.url, selected_application.url) %>
+              </div>
+            <% end %>
+          </div>
+          <ul class="dropdown-menu">
+            <% translator_applications.each do |app| %>
+              <li>
+                <%=link_to({:app_id => app.id}, :style => "#{translator_applications.last != app ? "padding-bottom:10px;border-bottom:1px dashed #ccc" : ""}") do %>
+                  <% if app.default? %>
+                    <div style="float:right;padding-top:5px;"><%=image_tag("tr8n/lock.png")%></div>
+                  <% end %>
+                  <div style="display:inline-block; width:70px; text-align: center; padding-top:10px;">
+                    <%=image_tag(app.logo_url, :style=>"max-width:50px;max-height:50px;") %>
+                  </div>
+                  <div style="display:inline-block; vertical-align: top; padding-left:10px;">
+
+                    <div style="font-size:16px; font-weight:bold; padding-top:5px;padding-bottom:5px;">
+                      <%= app.name %>
+                    </div>
+                    <% if app.description %>
+                      <div style="font-size:12px; color: #666; max-width:480px; white-space: normal;">
+                        <%= app.description %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+            <li class="divider"></li>
+            <li>
+              <div style="text-align:center">
+                <%=link_to(tra("Create New Application"), {:controller => "/tr8n/app/wizards", :action => :application}, {"class" => "btn", "style" => "width:90%;", "data-toggle" => "dynamic_wizard"})%>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function(){
+    $('#applications_menu').dropdown();
+  });
+</script>
+
+<style>
+  #application_list_menu li {
+    min-width: 600px;
+  }
+
+
+  .active a {
+    background: #f5f5f5;
+    border: 1px solid #eee;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+</style>
+
+<% ctrl = controller.class.name.underscore.gsub("tr8n/", "").gsub("_controller", "") %>
+
+<div class="row" style="background:white; margin-left:-10px; border-top-left-radius: 10px;">
+  <div class="span" style="margin-left:10px; background:white; width:180px; margin-right:0px;">
+    <div class="" style=" margin-left:0px; maring-right:0px; padding:10px; padding-left:0px; margin-top:10px;">
+      <div style="color:#666; font-weight:bold; padding-bottom:10px;">
+        <%= tra("Translator") %>
+      </div>
+      <ul class="nav sub-nav" style="padding-left:0px;padding-right:10px;width:200px;">
+        <% features = []
+           features << ["icon-check", "Assignments", "translator/assignments", false]
+           features << ["icon-flag", "Notifications", "translator/notifications", false]
+           features << ["icon-bookmark", "Bookmarks", "translator/following", true]
+           features << ["icon-cog", "Preferences", "translator/settings", true]
+
+           features.each do |tab| %>
+          <% next if tab.last and not application_admin? %>
+          <li class="<%='active' if ctrl == tab[2] %>" style="padding:2px;">
+            <%=link_to("/tr8n/#{tab[2]}", :style=>"padding:5px;") do %>
+              <i class='<%=tab[0]%>'></i>
+              <%= tra(tab[1]) %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+
+      <div style="color:#666; font-weight:bold; padding-bottom:10px;">
+        <%= tra("Application") %>
+      </div>
+      <ul class="nav sub-nav" style="padding-left:0px;padding-right:10px;width:200px;">
+        <% features = []
+           features << ["icon-home", "Dashboard", "app/dashboard", false]
+           features << ["icon-th", "Site Map", "app/sitemap", false]
+           features << ["icon-th-list", "Phrases", "app/phrases", false]
+           features << ["icon-globe", "Translations", "app/translations", false]
+           features << ["icon-comment", "Forum", "app/forum", false]                      if selected_application.feature_enabled?(:forum)
+           features << ["icon-book", "Glossary", "app/glossary", false]                   if selected_application.feature_enabled?(:glossary)
+           features << ["icon-certificate", "Awards", "app/awards", false]                if selected_application.feature_enabled?(:awards)
+           features.each do |tab| %>
+          <% next if tab.last and not application_admin? %>
+          <li class="<%='active' if ctrl == tab[2] %>" style="padding:2px;">
+            <%=link_to("/tr8n/#{tab[2]}", :style=>"padding:5px;") do %>
+              <i class='<%=tab[0]%>'></i>
+              <%= tra(tab[1]) %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+
+      <div style="color:#666; font-weight:bold; padding-bottom:10px;">
+        <%= tra("Administration") %>
+      </div>
+      <ul class="nav sub-nav" style="padding-left:0px;padding-right:10px;width:200px;">
+        <% features = []
+           features << ["icon-cog", "Application", ["app/settings"], true]
+           features << ["icon-user", "Translators", ["app/translators"], true]
+           features << ["icon-envelope", "Emails", ["app/emails"], false]
+           features << ["icon-cog", "Language", ["language/settings", "language/context_rules", "language/cases", "language/censorship"], true]
+           features.each do |tab| %>
+          <% next if tab.last and not application_admin? %>
+          <li class="<%='active' if tab[2].include?(ctrl)  %>" style="padding:2px;">
+            <%=link_to("/tr8n/#{tab[2].first}", :style=>"padding:5px;") do %>
+              <i class='<%=tab[0]%>'></i>
+              <%= tra(tab[1]) %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+
+    </div>
+
+  </div>
+  <div class="span tr8n_container" style="background:white; width:955px; border-left: 1px solid #eee; padding: 15px; min-height:800px; margin-left:0px;">

@@ -52,8 +52,8 @@
           <tr id="languages_<%=tran_lang.id%>">
             <td><i class='icon-align-justify handle'></i></td>
             <td>
-              <%= image_tag(lang.flag_url, :style => "align:middle") %>  &nbsp;
-              <%=lang.english_name%>
+              <%= tr8n_language_flag_tag(lang) %>
+              <%= lang.english_name%>
             </td>
             <td><%=lang.native_name%></td>
             <td><%=lang.locale%></td>

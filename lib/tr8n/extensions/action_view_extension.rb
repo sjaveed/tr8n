@@ -94,19 +94,21 @@ module Tr8n
       render(:partial => '/tr8n/common/scripts', :locals => {:opts => opts})    
     end
 
-    def tr8n_translator_rank_tag(translator, rank = nil)
+    def tr8n_translator_rank_tag(translator, rank = nil, opts = {})
       return "" unless translator
 
       rank ||= translator.rank || 0
 
+      style = opts[:style] || ""
+
       html = "<span dir='ltr'>"
       1.upto(5) do |i|
         if rank > i * 20 - 10  and rank < i * 20  
-          html << image_tag("tr8n/rating_star05.png")
+          html << image_tag("tr8n/rating_star05.png", :style=>style)
         elsif rank < i * 20 - 10 
-          html << image_tag("tr8n/rating_star0.png")
+          html << image_tag("tr8n/rating_star0.png", :style=>style)
         else
-          html << image_tag("tr8n/rating_star1.png")
+          html << image_tag("tr8n/rating_star1.png", :style=>style)
         end 
       end
       html << "</span>"

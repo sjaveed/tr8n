@@ -37,7 +37,13 @@ class Tr8n::App::ForumController < Tr8n::App::BaseController
         topic = Tr8n::LanguageForumTopic.create(:language_id => tr8n_current_language.id, :translator => tr8n_current_translator, :topic => params[:topic])
       end
       
-      Tr8n::LanguageForumMessage.create(:language_forum_topic => topic, :language_id => tr8n_current_language.id, :message => params[:message], :translator => tr8n_current_translator)
+      Tr8n::LanguageForumMessage.create(
+          :language_forum_topic => topic,
+          :language_id => tr8n_current_language.id,
+          :message => params[:message],
+          :translator => tr8n_current_translator,
+          :mentions => params[:mentioned_translators]
+      )
       return redirect_to(:action => :topic, :topic_id => topic.id, :last_page => true)
     end
     

@@ -43,7 +43,7 @@
 
 class Tr8n::TranslationKeyComment < ActiveRecord::Base
   self.table_name = :tr8n_translation_key_comments
-  attr_accessible :language_id, :translation_key_id, :translator_id, :message
+  attr_accessible :language_id, :translation_key_id, :translator_id, :message, :mentions
   attr_accessible :language, :translator, :translation_key
   
   belongs_to :language,               :class_name => "Tr8n::Language"
@@ -56,7 +56,11 @@ class Tr8n::TranslationKeyComment < ActiveRecord::Base
 
   def toHTML
     return "" unless message
-    message.gsub("\n", "<br>").html_safe
+    msg = ERB::Util.html_escape(message.dup)
+    message.scan(/(@[^\s]+)/).each do |frag|
+      msg = message.gsub(frag.first, "<span class='tr8n_mentioned_translator'>#{frag.first}</span>")
+    end
+    msg.gsub("\n", "<br>").html_safe
   end
 
   def distribute_notification

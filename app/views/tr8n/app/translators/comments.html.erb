@@ -1,0 +1,37 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "view_sections") %>
+
+  <div class="section">
+    <%= tr8n_paginator_tag(@comments, :subject => 'comment') if @comments.any? %>
+
+    <table class="table table-hover ">
+      <thead>
+      <tr>
+        <th style="width:150px;"><%=tra("Date") %></th>
+        <th><%=tra("Phrase") %></th>
+        <th><%=tra("Comment") %></th>
+      </tr>
+      </thead>
+      <tbody id="languages" data-update-url="/tr8n/translator/settings/update_languages_order">
+      <% @comments.each do |c| %>
+        <tr>
+          <td>
+            <%= c.created_at.tr(:date_time) %>
+          </td>
+          <td>
+            <%=c.translation_key.label%>
+          </td>
+          <td>
+            <%= c.message %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>

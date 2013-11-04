@@ -1,4 +1,5 @@
 <ul class="breadcrumb">
-  <li class="active"><%=link_to(tra("All Translators"), :action => :index)%>
-  </li>
+  <li><%=link_to(tra("All Translators"), :action => :index)%>  </li>
+  <span class="divider">/</span>
+  <li class="active"><%=link_to(@translator.name, :action => :view, :id => @translator.id)%>  </li>
 </ul>

@@ -58,7 +58,7 @@
           <tr>
             <td style="vertical-align:top">
               <div style="float:left;"><%=tr8n_user_mugshot_tag(translator, :linked => true)%> &nbsp;</div>
-              <%=link_to(translator.name, :controller => "/tr8n/translator/dashboard", :id => translator.id)%>
+              <%=link_to(translator.name, :action => :view, :id => translator.id)%>
             </td>
             <td>
               <%=translator.languages.collect{|lang| lang.name}.join(', ')%>

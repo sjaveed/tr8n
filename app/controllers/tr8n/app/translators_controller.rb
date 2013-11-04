@@ -69,4 +69,43 @@ class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
 
     redirect_back
   end
+
+  def view
+    translator
+  end
+
+  def activity
+    @activities = Tr8n::TranslatorLog.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+  def translations
+    @translations = Tr8n::Translation.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+  def votes
+    @votes = Tr8n::TranslationVote.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+  def locks
+    @locks = Tr8n::TranslationKeyLock.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+  def comments
+    @comments = Tr8n::TranslationKeyComment.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+  def messages
+    @messages = Tr8n::LanguageForumMessage.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+  def assignments
+    @assignments = Tr8n::ComponentTranslator.where(:translator_id => translator.id).page(page).per(per_page)
+  end
+
+private
+
+  def translator
+    @translator ||= Tr8n::Translator.find_by_id(params[:id])
+  end
+
 end

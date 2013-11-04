@@ -1,12 +1,20 @@
-<div class="section grey">
+<div class="section grey" style="margin-top:20px;">
   <%= form_tag({:action => :submit_comment, :id => translation_key.id}, {:method => :post, :id => "translation_key_comments_form"}) do %>
+    <%=hidden_field_tag(:language_id, @language_id)%>
+    <%=hidden_field_tag(:with_status, params[:with_status])%>
+    <%=hidden_field_tag(:submitted_by, params[:submitted_by])%>
+    <%=hidden_field_tag(:submitted_on, params[:submitted_on])%>
+    <%=hidden_field_tag(:grouped_by, params[:grouped_by])%>
+
+    <%=hidden_field_tag(:mentioned_translators, "")%>
+
     <table style="width:99%">
       <tr>
-        <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold;">
-          <%=tra("Your Comment:") %>
+        <td class="tr8n_text_align_right" style="width:60px; padding-right:10px; font-weight:bold; vertical-align:top;">
+            <%=tr8n_user_mugshot_tag(tr8n_current_translator, :linked => false)%>
         </td>
         <td>
-          <%=text_area_tag(:message, "", :class => "keyboardInput", :style=>"width:99%; height:70px")%>
+          <%=text_area_tag(:message, "", :class => "keyboardInput", :id=>:phrase_comment, :style=>"width:99%; height:70px")%>
         </td>
       </tr>
       <tr>
@@ -25,4 +33,18 @@
     </div>
   <% end %>
   
-</div>  
+</div>
+
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery.caretposition.js") %>
+<%=javascript_include_tag("tr8n/vendor/jquery/jquery.sew.js") %>
+
+<script>
+  var mentions = [];
+  var values = <%= @translators.collect{|t| {'val' => t.name, 'meta' => t.name, 'id' => t.id}}.to_json.html_safe  %>;
+  $('#phrase_comment').sew({
+    values: values
+  }).on('mention-selected', function(e, value) {
+    mentions.push(value.id);
+    $("#mentioned_translators").val(mentions.join());
+  });
+</script>

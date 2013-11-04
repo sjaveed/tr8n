@@ -104,12 +104,14 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     end
     
     @show_add_dialog = (params[:mode] == "add" or translation_key.translations_for(tr8n_current_language).empty?)
+    @language_id = params[:language_id] || tr8n_current_language.id.to_s
+    @language = Tr8n::Language.find_by_id(@language_id) unless @language_id.blank?
 
     # for new translation
     @translation = Tr8n::Translation.new(:translation_key => translation_key, :language => tr8n_current_language, :translator => tr8n_current_translator)
-    @rules = {}
 
-    @translations = Tr8n::Translation.where("tr8n_translations.translation_key_id = ? and tr8n_translations.language_id = ?", translation_key.id, Tr8n::RequestContext.current_language.id)
+    @translations = Tr8n::Translation.where("tr8n_translations.translation_key_id = ?", translation_key.id)
+    @translations = @translations.where(:language_id => @language.id) if @language
 
     if params[:with_status] == "accepted"
       @translations = @translations.where("tr8n_translations.rank >= ?", selected_application.threshold)
@@ -124,7 +126,7 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
       if params[:submitted_by] == "me"
         @translations = @translations.where("tr8n_translations.translator_id = ?", Tr8n::RequestContext.current_user_is_translator? ? Tr8n::RequestContext.current_translator.id : 0)
       else
-        @translations = @translations.where("tr8n_translations.translator_id = ?", params[:submitted_by].id)
+        @translations = @translations.where("tr8n_translations.translator_id = ?", params[:submitted_by])
       end
     end
 
@@ -141,10 +143,28 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
 
     @translations = @translations.order("rank desc, created_at desc")
 
-    @comments = Tr8n::TranslationKeyComment.where("language_id = ? and translation_key_id = ?", tr8n_current_language.id, translation_key.id).order("created_at desc").page(page).per(per_page)
+    @translators = []
+    @translator_options ||= begin
+      opts = []
+      opts << ["by anyone", "anyone"]
+      @translations.each do |t|
+        next unless t.translator
+        next if @translators.include?(t.translator)
+        @translators << t.translator
+        opts << ["by #{t.translator.name}", t.translator.id]
+      end
+      opts
+    end
+
+    @translators += tr8n_selected_application.translators
+    @translators.uniq!
+
+    @comments = Tr8n::TranslationKeyComment.where("translation_key_id = ?", translation_key.id)
+    @comments = @comments.where(:language_id => @language.id) if @language
+    @comments = @comments.order("created_at desc").page(page).per(per_page)
     
     @grouping = {}
-    if params[:grouped_by] != "nothing"
+    if !params[:grouped_by].blank? and params[:grouped_by] != "nothing"
       @translations.each do |tr|
         case params[:grouped_by]
           when "translator" then
@@ -170,7 +190,6 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
         end
       end
     end
-    
   end
 
   def lock
@@ -228,11 +247,12 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
   end
   
   def submit_comment
-    Tr8n::TranslationKeyComment.create(:language => tr8n_current_language,
+    Tr8n::TranslationKeyComment.create(:language_id => params[:language_id],
                                        :translator => tr8n_current_translator,
                                        :translation_key => translation_key,
-                                       :message => params[:message])
-
+                                       :message => params[:message],
+                                       :mentions => params[:mentioned_translators]
+    )
     trfn("Comment has been added.")
     redirect_back
   end

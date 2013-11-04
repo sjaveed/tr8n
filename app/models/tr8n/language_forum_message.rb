@@ -43,7 +43,7 @@
 
 class Tr8n::LanguageForumMessage < ActiveRecord::Base
   self.table_name = :tr8n_language_forum_messages
-  attr_accessible :language_id, :language_forum_topic_id, :translator_id, :message
+  attr_accessible :language_id, :language_forum_topic_id, :translator_id, :message, :mentions
   attr_accessible :language, :translator, :language_forum_topic
 
   belongs_to :language,               :class_name => "Tr8n::Language"
@@ -56,7 +56,11 @@ class Tr8n::LanguageForumMessage < ActiveRecord::Base
 
   def toHTML
     return "" unless message
-    ERB::Util.html_escape(message).gsub("\n", "<br>").html_safe
+    msg = ERB::Util.html_escape(message.dup)
+    message.scan(/(@[^\s]+)/).each do |frag|
+      msg = message.gsub(frag.first, "<span class='tr8n_mentioned_translator'>#{frag.first}</span>")
+    end
+    msg.gsub("\n", "<br>").html_safe
   end
 
   def distribute_notification

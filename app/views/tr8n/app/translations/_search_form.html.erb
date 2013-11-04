@@ -1,0 +1,23 @@
+<%= form_tag({}, {:method => :get, :id => "translations_search_form"}) do %>
+  <%=hidden_field_tag(:id, params[:id]) %>
+  <div class="section blue">
+    <div class="tr8n_float_right">
+      <button type="submit" class="btn btn-primary">
+        <%=tra("Search")%>
+      </button>
+    </div>
+
+    <div class="tr8n_text_align_left">
+      <%=text_field_tag(:search, params[:search], {:style => "width:85%;font-size:12px;height:20px;background: white url(/assets/tr8n/icn_search.png) right no-repeat; padding-right: 20px; border-radius:10px;", :placeholder => trla("Search translations")})%>
+    </div>
+
+    <div class="tr8n_text_align_left" style="margin-top:10px; padding:3px; font-size:11px; color:#666; font-weight:bold;">
+      <%=select_tag(:language_id, options_for_select(language_options, @language_id), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
+      <%=select_tag(:with_status, options_for_select(translation_status_options, params[:with_status]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
+      <%=select_tag(:submitted_by, options_for_select(translator_options, params[:submitted_by]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
+      <%=select_tag(:submitted_on, options_for_select(date_options, params[:submitted_on]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>
+
+      <!--<%=select_tag(:grouped_by, options_for_select(Tr8n::Translation.filter_group_by_options, params[:grouped_by]), :onChange => "Tr8n.Utils.Effects.submit('translations_search_form')")%>-->
+    </div>
+  </div>
+<% end %>

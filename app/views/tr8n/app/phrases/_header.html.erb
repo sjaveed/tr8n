@@ -1,6 +1,4 @@
-<% style = @translation_key.locked? ? "background-color:#ECFFEF; border: 1px solid #50B74F;" : "background-color:#FDFDDF; border: 1px solid #DDCF6F;" %>
-
-<div class="section tr8n_text_align_left" style="margin-bottom:5px;<%=style%>;">
+<div class="section grey tr8n_text_align_left" style="margin-bottom:5px;">
   <div class="tr8n_float_right" style="font-size:12px; padding-right:3px;">
     <% if @translation_key.locked? %>
       <%=image_tag("tr8n/lock.png", :style=>"vertical-align:bottom;", :title => trla("This phrase is locked.")) %>

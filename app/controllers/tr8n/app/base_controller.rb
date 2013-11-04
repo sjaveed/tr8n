@@ -24,5 +24,54 @@
 class Tr8n::App::BaseController < Tr8n::BaseController
 
 
+private
+
+  def date_options
+    @date_options ||=  begin
+      [
+        ["on any date", "any"],
+        ["today", "today"],
+        ["yesterday", "yesterday"],
+        ["in the last week", "last_week"],
+        ["in the last month", "last_month"]
+      ].collect{|option| [option.first.trl("Date option"), option.last]}
+    end
+  end
+  helper_method :date_options
+
+  def language_options
+    @language_options ||= begin
+      langs = tr8n_selected_application.languages.collect{|lang| [lang.english_name, lang.id.to_s]}
+      langs.unshift([tra("all languages"), ""])
+      langs
+    end
+  end
+  helper_method :language_options
+
+  def translator_options
+    @translator_options ||= begin
+      opts = []
+      opts << ["by anyone", "anyone"]
+      opts << ["by me", "me"]
+      tr8n_selected_application.translators.each do |t|
+        next if tr8n_current_translator == t
+        opts << ["by #{t.name}", t.id]
+      end
+      opts
+    end
+  end
+  helper_method :translator_options
+
+  def translation_status_options
+    @translation_status_options ||= begin
+      [
+        ["all translations", "all"],
+        ["accepted", "accepted"],
+        ["pending", "pending"],
+        ["rejected", "rejected"]
+      ].collect{|option| [option.first.trl("Translation status"), option.last]}
+    end
+  end
+  helper_method :translation_status_options
 
 end

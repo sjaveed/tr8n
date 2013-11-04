@@ -1,0 +1,71 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "view_sections") %>
+
+
+  <div class="section grey">
+    <table>
+      <tr>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Name:")%></th>
+        <td style="padding:3px;">
+          <%=@translator.name%>
+        </td>
+      </tr>
+      <tr>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Joined On:")%></th>
+        <td style="padding:3px;">
+          <%==@translator.created_at%>
+        </td>
+      </tr>
+      <tr>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Rank:")%></th>
+        <td style="padding:3px;">
+          <%==@translator.rank%>
+        </td>
+      </tr>
+      <tr>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Level:")%></th>
+        <td style="padding:3px;">
+          <%==@translator.level%>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section_title">
+    <%=tra("Languages") %>
+  </div>
+
+  <div class="section">
+    <table class="table table-hover ">
+      <thead>
+      <tr>
+        <th><%=tra("English Name") %></th>
+        <th><%=tra("Native Name") %></th>
+        <th><%=tra("Locale") %></th>
+        <th><%=tra("Direction") %></th>
+      </tr>
+      </thead>
+      <tbody id="languages" data-update-url="/tr8n/translator/settings/update_languages_order">
+      <% @translator.translator_languages.each do |tran_lang| %>
+        <% lang = tran_lang.language %>
+        <tr id="languages_<%=tran_lang.id%>">
+          <td>
+            <%= image_tag(lang.flag_url, :style => "align:middle") %>  &nbsp;
+            <%=lang.english_name%>
+          </td>
+          <td><%=lang.native_name%></td>
+          <td><%=lang.locale%></td>
+          <td><%= (lang.dir == "ltr" ? "&rarr;" : "&larr;").html_safe %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+
+
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>

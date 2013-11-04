@@ -1,0 +1,28 @@
+<div class="section-header">
+  <%=tra("Translators") %>
+</div>
+
+<%= render :partial=>"breadcrumb" %>
+
+<ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
+  <% [
+         [nil, "Basics", "view"],
+         [nil, "Assignments", "assignments"],
+         [nil, "Activity", "activity"],
+         [nil, "Translations", "translations"],
+         [nil, "Votes", "votes"],
+         [nil, "Locks", "locks"],
+         [nil, "Comments", "comments"],
+         [nil, "Forum Messages", "messages"],
+     ].each do |tab| %>
+
+    <li class="<%='active' if tab[2] == controller.action_name  %>">
+      <%=link_to("/tr8n/app/translators/#{tab[2]}?id=#{@translator.id}") do %>
+        <% if tab[0] %>
+          <i class='<%=tab[0]%>'></i>
+        <% end %>
+        <%= tra(tab[1]) %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

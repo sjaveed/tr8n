@@ -56,8 +56,9 @@ class Tr8n::Notifications::LanguageForumMessage < Tr8n::Notification
     end
 
     translators += followers(message.translator)
+    translators += mentioned(message.mentions, message.message)
 
-    # remove the current dashboard
+    # remove the current translator
     translators = translators.uniq - [message.translator]
 
     translators.each do |t|
@@ -66,7 +67,13 @@ class Tr8n::Notifications::LanguageForumMessage < Tr8n::Notification
   end
 
   def title
-    tr("[link: {user}] replied to a forum topic you are following.", nil, 
+    if mentioned_translators.include?(translator)
+      return tr("[link: {user}] mentioned you in a forum message.", nil,
+                :user => actor, :link => {:href => actor.url}
+      )
+    end
+
+    tr("[link: {user}] replied to a forum topic you are following.", nil,
       :user => actor, :link => {:href => actor.url}
     )
   end

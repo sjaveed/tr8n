@@ -340,7 +340,6 @@ class Tr8n::Translation < ActiveRecord::Base
     [["date", "date"], 
      ["rank", "rank"]].collect{|option| [option.first.trl("Translation filter order by option"), option.last]}
   end
-  
 
   def self.filter_group_by_options
     [["not grouped", "nothing"],

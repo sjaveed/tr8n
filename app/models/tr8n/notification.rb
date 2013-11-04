@@ -83,6 +83,18 @@ class Tr8n::Notification < ActiveRecord::Base
                           obj.class.name, obj.id).all.collect{|f| f.translator}
   end
 
+  def self.mentioned(mentioned_ids, message)
+    return [] if mentioned_ids.blank?
+    translators = []
+    mentioned_ids.split(",").each do |tid|
+      t = Tr8n::Translator.find_by_id(tid)
+      next unless t
+      next unless message.index("@#{t.name}")
+      translators << t
+    end
+    translators
+  end
+
   def self.translators_for_translation(translation)
     tkey = translation.translation_key
 
@@ -94,6 +106,10 @@ class Tr8n::Notification < ActiveRecord::Base
       translators << t.translator
     end
     translators
+  end
+
+  def mentioned_translators
+    @mentioned_translators ||= self.class.mentioned(object.mentions, object.message)
   end
 
   def key

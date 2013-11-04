@@ -1,26 +1,29 @@
-<%= tr8n_paginator_tag(translations, :subject => 'translation') if mode == :list and translations.any? %>	
-
-<table style="width:100%;" cellpadding="5px" cellspacing="3px">
-  <tr style="border-bottom:1px solid #ccc;">
-    <td class="tr8n_text_align_left" style="width:200px;"><%=tra("Translator")%></td>
-    <td class="tr8n_text_align_left" style="width:25px;"><%=tra("Rank")%></td>
-    <td style="width:80px;text-align:center"><%=tra("Your Vote")%></td>
-    <td class="tr8n_text_align_left"><%=tra("Translation")%></td>
-    <% if [:view, :edit].include?(mode) %> 
-      <td class="topic_header" style="width:50px;">&nbsp;</td>
-		<% end %>
-  </tr>  
-
-  <% translations.each do |trn| %>
-    <% style = "border-bottom:1px dotted #ccc;" unless translations.last == trn %>
-    <tr style="<%=style%>" id="translation_row_<%=trn.id%>">
-			 <%= render :partial => "/tr8n/app/translations/translation", :locals => {:language => language, :translation => trn, :mode => mode} %>
-    </tr>
-  <% end %>
-</table>
+<%= tr8n_paginator_tag(translations, :subject => 'translation') if mode == :list and translations.any? %>
 
 <% if translations.empty? %>
-    <div class="tr8n_text_align_left" style="padding-top:10px; font-size:12px;"><%=trla("No translations found")%></div>
+  <div class="tr8n_text_align_left" style="padding-top:10px; font-size:14px;">
+    <%=trla("No translations found")%>
+  </div>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr style="">
+        <th class="tr8n_text_align_left" style="width:170px;"><%=tra("Translator")%></th>
+        <th class="tr8n_text_align_right" style="width:10px;"></th>
+        <th style="width:80px;text-align:center"><%=tra("Your Vote")%></th>
+        <th class="tr8n_text_align_left"><%=tra("Translation")%></th>
+        <% if [:view, :edit].include?(mode) %>
+          <th class="topic_header" style="width:50px;">&nbsp;</th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <% translations.each do |trn| %>
+      <tr id="translation_row_<%=trn.id%>">
+         <%= render :partial => "/tr8n/app/translations/translation", :locals => {:translation => trn, :mode => mode} %>
+      </tr>
+    <% end %>
+  </table>
 <% end %>
 
 <% if [:edit, :view].include?(mode) %>

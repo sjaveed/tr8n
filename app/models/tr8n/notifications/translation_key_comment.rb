@@ -50,18 +50,19 @@ class Tr8n::Notifications::TranslationKeyComment < Tr8n::Notification
     tkey = comment.translation_key
 
     # find translators for all other translations of the key in this settings
-    tanslations = Tr8n::Translation.where("translation_key_id = ? and language_id = ?", tkey.id, comment.language.id)
+    translations = Tr8n::Translation.where("translation_key_id = ? and language_id = ?", tkey.id, comment.language.id)
 
     translators = []
-    tanslations.each do |t|
+    translations.each do |t|
       translators << t.translator
     end
 
     translators += commenters(tkey, comment.language)
     translators += followers(tkey)
     translators += followers(comment.translator)
+    translators += mentioned(comment.mentions, comment.message)
 
-    # remove the current dashboard
+    # remove the current translator
     translators = translators.uniq - [comment.translator]
 
     translators.each do |t|
@@ -70,6 +71,12 @@ class Tr8n::Notifications::TranslationKeyComment < Tr8n::Notification
   end
 
   def title
+    if mentioned_translators.include?(translator)
+      return tr("[link: {user}] mentioned you in a comment to a phrase.", nil,
+                :user => actor, :link => {:href => actor.url}
+      )
+    end
+
     if object.translation_key.followed?
       return tr("[link: {user}] commented on a translation to a phrase you are following.", nil, 
           :user => actor, :link => {:href => actor.url}

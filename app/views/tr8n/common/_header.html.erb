@@ -113,6 +113,11 @@
           <% next if tab.last and not application_admin? %>
           <li class="<%='active' if ctrl == tab[2] %>" style="padding:2px;">
             <%=link_to("/tr8n/#{tab[2]}", :style=>"padding:5px;") do %>
+              <% if tab[1] == "Notifications"%>
+                <div id="nav_notification_bubble" style="float:right;margin-right:20px; background: #eee; padding: 0px 5px; border-radius:5px; font-size:10px; <%= "display:none" if tr8n_current_translator.unread_notifications_count == 0 %>">
+                  <span id="nav_notification_bubble_count"><%= tr8n_current_translator.unread_notifications_count %></span>
+                </div>
+              <% end %>
               <i class='<%=tab[0]%>'></i>
               <%= tra(tab[1]) %>
             <% end %>
@@ -164,6 +169,29 @@
       </ul>
 
     </div>
+
+  <script>
+    function checkNotificationCount() {
+      $.getJSON( "/tr8n/translator/dashboard/notification_count", function( data ) {
+        var count = parseInt(data['count']);
+        if (count > 0) {
+          $("#nav_notification_bubble_count").text('' + count);
+          $("#nav_notification_bubble").show();
+        } else {
+          $("#nav_notification_bubble_count").text('0');
+          $("#nav_notification_bubble").hide();
+        }
+
+        if (typeof updateNotificationCount == 'function') {
+          updateNotificationCount(count);
+        }
+
+        window.setTimeout(checkNotificationCount, 3000);
+      });
+    }
+
+    window.setTimeout(checkNotificationCount, 3000);
+  </script>
 
   </div>
   <div class="span tr8n_container" style="background:white; width:955px; border-left: 1px solid #eee; padding: 15px; min-height:800px; margin-left:0px;">

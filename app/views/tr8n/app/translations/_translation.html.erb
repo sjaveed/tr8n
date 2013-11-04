@@ -1,26 +1,28 @@
 <td class="tr8n_text_align_left" style="vertical-align:top; padding-top:5px; font-size:12px">
-  <table>
-    <tr>
-      <td class="tr8n_text_align_left" style="padding-right:5px;">
-        <%=tr8n_user_mugshot_tag(translation.translator, :linked => true)%>
-      </td>
-      <td class="tr8n_text_align_left">
-        <%=tr8n_translator_tag(translation.translator, :linked => true)%>
-        <div style="font-size:11px;color:grey;<%=tr8n_style_attribute_tag('text-align', 'left')%>;">
-            <%=tr8n_when_string_tag(translation.created_at).html_safe %>
-        </div>
-				<%=tr8n_translator_rank_tag(translation.translator)%>
-      </td>
-    </tr>
-  </table>
+  <div style="width:60px;display:inline-block; vertical-align: top; padding-top:5px;">
+    <%=tr8n_user_mugshot_tag(translation.translator, :linked => true)%>
+  </div>
+  <div style="width:100px;display:inline-block; vertical-align: top">
+    <%=tr8n_translator_tag(translation.translator, :linked => true)%>
+    <div style="font-size:11px;color:grey;<%=tr8n_style_attribute_tag('text-align', 'left')%>;">
+      <%=tr8n_when_string_tag(translation.created_at).html_safe %>
+    </div>
+    <div class="tr8n_text_align_left muted" style="">
+      <%= tr8n_language_flag_tag(translation.language) %>
+      <%=translation.language.english_name %>
+    </div>
+  </div>
+  <div style="padding-left:3px;">
+    <%=tr8n_translator_rank_tag(translation.translator, nil, :style=>"width:10px;")%>
+  </div>
 </td>
 
 <td class="tr8n_text_align_right" style="vertical-align:top; padding-top:5px;">
   <%=tr8n_spinner_tag("tr8n_spinner_for_#{translation.id}", "", "")%>
-  <div class="tr8n_text_align_left" id="tr8n_votes_for_<%=translation.id%>" dir="ltr" style="padding:2px;white-space:nowrap;">
-    <%= translation.rank_label %> 
-  </div>  
-</td>  
+  <div class="tr8n_text_align_right" id="tr8n_votes_for_<%=translation.id%>" dir="ltr" style="padding:2px;white-space:nowrap;">
+    <%= translation.rank_label %>
+  </div>
+</td>
 
 <td style="text-align:center; vertical-align:top; color:grey; padding-top:5px;">
   <% if translation.translation_key.locked? %>
@@ -64,7 +66,7 @@
 	        <%=link_to_function("<i class='icon-pencil'></i>".html_safe, "updateTranslationRow('#{translation.id}', 'edit')")%>
 	        <%=link_to_function("<i class='icon-remove'></i>".html_safe, "deleteTranslationRow('#{translation.id}')")%>
 	    <% elsif translation.can_be_deleted_by?(tr8n_current_translator)  %>
-	        <%=link_to_function(image_tag("tr8n/cross.png"), "deleteTranslationRow('#{translation.id}')")%>
+	        <%=link_to_function("<i class='icon-remove'></i>".html_safe, "deleteTranslationRow('#{translation.id}')")%>
 	    <% end %>
 	<% elsif mode == :edit %>
 	    <%=link_to_function("<i class='icon-ok'></i>".html_safe, "submitTranslationRow('#{translation.id}')")%>

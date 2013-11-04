@@ -39,7 +39,14 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
 
     # @translations = Tr8n::Translation.for_params(params).order("created_at desc, rank desc").page(page).per(per_page)
 
-    @translations = Tr8n::Translation.where("tr8n_translations.language_id = ?", Tr8n::RequestContext.current_language.id)
+    @language_id = params[:language_id] || tr8n_current_language.id.to_s
+
+    @translations = Tr8n::Translation.order("tr8n_translations.created_at desc")
+
+    unless @language_id.blank?
+      @translations = @translations.where(:language_id => @language_id)
+    end
+
     @source_ids = selected_application.sources.collect{|s| s.id}
 
     if @source_ids.size > 0
@@ -85,23 +92,6 @@ class Tr8n::App::TranslationsController < Tr8n::App::BaseController
     end
 
     @translations = @translations.order("tr8n_translations.id desc").page(page).per(per_page).includes(:translation_key)
-
-    @translator_options = []
-    @translator_options << ["by anyone", "anyone"]
-    @translator_options << ["by me", "me"]
-    selected_application.translators.each do |t|
-      next if tr8n_current_translator == t
-      @translator_options << ["by #{t.name}", t.id]
-    end
-
-    @date_options =  [
-        ["on any date", "any"],
-        ["today", "today"],
-        ["yesterday", "yesterday"],
-        ["in the last week", "last_week"],
-        ["in the last month", "last_month"]
-    ].collect{|option| [option.first.trl("Translation filter date option"), option.last]}
-
   end
 
   # main translation method used by the dashboard and translation screens

@@ -1,0 +1,46 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "view_sections") %>
+
+  <div class="section">
+    <%= tr8n_paginator_tag(@votes, :subject => 'vote') if @votes.any? %>
+
+    <table class="table table-hover ">
+      <thead>
+      <tr>
+        <th style="width:150px;"><%=tra("Date") %></th>
+        <th style="width:150px;"><%=tra("Language") %></th>
+        <th><%=tra("Translation") %></th>
+        <th style="max-width:50px;" ><%=tra("Vote", "Translator's vote") %></th>
+        <th style="max-width:50px;" class="tr8n_text_align_right"><%=tra("Rank") %></th>
+      </tr>
+      </thead>
+      <tbody id="languages" data-update-url="/tr8n/translator/settings/update_languages_order">
+      <% @votes.each do |tv| %>
+        <% next unless tv.translation %>
+        <tr>
+          <td>
+            <%= tv.created_at.tr(:date_time) %>
+          </td>
+          <td>
+            <%= image_tag(tv.translation.language.flag_url, :style => "vertical-align:middle; padding-right:5px;") %>
+            <%=tv.translation.language.english_name%>
+          </td>
+          <td>
+            <%=tv.translation.label%>
+            <%= render :partial => "/tr8n/app/translations/original_phrase", :locals => {:translation => tv.translation} %>
+          </td>
+          <td class="tr8n_text_align_right">
+            <%=tv.vote%>
+          </td>
+          <td class="tr8n_text_align_right"><%=tv.translation.rank_label %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+<% end %>

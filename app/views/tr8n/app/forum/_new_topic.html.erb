@@ -9,6 +9,7 @@
 <div class="section grey tr8n_text_align_left">
   <%= form_tag({:action => :topic}, {:method => :post, :id => "forum_topic_form"}) do %>
     <%=hidden_field_tag(:language_id, params[:language_id])%>
+    <%=hidden_field_tag(:mentioned_translators, "")%>
 
     <table style="width:99%">
       <tr>
@@ -72,7 +73,12 @@
     $("#forum_languages").chosen({});
   })();
 
-  var values = <%= selected_application.translators.collect{|t| {'val' => t.name, 'meta' => t.name}}.to_json.html_safe  %>;
-
-  $('#message').sew({values: values});
+  var mentions = [];
+  var values = <%= selected_application.translators.collect{|t| {'val' => t.name, 'meta' => t.name, 'id' => t.id}}.to_json.html_safe  %>;
+  $('#message').sew({
+    values: values
+  }).on('mention-selected', function(e, value) {
+    mentions.push(value.id);
+    $("#mentioned_translators").val(mentions.join());
+  });
 </script>

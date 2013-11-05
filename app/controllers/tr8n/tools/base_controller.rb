@@ -31,13 +31,8 @@ class Tr8n::Tools::BaseController < Tr8n::BaseController
   private
 
   def validate_remote_application
-    if params[:app_key]
-      app = Tr8n::Application.find_by_key(params[:app_key])
-      # TODO verify that the domain has been added under the application
-    elsif params[:origin]
-      # TODO: maybe should be removed alltogether
-      domain = Tr8n::TranslationDomain.find_or_create(params[:origin])
-      app = domain.application
+    if params[:app_key] or params[:app_id]
+      app = Tr8n::Application.find_by_key(params[:app_key] || params[:app_id])
     end
     Tr8n::RequestContext.set_remote_application(app) if app
   end

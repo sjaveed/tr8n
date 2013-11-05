@@ -55,56 +55,29 @@ function removeLanguage(language_id) {
           </ul>
         </div>
 
-        <% if @application_languages %>
-          <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
+        <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
+          <% if tr8n_current_translator.manager? %>
             <div style="float:right">
               <%=link_to("manage", "/tr8n/app/settings/languages", :target=>"_top") %>
             </div>
-            <%=tra("Application Languages") %>
-          </div>
-
-          <div style="max-height: 160px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
-            <ul class="language_list">
-              <% @application_languages.each do |language| %>
-                <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
-
-                  <% if Tr8n::Config.enable_language_stats? %>
-                    <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
-                  <% end %>
-
-                  <%= tr8n_language_flag_tag(language) %>
-
-                  <span dir="ltr">
-                  <%= language.full_name %>
-                </span>
-                </li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
-
-        <% if @all_languages.any? %>
-        <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
-            <%=tra("Other Languages") %>
+          <% end %>
+          <%=tra("{application} Languages", :application => @application.name) %>
         </div>
-        <% end %>
-      <% end %>
 
-      <% if @all_languages.any? %>
-        <div id="tr8n_languages_list" style="max-height: 210px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
+        <div style="max-height: 160px; overflow: auto; border:solid 1px #e8e8e8; padding:5px; background-color:white;">
           <ul class="language_list">
-            <% @all_languages.each do |language| %>
+            <% @application_languages.each do |language| %>
               <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
 
                 <% if Tr8n::Config.enable_language_stats? %>
-                    <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
+                  <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
                 <% end %>
 
                 <%= tr8n_language_flag_tag(language) %>
 
                 <span dir="ltr">
-                  <%= language.full_name %>
-                </span>
+                <%= language.full_name %>
+              </span>
               </li>
             <% end %>
           </ul>

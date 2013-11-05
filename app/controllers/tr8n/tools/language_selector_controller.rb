@@ -36,27 +36,22 @@ class Tr8n::Tools::LanguageSelectorController < Tr8n::Tools::BaseController
       @inline_translations_enabled = tr8n_current_translator.enable_inline_translations?
     end
   
-    # @inline_translations_allowed = true if tr8n_current_user_is_admin?
-  
     @source_url = request.env['HTTP_REFERER']
     @source_url.gsub!("locale", "previous_locale") if @source_url
 
-    @all_languages = tr8n_current_application.languages
+    if tr8n_current_application.default? and tr8n_selected_application
+      @application = tr8n_selected_application
+      @application_languages = tr8n_selected_application.languages
+    else
+      @application = tr8n_current_application
+      @application_languages = tr8n_current_application.languages
+    end
 
     @user_languages = []
     unless tr8n_current_user_is_guest?
       @user_languages = Tr8n::LanguageUser.languages_for(tr8n_current_user).collect{|ul| ul.language}
     end
-    @user_languages = @user_languages & @all_languages
-
-    if tr8n_current_application.default? and session[:tr8n_selected_app_id]
-      application = Tr8n::Application.find_by_id(session[:tr8n_selected_app_id])
-      if application != tr8n_current_application
-        @application_languages = application.languages
-        @all_languages = @all_languages - @application_languages
-      end
-    end
-
+    @user_languages = @user_languages & @application_languages
   end
 
   def change

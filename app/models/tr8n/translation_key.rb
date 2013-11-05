@@ -132,7 +132,7 @@ class Tr8n::TranslationKey < ActiveRecord::Base
 
     # each key is associated with one or more sources
     translation_key_source = Tr8n::TranslationKeySource.find_or_create(translation_key, translation_source)
-    Tr8n::RequestContext.current_source.clear_cache_for_language
+    #Tr8n::RequestContext.current_source.clear_cache_for_language
 
     # for debugging purposes only - this will track the actual location of the key in the source
     if Tr8n::Config.enable_key_caller_tracking?    

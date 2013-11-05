@@ -59,11 +59,12 @@ class Tr8n::Emails::Partial < Tr8n::Emails::Base
     "/emails/partials/#{keyword}"
   end
 
-  def render_body(mode = :html, tokens = self.tokens, options = {})
+  def render_body(mode = :html, tokens = {}, options = {})
     if Tr8n::RequestContext.email_render_options.blank?
       return super
     end
 
+    #tokens = self.tokens.merge(tokens)
     tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
 
     ::Liquid::Template.parse(content(mode)).render(tokens).html_safe

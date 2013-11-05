@@ -59,11 +59,12 @@ class Tr8n::Emails::Layout < Tr8n::Emails::Base
     "/emails/layouts/#{keyword}"
   end
 
-  def render_body(mode = :html, tokens = self.tokens, options = {})
+  def render_body(mode = :html, tokens = {}, options = {})
     content = content(mode)
 
     options[:language] ||= Tr8n::RequestContext.current_language
 
+    #tokens = self.tokens.merge(tokens)
     tokens = Tr8n::RequestContext.current_application.tokens("data").merge(tokens)
 
     Tr8n::RequestContext.render_email_with_options(options.merge(:mode => mode, :tokens => tokens, :source => source_key)) do

@@ -31,11 +31,11 @@ module Tr8n
         obj = obj.constantize
       end
 
-      Tr8n::Logger.logger(:offline).debug("*********************")
-      Tr8n::Logger.logger(:offline).debug(obj.inspect)
-      Tr8n::Logger.logger(:offline).debug(method_name)
-      Tr8n::Logger.logger(:offline).debug(opts.inspect)
-      Tr8n::Logger.logger(:offline).debug(caller.to_s)
+      #Tr8n::Logger.logger(:offline).debug("*********************")
+      #Tr8n::Logger.logger(:offline).debug(obj.inspect)
+      #Tr8n::Logger.logger(:offline).debug(method_name)
+      #Tr8n::Logger.logger(:offline).debug(opts.inspect)
+      #Tr8n::Logger.logger(:offline).debug(caller.to_s)
 
       if Tr8n::Config.offline_task_method == "delayed_jobs"
         obj.delay.send(method_name, opts)

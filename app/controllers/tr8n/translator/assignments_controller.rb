@@ -26,9 +26,10 @@ class Tr8n::Translator::AssignmentsController < Tr8n::Translator::BaseController
   def index
     @translator = Tr8n::RequestContext.current_translator
     @components = Tr8n::Component.find(:all,
-                                       :conditions => ["ct.translator_id = ?", Tr8n::RequestContext.current_translator.id],
+                                       :conditions => ["tr8n_component_translators.translator_id = ? and tr8n_components.application_id = ?",
+                                                       Tr8n::RequestContext.current_translator.id, tr8n_selected_application.id],
                                        :joins => [
-                                           "join tr8n_component_translators as ct on tr8n_components.id = ct.component_id",
+                                           "join tr8n_component_translators on tr8n_components.id = tr8n_component_translators.component_id",
                                        ]
     )
   end

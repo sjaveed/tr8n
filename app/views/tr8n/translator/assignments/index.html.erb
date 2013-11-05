@@ -6,15 +6,34 @@
     <%=tra("Assignments") %>
   </div>
 
-  <div class="tr8n tr8n_container" <%=tr8n_dir_attribute_tag%> >
-    <div class="section blue">
-      <% if @components.any? %>
-        <%= tra("You have [bold: {count||assignment}]: {assignments}.", :count => @components.size, :assignments => @components.collect{|comp| link_to(comp.title, :anchor => "comp-#{comp.id}")}.join(", ")) %>
-      <% else %>
-        <%= tra("You currently don't have any assignments.") %>
+  <div class="section">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th style=""><%=tra("Name") %></th>
+        <th style="text-align:right"><%=tra("Sections") %></th>
+        <th style="text-align:right"><%=tra("Languages") %></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @components.each do |comp| %>
+        <tr>
+          <td>
+            <%=comp.name%>
+          </td>
+          <td style="text-align:right">
+            <%=link_to(comp.sources.count, :action=>:view, :id => comp.id)%>
+          </td>
+          <td style="text-align:right">
+            <%=link_to(comp.translators.count, :action=>:translators, :id => comp.id)%>
+          </td>
+        </tr>
       <% end %>
-    </div>
+      </tbody>
+    </table>
+
   </div>
+
 
   <%= render :partial => "/tr8n/common/footer" %>
 

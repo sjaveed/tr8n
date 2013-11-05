@@ -64,6 +64,40 @@ class Tr8n::Component < ActiveRecord::Base
   after_destroy :clear_cache
   after_save :clear_cache
 
+  include AASM
+
+  aasm :column => :state do
+    state :new, :initial => true
+    state :assigned
+    state :completed
+    state :approved
+    state :rejected
+    state :live
+
+    event :assign do
+      transitions :from => :new,            :to => :assigned
+      transitions :from => :rejected,       :to => :assigned
+      transitions :from => :live,           :to => :assigned
+    end
+
+    event :complete do
+      transitions :sent => :assigned,       :to => :completed
+    end
+
+    event :approve do
+      transitions :from => :completed,      :to => :approved
+    end
+
+    event :reject do
+      transitions :from => :completed,      :to => :rejected
+    end
+
+    event :release do
+      transitions :from => :approved,       :to => :live
+    end
+  end
+
+
   def self.cache_key(key)
     "component_[#{key.to_s}]"
   end

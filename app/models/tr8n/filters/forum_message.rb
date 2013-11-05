@@ -21,27 +21,41 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Media::LanguageFlag Schema Information
+#-- Tr8n::Filters::ForumMessage Schema Information
 #
-# Table name: tr8n_media
+# Table name: will_filter_filters
 #
-#  id            integer                        not null, primary key
-#  type          character varying(255)         
-#  position      integer                        
-#  owner_id      integer                        
-#  owner_type    character varying(255)         
-#  keyword       character varying(255)         
-#  path          character varying(255)         
-#  thumbnails    text                           
-#  created_at    timestamp without time zone    not null
-#  updated_at    timestamp without time zone    not null
+#  id                  integer                        not null, primary key
+#  type                character varying(255)         
+#  name                character varying(255)         
+#  data                text                           
+#  user_id             integer                        
+#  model_class_name    character varying(255)         
+#  created_at          timestamp without time zone    not null
+#  updated_at          timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_m_oid_ot_k    (owner_id, owner_type, keyword) 
+#  index_will_filter_filters_on_user_id    (user_id) 
 #
 #++
 
-class Tr8n::Media::LanguageFlag < Tr8n::Media::Flag
+class Tr8n::Filters::ForumMessage < Tr8n::Filters::Base
 
+  def model_class
+    Tr8n::Forum::Message
+  end
+
+  # def inner_joins
+  #   [["Tr8n::Language", :language_id], ["Tr8n::Forum::Topic", :forum_topic_id], ["Tr8n::Translator", :translator_id]]
+  # end
+  
+  def default_filter_if_empty
+    "created_today"
+  end
+  
+  # def inner_joins
+  #   [:language, :forum_topic, :translator]
+  # end
+  
 end

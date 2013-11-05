@@ -95,7 +95,7 @@ class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
   end
 
   def messages
-    @messages = Tr8n::LanguageForumMessage.where(:translator_id => translator.id).page(page).per(per_page)
+    @messages = Tr8n::Forum::Message.where(:translator_id => translator.id).page(page).per(per_page)
   end
 
   def assignments

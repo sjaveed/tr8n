@@ -28,7 +28,7 @@
 
     [:actions, lambda{|topic|
       tr8n_actions_tag([
-        link_to("View Messages", "/tr8n/admin/forum/messages?wf_c0=language_forum_topic_id&wf_o0=is&wf_v0_0=#{topic.id}"),
+        link_to("View Messages", "/tr8n/admin/forum/messages?wf_c0=forum_topic_id&wf_o0=is&wf_v0_0=#{topic.id}"),
         link_to_function("Delete", "deleteObjects('#{topic.id}')")
       ])
     }, 'padding:5px;text-align:right;white-space:nowrap;'] 

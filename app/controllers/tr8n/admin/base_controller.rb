@@ -51,9 +51,9 @@ class Tr8n::Admin::BaseController < Tr8n::BaseController
       when "glossary"
         object = Tr8n::Glossary.find_by_id(id)
       when "topic"
-        object = Tr8n::LanguageForumTopic.find_by_id(id)
+        object = Tr8n::Forum::Topic.find_by_id(id)
       when "message"
-        object = Tr8n::LanguageForumMessage.find_by_id(id)
+        object = Tr8n::Forum::Message.find_by_id(id)
       when "translation"
         object = Tr8n::Translation.find_by_id(id)
       when "application_language"

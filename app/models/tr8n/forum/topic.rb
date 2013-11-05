@@ -21,9 +21,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::LanguageForumTopic Schema Information
+#-- Tr8n::Forum::Topic Schema Information
 #
-# Table name: tr8n_language_forum_topics
+# Table name: tr8n_forum_topics
 #
 #  id               integer                        not null, primary key
 #  translator_id    integer                        not null
@@ -39,23 +39,25 @@
 #
 #++
 
-class Tr8n::LanguageForumTopic < ActiveRecord::Base
-  self.table_name = :tr8n_language_forum_topics
+class Tr8n::Forum::Topic < ActiveRecord::Base
+  self.table_name = :tr8n_forum_topics
   attr_accessible :translator_id, :language_id, :topic
   attr_accessible :language, :translator
-  
+
+  # primary language
   belongs_to :language, :class_name => "Tr8n::Language"
   belongs_to :translator, :class_name => "Tr8n::Translator"
   
-  has_many :language_forum_messages, :class_name => "Tr8n::LanguageForumMessage", :dependent => :destroy
-  
-  alias :messages :language_forum_messages
-  
+  has_many :messages, :class_name => "Tr8n::Forum::Message", :foreign_key => :topic_id, :dependent => :destroy
+  has_many :topic_languages, :class_name => "Tr8n::Forum::TopicLanguage", :foreign_key => :topic_id, :dependent => :destroy
+  has_many :languages, :through => :topic_languages
+
   def post_count
-    @post_count ||= Tr8n::LanguageForumMessage.where("language_forum_topic_id = ?", self.id).count
+    @post_count ||= Tr8n::Forum::Message.where(:topic_id => self.id).count
   end
 
   def last_post
-    @last_post ||= Tr8n::LanguageForumMessage.where("language_forum_topic_id = ?", self.id).order("created_at desc").first
+    @last_post ||= Tr8n::Forum::Message.where(:topic_id => self.id).order("created_at desc").first
   end
+
 end

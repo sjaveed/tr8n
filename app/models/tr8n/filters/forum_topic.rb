@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Filters::LanguageForumTopic Schema Information
+#-- Tr8n::Filters::ForumTopic Schema Information
 #
 # Table name: will_filter_filters
 #
@@ -40,10 +40,10 @@
 #
 #++
 
-class Tr8n::Filters::LanguageForumTopic < Tr8n::Filters::Base
+class Tr8n::Filters::ForumTopic < Tr8n::Filters::Base
 
   def model_class
-    Tr8n::LanguageForumTopic
+    Tr8n::Forum::Topic
   end
 
   # def inner_joins

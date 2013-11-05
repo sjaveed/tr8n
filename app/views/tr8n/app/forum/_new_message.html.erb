@@ -5,13 +5,13 @@
 
 <div class="section grey">
   <%= form_tag({:action => :topic}, {:method => :post, :id => "forum_topic_form"}) do %>
-    <%=hidden_field_tag(:topic_id, @topic.id)%>
+    <%=hidden_field_tag(:id, @topic.id)%>
     <%=hidden_field_tag(:mentioned_translators, "")%>
 
     <table style="width:99%">
       <tr>
-        <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold; vertical-align: top;">
-          <%=tra("Your Reply:") %>
+        <td style="width:70px; text-align:right; padding-right:10px; font-weight:bold; vertical-align: top;">
+          <%=tr8n_user_mugshot_tag(tr8n_current_translator, :linked => false)%>
         </td>
         <td>
           <%=text_area_tag(:message, "", :class => "keyboardInput", :style=>"width:99%; height:70px")%>

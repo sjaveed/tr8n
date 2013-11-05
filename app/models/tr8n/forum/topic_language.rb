@@ -21,41 +21,32 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Filters::LanguageForumMessage Schema Information
+#-- Tr8n::Forum::TopicLanguage Schema Information
 #
-# Table name: will_filter_filters
+# Table name: tr8n_forum_topic_languages
 #
-#  id                  integer                        not null, primary key
-#  type                character varying(255)         
-#  name                character varying(255)         
-#  data                text                           
-#  user_id             integer                        
-#  model_class_name    character varying(255)         
-#  created_at          timestamp without time zone    not null
-#  updated_at          timestamp without time zone    not null
+#  id             integer                        not null, primary key
+#  language_id    integer                        
+#  topic_id       integer                        
+#  created_at     timestamp without time zone    not null
+#  updated_at     timestamp without time zone    not null
 #
 # Indexes
 #
-#  index_will_filter_filters_on_user_id    (user_id) 
+#  tr8n_toplang    (language_id) 
 #
 #++
 
-class Tr8n::Filters::LanguageForumMessage < Tr8n::Filters::Base
+class Tr8n::Forum::TopicLanguage < ActiveRecord::Base
+  self.table_name = :tr8n_forum_topic_languages
+  attr_accessible :topic_id, :language_id
+  attr_accessible :language, :topic
 
-  def model_class
-    Tr8n::LanguageForumMessage
+  belongs_to :language, :class_name => "Tr8n::Language"
+  belongs_to :topic, :class_name => "Tr8n::Forum::Topic", :foreign_key => :topic_id
+
+  def self.find_or_create(topic, language)
+    where("language_id = ? and topic_id = ?", language.id, topic.id).first || create(:topic => topic, :language => language)
   end
 
-  # def inner_joins
-  #   [["Tr8n::Language", :language_id], ["Tr8n::LanguageForumTopic", :language_forum_topic_id], ["Tr8n::Translator", :translator_id]]
-  # end
-  
-  def default_filter_if_empty
-    "created_today"
-  end
-  
-  # def inner_joins
-  #   [:language, :language_forum_topic, :translator]
-  # end
-  
 end

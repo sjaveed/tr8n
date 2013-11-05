@@ -289,20 +289,20 @@ ActiveRecord::Schema.define(:version => 20131016010319) do
 
   add_index "tr8n_language_contexts", ["language_id", "keyword"], :name => "tr8n_lctx_lk"
 
-  create_table "tr8n_language_forum_messages", :force => true do |t|
+  create_table "tr8n_forum_messages", :force => true do |t|
     t.integer  "language_id",             :null => false
-    t.integer  "language_forum_topic_id", :null => false
+    t.integer  "forum_topic_id", :null => false
     t.integer  "translator_id",           :null => false
     t.text     "message",                 :null => false
     t.datetime "created_at",              :null => false
     t.datetime "updated_at",              :null => false
   end
 
-  add_index "tr8n_language_forum_messages", ["language_id", "language_forum_topic_id"], :name => "tr8n_lfm_ll"
-  add_index "tr8n_language_forum_messages", ["language_id"], :name => "tr8n_lfm_l"
-  add_index "tr8n_language_forum_messages", ["translator_id"], :name => "tr8n_lfm_t"
+  add_index "tr8n_forum_messages", ["language_id", "forum_topic_id"], :name => "tr8n_lfm_ll"
+  add_index "tr8n_forum_messages", ["language_id"], :name => "tr8n_lfm_l"
+  add_index "tr8n_forum_messages", ["translator_id"], :name => "tr8n_lfm_t"
 
-  create_table "tr8n_language_forum_topics", :force => true do |t|
+  create_table "tr8n_forum_topics", :force => true do |t|
     t.integer  "translator_id", :null => false
     t.integer  "language_id"
     t.text     "topic",         :null => false
@@ -310,8 +310,8 @@ ActiveRecord::Schema.define(:version => 20131016010319) do
     t.datetime "updated_at",    :null => false
   end
 
-  add_index "tr8n_language_forum_topics", ["language_id"], :name => "tr8n_lft_l"
-  add_index "tr8n_language_forum_topics", ["translator_id"], :name => "tr8n_lft_t"
+  add_index "tr8n_forum_topics", ["language_id"], :name => "tr8n_lft_l"
+  add_index "tr8n_forum_topics", ["translator_id"], :name => "tr8n_lft_t"
 
   create_table "tr8n_language_metrics", :force => true do |t|
     t.string   "type"

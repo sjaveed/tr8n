@@ -36,6 +36,7 @@
 #  viewed_at            timestamp without time zone    
 #  created_at           timestamp without time zone    not null
 #  updated_at           timestamp without time zone    not null
+#  key                  character varying(255)         
 #
 # Indexes
 #
@@ -43,6 +44,7 @@
 #  index_tr8n_email_logs_on_email_template_id    (email_template_id) 
 #  index_tr8n_email_logs_on_from_id              (from_id) 
 #  index_tr8n_email_logs_on_to_id                (to_id) 
+#  tr8n_el_k                                     (key) 
 #
 #++
 

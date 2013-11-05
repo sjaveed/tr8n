@@ -242,25 +242,25 @@ class CreateTr8nTables < ActiveRecord::Migration
     end
     add_index :tr8n_glossary, [:keyword]
     
-    create_table :tr8n_language_forum_topics do |t|
+    create_table :tr8n_forum_topics do |t|
       t.integer :translator_id, :null => false
       t.integer :language_id
       t.text    :topic, :null => false
       t.timestamps
     end
-    add_index :tr8n_language_forum_topics, [:language_id], :name => :tr8n_lft_l
-    add_index :tr8n_language_forum_topics, [:translator_id], :name => :tr8n_lft_t
+    add_index :tr8n_forum_topics, [:language_id], :name => :tr8n_lft_l
+    add_index :tr8n_forum_topics, [:translator_id], :name => :tr8n_lft_t
     
-    create_table :tr8n_language_forum_messages do |t|
+    create_table :tr8n_forum_messages do |t|
       t.integer :language_id, :null => false
-      t.integer :language_forum_topic_id, :null => false
+      t.integer :forum_topic_id, :null => false
       t.integer :translator_id, :null => false
       t.text    :message, :null => false
       t.timestamps
     end
-    add_index :tr8n_language_forum_messages, [:language_id], :name => :tr8n_lfm_l
-    add_index :tr8n_language_forum_messages, [:translator_id], :name => :tr8n_lfm_t
-    add_index :tr8n_language_forum_messages, [:language_id, :language_forum_topic_id], :name => :tr8n_lfm_ll
+    add_index :tr8n_forum_messages, [:language_id], :name => :tr8n_lfm_l
+    add_index :tr8n_forum_messages, [:translator_id], :name => :tr8n_lfm_t
+    add_index :tr8n_forum_messages, [:language_id, :forum_topic_id], :name => :tr8n_lfm_ll
     
     create_table :tr8n_translation_key_comments do |t|
       t.integer :language_id, :null => false
@@ -462,8 +462,8 @@ class CreateTr8nTables < ActiveRecord::Migration
     drop_table :tr8n_translations
     drop_table :tr8n_translation_votes
     drop_table :tr8n_glossary
-    drop_table :tr8n_language_forum_messages
-    drop_table :tr8n_language_forum_topics
+    drop_table :tr8n_forum_messages
+    drop_table :tr8n_forum_topics
     drop_table :tr8n_translation_key_comments
     drop_table :tr8n_language_case_rules
     drop_table :tr8n_translation_domains

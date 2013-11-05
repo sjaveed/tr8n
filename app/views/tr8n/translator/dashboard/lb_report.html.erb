@@ -27,7 +27,7 @@
     <% if @reported_object.is_a?(Tr8n::TranslationKey) %>
        <% @translation_key = @reported_object %>
        <%= render :partial => '/tr8n/phrases/header' %>
-    <% elsif @reported_object.is_a?(Tr8n::LanguageForumMessage) %>
+    <% elsif @reported_object.is_a?(Tr8n::Forum::Message) %>
       <div style="padding:10px; background-color:#eff8ff; border: 1px solid #ccc; margin-bottom: 5px;">
         <div style="color:grey;font-size:20px;padding-bottom:10px;">
             <%=tra("Forum Message")%>

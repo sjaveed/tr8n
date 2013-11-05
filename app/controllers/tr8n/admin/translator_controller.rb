@@ -40,7 +40,7 @@ class Tr8n::Admin::TranslatorController < Tr8n::Admin::BaseController
       :votes => Tr8n::TranslationVote,
       :locks => Tr8n::TranslationKeyLock,
       :following => Tr8n::TranslatorFollowing,
-      :messages => Tr8n::LanguageForumMessage,
+      :messages => Tr8n::Forum::Message,
       :reports => Tr8n::TranslatorReport,
       :activity => Tr8n::TranslatorLog,
     }[params[:mode].to_sym] if params[:mode]

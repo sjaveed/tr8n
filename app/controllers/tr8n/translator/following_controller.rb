@@ -69,7 +69,7 @@ class Tr8n::Translator::FollowingController < Tr8n::Translator::BaseController
     elsif params[:translation_id]
       @reported_object = Tr8n::Translation.find_by_id(params[:translation_id])
     elsif params[:message_id]
-      @reported_object = Tr8n::LanguageForumMessage.find_by_id(params[:message_id])
+      @reported_object = Tr8n::Forum::Message.find_by_id(params[:message_id])
     elsif params[:comment_id]
       @reported_object = Tr8n::TranslationKeyComment.find_by_id(params[:comment_id])
     end

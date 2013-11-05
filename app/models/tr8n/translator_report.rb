@@ -74,11 +74,11 @@ class Tr8n::TranslatorReport < ActiveRecord::Base
       return ['Spammer', 'Vandalist', 'Bully', 'Other:']
     end
 
-    if object.is_a?(Tr8n::LanguageForumMessage)
+    if object.is_a?(Tr8n::Forum::Message)
       return ['Inappropriate Language', 'Bad Tokens', 'Spam', 'Vandalism', 'Other:']
     end
 
-    if object.is_a?(Tr8n::LanguageForumTopic)
+    if object.is_a?(Tr8n::Forum::Topic)
       return ['Inappropriate Language', 'Bad Tokens', 'Spam', 'Vandalism', 'Other:']
     end
 
@@ -96,7 +96,7 @@ class Tr8n::TranslatorReport < ActiveRecord::Base
     if object.is_a?(Tr8n::Translation) 
       object.vote!(translator, -100)
       submit(translator, object.translator, "bad translation #{object.id}", comment)
-    elsif object.is_a?(Tr8n::LanguageForumMessage)
+    elsif object.is_a?(Tr8n::Forum::Message)
       submit(translator, object.translator, "bad message #{object.id}", comment)
     end
   end

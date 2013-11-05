@@ -10,20 +10,16 @@
     <% if @topic %>
       <ul class="breadcrumb">
         <li>
-          <% if @topic.language %>
-            <%=link_to(tra("{language} Language Forum", nil, :language => @topic.language.native_name), :action => :index)%>
-          <% else %>
-            <%=link_to(tra("General Forum"), :action => :index)%>
-          <% end %>
+          <%=link_to(tra("{language} Language Forum", :language => tr8n_current_language.native_name), :action => :index)%>
           <span class="divider">/</span>
         </li>
 
-        <li class="active"><%=link_to(@topic.topic, :topic_id => @topic.id)%></li>
+        <li class="active"><%=link_to(@topic.topic, :id => @topic.id)%></li>
       </ul>
 
       <div class="section_title tr8n_text_align_left">
         <div class="tr8n_float_right" style="font-size:12px; color: #ccc;">
-          <%=link_to(tra("Reply"), :topic_id => @topic.id, :page => params[:page], :anchor => :reply_message) %>
+          <%=link_to(tra("Reply"), :id => @topic.id, :page => params[:page], :anchor => :reply_message) %>
           &nbsp; | &nbsp;
           <%=link_to(tra("Start a new discussion topic"), :mode => :create) %>
         </div>

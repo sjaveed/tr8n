@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Notifications::LanguageForumMessage Schema Information
+#-- Tr8n::Notifications::Message Schema Information
 #
 # Table name: tr8n_notifications
 #
@@ -44,11 +44,11 @@
 #
 #++
 
-class Tr8n::Notifications::LanguageForumMessage < Tr8n::Notification
+class Tr8n::Notifications::Message < Tr8n::Notification
 
   def self.distribute(message)
     # find translators for all other translations of the key in this settings
-    messages = Tr8n::LanguageForumMessage.where("language_forum_topic_id = ?", message.language_forum_topic.id)
+    messages = Tr8n::Forum::Message.where("topic_id = ?", message.topic.id)
 
     translators = []
     messages.each do |m|
@@ -79,7 +79,7 @@ class Tr8n::Notifications::LanguageForumMessage < Tr8n::Notification
   end
 
   def excerpt
-    :language_forum_message
+    :forum_message
   end
 
 end

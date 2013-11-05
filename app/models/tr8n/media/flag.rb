@@ -21,24 +21,24 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Media::Logo Schema Information
+#-- Tr8n::Media::Flag Schema Information
 #
 # Table name: tr8n_media
 #
 #  id            integer                        not null, primary key
-#  type          character varying(255)
-#  position      integer
-#  owner_id      integer
-#  owner_type    character varying(255)
-#  keyword       character varying(255)
-#  path          character varying(255)
-#  thumbnails    text
+#  type          character varying(255)         
+#  position      integer                        
+#  owner_id      integer                        
+#  owner_type    character varying(255)         
+#  keyword       character varying(255)         
+#  path          character varying(255)         
+#  thumbnails    text                           
 #  created_at    timestamp without time zone    not null
 #  updated_at    timestamp without time zone    not null
 #
 # Indexes
 #
-#  tr8n_m_oid_ot_k    (owner_id, owner_type, keyword)
+#  tr8n_m_oid_ot_k    (owner_id, owner_type, keyword) 
 #
 #++
 

@@ -11,21 +11,21 @@
     <%=hidden_field_tag(:language_id, params[:language_id])%>
     <%=hidden_field_tag(:mentioned_translators, "")%>
 
-    <table style="width:99%">
+    <table>
       <tr>
         <td style="width:80px; text-align:right; padding-right:10px; font-weight:bold; vertical-align: top">
           <%=tra("Languages:")%>
         </td>
         <td>
           <%=hidden_field_tag(:locales, "") %>
-          <select id="forum_languages" data-placeholder="Languages" multiple class="chzn-select" style="width:815px;">
+          <select id="forum_locales" data-placeholder="Languages" multiple class="chzn-select" style="width:815px;">
             <option value=""></option>
-            <% selected_application.languages.each do |lang| %>
-              <option value="<%=lang.locale%>" <%="selected" if lang == tr8n_current_language %>><%=lang.english_name%></option>
+            <% tr8n_selected_application.languages.each do |lang| %>
+              <option value="<%=lang.locale%>" <%="selected" if lang.id == tr8n_current_language.id %>><%=lang.english_name%></option>
             <% end %>
           </select>
           <p class="muted">
-            If you would like to create a topic that appears in all languages, leave the field blank.
+            <%=tra("If you would like to create a topic that appears in all languages, leave the field blank.") %>
           </p>
         </td>
       </tr>
@@ -54,7 +54,7 @@
     </table>
     
     <div style="padding-top:20px; padding-bottom:10px;text-align:center">
-        <button type="submit" class="btn btn-primary">
+        <button type="button" onClick="$('#locales').val($('#forum_locales').val()); $('#forum_topic_form').submit();" class="btn btn-primary">
           <%=tra("Start a New Discussion")%>
         </button>
         <% if include_cancel_button %>
@@ -70,7 +70,7 @@
 
 <script>
   (function() {
-    $("#forum_languages").chosen({});
+    $("#forum_locales").chosen({});
   })();
 
   var mentions = [];

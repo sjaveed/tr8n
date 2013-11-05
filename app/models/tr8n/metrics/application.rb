@@ -21,14 +21,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::Metrics::Language Schema Information
+#-- Tr8n::Metrics::Application Schema Information
 #
 # Table name: tr8n_language_metrics
 #
 #  id                      integer                        not null, primary key
-#  type                    character varying(255)
+#  type                    character varying(255)         
 #  language_id             integer                        not null
-#  metric_date             date
+#  metric_date             date                           
 #  user_count              integer                        default = 0
 #  translator_count        integer                        default = 0
 #  translation_count       integer                        default = 0
@@ -40,8 +40,8 @@
 #
 # Indexes
 #
-#  tr8n_lm_c    (created_at)
-#  tr8n_lm_l    (language_id)
+#  tr8n_lm_c    (created_at) 
+#  tr8n_lm_l    (language_id) 
 #
 #++
 

@@ -357,7 +357,7 @@ class Tr8n::Language < ActiveRecord::Base
   end
   
   def recently_added_forum_messages
-    @recently_added_forum_messages ||= Tr8n::LanguageForumMessage.where("language_id = ?", self.id).order("created_at desc").limit(5)    
+    @recently_added_forum_messages ||= Tr8n::Forum::Message.where("language_id = ?", self.id).order("created_at desc").limit(5)
   end
 
   def recently_added_translations

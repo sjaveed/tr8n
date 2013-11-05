@@ -21,38 +21,37 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 #
-#-- Tr8n::LanguageForumMessage Schema Information
+#-- Tr8n::Forum::Message Schema Information
 #
-# Table name: tr8n_language_forum_messages
+# Table name: tr8n_forum_messages
 #
-#  id                         integer                        not null, primary key
-#  language_id                integer                        not null
-#  language_forum_topic_id    integer                        not null
-#  translator_id              integer                        not null
-#  message                    text                           not null
-#  created_at                 timestamp without time zone    not null
-#  updated_at                 timestamp without time zone    not null
+#  id               integer                        not null, primary key
+#  language_id      integer                        not null
+#  topic_id         integer                        not null
+#  translator_id    integer                        not null
+#  message          text                           not null
+#  created_at       timestamp without time zone    not null
+#  updated_at       timestamp without time zone    not null
+#  mentions         character varying(255)         
 #
 # Indexes
 #
 #  tr8n_lfm_l     (language_id) 
-#  tr8n_lfm_ll    (language_id, language_forum_topic_id) 
+#  tr8n_lfm_ll    (language_id, topic_id) 
 #  tr8n_lfm_t     (translator_id) 
 #
 #++
 
-class Tr8n::LanguageForumMessage < ActiveRecord::Base
-  self.table_name = :tr8n_language_forum_messages
-  attr_accessible :language_id, :language_forum_topic_id, :translator_id, :message, :mentions
-  attr_accessible :language, :translator, :language_forum_topic
+class Tr8n::Forum::Message < ActiveRecord::Base
+  self.table_name = :tr8n_forum_messages
+  attr_accessible :language_id, :topic_id, :translator_id, :message, :mentions
+  attr_accessible :language, :translator, :topic
 
   belongs_to :language,               :class_name => "Tr8n::Language"
   belongs_to :translator,             :class_name => "Tr8n::Translator"
-  belongs_to :language_forum_topic,   :class_name => "Tr8n::LanguageForumTopic"
+  belongs_to :topic,                  :class_name => "Tr8n::Forum::Topic", :foreign_key => :topic_id
   
   after_create :distribute_notification
-
-  alias :topic :language_forum_topic
 
   def toHTML
     return "" unless message

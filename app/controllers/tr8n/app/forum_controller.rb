@@ -26,40 +26,52 @@ class Tr8n::App::ForumController < Tr8n::App::BaseController
   before_filter :validate_current_translator
   
   def index
-    @topics = Tr8n::LanguageForumTopic.where(:language_id => tr8n_current_language.id).order("created_at desc").page(page).per(per_page)
+    @topics = Tr8n::Forum::Topic.where("tr8n_forum_topics.language_id = ? or tr8n_forum_topics.language_id is null or tr8n_forum_topics.id in (select tr8n_forum_topic_languages.topic_id from tr8n_forum_topic_languages where tr8n_forum_topic_languages.language_id = ?)", tr8n_current_language.id, tr8n_current_language.id)
+    @topics = @topics.order("created_at desc").page(page).per(per_page)
   end
 
   def topic
     if request.post?
-      if params[:topic_id]
-        topic = Tr8n::LanguageForumTopic.find_by_id(params[:topic_id])
+      if params[:id]
+        topic = Tr8n::Forum::Topic.find_by_id(params[:id])
       else
-        topic = Tr8n::LanguageForumTopic.create(:language_id => tr8n_current_language.id, :translator => tr8n_current_translator, :topic => params[:topic])
+        topic = Tr8n::Forum::Topic.create(:translator => tr8n_current_translator, :topic => params[:topic])
+        unless params[:locales].blank?
+          params[:locales].split(',').each do |locale|
+            lang = Tr8n::Language.by_locale(locale)
+            next unless lang
+            unless topic.language
+              topic.language = lang
+              topic.save
+            end
+            Tr8n::Forum::TopicLanguage.find_or_create(topic, lang)
+          end
+        end
       end
       
-      Tr8n::LanguageForumMessage.create(
-          :language_forum_topic => topic,
-          :language_id => tr8n_current_language.id,
+      Tr8n::Forum::Message.create(
+          :topic => topic,
+          :language => tr8n_current_language,
           :message => params[:message],
           :translator => tr8n_current_translator,
           :mentions => params[:mentioned_translators]
       )
-      return redirect_to(:action => :topic, :topic_id => topic.id, :last_page => true)
+      return redirect_to(:action => :topic, :id => topic.id, :last_page => true)
     end
     
     unless params[:mode] == "create"
-      @topic = Tr8n::LanguageForumTopic.find_by_id(params[:topic_id])
+      @topic = Tr8n::Forum::Topic.find_by_id(params[:id])
       if params[:last_page]
         params[:page] = (@topic.post_count / per_page.to_i) 
         params[:page] += 1 unless (@topic.post_count % per_page.to_i == 0) 
       end
 
-      @messages = Tr8n::LanguageForumMessage.where(:language_forum_topic_id => @topic.id).order("created_at asc").page(page).per(per_page)
+      @messages = Tr8n::Forum::Message.where(:topic_id => @topic.id).order("created_at asc").page(page).per(per_page)
     end
   end
 
   def delete_topic
-    topic = Tr8n::LanguageForumTopic.find_by_id(params[:topic_id])
+    topic = Tr8n::Forum::Topic.find_by_id(params[:id])
     
     if topic.translator != tr8n_current_translator
       trfe("You cannot delete topics you didn't create.")
@@ -72,7 +84,7 @@ class Tr8n::App::ForumController < Tr8n::App::BaseController
   end
 
   def delete_message
-    message = Tr8n::LanguageForumMessage.find_by_id(params[:message_id])
+    message = Tr8n::Forum::Message.find_by_id(params[:message_id])
     
     unless message
       trfe("This message does not exist")
@@ -81,12 +93,12 @@ class Tr8n::App::ForumController < Tr8n::App::BaseController
 
     if message.translator != tr8n_current_translator
       trfe("You cannot delete messages you didn't post.")
-      redirect_to(:action => :topic, :topic_id => message.language_forum_topic.id)
+      redirect_to(:action => :topic, :topic_id => message.forum_topic.id)
     end
     
     message.destroy
     trfn("The message has been removed")
-    redirect_to(:action => :topic, :topic_id => message.language_forum_topic.id)
+    redirect_to(:action => :topic, :id => message.topic.id)
   end  
 
 end

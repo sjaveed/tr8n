@@ -32,6 +32,7 @@
 #  message               text                           not null
 #  created_at            timestamp without time zone    not null
 #  updated_at            timestamp without time zone    not null
+#  mentions              character varying(255)         
 #
 # Indexes
 #

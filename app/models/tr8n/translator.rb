@@ -78,8 +78,8 @@ class Tr8n::Translator < ActiveRecord::Base
   has_many  :translator_languages,          :class_name => "Tr8n::TranslatorLanguage",        :dependent => :destroy, :order => "position asc"
   has_many  :languages,                     :class_name => "Tr8n::Language",                  :through => :translator_languages, :order => "tr8n_translator_languages.position asc"
 
-  has_many  :language_forum_topics,         :class_name => "Tr8n::LanguageForumTopic",        :dependent => :destroy
-  has_many  :language_forum_messages,       :class_name => "Tr8n::LanguageForumMessage",      :dependent => :destroy
+  has_many  :forum_topics,         :class_name => "Tr8n::Forum::Topic",        :dependent => :destroy
+  has_many  :forum_messages,       :class_name => "Tr8n::Forum::Message",      :dependent => :destroy
 
   has_many  :application_translators,       :class_name => 'Tr8n::ApplicationTranslator',     :dependent => :destroy
   has_many  :applications,                  :class_name => 'Tr8n::Application',               :through => :application_translators

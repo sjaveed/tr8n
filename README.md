@@ -14,56 +14,19 @@ and monitoring translation progress.
 
 
 
-The Tr8n engine is based on a robust and flexible pluggable architecture where rule types and the syntax of the TML tokens
-can be configured or extended for any application deployment.
-
 Tr8n translation engine has been successfully deployed by Geni and Yammer:
 
 Geni Inc, http://www.geni.com
 
 Yammer Inc, http://www.yammer.com 
 
-You can visit their web sites and see how it is being used.
 
 
 # Documentation
 
-Please look through the following slides to get familiar with Tr8n concepts and features:
+Documentation is available on Tr8n's wiki site:
 
-http://wiki.tr8n.org/slides
-
-Once you are done, you can try out Tr8n features yourself by following the deployement instructions from one of the examples:
-
-https://github.com/tr8n
-
-
-Configuration Guide
-
-https://github.com/berk/tr8n/wiki/4.-Configuration-Instructions
-
-Integration Guide
-
-https://github.com/berk/tr8n/wiki/5.-Integration-Instructions
-
-Translation Markup Language (TML)
-
-https://github.com/berk/tr8n/wiki/6.-Tr8n-Syntax-and-Translation-Markup-Language
-
-Rules Engine 
-
-https://github.com/berk/tr8n/wiki/7.-Tr8n-Rules-Engine
-
-Language Context Rules
-
-https://github.com/berk/tr8n/wiki/7.1-Language-Context-Rules
-
-Language Case Rules
-
-https://github.com/berk/tr8n/wiki/7.2-Language-Case-Rules
-
-Supported Languages
-
-https://github.com/berk/tr8n/wiki/9.-Supported-Languages
+http://wiki.tr8nhub.com
 
 
 # Installation Instructions

@@ -13,7 +13,6 @@ and monitoring translation progress.
 ![alt text](https://raw.github.com/tr8n/tr8n/master/doc/screenshots/tr8nlogo.png "Tr8n Logo")
 
 
-
 Tr8n translation engine has been successfully deployed by Geni and Yammer:
 
 Geni Inc, http://www.geni.com

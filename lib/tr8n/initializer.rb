@@ -72,11 +72,17 @@ module Tr8n
 
     def self.init_countries
       log "Initializing countries..."
-      countries_file = File.expand_path(File.join(data_path, "countries.json"))
+      countries_file = File.expand_path(File.join(data_path, "countries", "countries.json"))
+      flags_folder = File.expand_path(File.join(data_path, "countries", "flags"))
+
       json = load_json(countries_file)
       json.each do |code, name|
         log ">> Importing #{name}..."
-        Tr8n::Country.create(:code => code.downcase, :english_name => name)
+        country = Tr8n::Country.create(:code => code.downcase, :english_name => name)
+        flag_path = "#{flags_folder}/#{name}.png"
+        if File.exists?(flag_path)
+          Tr8n::Media::LanguageFlag.create_from_file(country, name, File.read(flag_path))
+        end
       end
       log "Created #{Tr8n::Country.count} countries."
     end

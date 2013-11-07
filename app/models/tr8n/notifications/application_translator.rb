@@ -57,4 +57,7 @@ class Tr8n::Notifications::ApplicationTranslator < Tr8n::Notification
     tr("You were assigned to translate an application.")
   end
 
+  def has_excerpt?
+    true
+  end
 end

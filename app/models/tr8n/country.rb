@@ -52,4 +52,12 @@ class Tr8n::Country < ActiveRecord::Base
     where(:code => code).first
   end
 
+  def flag
+    @flag ||= Tr8n::Media::CountryFlag.where(:owner_type => self.class.name, :owner_id => self.id).first
+  end
+
+  def flag_url
+    flag ? flag.url(:original, :full => true) : "#{Tr8n::Config.base_url}/assets/tr8n/tr8n_flag.png"
+  end
+
 end

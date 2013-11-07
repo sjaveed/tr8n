@@ -84,14 +84,14 @@ class Tr8n::Language < ActiveRecord::Base
     @flag ||= Tr8n::Media::LanguageFlag.where(:owner_type => self.class.name, :owner_id => self.id).first
   end
 
+  def flag_url
+    flag ? flag.url(:original, :full => true) : "#{Tr8n::Config.base_url}/assets/tr8n/tr8n_flag.png"
+  end
+
   def featured?(app)
     al = Tr8n::ApplicationLanguage.where(:application_id=>app.id, :language_id => id).first
     return false unless al
     not al.featured_index.nil?
-  end
-
-  def flag_url
-    flag ? flag.url(:original, :full => true) : "#{Tr8n::Config.base_url}/assets/tr8n/tr8n_flag.png"
   end
 
   def cache_key

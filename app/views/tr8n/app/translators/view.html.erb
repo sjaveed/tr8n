@@ -7,9 +7,21 @@
   <div class="section grey">
     <table>
       <tr>
-        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Name:")%></th>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Username:")%></th>
         <td style="padding:3px;">
           <%=@translator.name%>
+        </td>
+      </tr>
+      <tr>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("First Name:")%></th>
+        <td style="padding:3px;">
+          <%=@translator.first_name%>
+        </td>
+      </tr>
+      <tr>
+        <th style="width:120px;padding:3px;text-align:left;vertical-align:middle;font-weight:bold;"><%=tra("Last Name:")%></th>
+        <td style="padding:3px;">
+          <%=@translator.last_name%>
         </td>
       </tr>
       <tr>
@@ -31,6 +43,17 @@
         </td>
       </tr>
     </table>
+
+    <div style="text-align:right">
+      <% if application_manager?(@translator) %>
+        <% unless @translator.admin? %>
+          <%=link_to(tra("Demote"), {:action => :demote, :id => @translator.id}, {:class => "btn btn-warning", :confirm => trla("Are you sure you want to promote this translator to be a manager of the application?")})%>
+        <% end %>
+      <% else %>
+        <%=link_to(tra("Promote To Manager"), {:action => :promote, :id => @translator.id}, {:class => "btn btn-success", :confirm => trla("Are you sure you want to promote this translator to be a manager of the application?")})%>
+      <% end %>
+    </div>
+
   </div>
 
   <div class="section_title">

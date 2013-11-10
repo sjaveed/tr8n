@@ -1,0 +1,82 @@
+<%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
+  <style>
+    label {
+      font-weight:bold;
+      padding-top:15px;
+    }
+  </style>
+
+  <%= render :partial => "/tr8n/app/common/header" %>
+  <%=render(:partial => "component_sections") %>
+
+  <div class="section grey">
+    <div class="tr8n_float_right" style="padding-right:5px;">
+      <%=tr8n_help_icon_tag("Component Sources") %>
+    </div>
+
+    <div class="tr8n_text_align_left" style="padding-top:5px;font-size:12px;">
+      <%= tra("Administrators and managers can manually create sources and assign keys to them.") %>
+
+      <div style="text-align: right; padding-top:20px;">
+        <%=link_to(tra("Edit Component"), {:action => :component_modal, :id => @component.id}, {"data-toggle" => "dynamic_modal", "class" => "btn btn-small"})%>
+        <%=link_to(tra("Assign All Application Translators"), {:action => :add_all_translators, :id => @component.id}, {:confirm=>trla("Are you sure you want to add all application translators to this component?"),"class" => "btn btn-small"})%>
+        <%=link_to(tra("Assign Translators"), {:action => :add_translators_modal, :id => @component.id}, {"data-toggle" => "dynamic_modal", "class" => "btn btn-small btn-primary"})%>
+      </div>
+    </div>
+
+  </div>
+
+  <% if @component.component_translators.empty? %>
+    <%=tra("No translators have been assigned to this component.") %>
+  <% else %>
+    <div class="section">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th><%=tra("Name") %></th>
+          <th><%=tra("Languages") %></th>
+          <th><%=tra("Level") %></th>
+          <th><%=tra("Translations") %></th>
+          <th><%=tra("Votes") %></th>
+          <th><%=tra("Rank") %></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @component.component_translators.each do |comp_t| %>
+          <% translator = comp_t.translator %>
+          <tr>
+            <td style="vertical-align:top">
+              <div style="float:left;"><%=tr8n_user_mugshot_tag(translator, :linked => true)%> &nbsp;</div>
+              <%=link_to(translator.name, :controller => "/tr8n/translator/dashboard", :id => translator.id)%>
+            </td>
+            <td>
+              <%=translator.languages.collect{|lang| lang.name}.join(', ')%>
+            </td>
+            <td>
+              <%=translator.level%>
+            </td>
+            <td>
+              <%= translator.total_metric.total_translations %>
+            </td>
+            <td>
+              <%= translator.total_metric.total_votes %>
+            </td>
+            <td>
+              <%=tr8n_translator_rank_tag(translator)%>
+            </td>
+            <td style="text-align:right">
+              <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :remove_translator, :id => comp_t.id}, {:confirm => trla("Are you sure you want to remove this translator from the component?")})%>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+   <% end %>
+
+  <%= render :partial => "/tr8n/app/common/footer" %>
+
+  <%= stylesheet_link_tag('tr8n/bootstrap/bootstrap-switch.css') %>
+  <%=javascript_include_tag('tr8n/vendor/bootstrap/bootstrap-switch.js') %>
+
+<% end %>

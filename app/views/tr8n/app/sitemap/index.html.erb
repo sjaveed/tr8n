@@ -1,7 +1,9 @@
 <%= tr8n_with_options_tag(:default_locale => Tr8n::Config.default_admin_locale, :admin => true) do %>
   <%= render :partial => "/tr8n/app/common/header" %>
 
-  <%=render(:partial => "sections") %>
+  <div class="section-header">
+    <%=tra("Site Map") %>
+  </div>
 
   <div class="tr8n tr8n_container">
     <div class="section grey">
@@ -10,166 +12,116 @@
       </div>
 
       <div class="tr8n_text_align_left" style="padding-top:5px;padding-bottom:20px;font-size:12px;">
-        <%=tra("This section provides a list of application components and sources associated with them.") %>
+        <%=tra("This section provides a list of application components.") %>
         <%=tra("You can click on any component or source to navigate directly to its list of phrases.") %>
 
       </div>
 
       <% if @editable %>
-        <div class="btn-group">
-          <%
-             [{:mode => :grid, :icon => 'icon-th'},
-              {:mode => :list, :icon => 'icon-align-justify'}
-             ].each do |mode|
-          %>
-            <%=link_to("<i class='#{mode[:icon]} #{@mode == mode[:mode] ? 'icon-white' : ''}'></i>".html_safe, {:mode=>mode[:mode]}, :class=>"btn #{@mode == mode[:mode] ? 'btn-primary' : 'btn-default'} btn-sm")%>
-         <% end %>
-        </div>
-
-        <div style="float:right">
-          <%=link_to(tra("Create New Component"), {:controller => "/tr8n/app/wizards", :action => :component}, {"class" => "btn btn-small btn-primary", "data-toggle" => "dynamic_wizard"})%>
+        <div style="text-align:right">
+          <%=link_to(tra("Add Components To Site Map"), {:action => :add_components_modal}, {"data-toggle" => "dynamic_modal", :class => "btn btn-primary"})%>
         </div>
       <% end %>
     </div>
 
-    <% if selected_application.components.empty? %>
-      <%=tra("No components have been setup for this application.") %>
-      <%=tra("[link: Click here] to create a new component.", :link => lambda{|t| link_to(t, {:controller => "/tr8n/app/wizards", :action => :component}, {"data-toggle" => "dynamic_wizard"})}) %>
-    <% end %>
-
-    <% if @mode == :grid %>
-      <ul id="components" data-update-url="/tr8n/app/sitemap/update_components_order">
-        <% @components.each_with_index do |comp, index| %>
-          <li class="ui-state-default" id="components_<%=comp.id%>">
-            <div class="section grey">
-              <div class="section_title">
-                <% if @editable %>
-                  <div style="float:right">
-                    <%=link_to("<i class='icon-pencil'></i>".html_safe, {:action => :component_modal, :id => comp.id}, {"data-toggle" => "dynamic_modal"})%>
-                    <%=link_to("<i class='icon-th-list'></i>".html_safe, {:action => :view, :id => comp.id})%>
-                    <%=link_to("<i class='icon-user'></i>".html_safe, {:action => :translators, :id => comp.id})%>
-                    <%=link_to("<i class='icon-globe'></i>".html_safe, {:action => :languages, :id => comp.id})%>
-                    <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :delete_component, :id => comp.id}, {:confirm => trla("Are you sure you want to delete this component?")})%>
-                  </div>
-                  <i class='icon-align-justify handle'></i>
-                <% end %>
-
-                <%=link_to(comp.name || "unnamed", :controller => "/tr8n/app/phrases", :action => :index, :component_id => comp.id)%>
-              </div>
-              <div>
-                <div style="padding-bottom:10px; color: #888; font-size:11px;">
-                  <% if @editable %>
-                    <div style="float:right;font-size:12px;">
-                      <%=link_to(image_tag("tr8n/plus.png", :style => "width:8px"), {:action => :add_sources_modal, :id => comp.id}, {"data-toggle" => "dynamic_modal"})%>
-                    </div>
-                  <% end %>
-                  <%=comp.description.blank? ? tra("Sections:") : comp.description %>
-                </div>
-                <ul id="component_<%=comp.id%>" data-update-url="/tr8n/app/sitemap/update_component_sources_order">
-                  <% comp.component_sources.each do |comp_src| %>
-                    <% src = comp_src.translation_source %>
-                    <li id="component_sources_<%=comp_src.id%>">
-                      <% if @editable %>
-                        <div style="float:right">
-                          <%=link_to(image_tag("tr8n/pencil-grey.png", :style => "width:8px"), {:action => :source_modal, :id => src.id}, {"data-toggle" => "dynamic_modal"})%>
-                          <%=link_to(image_tag("tr8n/close.gif", :style => "width:6px"), {:action => :remove_source, :id => comp_src.id}, {:confirm => trla("Are you sure you want to remove this source?")})%>
-                        </div>
-                        <i class='icon-align-justify handle2'></i>
-                      <% end %>
-                      <%=link_to(src.name || src.source, :controller => "/tr8n/app/phrases", :action => :index, :component_id => comp.id, :source_id => src.id)%>
-                    </li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-
-      <style>
-        #components .handle {
-          cursor: move;
-        }
-
-        #components .handle2 {
-          cursor: move;
-        }
-
-        #components { list-style-type: none; margin: 0; padding: 0; width: 100%; margin-left:1px;}
-        #components .ui-state-default { margin-right: 5px; padding: 1px; float: left; width: <%=@column_width%>px;}
-        .ui-state-default {
-          background: transparent;
-          border: 0px;
-        }
-      </style>
+    <% if @components.empty? %>
+      <%=tra("The site map has not been setup for this application yet.") %>
 
       <% if @editable %>
-        <script>
-          $(function() {
-            $( "#components" ).sortable({
-              handle: '.handle',
-              update: function() {
-                $.post($(this).data('update-url'), $(this).sortable('serialize'))
-              }
-            });
-            $( "#components" ).disableSelection();
-
-            <% selected_application.components.each do |comp| %>
-            $( "#component_<%=comp.id%>" ).sortable({
-              axis: 'y',
-              handle: '.handle2',
-              update: function() {
-                $.post($(this).data('update-url'), $(this).sortable('serialize'))
-              }
-            });
-            $( "#component_<%=comp.id%>" ).disableSelection();
-            <% end %>
-          });
-        </script>
+         <%=tra("[link: Click here] to add a component to the site map.", :link => lambda{|t| link_to(t, {:action => :add_components_modal}, {"data-toggle" => "dynamic_modal"})}) %>
       <% end %>
-
-    <% else %>
-      <div class="section">
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th style=""><%=tra("Keyword") %></th>
-            <th style=""><%=tra("Name") %></th>
-            <th style="text-align:right"><%=tra("Sources") %></th>
-            <th style="text-align:right"><%=tra("Languages") %></th>
-            <th style="text-align:right"><%=tra("Translators") %></th>
-            <th style=""></th>
-          </tr>
-          </thead>
-          <tbody>
-          <% @components.each do |comp| %>
-            <tr>
-              <td>
-                <%=comp.key%>
-              </td>
-              <td>
-                <%=comp.name%>
-              </td>
-              <td style="text-align:right">
-                <%=link_to(comp.sources.count, :action=>:view, :id => comp.id)%>
-              </td>
-              <td style="text-align:right">
-                <%=link_to(comp.languages.count, :action=>:languages, :id => comp.id)%>
-              </td>
-              <td style="text-align:right">
-                <%=link_to(comp.translators.count, :action=>:translators, :id => comp.id)%>
-              </td>
-              <td style="text-align:right">
-                <%=link_to("<i class='icon-pencil'></i>".html_safe, {:action => :component_modal, :id => comp.id}, {"data-toggle" => "dynamic_modal"})%>
-                <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :delete_component, :id => comp.id}, {:confirm => trla("Are you sure you want to delete this component?")})%>
-              </td>
-            </tr>
-          <% end %>
-          </tbody>
-        </table>
-
-      </div>
     <% end %>
+
+    <ul id="components" data-update-url="/tr8n/app/sitemap/update_components_order">
+      <% @components.each_with_index do |comp, index| %>
+        <li class="ui-state-default" id="components_<%=comp.id%>">
+          <div class="section grey">
+            <div class="section_title">
+              <% if @editable %>
+                <div style="float:right">
+                  <%=link_to("<i class='icon-pencil'></i>".html_safe, {:controller => "/tr8n/app/components", :action => :component_modal, :id => comp.id}, {"data-toggle" => "dynamic_modal", "title" => trla("Edit component details")})%>
+                  <%=link_to("<i class='icon-th-list'></i>".html_safe, {:controller => "/tr8n/app/components",:action => :view, :id => comp.id}, {"title" => trla("Edit component sources")})%>
+                  <%=link_to("<i class='icon-user'></i>".html_safe, {:controller => "/tr8n/app/components", :action => :translators, :id => comp.id}, {"title" => trla("Edit component translators")})%>
+                  <%=link_to("<i class='icon-globe'></i>".html_safe, {:controller => "/tr8n/app/components", :action => :languages, :id => comp.id}, {"title" => trla("Edit component languages")})%>
+                  <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :remove_component, :id => comp.id}, {"title" => trla("Remove component from site map"), :confirm => trla("Are you sure you want to remove this component from the site map?")})%>
+                </div>
+                <i class='icon-move handle'></i>
+              <% end %>
+
+              <%=link_to(comp.name || "unnamed", :controller => "/tr8n/app/phrases", :action => :index, :component_id => comp.id)%>
+            </div>
+            <div>
+              <div style="padding-bottom:10px; color: #888; font-size:11px;">
+                <% if @editable %>
+                  <div style="float:right;font-size:12px;">
+                    <%=link_to(image_tag("tr8n/plus.png", :style => "width:8px"), {:controller => "/tr8n/app/components", :action => :add_sources_modal, :id => comp.id}, {"data-toggle" => "dynamic_modal"})%>
+                  </div>
+                <% end %>
+                <%=comp.description.blank? ? tra("Sections:") : comp.description %>
+              </div>
+              <ul id="component_<%=comp.id%>" data-update-url="/tr8n/app/sitemap/update_component_sources_order">
+                <% comp.component_sources.each do |comp_src| %>
+                  <% src = comp_src.translation_source %>
+                  <li id="component_sources_<%=comp_src.id%>">
+                    <% if @editable %>
+                      <div style="float:right">
+                        <%=link_to(image_tag("tr8n/pencil-grey.png", :style => "width:8px"), {:controller => "/tr8n/app/components", :action => :source_modal, :id => src.id}, {"data-toggle" => "dynamic_modal"})%>
+                        <%=link_to(image_tag("tr8n/close.gif", :style => "width:6px"), {:controller => "/tr8n/app/components", :action => :remove_source, :id => comp_src.id}, {:confirm => trla("Are you sure you want to remove this source?")})%>
+                      </div>
+                      <i class='icon-align-justify handle2'></i>
+                    <% end %>
+                    <%=link_to(src.name || src.source, {:controller => "/tr8n/app/phrases", :action => :index, :component_id => comp.id, :source_id => src.id})%>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+
+    <style>
+      #components .handle {
+        cursor: move;
+      }
+
+      #components .handle2 {
+        cursor: move;
+      }
+
+      #components { list-style-type: none; margin: 0; padding: 0; width: 100%; margin-left:1px;}
+      #components .ui-state-default { margin-right: 5px; padding: 1px; float: left; width: <%=@column_width%>px;}
+      .ui-state-default {
+        background: transparent;
+        border: 0px;
+      }
+    </style>
+
+    <% if @editable %>
+      <script>
+        $(function() {
+          $( "#components" ).sortable({
+            handle: '.handle',
+            update: function() {
+              $.post($(this).data('update-url'), $(this).sortable('serialize'))
+            }
+          });
+          $( "#components" ).disableSelection();
+
+          <% @components.each do |comp| %>
+          $( "#component_<%=comp.id%>" ).sortable({
+            axis: 'y',
+            handle: '.handle2',
+            update: function() {
+              $.post($(this).data('update-url'), $(this).sortable('serialize'))
+            }
+          });
+          $( "#component_<%=comp.id%>" ).disableSelection();
+          <% end %>
+        });
+      </script>
+    <% end %>
+
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
 <% end %>

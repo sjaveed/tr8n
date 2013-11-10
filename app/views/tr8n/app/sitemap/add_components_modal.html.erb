@@ -1,0 +1,49 @@
+<!-- Modal -->
+<div class="modal-dialog" id="languages_modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">
+        <%=tra("Add Components To Site Map")%>
+      </h4>
+    </div>
+
+    <%= form_tag({}, {:method => :post, :role => "form", :class => "form-inline", :id => "components_form", :style=>"margin:0px;"}) do |f| %>
+      <div class="modal-body" style="min-height:300px">
+
+        <div class="form-group">
+          <p>
+            <%=tra("Enter a list of components you want to add to the site map.") %>
+          </p>
+
+          <%=hidden_field_tag(:selected_components, "") %>
+
+          <select id="components_list" data-placeholder="Components" multiple class="chzn-select" style="width:400px;">
+            <option value=""></option>
+            <% selected_application.components.each do |cmp| %>
+              <% next unless cmp.position.nil? %>
+              <option value="<%=cmp.id%>"><%=cmp.name || cmp.key%></option>
+            <% end %>
+          </select>
+
+          <p style="padding-top:20px; color:#666">
+            <%= tra("Start typing a component name.") %>
+          </p>
+
+        </div>
+
+      </div>
+    <% end %>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal"><%=tra("Cancel") %></button>
+      <button type="button" class="btn btn-primary" onClick="$('#selected_components').val($('#components_list').val()); $('#components_form').submit();"><%=tra("Submit") %></button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+
+<script>
+  (function() {
+    $("#components_list").chosen({});
+  })();
+</script>

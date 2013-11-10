@@ -97,10 +97,23 @@ module Tr8n
     end
     helper_method :translator_applications
 
-    def application_admin?
-      tr8n_current_user.admin?
+    def application_manager?(translator = nil)
+      translator ||= tr8n_current_translator
+      return true if translator.admin?
+      app_translator = tr8n_selected_application.application_translators.where(:translator_id => translator.id).first
+      return false unless app_translator
+      app_translator.manager?
     end
-    helper_method :application_admin?
+    helper_method :application_manager?
+
+    def language_manager?(translator = nil)
+      translator ||= tr8n_current_translator
+      return true if translator.admin?
+      translator_language = Tr8n::TranslatorLanguage.where(:language_id => tr8n_current_language.id, :translator_id => translator.id).first
+      return false unless translator_language
+      translator_language.manager?
+    end
+    helper_method :language_manager?
 
     def render_modal
       render(:layout => false)

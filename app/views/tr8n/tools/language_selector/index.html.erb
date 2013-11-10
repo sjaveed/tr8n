@@ -56,7 +56,7 @@ function removeLanguage(language_id) {
         </div>
 
         <div style="color:grey; font-size:11px; padding-top:5px; padding-bottom:5px; font-weight:bold;">
-          <% if tr8n_current_translator.manager? %>
+          <% if application_manager? %>
             <div style="float:right">
               <%=link_to("manage", "/tr8n/app/settings/languages", :target=>"_top") %>
             </div>
@@ -69,9 +69,9 @@ function removeLanguage(language_id) {
             <% @application_languages.each do |language| %>
               <li onClick="Tr8n.Dispatcher.postMessage({'subject': 'language_selector', 'action': 'change', 'locale': '<%=language.locale%>'}, '<%=params[:origin]%>')">
 
-                <% if Tr8n::Config.enable_language_stats? %>
-                  <span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>
-                <% end %>
+                <!--<% if Tr8n::Config.enable_language_stats? %>-->
+                  <!--<span style="font-size:8px; <%=tr8n_style_attribute_tag('float', 'right')%>; color:#ccc;"><%= "#{language.default? ? '100' : (language.completeness || 0)}%" %></span>-->
+                <!--<% end %>-->
 
                 <%= tr8n_language_flag_tag(language) %>
 

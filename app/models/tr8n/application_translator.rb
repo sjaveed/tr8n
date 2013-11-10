@@ -68,4 +68,9 @@ class Tr8n::ApplicationTranslator < ActiveRecord::Base
     Tr8n::Notification.distribute(self)    
   end
 
+  def make_manager!
+    self.manager = true
+    save
+  end
+
 end

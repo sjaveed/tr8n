@@ -32,67 +32,67 @@
     </div>
     <% end %>
 
-    <div class="section">
-      <%= tr8n_paginator_tag(@translation_keys, :subject => 'phrase') if @translation_keys.any? %>
-      <%= form_tag({:controller => "/tr8n/app/translations", :action => :submit}, {:id => 'translation_form', :method => :post}) do |f| %>
+    <% if @translation_keys.empty? %>
+      <div class="tr8n_text_align_left" style="padding-top:10px; font-size:12px;"><%=trla("No phrases found")%></div>
+    <% else %>
 
-        <table class="table">
-          <thead>
-            <tr>
-               <th style="width:15px; ">
-                 <%=check_box_tag("all_keys", 'yes', false, :style=>"vertical-align:middle;margin-right:5px;", :onClick => "checkAll(this)") %>
-               </th>
-               <th class="tr8n_text_align_left" style="width:40%;padding:5px;">
-                 <%=tra("Original Phrase")%>
-               </th>
-               <th class="tr8n_text_align_left" style="width:60%;padding:5px;" colspan="2">
-                 <%=tra("Top {language} Translations", :language => tr8n_current_language.native_name) %>
-               </th>
-            </tr>
-          </thead>
-          <% @translation_keys.each_with_index do |tk, index| %>
-            <tr class="tkey_row" style="border-bottom:1px dotted #ccc;">
-              <td class="tr8n_text_align_left" style="vertical-align:top;padding-top:5px;background:#f9f8f7">
-                <%=check_box_tag("key_check_#{index}", tk.id, false, :style=>"vertical-align:top;", :onClick => "verifyCheck(this)") %>
-              </td>
-              <td class="tr8n_text_align_left" style="font-size:12px; vertical-align:top;padding:5px;background:#f9f8f7">
-                <% if tk.locked? %>
-                  <div class="tr8n_float_right"><%=image_tag("tr8n/lock.png", :style=>"width:12px; padding:5px;", :title => trla("This phrase is locked"))%></div>
-                <% end %>
-                <span dir='ltr'>
-                  <%=link_to(tk.default_decoration(tr8n_current_language, :application => selected_application), :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])%>
-                </span>
-                <div class="tr8n_text_align_left" dir='ltr' style="color:grey;font-size:10px;padding-top:3px;"><%=tk.description%></div>
-              </td>
+      <div class="section">
+        <%= tr8n_paginator_tag(@translation_keys, :subject => 'phrase') if @translation_keys.any? %>
+        <%= form_tag({:controller => "/tr8n/app/translations", :action => :submit}, {:id => 'translation_form', :method => :post}) do |f| %>
 
-              <td style="padding:5px; vertical-align:top">
-                <div id="tr8n_translator_votes_for_<%=tk.key%>" class="tr8n_text_align_left">
-                  <% if tk.in_current_language? %>
-                    <div class="muted">
-                      <%= tra("This phrase needs no translations for {language}.", :language => tr8n_current_language.native_name) %>
-                    </div>
-                  <% else %>
-                    <% translations = tk.translations_for(tr8n_current_language) %>
-                    <% if translations.empty? %>
+          <table class="table">
+            <thead>
+              <tr>
+                 <th style="width:15px; ">
+                   <%=check_box_tag("all_keys", 'yes', false, :style=>"vertical-align:middle;margin-right:5px;", :onClick => "checkAll(this)") %>
+                 </th>
+                 <th class="tr8n_text_align_left" style="width:40%;padding:5px;">
+                   <%=tra("Original Phrase")%>
+                 </th>
+                 <th class="tr8n_text_align_left" style="width:60%;padding:5px;" colspan="2">
+                   <%=tra("Top {language} Translations", :language => tr8n_current_language.native_name) %>
+                 </th>
+              </tr>
+            </thead>
+            <% @translation_keys.each_with_index do |tk, index| %>
+              <tr class="tkey_row" style="border-bottom:1px dotted #ccc;">
+                <td class="tr8n_text_align_left" style="vertical-align:top;padding-top:5px;background:#f9f8f7">
+                  <%=check_box_tag("key_check_#{index}", tk.id, false, :style=>"vertical-align:top;", :onClick => "verifyCheck(this)") %>
+                </td>
+                <td class="tr8n_text_align_left" style="font-size:12px; vertical-align:top;padding:5px;background:#f9f8f7">
+                  <% if tk.locked? %>
+                    <div class="tr8n_float_right"><%=image_tag("tr8n/lock.png", :style=>"width:12px; padding:5px;", :title => trla("This phrase is locked"))%></div>
+                  <% end %>
+                  <span dir='ltr'>
+                    <%=link_to(tk.default_decoration(tr8n_current_language, :application => selected_application), :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])%>
+                  </span>
+                  <div class="tr8n_text_align_left" dir='ltr' style="color:grey;font-size:10px;padding-top:3px;"><%=tk.description%></div>
+                </td>
+
+                <td style="padding:5px; vertical-align:top">
+                  <div id="tr8n_translator_votes_for_<%=tk.key%>" class="tr8n_text_align_left">
+                    <% if tk.in_current_language? %>
                       <div class="muted">
-                        <%= tra("There are no translations for this phrase.") %>
-                        <% unless tk.locked? %>
-                          <%= tra("Be the first one to [link: translate it].", :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])}  ) %>
-                        <% end %>
+                        <%= tra("This phrase needs no translations for {language}.", :language => tr8n_current_language.native_name) %>
                       </div>
                     <% else %>
-                      <%= render :partial => "/tr8n/common/translation_votes", :locals => {:translation_key => tk, :translations => translations[0..4], :source_id => params[:source_id], :component_id => params[:component_id]} %>
+                      <% translations = tk.translations_for(tr8n_current_language) %>
+                      <% if translations.empty? %>
+                        <div class="muted">
+                          <%= tra("There are no translations for this phrase.") %>
+                          <% unless tk.locked? %>
+                            <%= tra("Be the first one to [link: translate it].", :link => lambda{|str| link_to(str, :controller => "/tr8n/app/phrases", :action => :view, :id => tk.id, :source_id => params[:source_id], :component_id => params[:component_id])}  ) %>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <%= render :partial => "/tr8n/common/translation_votes", :locals => {:translation_key => tk, :translations => translations[0..4], :source_id => params[:source_id], :component_id => params[:component_id]} %>
+                      <% end %>
                     <% end %>
-                  <% end %>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </table>
-
-        <% if @translation_keys.empty? %>
-            <div class="tr8n_text_align_left" style="padding-top:10px; font-size:12px;"><%=trla("No phrases found")%></div>
-        <% else %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </table>
 
           <div id="translation_key_toolbar" style="padding-top:25px; padding-bottom: 10px;">
             <div style="float:right">

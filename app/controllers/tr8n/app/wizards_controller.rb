@@ -52,7 +52,8 @@ class Tr8n::App::WizardsController < Tr8n::App::BaseController
         end
       end
 
-      app.add_translator(tr8n_current_translator)
+      app_translator = app.add_translator(tr8n_current_translator)
+      app_translator.make_manager!
 
       emails = params[:translators].strip.blank? ? [] : params[:translators].split(',')
       emails.each do |email|

@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal-dialog">
-  <%= form_tag({}, {:id=>"sources_form", :method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
+  <%= form_tag({:controller => "/tr8n/app/components", :action => "add_to_component_modal"}, {:id=>"sources_form", :method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
     <%= hidden_field_tag :sources, params[:sources] %>
     <div class="modal-content">
       <div class="modal-header">

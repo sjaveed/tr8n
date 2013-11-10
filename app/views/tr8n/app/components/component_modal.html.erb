@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal-dialog">
-  <%= form_for(@component, :as => :component, :url => {:id => @component.id}, :html => {:method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
+  <%= form_for(@component, :as => :component, :url => {:controller => "/tr8n/app/components", :action => "component_modal", :id => @component.id}, :html => {:method => :post, :role => "form", :class => "form-inline", :style=>"margin:0px;"}) do |f| %>
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

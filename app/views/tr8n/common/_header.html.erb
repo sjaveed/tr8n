@@ -84,8 +84,6 @@
   #application_list_menu li {
     min-width: 600px;
   }
-
-
   .active a {
     background: #f5f5f5;
     border: 1px solid #eee;
@@ -104,13 +102,12 @@
       </div>
       <ul class="nav sub-nav" style="padding-left:0px;padding-right:10px;width:200px;">
         <% features = []
-           features << ["icon-check", "Assignments", "translator/assignments", false]
-           features << ["icon-flag", "Notifications", "translator/notifications", false]
-           features << ["icon-bookmark", "Bookmarks", "translator/following", false]
-           features << ["icon-cog", "Preferences", "translator/settings", false]
+           features << ["icon-check", "Assignments", "translator/assignments"]
+           features << ["icon-flag", "Notifications", "translator/notifications"]
+           features << ["icon-bookmark", "Bookmarks", "translator/following"]
+           features << ["icon-cog", "Preferences", "translator/settings"]
 
            features.each do |tab| %>
-          <% next if tab.last and not application_admin? %>
           <li class="<%='active' if ctrl == tab[2] %>" style="padding:2px;">
             <%=link_to("/tr8n/#{tab[2]}", :style=>"padding:5px;") do %>
               <% if tab[1] == "Notifications"%>
@@ -138,7 +135,7 @@
            features << ["icon-book", "Glossary", "app/glossary", false]                   if selected_application.feature_enabled?(:glossary)
            features << ["icon-certificate", "Awards", "app/awards", false]                if selected_application.feature_enabled?(:awards)
            features.each do |tab| %>
-          <% next if tab.last and not application_admin? %>
+          <% next if tab.last and not application_manager? %>
           <li class="<%='active' if ctrl == tab[2] %>" style="padding:2px;">
             <%=link_to("/tr8n/#{tab[2]}", :style=>"padding:5px;") do %>
               <i class='<%=tab[0]%>'></i>
@@ -148,18 +145,17 @@
         <% end %>
       </ul>
 
-      <% if application_admin? %>
+      <% if application_manager? %>
         <div style="color:#666; font-weight:bold; padding-bottom:10px;">
           <%= tra("Administration") %>
         </div>
         <ul class="nav sub-nav" style="padding-left:0px;padding-right:10px;width:200px;">
           <% features = []
-             features << ["icon-cog", "Application", ["app/settings"], true]
-             features << ["icon-user", "Translators", ["app/translators"], true]
-             features << ["icon-envelope", "Emails", ["app/emails"], false]
-             features << ["icon-cog", "Language", ["language/settings", "language/context_rules", "language/cases", "language/censorship"], true]
+             features << ["icon-cog", "Application", ["app/settings"]]
+             features << ["icon-user", "Translators", ["app/translators"]]
+             features << ["icon-th", "Components", ["app/components"]]
+             features << ["icon-envelope", "Emails", ["app/emails"]]
              features.each do |tab| %>
-            <% next if tab.last and not application_admin? %>
             <li class="<%='active' if tab[2].include?(ctrl)  %>" style="padding:2px;">
               <%=link_to("/tr8n/#{tab[2].first}", :style=>"padding:5px;") do %>
                 <i class='<%=tab[0]%>'></i>
@@ -170,6 +166,23 @@
         </ul>
       <% end %>
 
+      <% if language_manager? %>
+        <div style="color:#666; font-weight:bold; padding-bottom:10px;">
+          <%= tra("Language") %>
+        </div>
+        <ul class="nav sub-nav" style="padding-left:0px;padding-right:10px;width:200px;">
+          <% features = []
+             features << ["icon-cog", "Settings", ["language/settings", "language/context_rules", "language/cases", "language/censorship"]]
+             features.each do |tab| %>
+            <li class="<%='active' if tab[2].include?(ctrl)  %>" style="padding:2px;">
+              <%=link_to("/tr8n/#{tab[2].first}", :style=>"padding:5px;") do %>
+                <i class='<%=tab[0]%>'></i>
+                <%= tra(tab[1]) %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     </div>
 
   <script>

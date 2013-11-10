@@ -300,10 +300,17 @@ class Tr8n::Translator < ActiveRecord::Base
     return super if remote?
 
     return "Deleted User" unless user
-    user_name = Tr8n::Config.user_name(user)
-    return "No Name" if user_name.blank?
-    
-    user_name
+    Tr8n::Config.user_name(user)
+  end
+
+  def first_name
+    return "Deleted User" unless user
+    Tr8n::Config.user_first_name(user)
+  end
+
+  def last_name
+    return "Deleted User" unless user
+    Tr8n::Config.user_last_name(user)
   end
 
   def email
@@ -318,9 +325,7 @@ class Tr8n::Translator < ActiveRecord::Base
   end  
 
   def gender
-    return "unknown" if system?
-    return super if remote?
-    
+    return "unknown" unless user
     Tr8n::Config.user_gender(user)
   end
 

@@ -1,5 +1,5 @@
 <div class="section-header">
-  <%=tra("Application Site Map") %>
+  <%=tra("Application Components") %>
 </div>
 
 <ul class="nav nav-tabs" style="padding-left:10px;padding-right:10px;">
@@ -9,7 +9,7 @@
      ].each do |tab| %>
 
     <li class="<%='active' if tab[2].include?(controller.action_name)  %>">
-      <%=link_to("/tr8n/app/sitemap/#{tab[2].first}") do %>
+      <%=link_to("/tr8n/app/components/#{tab[2].first}") do %>
         <% if tab[0] %>
           <i class='<%=tab[0]%>'></i>
         <% end %>

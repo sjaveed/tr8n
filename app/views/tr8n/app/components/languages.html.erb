@@ -27,36 +27,39 @@
 
     </div>
 
-    <div class="section">
-      <table class="table table-hover" id="languages">
-        <thead>
-        <tr>
-          <th><%=tra("English Name") %></th>
-          <th><%=tra("Native Name") %></th>
-          <th><%=tra("Locale") %></th>
-          <th><%=tra("Direction") %></th>
-        </tr>
-        </thead>
-        <tbody id="languages" data-update-url="/tr8n/app/settings/update_languages_order">
-        <% @component.component_languages.each do |comp_lang| %>
-          <% lang = comp_lang.language %>
-          <tr id="locale_<%=lang.locale%>">
-            <td>
-              <%= tr8n_language_flag_tag(lang) %>
-              <%=lang.english_name%>
-            </td>
-            <td><%=lang.native_name%></td>
-            <td><%=lang.locale%></td>
-            <td><%= (lang.dir == "ltr" ? "&rarr;" : "&larr;").html_safe %></td>
-            <td style="text-align:right">
-              <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :remove_language, :id => comp_lang.id}, {:confirm => trla("Are you sure you want to remove this language from the component?")})%>
-            </td>
+    <% if @component.component_languages.empty? %>
+      <%=tra("No languages have been assigned to this component.") %>
+    <% else %>
+      <div class="section">
+        <table class="table table-hover" id="languages">
+          <thead>
+          <tr>
+            <th><%=tra("English Name") %></th>
+            <th><%=tra("Native Name") %></th>
+            <th><%=tra("Locale") %></th>
+            <th><%=tra("Direction") %></th>
           </tr>
-        <% end %>
-        </tbody>
-      </table>
-    </div>
-
+          </thead>
+          <tbody id="languages" data-update-url="/tr8n/app/settings/update_languages_order">
+          <% @component.component_languages.each do |comp_lang| %>
+            <% lang = comp_lang.language %>
+            <tr id="locale_<%=lang.locale%>">
+              <td>
+                <%= tr8n_language_flag_tag(lang) %>
+                <%=lang.english_name%>
+              </td>
+              <td><%=lang.native_name%></td>
+              <td><%=lang.locale%></td>
+              <td><%= (lang.dir == "ltr" ? "&rarr;" : "&larr;").html_safe %></td>
+              <td style="text-align:right">
+                <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :remove_language, :id => comp_lang.id}, {:confirm => trla("Are you sure you want to remove this language from the component?")})%>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
   </div>
   <%= render :partial => "/tr8n/app/common/footer" %>
 

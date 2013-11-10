@@ -31,9 +31,28 @@ class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
     @invitations = Tr8n::Requests::InviteTranslator.where(:application_id => selected_application.id).order("created_at desc").page(page).per(per_page)
   end
 
+  def promote
+    app_translator = tr8n_selected_application.application_translators.where(:translator_id => params[:id]).first
+    if app_translator
+      app_translator.manager = true
+      app_translator.save
+      trfn("Translator has been promoted to be application manager")
+    end
+    redirect_back
+  end
+
+  def demote
+    app_translator = tr8n_selected_application.application_translators.where(:translator_id => params[:id]).first
+    if app_translator
+      app_translator.manager = false
+      app_translator.save
+      trfn("Translator has been demoted")
+    end
+    redirect_back
+  end
+
   def invite_wizard
     if request.post?
-
       emails = params[:emails].strip.blank? ? [] : params[:emails].split(",")
       languages = params[:languages] unless params[:languages].blank?
       message = params[:message]

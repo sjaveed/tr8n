@@ -76,7 +76,7 @@
               <%=tr8n_translator_rank_tag(translator)%>
             </td>
             <td style="text-align:right">
-              <%=link_to(tra("remove"), {:action => :remove, :id => translator.id}, :confirm => trla("Are you sure you want to remove this translator from the application?"))%>
+              <%=link_to("<i class='icon-remove'></i>".html_safe, {:action => :remove, :id => translator.id}, :confirm => trla("Are you sure you want to remove this translator from the application?"))%>
             </td>
           </tr>
         <% end %>

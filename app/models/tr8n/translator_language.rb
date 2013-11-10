@@ -50,4 +50,9 @@ class Tr8n::TranslatorLanguage < ActiveRecord::Base
     where("translator_id = ? and language_id = ?", translator.id, language.id).first || create(:translator => translator, :language => language)
   end
 
+  def make_manager!
+    self.manager = true
+    save
+  end
+
 end

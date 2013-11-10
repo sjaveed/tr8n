@@ -315,6 +315,22 @@ module Tr8n
       "Invalid user"
     end
 
+    def self.user_first_name(user)
+      return "Unknown user" unless user
+      user.send(site_user_info[:methods][:first_name])
+    rescue Exception => ex
+      Tr8n::Logger.error("Failed to fetch #{user_class_name} name: #{ex.to_s}")
+      "Invalid user"
+    end
+
+    def self.user_last_name(user)
+      return "Unknown user" unless user
+      user.send(site_user_info[:methods][:last_name])
+    rescue Exception => ex
+      Tr8n::Logger.error("Failed to fetch #{user_class_name} name: #{ex.to_s}")
+      "Invalid user"
+    end
+
     def self.user_email(user)
       user.send(site_user_info[:methods][:email])
     rescue Exception => ex

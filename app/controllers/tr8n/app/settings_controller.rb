@@ -23,6 +23,8 @@
 
 class Tr8n::App::SettingsController < Tr8n::App::BaseController
 
+  before_filter :validate_application_management
+
   def index
     if request.post?
       selected_application.name = params[:application][:name]

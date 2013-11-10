@@ -74,4 +74,13 @@ private
   end
   helper_method :translation_status_options
 
+  def validate_application_management
+    # admins can do everything
+    return if tr8n_current_user_is_admin?
+
+    unless application_manager?
+      return redirect_to(:controller => "/tr8n/app/phrases", :action => :index)
+    end
+  end
+
 end

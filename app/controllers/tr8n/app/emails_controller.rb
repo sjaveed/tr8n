@@ -27,6 +27,8 @@ class Tr8n::App::EmailsController < Tr8n::App::BaseController
   skip_before_filter :validate_selected_application, :only => [:view, :track]
   skip_before_filter :validate_guest_user, :only => [:view, :track]
 
+  before_filter :validate_application_management, :except => [:view, :track]
+
   def index
     @emails = selected_application.email_templates.page(page).per(per_page)
   end

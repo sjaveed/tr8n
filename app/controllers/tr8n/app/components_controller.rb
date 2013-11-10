@@ -23,6 +23,8 @@
 
 class Tr8n::App::ComponentsController < Tr8n::App::BaseController
 
+  before_filter :validate_application_management
+
   def index
     @column_width = 470    # 3 columns
     @mode = (params[:mode] || :grid).to_sym

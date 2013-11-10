@@ -23,6 +23,8 @@
 
 class Tr8n::App::TranslatorsController < Tr8n::App::BaseController
 
+  before_filter :validate_application_management
+
   def index
     @translators = selected_application.translators.page(page).per(per_page)
   end

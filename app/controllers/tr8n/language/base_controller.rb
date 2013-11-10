@@ -38,14 +38,9 @@ private
       return redirect_to(tr8n_features_tabs.first[:link])
     end
 
-    unless tr8n_current_user_is_translator? and tr8n_current_translator.manager?
-      trfe("In order to manage a settings you first must request to become a manager of that settings.")
-      return redirect_to(tr8n_features_tabs.first[:link])
+    unless language_manager?
+      return redirect_to(:controller => "/tr8n/app/phrases", :action => :index)
     end
   end
 
-  def language_manager?
-    tr8n_current_user.admin?
-  end
-  helper_method :language_manager?
 end

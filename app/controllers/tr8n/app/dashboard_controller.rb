@@ -23,6 +23,8 @@
 
 class Tr8n::App::DashboardController < Tr8n::App::BaseController
 
+  before_filter :validate_application_management
+
   def index
 
   end

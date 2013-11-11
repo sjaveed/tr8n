@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
   s.version     = Tr8n::VERSION
   s.authors     = ["Michael Berkovich"]
   s.email       = ["theiceberk@gmail.com"]
-  s.homepage    = "https://github.com/tr8n/tr8n"
+  s.homepage    = "https://github.com/sjaveed/tr8n"
   s.summary     = "Crowd-sourced translation engine for Rails."
   s.description = "Crowd-sourced translation and localization engine for Rails."
 
   s.files         = `git ls-files`.split("\n") - Dir.glob("app/javascripts/**/*")
-  s.test_files    = `git ls-files -- {test,local,spec,features}/*`.split("\n")
+#   s.test_files    = `git ls-files -- {test,local,spec,features}/*`.split("\n")
   s.extra_rdoc_files = ['README.md']
   s.require_paths = ['lib']
 

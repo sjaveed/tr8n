@@ -241,6 +241,24 @@ class Tr8n::App::PhrasesController < Tr8n::App::BaseController
     redirect_back
   end
 
+  def delete
+    unless tr8n_current_translator.admin?
+      trfn("You are not authorized to perform this operation")
+      return redirect_back
+    end
+
+    total = 0
+    params[:keys].split(",").each do |key_id|
+      key = Tr8n::TranslationKey.find_by_id(key_id)
+      next unless key
+      total += 1
+      key.destroy
+    end
+
+    trfn("{count| Phrase has, Phrases have} been deleted from the service", :count => total)
+    redirect_back
+  end
+
   def dictionary
     @definitions = Tr8n::Dictionary.load_definitions_for(translation_key.words)
     render :partial => "dictionary", :layout => false

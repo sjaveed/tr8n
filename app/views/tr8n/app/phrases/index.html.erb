@@ -99,6 +99,9 @@
               <%=link_to_function(tra("Lock"), "lockKeys()", {"class" => "btn btn-success"})%>
               <%=link_to_function(tra("Unlock"), "unlockKeys()", {"class" => "btn btn-warning"})%>
               <%=link_to_function(tra("Remove"), "removeKeys()", {"class" => "btn btn-danger"})%>
+              <% if tr8n_current_translator.admin? %>
+                <%=link_to_function(tra("Delete"), "deleteKeys()", {"class" => "btn btn-danger", :style => "margin-left:20px;"})%>
+              <% end %>
             </div>
             <%=link_to_function(tra("Add To Source..."), "addSelectedKeysToSource()", {"class" => "btn"})%>
           </div>
@@ -160,6 +163,11 @@
     function removeKeys() {
       if (!confirm("<%=trla("Are you sure you want to remove all selected phrases?") %>")) return;
       location.href = "/tr8n/app/phrases/remove?keys=" + getSelectedKeyIds();
+    }
+
+    function deleteKeys() {
+      if (!confirm("<%=trla("Are you sure you want to delete all selected phrases?") %>")) return;
+      location.href = "/tr8n/app/phrases/delete?keys=" + getSelectedKeyIds();
     }
 
     function addSelectedKeysToSource() {

@@ -230,8 +230,9 @@ Tr8n.UI.Translator = {
     if (is_language_case) {
       params = {
         type: 'language_case',
-        id:  translatable_node.getAttribute('data-rule_id'),
-        label: translatable_node.getAttribute('data-case_key')
+        case_id:  translatable_node.getAttribute('data-case_id'),
+        rule_id:  translatable_node.getAttribute('data-rule_id'),
+        case_key: translatable_node.getAttribute('data-case_key')
       }
     } else {
       params = {

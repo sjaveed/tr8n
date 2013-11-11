@@ -12,7 +12,7 @@
         <% if params[:type] == 'translator' %>
           location = "/tr8n/tools/translator?id=<%=params[:id]%>&origin=<%=params[:origin]%>";
         <% else %>
-          location = "/tr8n/tools/language_case_manager?id=<%=params[:id]%>&label=<%=params[:label]%>&origin=<%=params[:origin]%>";
+          location = "/tr8n/tools/language_case_manager?case_id=<%=params[:case_id]%>&rule_id=<%=params[:rule_id]%>&case_key=<%=params[:case_key]%>&origin=<%=params[:origin]%>";
         <% end %>
       }, 500);
 	  }

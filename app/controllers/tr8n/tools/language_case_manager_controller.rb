@@ -28,9 +28,9 @@ class Tr8n::Tools::LanguageCaseManagerController < Tr8n::Tools::BaseController
 
   # settings selector window
   def index
-    @rule = Tr8n::LanguageCaseRule.find_by_id(params[:id])
-    @lcase = @rule.language_case
-    @label = params[:label]
+    @lcase = Tr8n::LanguageCase.find_by_id(params[:case_id]) if params[:case_id]
+    @rule = Tr8n::LanguageCaseRule.find_by_id(params[:rule_id]) if params[:rule_id]
+    @label = params[:case_key]
   end
 
   #

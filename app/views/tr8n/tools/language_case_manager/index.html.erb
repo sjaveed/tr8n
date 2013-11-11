@@ -8,9 +8,11 @@
 </div>
 
 <div style="padding-bottom:25px;">
+<% match = false %>
 <% @lcase.rules.each_with_index do |rule, index| %>
     <div style="padding:3px;margin-top:5px;<%='border: 1px solid #eee; border-radius:5px' if rule == @rule %>">
       <% if rule == @rule %>
+        <% match = true %>
         <div style="float:right"><%=image_tag("tr8n/accept.png") %></div>
       <% end %>
       <%=index+1%>. <%= rule.describe %>
@@ -18,4 +20,9 @@
 <% end %>
 </div>
 
-
+<% unless match %>
+<div style="padding-top:10px; padding-bottom:20px; color: darkred;">
+  <%=tra("No rules have been matched.") %>
+  <%=tra("Please report this case to the application manager or site administrator.") %>
+</div>
+<% end %>

@@ -94,6 +94,13 @@ class Tr8n::Language < ActiveRecord::Base
     not al.featured_index.nil?
   end
 
+  def manager?(translator)
+    return true if translator.admin?
+    translator_language = Tr8n::TranslatorLanguage.where(:language_id => self.id, :translator_id => translator.id).first
+    return false unless translator_language
+    translator_language.manager?
+  end
+
   def cache_key
     self.class.cache_key(locale)
   end

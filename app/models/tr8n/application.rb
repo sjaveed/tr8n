@@ -269,6 +269,13 @@ class Tr8n::Application < ActiveRecord::Base
     definition["translator_level"] = value
   end
 
+  def manager?(translator)
+    return true if translator.admin?
+    app_translator = application_translators.where(:translator_id => translator.id).first
+    return false unless app_translator
+    app_translator.manager?
+  end
+
   def default?
     key == "default"
   end

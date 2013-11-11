@@ -186,12 +186,13 @@ module Tr8n
         request_token = remote_application.find_or_create_request_token(current_translator)
         params.merge!({
           'code' => request_token.token,
-          'translator' => {
-            'id'      => current_translator.id,
-            'email'   => current_translator.email,
-            'name'    => current_translator.name,
-            'inline'  => current_translator.inline_mode,
-            'manager' => current_translator.manager?,
+          'translator'  => {
+            'id'        => current_translator.id,
+            'email'     => current_translator.email,
+            'name'      => current_translator.name,
+            'inline'    => current_translator.inline_mode,
+            'manager'   => remote_application.manager?(current_translator),
+            'features'  => Tr8n::Feature.by_object(current_translator, :slim => true)
           }
         })
       end

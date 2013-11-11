@@ -73,29 +73,34 @@ module Tr8n
     end
 
     def self.sign_and_encode_params(params, secret)
-      payload = Base64.encode64(params.merge(:algorithm => 'HMAC-SHA256', :ts => Time.now.to_i).to_json)
+      payload = params.merge(:algorithm => 'HMAC-SHA256', :ts => Time.now.to_i).to_json
+      #pp payload
+
+      payload = Base64.encode64(payload)
+      #pp payload
+
       sig = OpenSSL::HMAC.digest('sha256', secret, payload)
       encoded_sig = Base64.encode64(sig)
-      data = URI::encode("#{encoded_sig}.#{payload}")
-      pp :encoded_sig, encoded_sig
+      #pp :encoded_signature, encoded_sig
+
+      data = URI::encode(Base64.encode64("#{encoded_sig}.#{payload}"))
+      #pp :payload, data
+
       data
     end
 
     def self.decode_and_verify_params(signed_request, secret)
       signed_request = URI::decode(signed_request)
+      signed_request = Base64.decode64(signed_request)
 
       encoded_sig, payload = signed_request.split('.', 2)
-      sig = Base64.decode64(encoded_sig)
-
-      data = JSON.parse(Base64.decode64(payload))
-      if data['algorithm'].to_s.upcase != 'HMAC-SHA256'
-        raise Tr8n::Exception.new("Bad signature algorithm: %s" % data['algorithm'])
-      end
       expected_sig = OpenSSL::HMAC.digest('sha256', secret, payload)
-
-      if expected_sig != sig
+      expected_sig = Base64.encode64(expected_sig)
+      if expected_sig != encoded_sig
         raise Tr8n::Exception.new("Bad signature")
       end
+
+      data = JSON.parse(Base64.decode64(payload))
       HashWithIndifferentAccess.new(data)
     end
 
